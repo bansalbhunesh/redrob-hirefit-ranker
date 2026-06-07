@@ -490,9 +490,10 @@ def final_score(features: CandidateFeatures, retrieval_score: float = 0.0) -> fl
         weighted_sum += weight * features.values.get(name, 0.0)
         total_weight += weight
     base_score = weighted_sum / total_weight
-    return clamp(
+    return max(
+        0.0,
         base_score
         * features.behavioral_multiplier
         * features.honeypot_multiplier
-        * features.disqualifier_multiplier
+        * features.disqualifier_multiplier,
     )

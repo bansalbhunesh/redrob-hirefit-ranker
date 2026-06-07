@@ -1,6 +1,9 @@
 from pathlib import Path
 
+from redrob_ranker.constants import FEATURE_NAMES
+from redrob_ranker.features import CandidateFeatures
 from redrob_ranker.pipeline import RankerConfig, run_ranking
+from redrob_ranker.pipeline import rows_from_ranked
 
 
 def test_pipeline_writes_valid_small_json(tmp_path: Path):
@@ -33,3 +36,46 @@ def test_pipeline_writes_valid_small_json(tmp_path: Path):
     assert result.rows[0]["candidate_id"] == "CAND_0000001"
     assert out.read_text(encoding="utf-8").startswith("candidate_id,rank,score,reasoning")
 
+
+def test_rows_normalize_raw_scores_and_use_clean_title_article():
+    values = {name: 0.0 for name in FEATURE_NAMES}
+    values.update(
+        {
+            "production_evidence": 1.0,
+            "ir_ranking_experience": 1.0,
+            "location_score": 1.0,
+            "notice_period_score": 1.0,
+            "responsiveness_score": 0.8,
+        }
+    )
+    features = CandidateFeatures(
+        candidate_id="CAND_0000001",
+        values=values,
+        behavioral_multiplier=1.0,
+        honeypot_multiplier=1.0,
+        disqualifier_multiplier=1.0,
+        flags=[],
+    )
+    candidate = {
+        "candidate_id": "CAND_0000001",
+        "profile": {
+            "current_title": "AI Engineer",
+            "current_company": "CRED",
+            "location": "Pune",
+            "country": "India",
+            "years_of_experience": 6.0,
+        },
+        "skills": [],
+        "redrob_signals": {"recruiter_response_rate": 0.8, "notice_period_days": 30},
+    }
+    lower_candidate = {**candidate, "candidate_id": "CAND_0000002"}
+
+    rows = rows_from_ranked(
+        [(candidate, features, 1.8), (lower_candidate, features, 1.2)],
+        top_k=2,
+    )
+
+    assert rows[0]["score"] == "1.000000"
+    assert rows[1]["score"] == "0.666667"
+    assert "Currently an AI Engineer" in rows[0]["reasoning"]
+    assert " a AI " not in rows[0]["reasoning"]

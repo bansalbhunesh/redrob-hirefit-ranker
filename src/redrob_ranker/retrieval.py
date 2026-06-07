@@ -38,8 +38,11 @@ def _bm25s_scores(texts: list[str], query: str) -> np.ndarray:
     tokenized = [tokenize(t) for t in texts]
     retriever = bm25s.BM25()
     retriever.index(tokenized, show_progress=False)
-    query_tokens = [tokenize(query)]
-    results, scores = retriever.retrieve(query_tokens, k=len(texts), show_progress=False)
+    query_tokens = tokenize(query)
+    if hasattr(retriever, "get_scores"):
+        return np.asarray(retriever.get_scores(query_tokens), dtype=np.float32)
+
+    results, scores = retriever.retrieve([query_tokens], k=len(texts), show_progress=False)
     flat_results = np.asarray(results[0])
     flat_scores = np.asarray(scores[0], dtype=np.float32)
     ordered_scores = np.zeros(len(texts), dtype=np.float32)

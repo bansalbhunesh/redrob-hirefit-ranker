@@ -31,6 +31,14 @@ def _company_context(features: CandidateFeatures) -> str:
     return "company background is mixed rather than a decisive advantage"
 
 
+def _article_for_title(title: str) -> str:
+    first = lower(str(title).strip().split()[0]) if str(title).strip() else ""
+    vowel_sound_initialisms = {"ai", "ml", "mle", "nlp", "llm", "ir", "sre", "r&d"}
+    if first in vowel_sound_initialisms or first[:1] in {"a", "e", "i", "o"}:
+        return "an"
+    return "a"
+
+
 def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str:
     profile = candidate.get("profile", {})
     signals = candidate.get("redrob_signals", {})
@@ -43,7 +51,7 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
     opening_variants = [
         f"{title} with {years:.1f} years at {current_company}",
         f"{years:.1f}-year {title} currently at {current_company}",
-        f"Currently a {title} with {years:.1f} years",
+        f"Currently {_article_for_title(title)} {title} with {years:.1f} years",
     ]
     variant = sum(ord(ch) for ch in str(candidate.get("candidate_id", ""))) % len(opening_variants)
     opening = opening_variants[variant]

@@ -12,6 +12,12 @@ from redrob_ranker.retrieval import Bm25Backend, retrieve_pool
 from redrob_ranker.validation import validate_rows
 
 
+def _submission_score(raw_score: float, max_score: float) -> float:
+    if max_score <= 0:
+        return 0.0
+    return max(0.0, min(raw_score / max_score, 1.0))
+
+
 @dataclass(slots=True)
 class RankerConfig:
     top_k: int = 100
@@ -52,12 +58,14 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
 
 def rows_from_ranked(ranked: list[tuple[dict, object, float]], top_k: int) -> list[dict]:
     rows: list[dict] = []
-    for rank, (candidate, features, score) in enumerate(ranked[:top_k], start=1):
+    selected = ranked[:top_k]
+    max_score = selected[0][2] if selected else 0.0
+    for rank, (candidate, features, score) in enumerate(selected, start=1):
         rows.append(
             {
                 "candidate_id": candidate["candidate_id"],
                 "rank": rank,
-                "score": f"{score:.6f}",
+                "score": f"{_submission_score(score, max_score):.6f}",
                 "reasoning": build_reason(candidate, features, rank),
             }
         )

@@ -8,7 +8,7 @@ Plan D v2 pipeline:
 
 1. Parse candidates with `orjson` when available.
 2. Render structured candidate text from profile, career, skills, education, logistics, and Redrob signals.
-3. Compute BM25 lexical scores using `bm25s` when installed, otherwise `rank-bm25`.
+3. Compute BM25 lexical scores using `bm25s.get_scores()` when installed, otherwise `rank-bm25`.
 4. Extract a deterministic 28-feature matrix for every loaded candidate.
 5. Compute `base_score` from technical/career/logistics/BM25 features.
 6. Apply `base_score * behavioral_multiplier * honeypot_multiplier * disqualifier_multiplier`.
@@ -54,7 +54,7 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 
 `--candidate-pool N` exists for demos/profiling only. The submission path should leave it at `0`.
 
-On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 243.4 seconds.
+On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 260.4 seconds.
 
 ## Validation
 
