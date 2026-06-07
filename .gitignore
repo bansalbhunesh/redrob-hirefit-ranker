@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# Challenge data and generated outputs
+data/
+artifacts/
+*.csv
+!sample_submission.csv
+*.jsonl
+*.jsonl.gz
+
+# Local config
+.env
+.DS_Store
+

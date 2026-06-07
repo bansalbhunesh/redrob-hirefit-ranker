@@ -1,0 +1,50 @@
+# Redrob Hackathon - Submission Metadata
+
+team_name: "your-team-name-here"
+
+primary_contact:
+  name: "Full Name"
+  email: "primary@example.com"
+  phone: "+91-XXXXXXXXXX"
+
+team_members:
+  - name: "Full Name"
+    email: "primary@example.com"
+    role: "ML Engineer"
+
+github_repo: "https://github.com/bansalbhunesh/redrob-hirefit-ranker"
+sandbox_link: "https://huggingface.co/spaces/bansalbhunesh/redrob-hirefit-ranker"
+reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
+
+compute:
+  platform: "Local CPU machine"
+  cpu_cores: 8
+  ram_gb: 16
+  python_version: "3.11.x"
+  os: "Windows/Linux"
+  uses_gpu_for_inference: false
+  has_network_during_ranking: false
+  pre_computation_required: false
+  pre_computation_time_minutes: 0
+
+ai_tools_used:
+  - "Codex"
+
+ai_usage_summary: |
+  Used Codex for architecture planning, implementation scaffolding, documentation,
+  and test generation. No candidate data is sent to hosted LLM APIs during ranking.
+
+methodology_summary: |
+  Offline Plan D v2 ranker for the Senior AI Engineer JD. BM25 provides lexical
+  fit (bm25s preferred, rank-bm25 fallback), while a deterministic 28-feature
+  matrix scores skills, career, experience, behavior, and logistics. The final
+  score applies multiplicative behavioral, honeypot, and JD-disqualifier
+  multipliers. No hosted LLM/API scoring is used during ranking; reasoning is
+  generated from actual candidate facts and feature triggers.
+
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: true
+  reproduction_tested: true

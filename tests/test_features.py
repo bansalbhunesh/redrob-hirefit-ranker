@@ -1,0 +1,149 @@
+from redrob_ranker.constants import FEATURE_NAMES
+from redrob_ranker.features import compute_features, final_score
+from redrob_ranker.retrieval import retrieve_pool
+
+
+def make_candidate(**overrides):
+    candidate = {
+        "candidate_id": "CAND_0000001",
+        "profile": {
+            "current_title": "Machine Learning Engineer",
+            "headline": "ML Engineer building retrieval systems",
+            "summary": "Shipped production embeddings search and ranking systems.",
+            "location": "Pune, Maharashtra",
+            "country": "India",
+            "years_of_experience": 7.0,
+            "current_company": "CRED",
+            "current_industry": "Fintech",
+        },
+        "career_history": [
+            {
+                "company": "CRED",
+                "title": "Machine Learning Engineer",
+                "start_date": "2021-01-01",
+                "end_date": None,
+                "is_current": True,
+                "duration_months": 60,
+                "industry": "Fintech",
+                "company_size": "1001-5000",
+                "description": "Built production vector search, ranking, and evaluation pipelines at scale.",
+            }
+        ],
+        "education": [
+            {
+                "institution": "IIT Delhi",
+                "degree": "B.Tech",
+                "field_of_study": "Computer Science",
+                "start_year": 2013,
+                "end_year": 2017,
+                "tier": "tier_1",
+            }
+        ],
+        "skills": [
+            {"name": "Python", "proficiency": "advanced", "endorsements": 20, "duration_months": 60},
+            {"name": "Milvus", "proficiency": "advanced", "endorsements": 10, "duration_months": 24},
+            {"name": "NLP", "proficiency": "advanced", "endorsements": 18, "duration_months": 48},
+            {"name": "NDCG", "proficiency": "intermediate", "endorsements": 6, "duration_months": 18},
+        ],
+        "redrob_signals": {
+            "profile_completeness_score": 90,
+            "last_active_date": "2026-05-20",
+            "open_to_work_flag": True,
+            "profile_views_received_30d": 40,
+            "applications_submitted_30d": 3,
+            "recruiter_response_rate": 0.8,
+            "avg_response_time_hours": 12,
+            "skill_assessment_scores": {"Python": 82},
+            "search_appearance_30d": 120,
+            "interview_completion_rate": 0.9,
+            "saved_by_recruiters_30d": 8,
+            "notice_period_days": 30,
+            "expected_salary_range_inr_lpa": {"min": 20, "max": 35},
+            "github_activity_score": 45,
+            "verified_email": True,
+            "verified_phone": True,
+            "linkedin_connected": True,
+            "willing_to_relocate": False,
+            "endorsements_received": 20,
+        },
+    }
+    for key, value in overrides.items():
+        candidate[key] = value
+    return candidate
+
+
+def test_feature_matrix_has_stable_28_keys():
+    features = compute_features(make_candidate())
+    assert set(FEATURE_NAMES) == set(features.values)
+    assert len(features.values) == 28
+    for name, value in features.values.items():
+        assert 0.0 <= value <= 1.0, name
+
+
+def test_good_candidate_scores_above_trap():
+    good = compute_features(make_candidate())
+    trap = make_candidate()
+    trap["candidate_id"] = "CAND_0000002"
+    trap["profile"]["current_title"] = "Marketing Manager"
+    trap["career_history"][0]["title"] = "Marketing Manager"
+    trap["career_history"][0]["description"] = "Used ChatGPT for content marketing."
+    trap["skills"] = [
+        {"name": "NLP", "proficiency": "expert", "endorsements": 0, "duration_months": 0}
+        for _ in range(12)
+    ]
+    bad = compute_features(trap)
+    assert good.role_fit > bad.role_fit
+    assert bad.honeypot_risk > good.honeypot_risk
+    assert final_score(good, 0.5) > final_score(bad, 0.5)
+
+
+def test_behavior_multiplier_downweights_stale_unresponsive_profile():
+    good = compute_features(make_candidate())
+    stale = make_candidate()
+    stale["candidate_id"] = "CAND_0000003"
+    stale["redrob_signals"].update(
+        {
+            "last_active_date": "2025-01-01",
+            "open_to_work_flag": False,
+            "recruiter_response_rate": 0.02,
+            "avg_response_time_hours": 220,
+            "notice_period_days": 150,
+            "saved_by_recruiters_30d": 0,
+        }
+    )
+    weak = compute_features(stale)
+    assert weak.behavioral_multiplier < good.behavioral_multiplier
+    assert weak.behavioral_multiplier < 0.75
+
+
+def test_honeypot_rules_catch_missing_plan_cases():
+    candidate = make_candidate()
+    candidate["candidate_id"] = "CAND_0000004"
+    candidate["career_history"].append(
+        {
+            "company": "AnotherCo",
+            "title": "ML Engineer",
+            "duration_months": 24,
+            "is_current": True,
+            "description": "Current role",
+        }
+    )
+    candidate["redrob_signals"]["expected_salary_range_inr_lpa"] = {"min": 40, "max": 20}
+    candidate["education"][0]["start_year"] = 2020
+    candidate["education"][0]["end_year"] = 2020
+    candidate["skills"].append(
+        {"name": "FAISS", "proficiency": "expert", "endorsements": 4, "duration_months": 0}
+    )
+    features = compute_features(candidate)
+    assert features.honeypot_multiplier == 0.05
+    assert "salary_inversion" in features.flags
+    assert "multiple_current_jobs" in features.flags
+    assert "impossible_education_timeline" in features.flags
+    assert "expert_skill_zero_duration" in features.flags
+
+
+def test_bm25_backend_falls_back_to_rank_bm25():
+    candidates = [make_candidate(), make_candidate(candidate_id="CAND_0000002")]
+    scores, backend = retrieve_pool(candidates, backend="auto")
+    assert backend in {"bm25s", "rank_bm25"}
+    assert len(scores) == 2
