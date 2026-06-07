@@ -16,9 +16,9 @@ The ranker scores 100,000 candidate profiles for Redrob's Senior AI Engineer rol
 
 ## Tech Stack
 
-- Python 3.11
-- `numpy`, `pandas`, `orjson`, `bm25s`, `rank-bm25`, `pyyaml`, `rich`
-- Optional demo: FastAPI, Uvicorn, Gradio
+- Python 3.11+; locally verified on Python 3.14.3
+- Core ranker: `numpy`, `orjson`, `bm25s`, `rank-bm25`
+- Optional demo: `pandas`, FastAPI, Uvicorn, Gradio
 
 ## Setup
 
@@ -26,6 +26,18 @@ The ranker scores 100,000 candidate profiles for Redrob's Senior AI Engineer rol
 python -m venv .venv
 .venv\Scripts\activate
 pip install -e ".[dev,demo]"
+```
+
+For the lean challenge runtime only:
+
+```bash
+pip install -r requirements.txt
+```
+
+For the optional FastAPI/Gradio demo:
+
+```bash
+pip install -r requirements-demo.txt
 ```
 
 The official challenge data is not committed. Place `candidates.jsonl` in the repo root or pass its path explicitly.
@@ -74,6 +86,8 @@ python apps/space/app.py
 - `apps/space/` - HuggingFace Gradio demo.
 - `tests/` - unit and integration tests.
 - `docs/` - deck outline and AI usage notes.
+- `requirements.txt` - lean ranking dependencies.
+- `requirements-demo.txt` - optional demo dependencies.
 
 ## AI Tools Usage
 

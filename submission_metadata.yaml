@@ -1,15 +1,15 @@
 # Redrob Hackathon - Submission Metadata
 
-team_name: "your-team-name-here"
+team_name: "redrob-hirefit-ranker"
 
 primary_contact:
-  name: "Full Name"
-  email: "primary@example.com"
+  name: "Bhunesh Bansal"
+  email: "bhuneshbansal20039888@gmail.com"
   phone: "+91-XXXXXXXXXX"
 
 team_members:
-  - name: "Full Name"
-    email: "primary@example.com"
+  - name: "Bhunesh Bansal"
+    email: "bhuneshbansal20039888@gmail.com"
     role: "ML Engineer"
 
 github_repo: "https://github.com/bansalbhunesh/redrob-hirefit-ranker"
@@ -20,8 +20,8 @@ compute:
   platform: "Local CPU machine"
   cpu_cores: 8
   ram_gb: 16
-  python_version: "3.11.x"
-  os: "Windows/Linux"
+  python_version: "3.14.3 local verification; compatible with 3.11+"
+  os: "Windows"
   uses_gpu_for_inference: false
   has_network_during_ranking: false
   pre_computation_required: false

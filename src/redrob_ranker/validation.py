@@ -26,6 +26,8 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
         if rank in ranks:
             errors.append(f"Duplicate rank: {rank}")
         ranks.add(rank)
+        if score < 0 or score > 1:
+            errors.append(f"Score out of range at rank {rank}: {score}")
         if score > last_score:
             errors.append(f"Score increases at rank {rank}.")
         last_score = score
@@ -33,4 +35,3 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
     if missing:
         errors.append(f"Missing ranks: {sorted(missing)}")
     return errors
-
