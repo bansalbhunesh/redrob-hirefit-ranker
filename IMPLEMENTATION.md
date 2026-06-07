@@ -54,7 +54,7 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 
 `--candidate-pool N` exists for demos/profiling only. The submission path should leave it at `0`.
 
-On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 260.4 seconds.
+On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 184.1 seconds.
 
 ## Validation
 

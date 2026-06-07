@@ -116,6 +116,51 @@ def test_behavior_multiplier_downweights_stale_unresponsive_profile():
     assert weak.behavioral_multiplier < 0.75
 
 
+def test_audit_edge_cases_for_senior_india_profiles():
+    veteran = make_candidate()
+    veteran["profile"]["years_of_experience"] = 12.0
+    veteran["skills"] = [
+        {"name": "GenAI", "proficiency": "advanced", "endorsements": 12, "duration_months": 24},
+        {"name": "LangChain", "proficiency": "advanced", "endorsements": 8, "duration_months": 18},
+        {"name": "Vector Search", "proficiency": "advanced", "endorsements": 10, "duration_months": 24},
+        {"name": "Python", "proficiency": "advanced", "endorsements": 20, "duration_months": 72},
+    ]
+    veteran["redrob_signals"]["notice_period_days"] = 90
+
+    features = compute_features(veteran)
+
+    assert features.values["core_skill_match"] >= 0.40
+    assert features.values["yoe_fit_score"] == 1.0
+    assert features.values["notice_period_score"] == 0.85
+
+
+def test_consulting_only_penalty_softens_when_production_is_real():
+    services_candidate = make_candidate()
+    services_candidate["profile"]["current_company"] = "TCS"
+    services_candidate["profile"]["current_industry"] = "IT Services"
+    services_candidate["career_history"] = [
+        {
+            "company": "TCS",
+            "title": "Senior Machine Learning Engineer",
+            "start_date": "2020-01-01",
+            "end_date": None,
+            "is_current": True,
+            "duration_months": 72,
+            "industry": "IT Services",
+            "description": (
+                "Shipped deployed production vector search ranking services with "
+                "latency monitoring, inference pipelines, live users, and A/B metrics."
+            ),
+        }
+    ]
+
+    features = compute_features(services_candidate)
+
+    assert features.values["consulting_only_flag"] == 1.0
+    assert features.values["production_evidence"] > 0.5
+    assert features.disqualifier_multiplier == 0.80
+
+
 def test_honeypot_rules_catch_missing_plan_cases():
     candidate = make_candidate()
     candidate["candidate_id"] = "CAND_0000004"

@@ -50,7 +50,7 @@ Validate with the official validator:
 python validate_submission.py ./submission.csv
 ```
 
-Local verification on the 100K candidate file completed in 260.4 seconds with `bm25s` and the official validator returned `Submission is valid.`
+Local verification on the 100K candidate file completed in 184.1 seconds with `bm25s` and the official validator returned `Submission is valid.`
 
 ## Demo
 

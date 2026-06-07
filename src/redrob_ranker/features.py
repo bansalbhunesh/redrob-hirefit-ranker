@@ -359,11 +359,9 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     values["code_writing_recent"] = clamp(_contains(" ".join([current_title, career_text]), CODE_WRITING_SIGNALS) / 4.0)
 
     yoe = float(profile.get("years_of_experience") or 0)
-    values["yoe_fit_score"] = clamp(math.exp(-((yoe - 7.0) ** 2) / (2 * 2.6**2)))
+    values["yoe_fit_score"] = 1.0 if yoe >= 7.0 else clamp(math.exp(-((yoe - 7.0) ** 2) / (2 * 2.6**2)))
     if yoe < 3:
         values["yoe_fit_score"] *= 0.55
-    elif yoe > 14:
-        values["yoe_fit_score"] *= 0.72
     values["education_score"] = _education_score(candidate)
 
     ml_months = 0
@@ -399,7 +397,7 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     values["profile_quality"] = clamp(0.70 * completeness + 0.30 * verified)
 
     notice = float(signals.get("notice_period_days") or 180)
-    values["notice_period_score"] = 1.0 if notice <= 30 else 0.82 if notice <= 60 else 0.62 if notice <= 90 else 0.35 if notice <= 120 else 0.18
+    values["notice_period_score"] = 1.0 if notice <= 30 else 0.93 if notice <= 60 else 0.85 if notice <= 90 else 0.45 if notice <= 120 else 0.20
 
     location = _norm(profile.get("location"))
     country = _norm(profile.get("country"))
@@ -437,7 +435,9 @@ def compute_features(candidate: dict) -> CandidateFeatures:
 
     behavioral_multiplier = compute_behavioral_multiplier(values, candidate)
     honeypot_multiplier = 0.05 if hard_flags else 1.0
-    disqualifier_multiplier = compute_disqualifier_multiplier(soft_flags)
+    disqualifier_multiplier = compute_disqualifier_multiplier(
+        soft_flags, production_evidence=values["production_evidence"]
+    )
 
     return CandidateFeatures(
         candidate_id=candidate["candidate_id"],
@@ -466,10 +466,10 @@ def compute_behavioral_multiplier(values: dict[str, float], candidate: dict) -> 
     return clamp(mult, 0.25, 1.5)
 
 
-def compute_disqualifier_multiplier(flags: list[str]) -> float:
+def compute_disqualifier_multiplier(flags: list[str], production_evidence: float = 0.0) -> float:
     mult = 1.0
     if "consulting_only" in flags:
-        mult *= 0.35
+        mult *= 0.80 if production_evidence > 0.5 else 0.35
     if "pure_research_without_deployment" in flags:
         mult *= 0.45
     if "cv_speech_robotics_primary" in flags:
