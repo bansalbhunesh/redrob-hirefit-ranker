@@ -8,6 +8,8 @@ Example:
 from __future__ import annotations
 
 import argparse
+import sys
+import time
 import tracemalloc
 from pathlib import Path
 
@@ -42,7 +44,64 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Print Python tracemalloc peak memory for local profiling.",
     )
+    parser.add_argument(
+        "--show-top",
+        type=int,
+        default=0,
+        help="Print rich ASCII output for the top N candidates.",
+    )
     return parser.parse_args()
+
+def print_top_n(result, n: int, elapsed: float, peak_mb: float | None) -> None:
+    if not result.raw_ranked or n <= 0:
+        return
+    print("\n" + "=" * 80)
+    print("REDROB HIREFIT RANKER — TOP CANDIDATES")
+    print("=" * 80)
+    print(f"Pipeline: {result.loaded_count:,} candidates -> {result.ranked_pool_count:,} ranked")
+    memory_str = f" | Memory: {peak_mb:.0f}MB" if peak_mb is not None else ""
+    print(f"Runtime:  {elapsed:.1f}s{memory_str} | Backend: {result.bm25_backend}")
+    print("-" * 80)
+
+    max_score = result.raw_ranked[0][2] if result.raw_ranked else 0.0
+
+    for i, (candidate, features, score) in enumerate(result.raw_ranked[:n]):
+        rank = i + 1
+        cid = candidate.get("candidate_id", "UNKNOWN")
+        p = candidate.get("profile", {})
+        
+        badge = "[ 1 ]" if rank == 1 else "[ 2 ]" if rank == 2 else "[ 3 ]" if rank == 3 else f"[ {rank} ]"
+        
+        normalized_score = score / max_score if max_score > 0 else 0.0
+        bar_len = int(normalized_score * 40)
+        bar = "#" * bar_len + "-" * (40 - bar_len)
+        
+        print(f"\n{badge} {cid} | Score: {normalized_score:.4f} [{bar}]")
+        print(f"   {p.get('current_title', 'No Title')} @ {p.get('current_company', 'No Company')} | {p.get('years_of_experience', 0):.1f}Y | {p.get('location', 'No Location')}")
+        
+        # Get reasoning from rows
+        reasoning = result.rows[i]["reasoning"] if i < len(result.rows) else ""
+        print(f"   [REASON] {reasoning}")
+        
+        # Feature breakdown
+        top_dims = sorted(features.values.items(), key=lambda x: -x[1])[:3]
+        dim_str = " | ".join([f"{k.replace('_',' ')}: {v:.2f}" for k, v in top_dims])
+        print(f"   [FEATURES] {dim_str}")
+        
+        # Honeypot / behavioral flags
+        if features.honeypot_multiplier <= 0.0:
+            print(f"   [HONEYPOT] DETECTED")
+        elif features.flags:
+            print(f"   [FLAGS] {', '.join(features.flags)}")
+        else:
+            signals = candidate.get("redrob_signals", {})
+            otw = signals.get("open_to_work_flag", False)
+            rr = signals.get("recruiter_response_rate", 0.0)
+            notice = signals.get("notice_period_days", "unknown")
+            print(f"   [SIGNALS] OTW={otw} | RR={rr:.0%} | Notice={notice}d")
+    
+    print("\n" + "=" * 80)
+
 
 
 def main() -> None:
@@ -60,7 +119,15 @@ def main() -> None:
     )
     if args.profile_memory:
         tracemalloc.start()
+    start_time = time.time()
     result = run_ranking(Path(args.candidates), Path(args.out), config)
+    elapsed = time.time() - start_time
+    print(f"Pipeline completed in {elapsed:.1f}s", file=sys.stderr)
+    if elapsed > 240:
+        print(
+            f"WARNING: Runtime {elapsed:.1f}s exceeds 240s safety margin (300s limit).",
+            file=sys.stderr,
+        )
     peak_mb = None
     if args.profile_memory:
         peak_mb = tracemalloc.get_traced_memory()[1] / 1024 / 1024
@@ -69,11 +136,14 @@ def main() -> None:
         f"Wrote {len(result.rows)} rows to {args.out}. "
         f"Loaded {result.loaded_count} candidates; ranked pool {result.ranked_pool_count}; "
         f"BM25 backend {result.bm25_backend}. "
+        f"Runtime {elapsed:.1f}s. "
         f"Honeypots detected {result.honeypots_detected}; "
         f"honeypots in output {result.honeypots_in_output}."
     )
     if peak_mb is not None:
         print(f"Peak traced Python memory: {peak_mb:.1f} MB.")
+    if args.show_top > 0:
+        print_top_n(result, args.show_top, elapsed, peak_mb)
 
 
 if __name__ == "__main__":

@@ -31,9 +31,10 @@ class RankingResult:
     rows: list[dict]
     loaded_count: int
     ranked_pool_count: int
-    bm25_backend: str = "unknown"
-    honeypots_detected: int = 0
-    honeypots_in_output: int = 0
+    bm25_backend: str
+    honeypots_detected: int
+    honeypots_in_output: int
+    raw_ranked: list[tuple[dict, object, float]] | None = None
 
 
 def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[tuple[dict, object, float]], str]:
@@ -95,4 +96,5 @@ def run_ranking(candidates_path: Path, out_path: Path, config: RankerConfig | No
         bm25_backend=used_backend,
         honeypots_detected=honeypots_detected,
         honeypots_in_output=honeypots_in_output,
+        raw_ranked=ranked,
     )

@@ -31,6 +31,8 @@ from redrob_ranker.text import candidate_text, lower
 
 REFERENCE_DATE = date(2026, 6, 8)
 
+_NORM_RE = re.compile(r"[^a-z0-9+#.\s/-]")
+
 
 @dataclass(slots=True)
 class CandidateFeatures:
@@ -102,7 +104,7 @@ def clamp(value: float, lo: float = 0.0, hi: float = 1.0) -> float:
 
 
 def _norm(text: object) -> str:
-    return re.sub(r"[^a-z0-9+#.\s/-]", " ", str(text or "").lower()).strip()
+    return _NORM_RE.sub(" ", str(text or "").lower()).strip()
 
 
 def _contains(text: str, terms: set[str] | list[str]) -> int:
@@ -141,6 +143,10 @@ def skill_names(candidate: dict) -> list[str]:
 
 
 def _profile_text(candidate: dict) -> str:
+    # Reuse cached text from retrieve_pool if available, else compute fresh.
+    cached = candidate.get("_cached_text")
+    if cached is not None:
+        return _norm(cached)
     return _norm(candidate_text(candidate))
 
 

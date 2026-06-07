@@ -92,7 +92,6 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
         concerns.append(f"JD disqualifier flags: {', '.join(features.flags[:2])}")
     if features.values["career_trajectory_score"] < 0.35:
         concerns.append("current title is not a strong match for the role")
-
     behavior = (
         f"response rate {signals.get('recruiter_response_rate', 0):.2f}, "
         f"notice {signals.get('notice_period_days', 'unknown')} days, "
@@ -114,5 +113,15 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
         selected.append(f"JD fit score components: production {features.values['production_evidence']:.2f}, core skills {features.values['core_skill_match']:.2f}")
 
     first_sentence = f"{opening}; {'; '.join(selected[:3])}."
-    second_sentence = f"Platform signals: {behavior}."
+
+    behavior_variants = [
+        f"Redrob engagement: {behavior}.",
+        f"Platform activity signals: {behavior}.",
+        f"Recruiter interaction profile: {behavior}.",
+        f"Availability and responsiveness: {behavior}.",
+    ]
+    candidate_id = str(candidate.get("candidate_id", ""))
+    variant_idx = (sum(ord(c) for c in candidate_id) + 7) % len(behavior_variants)
+    second_sentence = behavior_variants[variant_idx]
+
     return f"{first_sentence} {second_sentence}"

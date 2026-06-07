@@ -88,7 +88,11 @@ def retrieve_pool(
     if not candidates:
         return {}, "none"
 
-    texts = [candidate_text(c) for c in candidates]
+    texts = []
+    for c in candidates:
+        t = candidate_text(c)
+        c["_cached_text"] = t  # Cache for reuse by compute_features
+        texts.append(t)
     scores, used_backend = bm25_scores(texts, backend=backend)
     if pool_size > 0 and pool_size < len(scores):
         idx = np.argpartition(-scores, pool_size - 1)[:pool_size]
