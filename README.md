@@ -13,6 +13,7 @@ The ranker scores 100,000 candidate profiles for Redrob's Senior AI Engineer rol
 - Honeypot guardrails for impossible timelines, expert-zero-duration skills, multiple current jobs, salary inversion, education impossibility, endorsement inflation, and title-description contradictions.
 - No hosted LLM/API candidate scoring. No network, GPU, or model download during ranking.
 - Deterministic, fact-grounded reasoning for the top 100.
+- Honeypot audit counts are printed after each ranking run.
 
 ## Tech Stack
 
@@ -62,7 +63,7 @@ Validate with the official validator:
 python validate_submission.py ./submission.csv
 ```
 
-Local verification on the 100K candidate file completed in 184.1 seconds with `bm25s` and the official validator returned `Submission is valid.`
+Local verification on the 100K candidate file completed in 242.7 seconds with `bm25s` and the official validator returned `Submission is valid.`
 
 ## Demo
 
@@ -86,6 +87,7 @@ python apps/space/app.py
 - `apps/space/` - HuggingFace Gradio demo.
 - `tests/` - unit and integration tests.
 - `docs/` - deck outline and AI usage notes.
+- `docs/FEATURE_JD_TRACEABILITY.md` - interview-defense map from features to JD intent.
 - `requirements.txt` - lean ranking dependencies.
 - `requirements-demo.txt` - optional demo dependencies.
 

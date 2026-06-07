@@ -1,6 +1,7 @@
 from redrob_ranker.constants import FEATURE_NAMES
 from redrob_ranker.features import compute_features, final_score
 from redrob_ranker.retrieval import retrieve_pool
+from redrob_ranker.text import candidate_text, tokenize
 
 
 def make_candidate(**overrides):
@@ -94,6 +95,8 @@ def test_good_candidate_scores_above_trap():
     bad = compute_features(trap)
     assert good.role_fit > bad.role_fit
     assert bad.honeypot_risk > good.honeypot_risk
+    assert bad.honeypot_multiplier == 0.0
+    assert final_score(bad, 0.5) == 0.0
     assert final_score(good, 0.5) > final_score(bad, 0.5)
 
 
@@ -114,6 +117,20 @@ def test_behavior_multiplier_downweights_stale_unresponsive_profile():
     weak = compute_features(stale)
     assert weak.behavioral_multiplier < good.behavioral_multiplier
     assert weak.behavioral_multiplier < 0.75
+
+
+def test_semantic_concept_expansion_catches_plain_language_retrieval():
+    candidate = make_candidate()
+    candidate["profile"]["summary"] = (
+        "Built a context aware conversational system that finds similar items "
+        "using neural representations and a FAISS index."
+    )
+    rendered = candidate_text(candidate)
+    tokens = tokenize(rendered)
+    assert "concept_retrieval_system" in tokens
+    assert "concept_rag_system" in tokens
+    assert "concept_vector_database" in tokens
+    assert "neural_representations" in tokens
 
 
 def test_audit_edge_cases_for_senior_india_profiles():
@@ -180,11 +197,26 @@ def test_honeypot_rules_catch_missing_plan_cases():
         {"name": "FAISS", "proficiency": "expert", "endorsements": 4, "duration_months": 0}
     )
     features = compute_features(candidate)
-    assert features.honeypot_multiplier == 0.05
+    assert features.honeypot_multiplier == 0.0
     assert "salary_inversion" in features.flags
     assert "multiple_current_jobs" in features.flags
     assert "impossible_education_timeline" in features.flags
     assert "expert_skill_zero_duration" in features.flags
+
+
+def test_assessment_claim_mismatch_penalizes_behavior_multiplier():
+    good = make_candidate()
+    good["skills"] = [
+        {"name": "Python", "proficiency": "advanced", "endorsements": 20, "duration_months": 60}
+    ]
+    good["redrob_signals"]["skill_assessment_scores"] = {"Python": 86}
+    mismatch = make_candidate()
+    mismatch["skills"] = [
+        {"name": "Python", "proficiency": "expert", "endorsements": 20, "duration_months": 60}
+    ]
+    mismatch["redrob_signals"]["skill_assessment_scores"] = {"Python": 38}
+
+    assert compute_features(mismatch).behavioral_multiplier < compute_features(good).behavioral_multiplier
 
 
 def test_bm25_backend_falls_back_to_rank_bm25():

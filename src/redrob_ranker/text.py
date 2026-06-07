@@ -5,7 +5,9 @@ from __future__ import annotations
 import re
 from typing import Iterable
 
-TOKEN_RE = re.compile(r"[a-z0-9+#.]+")
+from redrob_ranker.constants import IMPORTANT_PHRASES, SEMANTIC_CONCEPTS
+
+TOKEN_RE = re.compile(r"[a-z0-9_+#.]+")
 
 
 def norm(value: object) -> str:
@@ -17,11 +19,25 @@ def lower(value: object) -> str:
 
 
 def tokenize(text: str) -> list[str]:
-    return TOKEN_RE.findall(text.lower())
+    lowered = text.lower()
+    tokens = TOKEN_RE.findall(lowered)
+    for phrase in IMPORTANT_PHRASES:
+        if phrase in lowered:
+            tokens.append(phrase.replace("/", "_").replace(" ", "_"))
+    return tokens
 
 
 def join_nonempty(parts: Iterable[object], sep: str = " ") -> str:
     return sep.join(norm(p) for p in parts if norm(p))
+
+
+def semantic_concept_markers(text: str) -> list[str]:
+    lowered = lower(text)
+    markers: list[str] = []
+    for concept, aliases in SEMANTIC_CONCEPTS.items():
+        if any(lower(alias) in lowered for alias in aliases):
+            markers.append(f"concept_{concept}")
+    return markers
 
 
 def candidate_text(candidate: dict) -> str:
@@ -89,5 +105,8 @@ def candidate_text(candidate: dict) -> str:
             ]
         )
     )
-    return "\n".join(s for s in sections if s)
-
+    rendered = "\n".join(s for s in sections if s)
+    markers = semantic_concept_markers(rendered)
+    if markers:
+        rendered = f"{rendered}\n{' '.join(markers)}"
+    return rendered

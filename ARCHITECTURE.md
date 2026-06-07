@@ -40,7 +40,7 @@ final_score = base_score
             * disqualifier_multiplier
 ```
 
-Hard honeypot traps receive `honeypot_multiplier = 0.05`. Softer JD disqualifiers compound through `disqualifier_multiplier`.
+Hard honeypot traps receive `honeypot_multiplier = 0.0`. Softer JD disqualifiers compound through `disqualifier_multiplier`.
 
 ## 5. Guardrails
 
@@ -64,4 +64,3 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
 No hosted LLM/API calls are made during ranking. The optional `bm25s` backend is preferred for speed, but `rank-bm25` fallback keeps the ranker runnable in restricted environments.
-

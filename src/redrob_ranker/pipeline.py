@@ -32,6 +32,8 @@ class RankingResult:
     loaded_count: int
     ranked_pool_count: int
     bm25_backend: str = "unknown"
+    honeypots_detected: int = 0
+    honeypots_in_output: int = 0
 
 
 def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[tuple[dict, object, float]], str]:
@@ -78,6 +80,10 @@ def run_ranking(candidates_path: Path, out_path: Path, config: RankerConfig | No
     ranked, used_backend = rank_candidates(candidates, config)
     top_k = min(config.top_k, len(ranked))
     rows = rows_from_ranked(ranked, top_k)
+    honeypots_detected = sum(1 for _, features, _ in ranked if features.honeypot_multiplier <= 0.0)
+    honeypots_in_output = sum(
+        1 for _, features, _ in ranked[:top_k] if features.honeypot_multiplier <= 0.0
+    )
     errors = validate_rows(rows, expected=top_k)
     if errors:
         raise ValueError("Invalid generated submission:\n" + "\n".join(errors))
@@ -87,4 +93,6 @@ def run_ranking(candidates_path: Path, out_path: Path, config: RankerConfig | No
         loaded_count=len(candidates),
         ranked_pool_count=len(ranked),
         bm25_backend=used_backend,
+        honeypots_detected=honeypots_detected,
+        honeypots_in_output=honeypots_in_output,
     )

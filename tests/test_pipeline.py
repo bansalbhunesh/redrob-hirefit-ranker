@@ -25,15 +25,17 @@ def test_pipeline_writes_valid_small_json(tmp_path: Path):
     "career_history": [{"company":"TCS","title":"Marketing Manager","duration_months":84,"description":"Content marketing"}],
     "education": [],
     "skills": [{"name":"NLP","proficiency":"expert","endorsements":0,"duration_months":0}],
-    "redrob_signals": {"last_active_date":"2025-01-01","open_to_work_flag":false,"recruiter_response_rate":0.05,"avg_response_time_hours":200,"interview_completion_rate":0.2,"saved_by_recruiters_30d":0,"notice_period_days":150,"verified_email":false,"verified_phone":false,"linkedin_connected":false,"willing_to_relocate":false}
+    "redrob_signals": {"last_active_date":"2025-01-01","open_to_work_flag":false,"recruiter_response_rate":0.05,"avg_response_time_hours":200,"interview_completion_rate":0.2,"saved_by_recruiters_30d":0,"notice_period_days":150,"verified_email":false,"verified_phone":false,"linkedin_connected":false,"willing_to_relocate":false,"expected_salary_range_inr_lpa":{"min":40,"max":20}}
   }
 ]
 """,
         encoding="utf-8",
     )
     out = tmp_path / "out.csv"
-    result = run_ranking(sample, out, RankerConfig(top_k=2, candidate_pool_size=2))
+    result = run_ranking(sample, out, RankerConfig(top_k=1, candidate_pool_size=2))
     assert result.rows[0]["candidate_id"] == "CAND_0000001"
+    assert result.honeypots_detected >= 1
+    assert result.honeypots_in_output == 0
     assert out.read_text(encoding="utf-8").startswith("candidate_id,rank,score,reasoning")
 
 
@@ -79,3 +81,4 @@ def test_rows_normalize_raw_scores_and_use_clean_title_article():
     assert rows[1]["score"] == "0.666667"
     assert "Currently an AI Engineer" in rows[0]["reasoning"]
     assert " a AI " not in rows[0]["reasoning"]
+    assert "JD" in rows[0]["reasoning"]

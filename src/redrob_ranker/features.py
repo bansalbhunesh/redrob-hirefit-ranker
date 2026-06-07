@@ -434,7 +434,7 @@ def compute_features(candidate: dict) -> CandidateFeatures:
         soft_flags.append("title_hopper")
 
     behavioral_multiplier = compute_behavioral_multiplier(values, candidate)
-    honeypot_multiplier = 0.05 if hard_flags else 1.0
+    honeypot_multiplier = 0.0 if hard_flags else 1.0
     disqualifier_multiplier = compute_disqualifier_multiplier(
         soft_flags, production_evidence=values["production_evidence"]
     )
@@ -458,12 +458,40 @@ def compute_behavioral_multiplier(values: dict[str, float], candidate: dict) -> 
     mult *= 0.85 + 0.25 * values["availability_score"]
     mult *= 0.8 + 0.2 * values["interview_reliability"]
     mult *= 1.05 if float(signals.get("saved_by_recruiters_30d") or 0) > 5 else 0.95 if float(signals.get("saved_by_recruiters_30d") or 0) == 0 else 1.0
-    mult *= 1.05 if values["github_signal"] > 0.2 else 1.0
+    raw_github = float(signals.get("github_activity_score") or 0)
+    mult *= 1.05 if values["github_signal"] > 0.2 else 0.94 if raw_github < 0 else 1.0
     if candidate.get("redrob_signals", {}).get("skill_assessment_scores"):
         mult *= 1.05 if values["assessment_score_avg"] > 0.6 else 0.9 if values["assessment_score_avg"] < 0.4 else 1.0
+        mult *= _assessment_claim_multiplier(candidate)
+    if "offer_acceptance_rate" in signals:
+        mult *= 0.85 + 0.30 * clamp(float(signals.get("offer_acceptance_rate") or 0))
     mult *= 1.02 if values["profile_quality"] > 0.82 else 1.0
     mult *= 1.05 if values["notice_period_score"] >= 1.0 else 0.70 if values["notice_period_score"] <= 0.2 else 1.0
     return clamp(mult, 0.25, 1.5)
+
+
+def _assessment_claim_multiplier(candidate: dict) -> float:
+    assessments = candidate.get("redrob_signals", {}).get("skill_assessment_scores", {}) or {}
+    if not assessments:
+        return 1.0
+
+    assessment_lookup = {_norm(k): float(v) for k, v in assessments.items()}
+    multiplier = 1.0
+    expected_by_proficiency = {
+        "beginner": 30.0,
+        "intermediate": 50.0,
+        "advanced": 70.0,
+        "expert": 85.0,
+    }
+    for skill in _skill_records(candidate):
+        name = _norm(skill.get("name"))
+        assessed = assessment_lookup.get(name)
+        if assessed is None:
+            continue
+        expected = expected_by_proficiency.get(_norm(skill.get("proficiency")))
+        if expected is not None and assessed < expected - 20:
+            multiplier *= 0.86
+    return clamp(multiplier, 0.55, 1.0)
 
 
 def compute_disqualifier_multiplier(flags: list[str], production_evidence: float = 0.0) -> float:

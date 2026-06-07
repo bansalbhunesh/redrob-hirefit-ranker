@@ -6,8 +6,95 @@ JD_QUERY = """
 Senior AI Engineer founding team Redrob AI production embeddings retrieval ranking
 candidate matching hybrid search vector database BM25 semantic search LLM reranking
 Python evaluation framework NDCG MRR MAP A/B testing product engineering applied
-machine learning NLP information retrieval recommender search systems shipped users scale.
+machine learning NLP information retrieval recommender search systems shipped users scale
+similar items neural representations context aware conversational system personalization
+candidate fit talent matching marketplace relevance search concept_retrieval_system
+concept_vector_database concept_rag_system concept_recommendation_system concept_evaluation.
 """
+
+IMPORTANT_PHRASES = {
+    "a/b testing",
+    "ann search",
+    "candidate fit",
+    "candidate matching",
+    "context aware",
+    "dense retrieval",
+    "hybrid search",
+    "information retrieval",
+    "learning to rank",
+    "neural representations",
+    "prompt engineering",
+    "recommendation system",
+    "search relevance",
+    "semantic search",
+    "similar items",
+    "vector database",
+    "vector representations",
+    "vector search",
+}
+
+SEMANTIC_CONCEPTS = {
+    "retrieval_system": [
+        "find similar",
+        "similar items",
+        "similar candidates",
+        "semantic search",
+        "search relevance",
+        "relevance search",
+        "nearest neighbor",
+        "dense retrieval",
+        "neural retrieval",
+        "retrieval system",
+    ],
+    "vector_database": [
+        "faiss",
+        "pinecone",
+        "weaviate",
+        "qdrant",
+        "milvus",
+        "pgvector",
+        "vector store",
+        "vector db",
+        "vector database",
+        "vector search",
+        "ann search",
+        "hnsw",
+    ],
+    "rag_system": [
+        "context aware conversational",
+        "knowledge grounded",
+        "grounded generation",
+        "retrieval augmented",
+        "llm with search",
+        "chatbot with search",
+        "conversational system",
+        "langchain",
+        "llamaindex",
+        "agentic",
+    ],
+    "recommendation_system": [
+        "recommendation system",
+        "recommender",
+        "personalization",
+        "personalized feed",
+        "relevant items",
+        "ranking feed",
+        "matching engine",
+        "candidate fit",
+        "talent matching",
+    ],
+    "evaluation": [
+        "ndcg",
+        "mrr",
+        "map",
+        "precision at",
+        "recall at",
+        "offline evaluation",
+        "online evaluation",
+        "a/b testing",
+        "ranking metrics",
+    ],
+}
 
 FEATURE_NAMES = [
     "core_skill_match",

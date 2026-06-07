@@ -60,11 +60,11 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
     concerns: list[str] = []
 
     if features.values["production_evidence"] >= 0.55 or features.values["ir_ranking_experience"] >= 0.55:
-        positives.append("career text shows production retrieval/ranking or search-system evidence")
+        positives.append("aligns with the JD requirement for shipped retrieval/ranking systems")
     elif features.values["core_skill_match"] >= 0.55:
-        positives.append("skill profile maps well to embeddings/vector-search requirements")
+        positives.append("skill profile maps to the JD's embeddings/vector-search requirements")
     elif features.values["career_trajectory_score"] >= 0.55:
-        positives.append("career trajectory is close to the target engineering role")
+        positives.append("career trajectory is close to the target Senior AI Engineer role")
 
     if skills:
         positives.append(f"relevant skills include {', '.join(skills[:3])}")
@@ -82,6 +82,8 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
         concerns.append(f"notice period is {signals.get('notice_period_days', 'unknown')} days")
     if features.values["responsiveness_score"] < 0.35:
         concerns.append(f"response rate is only {signals.get('recruiter_response_rate', 0):.2f}")
+    if not signals.get("open_to_work_flag") and features.values["availability_score"] < 0.65:
+        concerns.append("not marked open-to-work")
     if features.values["keyword_stuffer_flag"] >= 0.5:
         concerns.append("AI-keyword stuffing risk was penalized")
     if features.honeypot_multiplier < 1.0:
@@ -93,7 +95,8 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
 
     behavior = (
         f"response rate {signals.get('recruiter_response_rate', 0):.2f}, "
-        f"notice {signals.get('notice_period_days', 'unknown')} days"
+        f"notice {signals.get('notice_period_days', 'unknown')} days, "
+        f"behavior multiplier {features.behavioral_multiplier:.2f}"
     )
 
     if rank <= 20:
@@ -106,7 +109,9 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
         selected = [f"concern: {c}" for c in concerns[:2]] + positives[:1]
 
     if not selected:
-        selected = ["included as an adjacent fit after stronger scoring signals"]
+        selected = ["included as an adjacent fit after stronger JD scoring signals"]
+    if not any("JD" in item for item in selected):
+        selected.append(f"JD fit score components: production {features.values['production_evidence']:.2f}, core skills {features.values['core_skill_match']:.2f}")
 
     first_sentence = f"{opening}; {'; '.join(selected[:3])}."
     second_sentence = f"Platform signals: {behavior}."

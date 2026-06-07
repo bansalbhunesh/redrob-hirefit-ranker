@@ -8,11 +8,12 @@ Plan D v2 pipeline:
 
 1. Parse candidates with `orjson` when available.
 2. Render structured candidate text from profile, career, skills, education, logistics, and Redrob signals.
-3. Compute BM25 lexical scores using `bm25s.get_scores()` when installed, otherwise `rank-bm25`.
-4. Extract a deterministic 28-feature matrix for every loaded candidate.
-5. Compute `base_score` from technical/career/logistics/BM25 features.
-6. Apply `base_score * behavioral_multiplier * honeypot_multiplier * disqualifier_multiplier`.
-7. Sort deterministically and output exactly 100 grounded rows.
+3. Render deterministic semantic concept markers and phrase tokens for plain-language retrieval, RAG, vector, recommender, and evaluation evidence.
+4. Compute BM25 lexical scores using `bm25s.get_scores()` when installed, otherwise `rank-bm25`.
+5. Extract a deterministic 28-feature matrix for every loaded candidate.
+6. Compute `base_score` from technical/career/logistics/BM25 features.
+7. Apply `base_score * behavioral_multiplier * honeypot_multiplier * disqualifier_multiplier`.
+8. Sort deterministically and output exactly 100 grounded rows.
 
 No hosted LLM re-ranking or candidate API scoring is used.
 
@@ -41,8 +42,13 @@ Logistics:
 ## Multipliers
 
 - `behavioral_multiplier`: combines open-to-work, recency, response quality, profile quality, interview reliability, recruiter saves, GitHub activity, assessments, verification, and notice period.
-- `honeypot_multiplier`: `0.05` for hard traps such as salary inversion, expert-zero-duration core skills, multiple current jobs, impossible education, or contradictory profiles.
+- `honeypot_multiplier`: `0.0` for hard traps such as salary inversion, expert-zero-duration core skills, multiple current jobs, impossible education, or contradictory profiles.
 - `disqualifier_multiplier`: compounds consulting-only, pure-research, CV/speech/robotics-primary, keyword-stuffer, and title-hopper penalties.
+
+The CLI prints total hard honeypots detected and hard honeypots in the emitted output.
+
+`--profile-memory` is available only with `--max-candidates <= 5000`; Python `tracemalloc`
+is too slow for the official 100K reproduction path.
 
 ## Runtime
 
@@ -54,7 +60,7 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 
 `--candidate-pool N` exists for demos/profiling only. The submission path should leave it at `0`.
 
-On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 184.1 seconds.
+On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 242.7 seconds.
 
 ## Validation
 
