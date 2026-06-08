@@ -103,6 +103,7 @@ Wrote 100 rows to ./submission.csv. Loaded 100000 candidates.
 ```
 
 **3. Official Validation:**
+*(Download `validate_submission.py` from the official Redrob challenge instructions/repo)*
 ```bash
 python validate_submission.py ./submission.csv
 ```
