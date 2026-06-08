@@ -11,10 +11,8 @@ HARD_HONEYPOT_FLAGS = {
     "career_history_too_short_for_claimed_yoe",
     "expert_skill_zero_duration",
     "multiple_current_jobs",
-    "salary_inversion",
     "impossible_education_timeline",
     "title_description_contradiction",
-    "endorsement_inflation_low_profile",
     "impossible_notice_period",
 }
 

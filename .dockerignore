@@ -1,0 +1,13 @@
+.git
+.pytest_cache
+__pycache__
+*.py[cod]
+*.csv
+*.jsonl
+*.jsonl.gz
+artifacts
+data
+dist
+build
+*.egg-info
+hf_space/.git

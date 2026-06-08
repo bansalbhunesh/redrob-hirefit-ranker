@@ -1,5 +1,5 @@
 from redrob_ranker.constants import FEATURE_NAMES
-from redrob_ranker.features import compute_features, final_score
+from redrob_ranker.features import compute_features, final_score, _contains
 from redrob_ranker.retrieval import retrieve_pool
 from redrob_ranker.text import candidate_text, tokenize
 
@@ -133,6 +133,23 @@ def test_semantic_concept_expansion_catches_plain_language_retrieval():
     assert "neural_representations" in tokens
 
 
+def test_boundary_matching_blocks_audit_false_positives():
+    assert _contains("research scientist planning storage roadmap", {"search", "ann", "rag", "map"}) == 0
+    assert _contains("built semantic search with ann retrieval and map evaluation", {"search", "ann", "map"}) == 3
+
+
+def test_short_aliases_do_not_match_inside_unrelated_words():
+    candidate = make_candidate()
+    candidate["profile"]["summary"] = "Built storage planning roadmaps for annual reporting."
+    candidate["career_history"][0]["description"] = "Research operations with planning and storage roadmaps."
+    candidate["skills"] = []
+
+    features = compute_features(candidate)
+
+    assert features.values["core_skill_match"] < 0.25
+    assert features.values["ir_ranking_experience"] < 0.3
+
+
 def test_audit_edge_cases_for_senior_india_profiles():
     veteran = make_candidate()
     veteran["profile"]["years_of_experience"] = 12.0
@@ -249,6 +266,31 @@ def test_honeypot_rules_catch_missing_plan_cases():
     assert "multiple_current_jobs" in features.flags
     assert "impossible_education_timeline" in features.flags
     assert "expert_skill_zero_duration" in features.flags
+
+
+def test_salary_inversion_alone_is_soft_not_hard_honeypot():
+    candidate = make_candidate()
+    candidate["candidate_id"] = "CAND_0000006"
+    candidate["redrob_signals"]["expected_salary_range_inr_lpa"] = {"min": 40, "max": 20}
+
+    features = compute_features(candidate)
+
+    assert features.honeypot_multiplier == 1.0
+    assert "salary_inversion" in features.flags
+    assert features.disqualifier_multiplier < 1.0
+
+
+def test_endorsement_inflation_is_soft_not_hard_honeypot():
+    candidate = make_candidate()
+    candidate["candidate_id"] = "CAND_0000007"
+    candidate["redrob_signals"]["profile_completeness_score"] = 30
+    candidate["redrob_signals"]["endorsements_received"] = 80
+
+    features = compute_features(candidate)
+
+    assert features.honeypot_multiplier == 1.0
+    assert "endorsement_inflation_low_profile" in features.flags
+    assert features.disqualifier_multiplier < 1.0
 
 
 def test_assessment_claim_mismatch_penalizes_behavior_multiplier():

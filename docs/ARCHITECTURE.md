@@ -10,7 +10,7 @@ Rank the top 100 candidates for the Redrob Senior AI Engineer JD while satisfyin
 - Full 100K reproduction in under 5 minutes.
 - Validator-safe CSV output.
 
-The final measured local run used `bm25s`, scored all 100,000 candidates, and completed in **215.3 seconds** with zero hard honeypots in the emitted top 100.
+The final measured local run used `bm25s`, scored all 100,000 candidates, and completed in **202.9 seconds** with zero hard honeypots in the emitted top 100.
 
 ## System Overview
 
@@ -139,14 +139,12 @@ The model intentionally uses multipliers rather than only additive penalties. Th
 
 Hard honeypots receive `honeypot_multiplier = 0.0`:
 
-- salary minimum greater than maximum
 - expert core skills with zero duration
 - multiple current jobs
 - impossible education timeline
 - career timeline inconsistent with claimed experience
 - too-short career history for claimed YOE
 - title/description contradiction
-- endorsement inflation with low profile quality
 - impossible notice period
 
 Soft disqualifiers compound through `disqualifier_multiplier`:
@@ -156,6 +154,8 @@ Soft disqualifiers compound through `disqualifier_multiplier`:
 - CV/speech/robotics-primary mismatch
 - AI keyword stuffing without career support
 - title hopping
+- salary minimum greater than maximum
+- endorsement inflation with low profile quality
 
 The consulting-only penalty is softened when the candidate has strong production evidence, because Indian services companies can still contain strong product/platform builders.
 
@@ -185,11 +185,11 @@ python validate_submission.py submission.csv
 Final measured output:
 
 ```text
-Runtime: 215.3s
+Runtime: 202.9s
 Loaded candidates: 100000
 Ranked pool: 100000
 Rows emitted: 100
 BM25 backend: bm25s
-Hard honeypots detected: 23247
+Hard honeypots detected: 56
 Hard honeypots in output: 0
 ```

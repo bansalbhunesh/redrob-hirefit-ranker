@@ -34,7 +34,8 @@ def test_pipeline_writes_valid_small_json(tmp_path: Path):
     out = tmp_path / "out.csv"
     result = run_ranking(sample, out, RankerConfig(top_k=1, candidate_pool_size=2))
     assert result.rows[0]["candidate_id"] == "CAND_0000001"
-    assert result.honeypots_detected >= 1
+    assert "salary_inversion" in result.raw_ranked[1][1].flags
+    assert result.raw_ranked[1][1].disqualifier_multiplier < 1.0
     assert result.honeypots_in_output == 0
     assert out.read_text(encoding="utf-8").startswith("candidate_id,rank,score,reasoning")
 

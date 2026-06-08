@@ -4,9 +4,9 @@ A deterministic, CPU-only candidate ranking engine for the Redrob India Runs Dat
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Challenge](https://img.shields.io/badge/Redrob-India_Runs_AI-ff69b4.svg)](#)
-[![Runtime](https://img.shields.io/badge/100K_Runtime-215.3s-brightgreen.svg)](#)
+[![Runtime](https://img.shields.io/badge/100K_Runtime-202.9s-brightgreen.svg)](#)
 
-Live dashboard placeholder: [redrob-hirefit-ranker.onrender.com](https://redrob-hirefit-ranker.onrender.com)
+Live sandbox: [redrob-hirefit-ranker on HuggingFace Spaces](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)
 
 ## What It Does
 
@@ -38,8 +38,8 @@ Measured result on the local challenge file:
 ```text
 Wrote 100 rows to submission.csv.
 Loaded 100000 candidates; ranked pool 100000; BM25 backend bm25s.
-Runtime 215.3s.
-Honeypots detected 23247; honeypots in output 0.
+Runtime 202.9s.
+Hard honeypots detected 56; hard honeypots in output 0.
 ```
 
 Both validators passed:
@@ -48,6 +48,17 @@ Both validators passed:
 python scripts/validate_submission.py submission.csv
 python validate_submission.py submission.csv
 ```
+
+Development silver-label check on the first 20K candidates:
+
+```text
+NDCG@10 0.8828
+NDCG@50 0.8565
+P@10    1.0000
+MAP     0.6890
+```
+
+These are heuristic JD-rule silver labels for tuning and defense, not the hidden challenge score.
 
 ## Architecture
 
@@ -91,9 +102,9 @@ python scripts/generate_precomputed.py \
   --submission submission.csv \
   --out apps/api/data/precomputed.json \
   --total-candidates 100000 \
-  --processing-time-ms 215300 \
+  --processing-time-ms 202900 \
   --bm25-backend bm25s \
-  --honeypots-blocked 23247 \
+  --honeypots-blocked 56 \
   --honeypots-in-output 0
 ```
 
@@ -105,6 +116,13 @@ uvicorn apps.api.main:app --reload
 ```
 
 Then open [http://localhost:8000](http://localhost:8000).
+
+Run the Gradio Space locally:
+
+```bash
+pip install -r requirements-demo.txt
+python apps/space/app.py
+```
 
 ## Setup
 
@@ -130,13 +148,29 @@ python scripts/validate_submission.py submission.csv
 
 The official challenge validator should still be used as the final gate when available.
 
+Silver-label development evaluation:
+
+```bash
+python scripts/build_silver_labels.py --candidates ./candidates.jsonl --out artifacts/silver_labels_20k.jsonl --max-candidates 20000
+python rank.py --candidates ./candidates.jsonl --out submission_20k.csv --max-candidates 20000
+python scripts/evaluate_silver.py --submission submission_20k.csv --labels artifacts/silver_labels_20k.jsonl
+```
+
+Docker reproduction:
+
+```bash
+docker build -t redrob-hirefit-ranker .
+docker run --rm -v "%cd%:/data" redrob-hirefit-ranker --candidates /data/candidates.jsonl --out /data/submission.csv
+```
+
 ## Repository Structure
 
 - `rank.py`: official one-command CLI.
 - `src/redrob_ranker/`: parsing, retrieval, feature scoring, reasoning, validation, and dashboard payload helpers.
 - `apps/api/`: FastAPI dashboard backend and tracked precomputed showpiece payload.
-- `apps/space/`: lightweight HuggingFace Space demo.
-- `scripts/`: repo-local validation and precomputed payload generation.
+- `apps/space/`: local Gradio demo app.
+- `hf_space/`: deployed HuggingFace Space wrapper.
+- `scripts/`: validation, precomputed payload generation, and silver-label evaluation.
 - `docs/`: architecture and implementation notes.
 - `tests/`: unit and integration-style checks for ranking, guardrails, payloads, and reasoning.
 

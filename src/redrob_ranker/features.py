@@ -32,6 +32,26 @@ from redrob_ranker.text import candidate_text, lower
 REFERENCE_DATE = date(2026, 6, 8)
 
 _NORM_RE = re.compile(r"[^a-z0-9+#.\s/-]")
+BOUNDARY_MATCH_TERMS = {
+    "ai",
+    "ml",
+    "ann",
+    "api",
+    "map",
+    "rag",
+    "mrr",
+    "tts",
+    "gan",
+    "gans",
+    "live",
+    "daily",
+    "paper",
+    "talk",
+    "scale",
+    "recall",
+    "search",
+    "service",
+}
 
 
 @dataclass(slots=True)
@@ -108,7 +128,29 @@ def _norm(text: object) -> str:
 
 
 def _contains(text: str, terms: set[str] | list[str]) -> int:
-    return sum(1 for term in terms if term in text)
+    normalized_terms = [str(term).lower() for term in terms]
+    needs_padding = any(_needs_boundary(term) for term in normalized_terms)
+    tokens = set(text.split()) if needs_padding else None
+    return sum(1 for term in normalized_terms if _normalized_term_in_text(term, text, tokens))
+
+
+def _term_in_text(term: str, text: str, tokens: set[str] | None = None) -> bool:
+    term_n = _norm(term)
+    return _normalized_term_in_text(term_n, text, tokens)
+
+
+def _needs_boundary(term_n: str) -> bool:
+    return term_n in BOUNDARY_MATCH_TERMS or (" " not in term_n and "/" not in term_n and "-" not in term_n and len(term_n) <= 4)
+
+
+def _normalized_term_in_text(term_n: str, text: str, tokens: set[str] | None = None) -> bool:
+    if not term_n:
+        return False
+    if " " in term_n or "/" in term_n or "-" in term_n or len(term_n) > 6:
+        return term_n in text
+    if _needs_boundary(term_n):
+        return term_n in (tokens if tokens is not None else set(text.split()))
+    return term_n in text
 
 
 NORMALIZED_MUST_HAVE_SKILLS = {
@@ -174,12 +216,15 @@ def _career_text(candidate: dict) -> str:
     return _norm(" ".join(parts))
 
 
-def _alias_match(candidate_terms: set[str], full_text: str, aliases: list[str]) -> float:
+def _alias_match(candidate_terms: set[str], full_text: str, full_tokens: set[str], aliases: list[str]) -> float:
     score = 0.0
     for alias_n in aliases:
         if alias_n in candidate_terms:
             score = max(score, 1.0)
-        elif alias_n and alias_n in full_text:
+        elif " " not in alias_n and "/" not in alias_n and "-" not in alias_n and len(alias_n) <= 6:
+            if alias_n in full_tokens:
+                score = max(score, 0.7)
+        elif alias_n in full_text:
             score = max(score, 0.7)
     return score
 
@@ -278,10 +323,6 @@ def _honeypot_flags(candidate: dict, values: dict[str, float]) -> list[str]:
     if sum(1 for j in career if j.get("is_current")) > 1:
         flags.append("multiple_current_jobs")
 
-    salary = signals.get("expected_salary_range_inr_lpa", {}) or {}
-    if float(salary.get("min") or 0) > float(salary.get("max") or 0) > 0:
-        flags.append("salary_inversion")
-
     for edu in candidate.get("education", []) or []:
         start = int(edu.get("start_year") or 0)
         end = int(edu.get("end_year") or 0)
@@ -292,9 +333,6 @@ def _honeypot_flags(candidate: dict, values: dict[str, float]) -> list[str]:
     title = _norm(profile.get("current_title"))
     if any(t in title for t in NON_TARGET_TITLES) and values["ir_ranking_experience"] >= 0.45:
         flags.append("title_description_contradiction")
-
-    if float(signals.get("profile_completeness_score") or 0) < 40 and int(signals.get("endorsements_received") or 0) > 40:
-        flags.append("endorsement_inflation_low_profile")
 
     if int(signals.get("notice_period_days") or 0) > 180:
         flags.append("impossible_notice_period")
@@ -307,16 +345,18 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     signals = candidate.get("redrob_signals", {})
     full_text = _profile_text(candidate)
     career_text = _career_text(candidate)
+    full_tokens = set(full_text.split())
     terms = _skill_terms(candidate)
     values = {name: 0.0 for name in FEATURE_NAMES}
 
     core_score = 0.0
     for group, aliases in NORMALIZED_MUST_HAVE_SKILLS.items():
-        core_score += MUST_HAVE_WEIGHTS[group] * _alias_match(terms, full_text, aliases)
+        core_score += MUST_HAVE_WEIGHTS[group] * _alias_match(terms, full_text, full_tokens, aliases)
     values["core_skill_match"] = clamp(core_score)
 
     nice_hits = [
-        _alias_match(terms, full_text, aliases) for aliases in NORMALIZED_NICE_TO_HAVE_SKILLS.values()
+        _alias_match(terms, full_text, full_tokens, aliases)
+        for aliases in NORMALIZED_NICE_TO_HAVE_SKILLS.values()
     ]
     values["nice_skill_match"] = clamp(sum(nice_hits) / max(1, len(nice_hits)))
 
@@ -442,6 +482,11 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     soft_flags: list[str] = []
     if values["consulting_only_flag"]:
         soft_flags.append("consulting_only")
+    salary = signals.get("expected_salary_range_inr_lpa", {}) or {}
+    if float(salary.get("min") or 0) > float(salary.get("max") or 0) > 0:
+        soft_flags.append("salary_inversion")
+    if float(signals.get("profile_completeness_score") or 0) < 40 and int(signals.get("endorsements_received") or 0) > 40:
+        soft_flags.append("endorsement_inflation_low_profile")
     if _contains(career_text, PURE_RESEARCH_SIGNALS) and values["production_evidence"] < 0.35:
         soft_flags.append("pure_research_without_deployment")
     if values["disqualifier_skill_flag"]:
@@ -525,6 +570,10 @@ def compute_disqualifier_multiplier(flags: list[str], production_evidence: float
         mult *= 0.70
     if "title_hopper" in flags:
         mult *= 0.75
+    if "salary_inversion" in flags:
+        mult *= 0.65
+    if "endorsement_inflation_low_profile" in flags:
+        mult *= 0.70
     return clamp(mult, 0.05, 1.0)
 
 

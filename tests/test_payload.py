@@ -116,6 +116,6 @@ def test_payload_honeypot_comes_from_feature_flags_not_reasoning_text():
     assert payload["honeypot_flag"] is True
     assert payload["tier"] == "honeypot"
     assert payload["multipliers"]["honeypot"] == 0.0
-    assert "Salary Inversion" in payload["honeypot_reasons"]
     assert "Multiple Current Jobs" in payload["honeypot_reasons"]
+    assert "salary_inversion" in payload["flags"]
     assert payload["score"] == 0.25
