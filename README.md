@@ -4,7 +4,7 @@ A deterministic, CPU-only candidate ranking engine for the Redrob India Runs Dat
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Challenge](https://img.shields.io/badge/Redrob-India_Runs_AI-ff69b4.svg)](#)
-[![Runtime](https://img.shields.io/badge/100K_Runtime-228.5s-brightgreen.svg)](#)
+[![Runtime](https://img.shields.io/badge/100K_Runtime-264.8s-brightgreen.svg)](#)
 
 Live sandbox: [redrob-hirefit-ranker on HuggingFace Spaces](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)
 
@@ -38,9 +38,9 @@ Measured result on the local challenge file:
 ```text
 Wrote 100 rows to submission.csv.
 Loaded 100000 candidates; ranked pool 100000; BM25 backend bm25s.
-Runtime 228.5s.
+Runtime 264.8s.
 Peak RSS 4.07 GB in a profiled full run.
-Hard honeypots detected 56; hard honeypots in output 0.
+Hard honeypots detected 53; hard honeypots in output 0.
 ```
 
 Both validators passed:
@@ -53,10 +53,10 @@ python validate_submission.py submission.csv
 Development silver-label check on the first 20K candidates:
 
 ```text
-NDCG@10 0.8828
-NDCG@50 0.8565
+NDCG@10 0.9088
+NDCG@50 0.8482
 P@10    1.0000
-MAP     0.6890
+MAP     0.7518
 ```
 
 These are heuristic JD-rule silver labels for tuning and defense, not the hidden challenge score.
@@ -103,9 +103,9 @@ python scripts/generate_precomputed.py \
   --submission submission.csv \
   --out apps/api/data/precomputed.json \
   --total-candidates 100000 \
-  --processing-time-ms 228500 \
+  --processing-time-ms 264800 \
   --bm25-backend bm25s \
-  --honeypots-blocked 56 \
+  --honeypots-blocked 53 \
   --honeypots-in-output 0
 ```
 

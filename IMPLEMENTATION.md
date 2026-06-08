@@ -61,9 +61,9 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 
 `--candidate-pool N` exists for demos/profiling only. The submission path should leave it at `0`.
 
-On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 228.5 seconds. The run loaded and scored all 100,000 candidates, detected 56 hard honeypots, and emitted 0 hard honeypots in the top 100. A profiled full run measured peak RSS at 4.07 GB.
+On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 264.8 seconds. The run loaded and scored all 100,000 candidates, detected 53 hard honeypots, and emitted 0 hard honeypots in the top 100. A profiled full run measured peak RSS at 4.07 GB.
 
-The local silver-label harness (`scripts/build_silver_labels.py` and `scripts/evaluate_silver.py`) is for development and defense only. On the first 20K candidates, the latest validated ranker scored NDCG@10 0.8828, NDCG@50 0.8565, P@10 1.0000, and MAP 0.6890 against heuristic JD-rule labels.
+The local silver-label harness (`scripts/build_silver_labels.py` and `scripts/evaluate_silver.py`) is for development and defense only. On the first 20K candidates, the latest validated ranker scored NDCG@10 0.9088, NDCG@50 0.8482, P@10 1.0000, and MAP 0.7518 against heuristic JD-rule labels.
 
 The FastAPI/dashboard payload is generated from `CandidateFeatures` directly, exposing feature values, behavioral/honeypot/disqualifier multipliers, and feature-derived flags. It does not infer honeypots by searching reasoning text.
 

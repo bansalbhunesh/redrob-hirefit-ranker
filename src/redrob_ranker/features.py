@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import re
+import statistics
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -428,8 +429,24 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     values["senior_title_held"] = 1.0 if _has_boundary(_SENIOR_TITLES_PADDED, f"{current_title} {title_text}") and _title_score(candidate) > 0.55 else 0.0
 
     title_score = _title_score(candidate)
-    short_jobs = sum(1 for j in candidate.get("career_history", []) or [] if int(j.get("duration_months") or 0) < 9)
-    title_hop_penalty = 0.35 if short_jobs >= 3 else 0.0
+    completed_tenures = [
+        int(j.get("duration_months") or 0)
+        for j in candidate.get("career_history", []) or []
+        if not j.get("is_current")
+    ]
+    very_short_jobs = sum(1 for months in completed_tenures if months < 9)
+    short_jobs = sum(1 for months in completed_tenures if months < 18)
+    median_tenure = statistics.median(completed_tenures) if completed_tenures else 0
+    hop_signal = (
+        1.0
+        if (len(completed_tenures) >= 3 and median_tenure < 18) or very_short_jobs >= 3
+        else 0.6 if short_jobs >= 3
+        else 0.0
+    )
+    strong_ranking_or_production = (
+        values["production_evidence"] > 0.45 or values["ir_ranking_experience"] > 0.65
+    )
+    title_hop_penalty = (0.18 if strong_ranking_or_production else 0.35) * hop_signal
     values["career_trajectory_score"] = clamp(0.75 * title_score + 0.25 * values["product_company_ratio"] - title_hop_penalty)
     values["scale_signal"] = clamp(_contains_padded(_SCALE_PADDED, career_text) / 4.0)
     values["code_writing_recent"] = clamp(
@@ -488,12 +505,18 @@ def compute_features(candidate: dict) -> CandidateFeatures:
 
     non_target_title = _has_boundary(_NON_TARGET_PADDED, current_title)
     skill_count = len(_skill_records(candidate))
-    values["keyword_stuffer_flag"] = 1.0 if (
-        skill_count >= 14
-        and values["core_skill_match"] >= 0.45
-        and values["production_evidence"] < 0.25
-        and (non_target_title or values["career_trajectory_score"] < 0.35)
-    ) else 0.0
+    stuffer_signals = 0
+    if skill_count >= 12 and values["core_skill_match"] >= 0.55:
+        stuffer_signals = 2
+        if values["production_evidence"] < 0.30:
+            stuffer_signals += 1
+        if values["ir_ranking_experience"] < 0.25:
+            stuffer_signals += 1
+        if values["skill_depth_score"] < 0.45:
+            stuffer_signals += 1
+        if values.get("endorsement_trust", 0.0) < 0.35:
+            stuffer_signals += 1
+    values["keyword_stuffer_flag"] = clamp(stuffer_signals / 6.0)
 
     values["disqualifier_skill_flag"] = 1.0 if (
         cv_count >= 3 and values["ir_ranking_experience"] < 0.3
@@ -512,9 +535,9 @@ def compute_features(candidate: dict) -> CandidateFeatures:
         soft_flags.append("pure_research_without_deployment")
     if values["disqualifier_skill_flag"]:
         soft_flags.append("cv_speech_robotics_primary")
-    if values["keyword_stuffer_flag"]:
+    if values["keyword_stuffer_flag"] >= 0.75:
         soft_flags.append("keyword_stuffer")
-    if short_jobs >= 4:
+    if hop_signal >= 1.0:
         soft_flags.append("title_hopper")
 
     behavioral_multiplier = compute_behavioral_multiplier(values, candidate)
@@ -525,7 +548,7 @@ def compute_features(candidate: dict) -> CandidateFeatures:
 
     return CandidateFeatures(
         candidate_id=candidate["candidate_id"],
-        values={k: clamp(v) for k, v in values.items()},
+        values={name: clamp(values.get(name, 0.0)) for name in FEATURE_NAMES},
         behavioral_multiplier=behavioral_multiplier,
         honeypot_multiplier=honeypot_multiplier,
         disqualifier_multiplier=disqualifier_multiplier,
@@ -534,16 +557,17 @@ def compute_features(candidate: dict) -> CandidateFeatures:
 
 
 def compute_behavioral_multiplier(values: dict[str, float], candidate: dict) -> float:
+    # Behavior may demote aggressively, but it can only mildly promote; fit must come from base score.
     signals = candidate.get("redrob_signals", {})
     mult = 1.0
-    mult *= 1.15 if signals.get("open_to_work_flag") else 0.95
+    mult *= 1.05 if signals.get("open_to_work_flag") else 0.90
     mult *= 0.5 + 0.5 * math.sqrt(values["responsiveness_score"])
     mult *= 0.7 + 0.3 * values["profile_quality"]
     mult *= 0.85 + 0.25 * values["availability_score"]
     mult *= 0.8 + 0.2 * values["interview_reliability"]
-    mult *= 1.05 if float(signals.get("saved_by_recruiters_30d") or 0) > 5 else 0.95 if float(signals.get("saved_by_recruiters_30d") or 0) == 0 else 1.0
+    mult *= 1.03 if float(signals.get("saved_by_recruiters_30d") or 0) > 5 else 0.97 if float(signals.get("saved_by_recruiters_30d") or 0) == 0 else 1.0
     raw_github = float(signals.get("github_activity_score") or 0)
-    mult *= 1.05 if values["github_signal"] > 0.2 else 1.0
+    mult *= 1.03 if values["github_signal"] > 0.2 else 1.0
     if candidate.get("redrob_signals", {}).get("skill_assessment_scores"):
         mult *= 1.05 if values["assessment_score_avg"] > 0.6 else 0.9 if values["assessment_score_avg"] < 0.4 else 1.0
         mult *= _assessment_claim_multiplier(candidate)
@@ -552,7 +576,7 @@ def compute_behavioral_multiplier(values: dict[str, float], candidate: dict) -> 
         mult *= 0.85 + 0.30 * clamp(float(offer_rate))
     mult *= 1.02 if values["profile_quality"] > 0.82 else 1.0
     mult *= 1.05 if values["notice_period_score"] >= 1.0 else 0.70 if values["notice_period_score"] <= 0.2 else 1.0
-    return clamp(mult, 0.25, 1.5)
+    return clamp(mult, 0.25, 1.10)
 
 
 def _assessment_claim_multiplier(candidate: dict) -> float:
@@ -590,7 +614,7 @@ def compute_disqualifier_multiplier(flags: list[str], production_evidence: float
     if "keyword_stuffer" in flags:
         mult *= 0.70
     if "title_hopper" in flags:
-        mult *= 0.75
+        mult *= 0.90
     if "salary_inversion" in flags:
         mult *= 0.65
     if "endorsement_inflation_low_profile" in flags:

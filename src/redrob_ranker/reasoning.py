@@ -90,8 +90,10 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
         concerns.append(f"response rate is only {signals.get('recruiter_response_rate', 0):.2f}")
     if not signals.get("open_to_work_flag") and features.values["availability_score"] < 0.65:
         concerns.append("not marked open-to-work")
-    if features.values["keyword_stuffer_flag"] >= 0.5:
+    if features.values["keyword_stuffer_flag"] >= 0.75:
         concerns.append("profile appeared to artificially inflate keyword matches")
+    if features.values["yoe_fit_score"] < 0.6:
+        concerns.append(f"{years:.0f} years is outside the JD's 5-9 year target band")
     if features.honeypot_multiplier < 1.0:
         concerns.append("inconsistencies detected in timeline or experience claims")
     if features.disqualifier_multiplier < 0.8:

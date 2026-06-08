@@ -119,6 +119,33 @@ def test_behavior_multiplier_downweights_stale_unresponsive_profile():
     assert weak.behavioral_multiplier < 0.75
 
 
+def test_behavior_multiplier_is_capped_as_mild_boost():
+    candidate = make_candidate()
+    candidate["redrob_signals"].update(
+        {
+            "last_active_date": "2026-06-01",
+            "open_to_work_flag": True,
+            "recruiter_response_rate": 1.0,
+            "avg_response_time_hours": 2,
+            "interview_completion_rate": 1.0,
+            "saved_by_recruiters_30d": 20,
+            "github_activity_score": 100,
+            "profile_completeness_score": 100,
+            "offer_acceptance_rate": 1.0,
+            "notice_period_days": 15,
+        }
+    )
+
+    assert compute_features(candidate).behavioral_multiplier <= 1.10
+
+
+def test_behavior_gap_cannot_flip_large_base_advantage():
+    strong_base_average_behavior = 0.85 * 0.95
+    weaker_base_perfect_behavior = 0.70 * 1.10
+
+    assert strong_base_average_behavior > weaker_base_perfect_behavior
+
+
 def test_semantic_concept_expansion_catches_plain_language_retrieval():
     candidate = make_candidate()
     candidate["profile"]["summary"] = (
@@ -211,6 +238,125 @@ def test_consulting_only_penalty_softens_when_production_is_real():
     assert features.values["consulting_only_flag"] == 1.0
     assert features.values["production_evidence"] > 0.5
     assert features.disqualifier_multiplier == 0.80
+
+
+def test_title_hopper_uses_completed_18_month_pattern():
+    hopper = make_candidate()
+    hopper["career_history"] = [
+        {
+            "company": f"Company{i}",
+            "title": "Machine Learning Engineer",
+            "duration_months": 14,
+            "is_current": False,
+            "industry": "Software",
+            "description": "Built ML platform features.",
+        }
+        for i in range(4)
+    ] + [
+        {
+            "company": "CurrentCo",
+            "title": "Machine Learning Engineer",
+            "duration_months": 4,
+            "is_current": True,
+            "industry": "Software",
+            "description": "Current role.",
+        }
+    ]
+    stable = make_candidate()
+    stable["career_history"] = [
+        {
+            "company": f"Stable{i}",
+            "title": "Machine Learning Engineer",
+            "duration_months": months,
+            "is_current": False,
+            "industry": "Software",
+            "description": "Built ML platform features.",
+        }
+        for i, months in enumerate([30, 40, 50])
+    ]
+    one_short = make_candidate()
+    one_short["career_history"] = [
+        {
+            "company": "ShortCo",
+            "title": "Machine Learning Engineer",
+            "duration_months": 6,
+            "is_current": False,
+            "industry": "Software",
+            "description": "Short completed role.",
+        }
+    ]
+
+    assert "title_hopper" in compute_features(hopper).flags
+    assert "title_hopper" not in compute_features(stable).flags
+    assert "title_hopper" not in compute_features(one_short).flags
+
+
+def test_keyword_stuffer_flags_plausible_ai_title_without_production_evidence():
+    stuffer = make_candidate()
+    stuffer["profile"]["current_title"] = "AI Engineer"
+    stuffer["profile"]["summary"] = "AI GenAI RAG embeddings vector database LLM agentic search."
+    stuffer["career_history"][0]["title"] = "AI Engineer"
+    stuffer["career_history"][0]["description"] = "Explored internal prototypes and demos."
+    stuffer["skills"] = [
+        {"name": name, "proficiency": "beginner", "endorsements": 0, "duration_months": 0}
+        for name in [
+            "Python",
+            "RAG",
+            "LLM",
+            "LangChain",
+            "LlamaIndex",
+            "FAISS",
+            "Pinecone",
+            "Milvus",
+            "Qdrant",
+            "Weaviate",
+            "NDCG",
+            "Learning to Rank",
+            "Embeddings",
+            "Vector Search",
+            "Prompt Engineering",
+            "GenAI",
+        ]
+    ]
+
+    features = compute_features(stuffer)
+
+    assert features.values["keyword_stuffer_flag"] >= 0.8
+    assert "keyword_stuffer" in features.flags
+
+
+def test_real_deep_skill_profile_not_flagged_as_keyword_stuffer():
+    candidate = make_candidate()
+    candidate["skills"] = [
+        {"name": name, "proficiency": "advanced", "endorsements": 20, "duration_months": 36}
+        for name in [
+            "Python",
+            "FAISS",
+            "Milvus",
+            "NDCG",
+            "Learning to Rank",
+            "Embeddings",
+            "Vector Search",
+            "PyTorch",
+            "FastAPI",
+            "Kafka",
+            "Spark",
+            "Elasticsearch",
+            "LangChain",
+            "RAG",
+            "MLOps",
+            "A/B Testing",
+        ]
+    ]
+    candidate["career_history"][0]["description"] = (
+        "Shipped deployed production vector search, retrieval, ranking, evaluation, "
+        "latency monitoring, A/B testing, and live inference services."
+    )
+
+    features = compute_features(candidate)
+
+    assert features.values["keyword_stuffer_flag"] <= 0.4
+    assert "keyword_stuffer" not in features.flags
 
 
 def test_cv_terms_do_not_disqualify_real_ir_candidate():

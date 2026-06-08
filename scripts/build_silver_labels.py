@@ -24,7 +24,7 @@ def silver_label(candidate: dict) -> tuple[int, list[str]]:
 
     if features.honeypot_multiplier <= 0.0:
         return 0, ["hard_honeypot"]
-    if values["keyword_stuffer_flag"] >= 0.5:
+    if values["keyword_stuffer_flag"] >= 0.75:
         return 1, ["keyword_stuffer"]
 
     score = 0
