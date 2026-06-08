@@ -1,11 +1,13 @@
 <div align="center">
-  <h1>🚀 Redrob HireFit Ranker v2.0</h1>
+  <h1>🚀 Redrob HireFit Ranker v3.0</h1>
   <p><b>A Zero-Cost, Deterministic 100K-Scale Candidate Ranking Engine</b></p>
   
   [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![Challenge](https://img.shields.io/badge/Redrob-India_Runs_AI-ff69b4.svg)](#)
   [![Runtime](https://img.shields.io/badge/Pipeline-132s-brightgreen.svg)](#)
+
+  <h4>🌐 <a href="https://redrob-hirefit-ranker.onrender.com">Live Dashboard App (Render)</a></h4>
 </div>
 
 ---
@@ -65,6 +67,10 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv --show-top
 ### 🌐 The "Showpiece + Live Proof" Interactive Dashboard
 
 We built a **hybrid-mode real-time FastAPI dashboard** explicitly for the Stage 5 interview. It solves the "dead air" problem of waiting 132 seconds for the 100K batch to run.
+
+**🚀 Live Deployment on Render:**
+* **Web Dashboard:** [https://redrob-hirefit-ranker.onrender.com](https://redrob-hirefit-ranker.onrender.com)
+* **API Health Status:** [https://redrob-hirefit-ranker.onrender.com/api/health](https://redrob-hirefit-ranker.onrender.com/api/health)
 
 **To run the interactive web app locally:**
 ```bash

@@ -335,6 +335,11 @@
     .candidate-card.tier-honeypot::before { background: var(--accent-red); }
     .candidate-card.tier-gold { box-shadow: 0 0 20px var(--glow-gold); }
     .candidate-card.tier-honeypot { border-color: rgba(248, 113, 113, 0.3); }
+    .candidate-card.selected {
+      border-color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.12);
+      box-shadow: 0 0 20px var(--glow-cyan);
+    }
 
     .candidate-card .card-header {
       display: flex; justify-content: space-between; align-items: flex-start;
@@ -1024,7 +1029,14 @@
 
       try {
         const res = await fetch('/api/rank', { method: 'POST', body: formData });
-        const data = await res.json();
+        let data;
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          data = await res.json();
+        } else {
+          const text = await res.text();
+          throw new Error(`Server returned status ${res.status}: ${text || res.statusText || 'Unknown Error'}`);
+        }
         if (data.error) throw new Error(data.error);
 
         state.candidates = data.candidates || [];
@@ -1044,7 +1056,14 @@
 
       try {
         const res = await fetch('/api/batch', { method: 'POST', body: formData });
-        const data = await res.json();
+        let data;
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          data = await res.json();
+        } else {
+          const text = await res.text();
+          throw new Error(`Server returned status ${res.status}: ${text || res.statusText || 'Unknown Error'}`);
+        }
         if (data.error) throw new Error(data.error);
 
         state.jobId = data.job_id;
@@ -1092,7 +1111,14 @@
     async function fetchBatchResults(jobId) {
       try {
         const res = await fetch(`/api/batch/${jobId}/results`);
-        const data = await res.json();
+        let data;
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          data = await res.json();
+        } else {
+          const text = await res.text();
+          throw new Error(`Server returned status ${res.status}: ${text || res.statusText || 'Unknown Error'}`);
+        }
         state.candidates = data.candidates || [];
         state.metadata = data.metadata || {};
         state.pipeline = data.pipeline || [];
@@ -1184,8 +1210,10 @@
         return;
       }
 
-      container.innerHTML = filtered.map((c, i) => `
-        <div class="candidate-card tier-${c.tier || 'standard'} animate-in" 
+      container.innerHTML = filtered.map((c, i) => {
+        const isSelected = c.candidate_id === state.selectedId;
+        return `
+        <div class="candidate-card tier-${c.tier || 'standard'} ${isSelected ? 'selected' : ''} animate-in" 
              style="animation-delay:${i * 0.03}s"
              onclick="selectCandidate('${c.candidate_id}')">
           <div class="card-header">
@@ -1208,7 +1236,13 @@
             ${c.behavioral?.open_to_work ? '<span class="tag tag-product">Open to Work</span>' : ''}
           </div>
         </div>
-      `).join('');
+      `; }).join('');
+    }
+
+    function selectCandidate(candidateId) {
+      state.selectedId = candidateId;
+      renderCandidates();
+      renderDetail(candidateId);
     }
 
     function renderDetail(candidateId) {
