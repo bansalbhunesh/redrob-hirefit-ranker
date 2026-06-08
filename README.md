@@ -67,7 +67,7 @@ Generate an interactive, single-file HTML presentation of your results in 2 seco
 ```bash
 python generate_demo.py --candidates ./candidates.jsonl --submission ./submission.csv --out demo.html
 ```
-*(Open `demo.html` in any browser to view the glassmorphic dashboard).*
+*(This generates a self-contained, offline HTML file with zero dependencies. You do **not** need to host it or set up a web server. Simply double-click `demo.html` to open it in Chrome/Edge during your interview).*
 
 ## 🚀 Setup & Reproduction
 
