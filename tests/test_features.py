@@ -254,11 +254,23 @@ def test_honeypot_rules_catch_missing_plan_cases():
             "description": "Current role",
         }
     )
+    candidate["career_history"].append(
+        {
+            "company": "ConsultingCo",
+            "title": "Advisor",
+            "duration_months": 12,
+            "is_current": True,
+            "description": "Advisory role",
+        }
+    )
     candidate["redrob_signals"]["expected_salary_range_inr_lpa"] = {"min": 40, "max": 20}
-    candidate["education"][0]["start_year"] = 2020
+    candidate["education"][0]["start_year"] = 2022
     candidate["education"][0]["end_year"] = 2020
     candidate["skills"].append(
         {"name": "FAISS", "proficiency": "expert", "endorsements": 4, "duration_months": 0}
+    )
+    candidate["skills"].append(
+        {"name": "Milvus", "proficiency": "expert", "endorsements": 4, "duration_months": 0}
     )
     features = compute_features(candidate)
     assert features.honeypot_multiplier == 0.0

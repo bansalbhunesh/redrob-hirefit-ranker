@@ -102,6 +102,15 @@ def test_payload_honeypot_comes_from_feature_flags_not_reasoning_text():
             "description": "Current platform role.",
         }
     )
+    candidate["career_history"].append(
+        {
+            "company": "ThirdCo",
+            "title": "Advisor",
+            "duration_months": 12,
+            "is_current": True,
+            "description": "Advisory role.",
+        }
+    )
 
     features = compute_features(candidate)
     payload = build_candidate_payload(

@@ -62,12 +62,18 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
     if features.values["production_evidence"] >= 0.55 or features.values["ir_ranking_experience"] >= 0.55:
         positives.append("aligns with the JD requirement for shipped retrieval/ranking systems")
     elif features.values["core_skill_match"] >= 0.55:
-        positives.append("skill profile maps to the JD's embeddings/vector-search requirements")
+        positives.append("skill profile maps strongly to the JD's core AI/ML requirements")
     elif features.values["career_trajectory_score"] >= 0.55:
         positives.append("career trajectory is close to the target Senior AI Engineer role")
 
     if skills:
         positives.append(f"relevant skills include {', '.join(skills[:3])}")
+    
+    company_ctx = _company_context(features)
+    if "advantage" not in company_ctx and "penalized" not in company_ctx:
+        pass # don't add the mixed one
+    else:
+        positives.append(company_ctx)
 
     if features.values["location_score"] >= 0.9:
         positives.append(f"{location} is a preferred India location")
@@ -85,11 +91,22 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
     if not signals.get("open_to_work_flag") and features.values["availability_score"] < 0.65:
         concerns.append("not marked open-to-work")
     if features.values["keyword_stuffer_flag"] >= 0.5:
-        concerns.append("AI-keyword stuffing risk was penalized")
+        concerns.append("profile appeared to artificially inflate keyword matches")
     if features.honeypot_multiplier < 1.0:
-        concerns.append("profile consistency risk triggered honeypot guardrails")
+        concerns.append("inconsistencies detected in timeline or experience claims")
     if features.disqualifier_multiplier < 0.8:
-        concerns.append(f"JD disqualifier flags: {', '.join(features.flags[:2])}")
+        flag_map = {
+            "consulting_only": "heavy consulting background without product experience",
+            "pure_research_without_deployment": "academic research without production deployments",
+            "cv_speech_robotics_primary": "focus on CV/Robotics rather than ranking",
+            "keyword_stuffer": "keyword inflation detected",
+            "title_hopper": "frequent short job tenures",
+            "salary_inversion": "unusual salary expectations",
+            "endorsement_inflation_low_profile": "unusual endorsement patterns"
+        }
+        friendly_flags = [flag_map.get(f, "profile concern") for f in features.flags if f in flag_map]
+        if friendly_flags:
+            concerns.append(f"concerns noted: {', '.join(friendly_flags[:2])}")
     if features.values["career_trajectory_score"] < 0.35:
         concerns.append("current title is not a strong match for the role")
     notice_days = signals.get("notice_period_days", "unknown")
@@ -117,7 +134,7 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
     if not selected:
         selected = ["included as an adjacent fit after stronger JD scoring signals"]
     if not any("JD" in item for item in selected):
-        selected.append(f"JD fit score components: production {features.values['production_evidence']:.2f}, core skills {features.values['core_skill_match']:.2f}")
+        selected.append("solid foundational match based on production experience and core skills")
 
     first_sentence = f"{opening}; {'; '.join(selected[:3])}."
 
