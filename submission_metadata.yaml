@@ -14,7 +14,7 @@ team_members:
 
 github_repo: "https://github.com/bansalbhunesh/redrob-hirefit-ranker"
 sandbox_link: "https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker"
-reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
+reproduce_command: "PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv  # Docker image pins the seed automatically"
 
 compute:
   platform: "Local CPU machine"
@@ -26,18 +26,28 @@ compute:
   has_network_during_ranking: false
   pre_computation_required: false
   pre_computation_time_minutes: 0
-  measured_runtime_seconds: 264.8
-  measured_peak_rss_gb: 4.07
+  # Feature scoring is parallelised across CPU workers (--workers, default auto).
+  # Observed 100K range ~123-184s across runs on the dev machine (8 cores, Py 3.14);
+  # output is identical to --workers 1. Re-measure in the 3.11 Docker image before submit.
+  measured_runtime_seconds: 184
+  measured_peak_rss_gb: 4.33
   measured_bm25_backend: "bm25s"
+  feature_scoring_workers: "auto (up to 8)"
 
 ai_tools_used:
   - "Codex"
+  - "Claude Code (Anthropic) for runtime parallelisation, independent eval harness, soft JD penalties, reasoning variety"
   - "Claude/Kimi audit notes as design-review references"
 
 ai_usage_summary: |
   Used Codex for architecture planning, implementation scaffolding, documentation,
-  and test generation. Claude/Kimi audit notes were used as offline design-review
-  references. No candidate data is sent to hosted LLM APIs during ranking.
+  and test generation. Claude Code (Anthropic) did a later engineering pass:
+  profiling and parallelising feature scoring for runtime margin, building the
+  independent (non-circular) evaluation harness, adding the LLM-wrapper and
+  junior-for-senior soft JD penalties, and improving reasoning variety; all
+  verified against the test suite and the format validator. Claude/Kimi audit
+  notes were used as offline design-review references. No candidate data is sent
+  to hosted LLM APIs during ranking.
 
 methodology_summary: |
   Offline Plan D v2 ranker for the Senior AI Engineer JD. BM25 provides lexical

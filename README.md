@@ -4,7 +4,7 @@ A deterministic, CPU-only candidate ranking engine for the Redrob India Runs Dat
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Challenge](https://img.shields.io/badge/Redrob-India_Runs_AI-ff69b4.svg)](#)
-[![Runtime](https://img.shields.io/badge/100K_Runtime-264.8s-brightgreen.svg)](#)
+[![Runtime](https://img.shields.io/badge/100K_Runtime-~150s_CPU-brightgreen.svg)](#)
 
 Live sandbox: [redrob-hirefit-ranker on HuggingFace Spaces](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)
 
@@ -30,7 +30,9 @@ The design is intentionally offline and deterministic:
 Command used for the final local 100K run:
 
 ```bash
-python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s
+# PYTHONHASHSEED=0 pins bm25s vocabulary ordering so the CSV is bit-identical across
+# runs and across serial/parallel. The Docker image (Stage-3 repro) sets this for you.
+PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s
 ```
 
 Measured result on the local challenge file:
@@ -38,16 +40,29 @@ Measured result on the local challenge file:
 ```text
 Wrote 100 rows to submission.csv.
 Loaded 100000 candidates; ranked pool 100000; BM25 backend bm25s.
-Runtime 264.8s.
-Peak RSS 4.07 GB in a profiled full run.
+Runtime ~123-184s (varies with machine load); peak RSS 4.33 GB (parent + workers).
 Hard honeypots detected 53; hard honeypots in output 0.
 ```
 
-Both validators passed:
+Feature scoring runs across CPU worker processes (`--workers`, default auto up to 8
+cores), which is the dominant cost; the per-candidate scores are byte-identical to
+the serial path (`--workers 1`, verified on the full 100K and locked by a regression
+test). With `PYTHONHASHSEED=0` the whole CSV is bit-identical serial-vs-parallel and
+run-to-run; without it, one normalized score can wobble in its 6th decimal (a cosmetic
+bm25s-vocabulary-ordering artifact) — rank order is unaffected (min adjacent gap
+4.1e-5, ~400x the noise). This cut the full 100K run from ~262s to ~123-184s on the
+dev machine (observed range across runs), leaving margin under the 300s budget; peak
+RSS stays ~4.3 GB against the
+16 GB limit. Re-measure inside the Python 3.11 Docker image before submitting,
+since reproduction happens there and core counts differ.
+
+Both the bundled validator and the official challenge validator passed:
 
 ```bash
 python scripts/validate_submission.py submission.csv
-python validate_submission.py submission.csv
+# The official challenge validator ships in the hackathon bundle (not this repo).
+# Run it from there as the final gate:
+#   python /path/to/challenge_bundle/validate_submission.py submission.csv
 ```
 
 Development silver-label check on the first 20K candidates:
@@ -60,6 +75,51 @@ MAP     0.7518
 ```
 
 These are heuristic JD-rule silver labels for tuning and defense, not the hidden challenge score.
+
+## Experimental: dense embeddings (branch `experiment/dense-embeddings`)
+
+The official path is lexical (BM25) + structured recruiter features. This branch adds
+an **opt-in, default-OFF** model2vec/potion dense-retrieval feature, as a guarded
+experiment — it enters the score as one feature with the behavioral/honeypot/
+disqualifier guardrails still multiplying on top, so a high cosine score cannot
+rescue a keyword stuffer or honeypot. With `--use-embeddings` omitted the output is
+byte-identical to the official path (covered by tests).
+
+```bash
+# Decision gate (run in the 3.11 Docker image; model2vec has no 3.14 wheel):
+docker build -t redrob-hirefit-ranker .
+docker run --rm -v "<repo>:/work" -w /work --entrypoint bash redrob-hirefit-ranker -c \
+  "pip install model2vec && PYTHONPATH=src python scripts/run_embedding_gate.py \
+   --candidates candidates.jsonl --labels artifacts/independent_labels_100k.jsonl"
+```
+
+Pre-committed merge rule: **adopt embeddings only if NDCG@10 improves AND runtime
+stays < 180s** against the independent labels. If they do not, ship the simpler,
+faster lexical+feature system — the measured negative result is itself the defense.
+
+**Result (20K A/B, potion-retrieval-32M, in the 3.11 image):**
+
+```text
+NDCG@10  baseline=0.8296  embeddings=0.8296  delta=+0.0000
+NDCG@50  baseline=0.6626  embeddings=0.6560  delta=-0.0066
+MAP      baseline=0.7963  embeddings=0.7850  delta=-0.0113
+runtime  baseline=75.5s   embeddings=168.3s  (encode-at-rank-time, 20K only)
+GATE: FAIL -> ship simpler system
+```
+
+Dense similarity did **not** improve top-10 quality (and slightly hurt NDCG@50/MAP —
+consistent with cosine rewarding buzzword-dense profiles), while the rank-time encode
+roughly doubled runtime and would exceed the 100K budget. Two honest caveats: the
+encode cost is movable to a precompute step (so runtime is not the fundamental
+blocker — the flat quality is); and this is scored against heuristic independent
+labels, so the truly rigorous check is LLM-judged labels. But flat-to-negative
+quality plus added complexity is a clear "ship the simpler system" — the full log is
+in `artifacts/embedding_gate_result.txt`. See `scripts/llm_judge_labels.py` to anchor
+the verdict with LLM labels if desired.
+
+`scripts/docker_remeasure.sh` re-measures the official ranker in the same 3.11 image
+(the real Stage-3 environment, and the only runtime number that counts for the
+constraint).
 
 ## Architecture
 
@@ -172,6 +232,32 @@ Silver-label development evaluation:
 python scripts/build_silver_labels.py --candidates ./candidates.jsonl --out artifacts/silver_labels_20k.jsonl --max-candidates 20000
 python rank.py --candidates ./candidates.jsonl --out submission_20k.csv --max-candidates 20000
 python scripts/evaluate_silver.py --submission submission_20k.csv --labels artifacts/silver_labels_20k.jsonl
+```
+
+### Independent (non-circular) evaluation
+
+`build_silver_labels.py` derives labels from the same `compute_features` the ranker
+uses, so it measures self-consistency, not fit to the hidden ground truth. The
+independent harness below shares **no code** with the ranker — it scores profiles
+with a separate, narrative-first rubric — so agreement is meaningful and divergence
+is a real signal:
+
+```bash
+python scripts/build_independent_labels.py --candidates ./candidates.jsonl --out artifacts/independent_labels_100k.jsonl
+python scripts/evaluate_independent.py --submission submission.csv --labels artifacts/independent_labels_100k.jsonl
+```
+
+It reports the challenge composite (0.50·NDCG@10 + 0.30·NDCG@50 + 0.15·MAP +
+0.05·P@10) using graded relevance, so it is sensitive enough to A/B-test ranker
+changes. The heuristic labels are a proxy; to anchor them, `scripts/llm_judge_labels.py`
+adds LLM-judged tiers on a stratified sample. **This is a development-only tool and
+never runs during ranking** (the ranking path stays offline/CPU/no-network):
+
+```bash
+# needs ANTHROPIC_API_KEY or OPENAI_API_KEY; dev-time eval labels only
+python scripts/llm_judge_labels.py --candidates ./candidates.jsonl --jd job_description.txt \
+  --out artifacts/llm_labels.jsonl --submission submission.csv \
+  --stratify-labels artifacts/independent_labels_100k.jsonl --sample-size 300
 ```
 
 Docker reproduction:
