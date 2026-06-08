@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 import tempfile
 import asyncio
@@ -15,7 +16,7 @@ import uuid
 # Add src to python path so we can import redrob_ranker
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
-from fastapi import FastAPI, File, UploadFile, BackgroundTasks
+from fastapi import FastAPI, File, UploadFile, BackgroundTasks, HTTPException
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,11 +30,30 @@ app = FastAPI(
     description="Hybrid-mode real-time candidate ranking dashboard. Showpiece + Live Proof + Batch."
 )
 
-# CORS for local development
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int(os.getenv(name, str(default)))
+    except ValueError:
+        return default
+
+
+MAX_LIVE_CANDIDATES = _env_int("REDROB_MAX_LIVE_CANDIDATES", 500)
+MAX_BATCH_CANDIDATES = _env_int("REDROB_MAX_BATCH_CANDIDATES", 5000)
+MAX_LIVE_UPLOAD_BYTES = _env_int("REDROB_MAX_LIVE_UPLOAD_BYTES", 2 * 1024 * 1024)
+MAX_BATCH_UPLOAD_BYTES = _env_int("REDROB_MAX_BATCH_UPLOAD_BYTES", 16 * 1024 * 1024)
+MAX_STORED_JOBS = _env_int("REDROB_MAX_STORED_JOBS", 20)
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("REDROB_CORS_ORIGINS", "*").split(",")
+    if origin.strip()
+]
+
+
+# CORS is permissive by default for local demos; set REDROB_CORS_ORIGINS on public hosts.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=ALLOWED_ORIGINS or ["*"],
+    allow_credentials="*" not in ALLOWED_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -53,6 +73,25 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 # ── In-memory job store for batch processing ──
 job_store: Dict[str, Dict[str, Any]] = {}
 results_store: Dict[str, List[Dict]] = {}
+
+
+async def read_upload_limited(file: UploadFile, max_bytes: int) -> bytes:
+    data = await file.read(max_bytes + 1)
+    if len(data) > max_bytes:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Upload exceeds {max_bytes // (1024 * 1024)} MB demo limit.",
+        )
+    return data
+
+
+def prune_job_stores() -> None:
+    if len(job_store) <= MAX_STORED_JOBS:
+        return
+    oldest = sorted(job_store.items(), key=lambda item: item[1].get("started_at", ""))
+    for job_id, _ in oldest[: max(0, len(job_store) - MAX_STORED_JOBS)]:
+        job_store.pop(job_id, None)
+        results_store.pop(job_id, None)
 
 
 def extract_candidate_payload(
@@ -110,12 +149,16 @@ async def rank_live(file: UploadFile = File(...)):
             in_path = base / (file.filename or "candidates.jsonl")
             out_path = base / "ranked_candidates.csv"
 
-            in_path.write_bytes(await file.read())
+            in_path.write_bytes(await read_upload_limited(file, MAX_LIVE_UPLOAD_BYTES))
 
             result = run_ranking(
                 in_path,
                 out_path,
-                RankerConfig(top_k=100, candidate_pool_size=500, max_candidates=500),
+                RankerConfig(
+                    top_k=100,
+                    candidate_pool_size=MAX_LIVE_CANDIDATES,
+                    max_candidates=MAX_LIVE_CANDIDATES,
+                ),
             )
 
             candidates_json = []
@@ -160,6 +203,8 @@ async def rank_live(file: UploadFile = File(...)):
                 "pipeline": pipeline_stages,
                 "candidates": candidates_json,
             })
+    except HTTPException:
+        raise
     except Exception as e:
         return JSONResponse({"error": str(e), "mode": "live"}, status_code=500)
 
@@ -167,18 +212,24 @@ async def rank_live(file: UploadFile = File(...)):
 @app.post("/api/batch")
 async def batch_rank(file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
     """Batch Mode: Async processing for large files with SSE progress tracking."""
+    prune_job_stores()
     job_id = f"batch-{datetime.now().strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:6]}"
     job_dir = JOB_DIR / job_id
     job_dir.mkdir(parents=True, exist_ok=True)
 
     safe_name = Path(file.filename or "candidates.jsonl").name
     in_path = job_dir / safe_name
-    in_path.write_bytes(await file.read())
+    in_path.write_bytes(await read_upload_limited(file, MAX_BATCH_UPLOAD_BYTES))
 
     total_lines = 0
     with open(in_path, "r", encoding="utf-8") as f:
         for _ in f:
             total_lines += 1
+            if total_lines > MAX_BATCH_CANDIDATES:
+                raise HTTPException(
+                    status_code=413,
+                    detail=f"Batch demo is capped at {MAX_BATCH_CANDIDATES} candidates.",
+                )
 
     job_store[job_id] = {
         "status": "queued",
@@ -217,7 +268,11 @@ def process_batch_job(job_id: str):
         result = run_ranking(
             in_path,
             out_path,
-            RankerConfig(top_k=100, candidate_pool_size=100000, max_candidates=100000),
+            RankerConfig(
+                top_k=100,
+                candidate_pool_size=MAX_BATCH_CANDIDATES,
+                max_candidates=MAX_BATCH_CANDIDATES,
+            ),
         )
 
         raw = result.raw_ranked or []
@@ -338,4 +393,14 @@ def get_batch_results(job_id: str):
 @app.get("/api/health")
 def health_check():
     """Health check endpoint."""
-    return {"status": "ok", "version": "3.0.0", "modes": ["showpiece", "live", "batch"]}
+    return {
+        "status": "ok",
+        "version": "3.0.0",
+        "modes": ["showpiece", "live", "batch"],
+        "limits": {
+            "live_candidates": MAX_LIVE_CANDIDATES,
+            "batch_candidates": MAX_BATCH_CANDIDATES,
+            "live_upload_mb": round(MAX_LIVE_UPLOAD_BYTES / (1024 * 1024), 2),
+            "batch_upload_mb": round(MAX_BATCH_UPLOAD_BYTES / (1024 * 1024), 2),
+        },
+    }

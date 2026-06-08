@@ -31,27 +31,7 @@ from redrob_ranker.text import candidate_text, lower
 
 REFERENCE_DATE = date(2026, 6, 8)
 
-_NORM_RE = re.compile(r"[^a-z0-9+#.\s/-]")
-BOUNDARY_MATCH_TERMS = {
-    "ai",
-    "ml",
-    "ann",
-    "api",
-    "map",
-    "rag",
-    "mrr",
-    "tts",
-    "gan",
-    "gans",
-    "live",
-    "daily",
-    "paper",
-    "talk",
-    "scale",
-    "recall",
-    "search",
-    "service",
-}
+_NORM_RE = re.compile(r"[^a-z0-9+#\s]")
 
 
 @dataclass(slots=True)
@@ -121,18 +101,20 @@ class CandidateFeatures:
 
 def clamp(value: float, lo: float = 0.0, hi: float = 1.0) -> float:
     return max(lo, min(hi, value))
-_NORM_RE = re.compile(r"[^a-z0-9+#\s]")
+
 
 def _norm(text: object) -> str:
     return _NORM_RE.sub(" ", str(text or "").lower()).strip()
 
 
-def _pad(terms):
-    padded = []
+def _pad(terms) -> tuple[str, ...]:
+    padded: list[str] = []
     for t in terms:
-        t_clean = t.strip().replace('.', ' ').replace('/', ' ').replace('-', ' ')
-        padded.append(f" {t_clean} ")
-    return padded
+        t_clean = _norm(str(t).replace(".", " ").replace("/", " ").replace("-", " "))
+        if t_clean:
+            padded.append(f" {t_clean} ")
+    return tuple(padded)
+
 
 def _has_boundary(padded_terms, text: str) -> bool:
     safe_text = f" {text} "
@@ -140,6 +122,7 @@ def _has_boundary(padded_terms, text: str) -> bool:
         if pt in safe_text:
             return True
     return False
+
 
 def _count_boundaries(padded_terms, text: str) -> int:
     safe_text = f" {text} "
@@ -149,11 +132,13 @@ def _count_boundaries(padded_terms, text: str) -> int:
             count += 1
     return count
 
-def _contains_padded(padded_terms: list[str], text: str) -> int:
+
+def _contains_padded(padded_terms: tuple[str, ...], text: str) -> int:
     return _count_boundaries(padded_terms, text)
 
+
 def _contains(text: str, terms: set[str] | list[str]) -> int:
-    return _contains_padded(_pad([str(t).lower() for t in terms]), text)
+    return _contains_padded(_pad(terms), text)
 
 
 NORMALIZED_MUST_HAVE_SKILLS = {
@@ -162,6 +147,22 @@ NORMALIZED_MUST_HAVE_SKILLS = {
 NORMALIZED_NICE_TO_HAVE_SKILLS = {
     group: tuple(_norm(alias) for alias in aliases) for group, aliases in NICE_TO_HAVE_SKILLS.items()
 }
+PADDED_MUST_HAVE_SKILLS = {
+    group: _pad(aliases) for group, aliases in NORMALIZED_MUST_HAVE_SKILLS.items()
+}
+PADDED_NICE_TO_HAVE_SKILLS = {
+    group: _pad(aliases) for group, aliases in NORMALIZED_NICE_TO_HAVE_SKILLS.items()
+}
+NORMALIZED_RELEVANT_SKILL_ALIASES = tuple(
+    alias
+    for aliases in list(NORMALIZED_MUST_HAVE_SKILLS.values())
+    + list(NORMALIZED_NICE_TO_HAVE_SKILLS.values())
+    for alias in aliases
+)
+PADDED_RELEVANT_SKILL_ALIASES = _pad(NORMALIZED_RELEVANT_SKILL_ALIASES)
+PADDED_CORE_SKILL_ALIASES = _pad(
+    alias for aliases in NORMALIZED_MUST_HAVE_SKILLS.values() for alias in aliases
+)
 
 
 def _days_since(date_s: str | None) -> int:
@@ -210,17 +211,23 @@ def _career_text(candidate: dict) -> str:
     return _norm(" ".join(parts))
 
 
-def _alias_match(candidate_terms: set[str], full_text: str, full_tokens: set[str], aliases: list[str]) -> float:
+def _alias_match(
+    candidate_terms: set[str],
+    full_text: str,
+    aliases: tuple[str, ...],
+    padded_aliases: tuple[str, ...],
+) -> float:
     score = 0.0
-    for alias_n in aliases:
+    safe_text = f" {full_text} "
+    for alias_n, alias_padded in zip(aliases, padded_aliases):
         if alias_n in candidate_terms:
             score = max(score, 1.0)
-        elif _has_boundary(_pad([alias_n]), full_text):
+        elif alias_padded in safe_text:
             score = max(score, 0.7)
     return score
 
 
-_TARGET_TITLE_PADDED = {f" {t.strip().replace('.', ' ').replace('/', ' ').replace('-', ' ')} ": w for t, w in TARGET_TITLE_WEIGHTS.items()}
+_TARGET_TITLE_PADDED = {_pad([t])[0]: w for t, w in TARGET_TITLE_WEIGHTS.items() if _pad([t])}
 _NON_TARGET_PADDED = _pad(NON_TARGET_TITLES)
 
 def _title_score(candidate: dict) -> float:
@@ -297,7 +304,6 @@ def _education_score(candidate: dict) -> float:
 
 
 def _honeypot_flags(candidate: dict, values: dict[str, float]) -> list[str]:
-    _CORE_ALIASES_PADDED = _pad([a for g in NORMALIZED_MUST_HAVE_SKILLS.values() for a in g] + [a for g in NORMALIZED_NICE_TO_HAVE_SKILLS.values() for a in g])
     flags: list[str] = []
     profile = candidate.get("profile", {})
     signals = candidate.get("redrob_signals", {})
@@ -319,7 +325,7 @@ def _honeypot_flags(candidate: dict, values: dict[str, float]) -> list[str]:
             continue
         expert_zero_any.append(skill.get("name", ""))
         name_n = _norm(skill.get("name"))
-        if _has_boundary(_CORE_ALIASES_PADDED, name_n):
+        if _has_boundary(PADDED_CORE_SKILL_ALIASES, name_n):
             expert_zero_core.append(skill.get("name", ""))
     if len(expert_zero_core) >= 2 or len(expert_zero_any) >= 5:
         flags.append("expert_skill_zero_duration")
@@ -335,7 +341,7 @@ def _honeypot_flags(candidate: dict, values: dict[str, float]) -> list[str]:
             break
 
     title = _norm(profile.get("current_title"))
-    if _has_boundary(NON_TARGET_TITLES, title) and values["ir_ranking_experience"] >= 0.45:
+    if _has_boundary(_NON_TARGET_PADDED, title) and values["ir_ranking_experience"] >= 0.45:
         flags.append("title_description_contradiction")
 
     return flags
@@ -343,26 +349,34 @@ def _honeypot_flags(candidate: dict, values: dict[str, float]) -> list[str]:
 
 _SENIOR_TITLES_PADDED = _pad(["senior", "staff", "lead", "principal"])
 _IR_RANKING_PADDED = _pad([str(t).lower() for t in IR_RANKING_SIGNALS])
+_CV_SPEECH_ROBOTICS_PADDED = _pad([str(t).lower() for t in CV_SPEECH_ROBOTICS_TERMS])
+_PRODUCTION_PADDED = _pad([str(t).lower() for t in PRODUCTION_SIGNALS])
+_PURE_RESEARCH_PADDED = _pad([str(t).lower() for t in PURE_RESEARCH_SIGNALS])
+_SCALE_PADDED = _pad([str(t).lower() for t in SCALE_SIGNALS])
+_CODE_WRITING_PADDED = _pad([str(t).lower() for t in CODE_WRITING_SIGNALS])
 _OPEN_SOURCE_PADDED = _pad([str(t).lower() for t in OPEN_SOURCE_SIGNALS])
 _MANAGEMENT_PADDED = _pad(["manager", "lead", "head", "vp", "director"])
+_ML_TERMS_PADDED = _pad(["machine learning", "ai", "ml", "nlp", "data science"])
+_LOCATIONS_PADDED = _pad(PREFERRED_INDIAN_LOCATIONS)
 
 def compute_features(candidate: dict) -> CandidateFeatures:
     profile = candidate.get("profile", {})
     signals = candidate.get("redrob_signals", {})
     full_text = _profile_text(candidate)
     career_text = _career_text(candidate)
-    full_tokens = set(full_text.split())
     terms = _skill_terms(candidate)
     values: dict[str, float] = {}
 
     core_score = 0.0
     for group, aliases in NORMALIZED_MUST_HAVE_SKILLS.items():
-        core_score += MUST_HAVE_WEIGHTS[group] * _alias_match(terms, full_text, full_tokens, aliases)
+        core_score += MUST_HAVE_WEIGHTS[group] * _alias_match(
+            terms, full_text, aliases, PADDED_MUST_HAVE_SKILLS[group]
+        )
     values["core_skill_match"] = clamp(core_score)
 
     nice_hits = [
-        _alias_match(terms, full_text, full_tokens, aliases)
-        for aliases in NORMALIZED_NICE_TO_HAVE_SKILLS.values()
+        _alias_match(terms, full_text, aliases, PADDED_NICE_TO_HAVE_SKILLS[group])
+        for group, aliases in NORMALIZED_NICE_TO_HAVE_SKILLS.items()
     ]
     values["nice_skill_match"] = clamp(sum(nice_hits) / max(1, len(nice_hits)))
 
@@ -371,6 +385,8 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     for skill in _skill_records(candidate):
         name = _norm(skill.get("name"))
         if not name:
+            continue
+        if not _has_boundary(PADDED_RELEVANT_SKILL_ALIASES, name):
             continue
         prof = {"beginner": 0.35, "intermediate": 0.6, "advanced": 0.85, "expert": 1.0}.get(
             _norm(skill.get("proficiency")), 0.4
@@ -396,14 +412,14 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     gh = float(signals.get("github_activity_score") or 0)
     values["github_signal"] = 0.0 if gh < 0 else clamp(gh / 100.0)
 
-    cv_count = _contains(full_text, CV_SPEECH_ROBOTICS_TERMS)
+    cv_count = _contains_padded(_CV_SPEECH_ROBOTICS_PADDED, full_text)
 
     product_months, consulting_months, total_months = _product_consulting_months(candidate)
     values["product_company_ratio"] = clamp(product_months / max(1, total_months))
     values["consulting_only_flag"] = 1.0 if total_months and consulting_months / total_months > 0.8 and values["product_company_ratio"] < 0.2 else 0.0
 
-    values["ir_ranking_experience"] = clamp(_contains(career_text, IR_RANKING_SIGNALS) / 7.0)
-    values["production_evidence"] = clamp(_contains(career_text, PRODUCTION_SIGNALS) / 8.0)
+    values["ir_ranking_experience"] = clamp(_contains_padded(_IR_RANKING_PADDED, career_text) / 7.0)
+    values["production_evidence"] = clamp(_contains_padded(_PRODUCTION_PADDED, career_text) / 8.0)
     if sum(1 for j in candidate.get("career_history", []) or [] if int(j.get("duration_months") or 0) >= 18) >= 2:
         values["production_evidence"] = clamp(values["production_evidence"] + 0.08)
 
@@ -415,8 +431,10 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     short_jobs = sum(1 for j in candidate.get("career_history", []) or [] if int(j.get("duration_months") or 0) < 9)
     title_hop_penalty = 0.35 if short_jobs >= 3 else 0.0
     values["career_trajectory_score"] = clamp(0.75 * title_score + 0.25 * values["product_company_ratio"] - title_hop_penalty)
-    values["scale_signal"] = clamp(_contains(career_text, SCALE_SIGNALS) / 4.0)
-    values["code_writing_recent"] = clamp(_contains(" ".join([current_title, career_text]), CODE_WRITING_SIGNALS) / 4.0)
+    values["scale_signal"] = clamp(_contains_padded(_SCALE_PADDED, career_text) / 4.0)
+    values["code_writing_recent"] = clamp(
+        _contains_padded(_CODE_WRITING_PADDED, " ".join([current_title, career_text])) / 4.0
+    )
 
     yoe = float(profile.get("years_of_experience") or 0)
     values["yoe_fit_score"] = 1.0 if yoe >= 7.0 else clamp(math.exp(-((yoe - 7.0) ** 2) / (2 * 2.6**2)))
@@ -425,7 +443,6 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     values["education_score"] = _education_score(candidate)
 
     ml_months = 0
-    _ML_TERMS_PADDED = _pad(["machine learning", " ai ", " ml ", "nlp", "data science"])
     for job in candidate.get("career_history", []) or []:
         text = _norm(" ".join([str(job.get("title", "")), str(job.get("description", ""))]))
         if _contains_padded(_IR_RANKING_PADDED, text) or _has_boundary(_ML_TERMS_PADDED, text):
@@ -463,14 +480,13 @@ def compute_features(candidate: dict) -> CandidateFeatures:
 
     location = _norm(profile.get("location"))
     country = _norm(profile.get("country"))
-    _LOCATIONS_PADDED = _pad(PREFERRED_INDIAN_LOCATIONS)
     preferred_city = _has_boundary(_LOCATIONS_PADDED, location)
     in_india = country == "india" or "india" in country
     willing_relocate = bool(signals.get("willing_to_relocate"))
     values["location_score"] = 1.0 if preferred_city else 0.68 if in_india else 0.42 if willing_relocate else 0.10
     values["relocation_willing"] = 1.0 if willing_relocate else 0.0
 
-    non_target_title = _has_boundary(NON_TARGET_TITLES, current_title)
+    non_target_title = _has_boundary(_NON_TARGET_PADDED, current_title)
     skill_count = len(_skill_records(candidate))
     values["keyword_stuffer_flag"] = 1.0 if (
         skill_count >= 14
@@ -492,7 +508,7 @@ def compute_features(candidate: dict) -> CandidateFeatures:
         soft_flags.append("salary_inversion")
     if float(signals.get("profile_completeness_score") or 0) < 40 and int(signals.get("endorsements_received") or 0) > 40:
         soft_flags.append("endorsement_inflation_low_profile")
-    if _contains(career_text, PURE_RESEARCH_SIGNALS) and values["production_evidence"] < 0.35:
+    if _contains_padded(_PURE_RESEARCH_PADDED, career_text) and values["production_evidence"] < 0.35:
         soft_flags.append("pure_research_without_deployment")
     if values["disqualifier_skill_flag"]:
         soft_flags.append("cv_speech_robotics_primary")

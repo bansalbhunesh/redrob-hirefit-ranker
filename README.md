@@ -118,6 +118,15 @@ uvicorn apps.api.main:app --reload
 
 Then open [http://localhost:8000](http://localhost:8000).
 
+Public demo safety defaults:
+
+- `/api/rank` processes at most 500 uploaded candidates and rejects uploads over 2 MB.
+- `/api/batch` processes at most 5,000 uploaded candidates and rejects uploads over 16 MB.
+- In-memory batch jobs are capped at 20 stored jobs.
+- Set `REDROB_CORS_ORIGINS`, `REDROB_MAX_LIVE_CANDIDATES`, `REDROB_MAX_BATCH_CANDIDATES`,
+  `REDROB_MAX_LIVE_UPLOAD_BYTES`, `REDROB_MAX_BATCH_UPLOAD_BYTES`, or `REDROB_MAX_STORED_JOBS`
+  to override these demo limits on a host like Render.
+
 Run the Gradio Space locally:
 
 ```bash

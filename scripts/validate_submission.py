@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import importlib.util
 import sys
 from pathlib import Path
 
@@ -13,7 +14,13 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from redrob_ranker.validation import validate_rows  # noqa: E402
+VALIDATION_MODULE = SRC / "redrob_ranker" / "validation.py"
+spec = importlib.util.spec_from_file_location("redrob_ranker_validation", VALIDATION_MODULE)
+if spec is None or spec.loader is None:
+    raise RuntimeError(f"Unable to load validator module from {VALIDATION_MODULE}")
+validation_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(validation_module)
+validate_rows = validation_module.validate_rows
 
 
 EXPECTED_HEADER = ["candidate_id", "rank", "score", "reasoning"]

@@ -150,6 +150,24 @@ def test_short_aliases_do_not_match_inside_unrelated_words():
     assert features.values["ir_ranking_experience"] < 0.3
 
 
+def test_skill_depth_only_counts_relevant_ai_retrieval_skills():
+    irrelevant = make_candidate()
+    irrelevant["skills"] = [
+        {"name": "Excel", "proficiency": "expert", "endorsements": 80, "duration_months": 96},
+        {"name": "Public Speaking", "proficiency": "expert", "endorsements": 70, "duration_months": 96},
+        {"name": "Payroll", "proficiency": "expert", "endorsements": 60, "duration_months": 96},
+    ]
+    relevant = make_candidate()
+    relevant["skills"] = [
+        {"name": "Python", "proficiency": "expert", "endorsements": 20, "duration_months": 60},
+        {"name": "FAISS", "proficiency": "advanced", "endorsements": 12, "duration_months": 30},
+        {"name": "NDCG", "proficiency": "advanced", "endorsements": 8, "duration_months": 24},
+    ]
+
+    assert compute_features(irrelevant).values["skill_depth_score"] == 0.0
+    assert compute_features(relevant).values["skill_depth_score"] > 0.5
+
+
 def test_audit_edge_cases_for_senior_india_profiles():
     veteran = make_candidate()
     veteran["profile"]["years_of_experience"] = 12.0
