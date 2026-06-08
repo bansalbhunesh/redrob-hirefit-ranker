@@ -26,13 +26,17 @@ compute:
   has_network_during_ranking: false
   pre_computation_required: false
   pre_computation_time_minutes: 0
+  measured_runtime_seconds: 219.1
+  measured_bm25_backend: "bm25s"
 
 ai_tools_used:
   - "Codex"
+  - "Claude/Kimi audit notes as design-review references"
 
 ai_usage_summary: |
   Used Codex for architecture planning, implementation scaffolding, documentation,
-  and test generation. No candidate data is sent to hosted LLM APIs during ranking.
+  and test generation. Claude/Kimi audit notes were used as offline design-review
+  references. No candidate data is sent to hosted LLM APIs during ranking.
 
 methodology_summary: |
   Offline Plan D v2 ranker for the Senior AI Engineer JD. BM25 provides lexical

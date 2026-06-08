@@ -115,7 +115,16 @@ def test_reasoning_does_not_hallucinate_for_empty_skills():
 
 def test_reasoning_variants_differ_across_candidate_ids():
     """Different candidate_ids should produce at least 2 different second-sentence variants."""
-    candidate_ids = ["CAND_0000001", "CAND_0000002", "CAND_0000003", "CAND_0000004"]
+    candidate_ids = [
+        "CAND_0000001",
+        "CAND_0000002",
+        "CAND_0000003",
+        "CAND_0000004",
+        "CAND_0000005",
+        "CAND_0000006",
+        "CAND_0000007",
+        "CAND_0000008",
+    ]
     second_sentences = set()
     for cid in candidate_ids:
         candidate = _make_candidate(candidate_id=cid)
@@ -129,3 +138,35 @@ def test_reasoning_variants_differ_across_candidate_ids():
     assert len(second_sentences) >= 2, (
         f"Expected reasoning variation across candidate IDs, but got only: {second_sentences}"
     )
+
+
+def test_reasoning_includes_jd_connection_and_factual_profile_detail():
+    candidate = _make_candidate()
+    features = compute_features(candidate)
+    reasoning = build_reason(candidate, features, rank=1)
+
+    assert "JD" in reasoning
+    assert candidate["profile"]["current_title"] in reasoning
+    assert "7.0" in reasoning
+    assert candidate["profile"]["current_company"] in reasoning
+
+
+def test_lower_rank_reasoning_uses_honest_concern_tone():
+    candidate = _make_candidate()
+    candidate["profile"]["current_title"] = "Marketing Manager"
+    candidate["career_history"][0]["title"] = "Marketing Manager"
+    candidate["career_history"][0]["description"] = "Used AI tools for campaign analysis."
+    candidate["redrob_signals"].update(
+        {
+            "open_to_work_flag": False,
+            "recruiter_response_rate": 0.05,
+            "avg_response_time_hours": 220,
+            "notice_period_days": 150,
+        }
+    )
+    features = compute_features(candidate)
+    reasoning = build_reason(candidate, features, rank=95)
+
+    assert "concern:" in reasoning
+    assert "JD" in reasoning
+    assert any(detail in reasoning for detail in ["notice period", "response rate", "current title"])

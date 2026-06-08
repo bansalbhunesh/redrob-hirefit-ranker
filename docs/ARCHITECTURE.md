@@ -1,74 +1,195 @@
-# Redrob Ranker: System Architecture Deep-Dive
+# Redrob HireFit Ranker Architecture
 
-This document details the engineering trade-offs, algorithms, and design philosophy behind the Redrob HireFit Ranker v2.0.
+## Goal
 
-## 1. Design Philosophy: Speed and Determinism Over "AI Magic"
+Rank the top 100 candidates for the Redrob Senior AI Engineer JD while satisfying the official constraints:
 
-In processing 100,000 JSON candidates for a Senior AI Engineer role, a common trap is to lean heavily into LLM APIs or dense vector embeddings. 
+- CPU-only execution.
+- No network or hosted LLM/API scoring during ranking.
+- Deterministic output.
+- Full 100K reproduction in under 5 minutes.
+- Validator-safe CSV output.
 
-**We rejected dense embeddings (like MiniLM) because:**
-- Running 100,000 embedding encodings on a CPU-only sandbox takes >30 minutes, violating the 300-second maximum runtime constraint.
-- Embeddings often struggle with precise, domain-specific terminology (e.g., confusing "Pinecone" the tree with "Pinecone" the vector DB).
+The final measured local run used `bm25s`, scored all 100,000 candidates, and completed in **219.1 seconds** with zero hard honeypots in the emitted top 100.
 
-**We rejected LLM API scoring because:**
-- It violates the air-gapped, zero-cost rules of the hackathon.
-- It introduces non-deterministic hallucinations that fail Stage 4 reviews.
+## System Overview
 
-**Our Solution:** A highly optimized Lexical Index (BM25s) paired with a deterministic, hand-crafted 28-dimension mathematical feature matrix. It evaluates 100K profiles in **~132 seconds** with absolute transparency.
+```mermaid
+flowchart LR
+    A["candidates.jsonl"] --> B["orjson parser"]
+    B --> C["structured text renderer"]
+    C --> D["phrase and concept expansion"]
+    D --> E["BM25 score: bm25s preferred"]
+    B --> F["28-feature extractor"]
+    E --> G["weighted base score"]
+    F --> G
+    F --> H["behavioral multiplier"]
+    F --> I["honeypot multiplier"]
+    F --> J["disqualifier multiplier"]
+    G --> K["final score"]
+    H --> K
+    I --> K
+    J --> K
+    K --> L["sort by score, then candidate_id"]
+    L --> M["top-100 grounded reasoning"]
+    M --> N["submission.csv"]
+```
 
----
+## Why Not Hosted LLM Or Dense Embeddings?
 
-## 2. Sub-System 1: Lexical Retrieval (`bm25s`)
+Research supports a best-relevance pattern of retrieve, dense rerank, and cross-encoder/LLM review. That is excellent when latency, cost, and network access are available.
 
-To filter the massive pool down, we use BM25.
-- **Batch Processing:** We bypassed standard Python loops to utilize `bm25s`'s C-optimized `tokenize()` and `index()` methods, cutting text extraction overhead by 40%.
-- **Semantic Concept Expansion:** Before indexing, we append hidden metadata tokens (e.g., `concept_ml_production`) to a candidate's text if they match specific arrays of aliases. This achieves the semantic grouping of embeddings at the speed of regex.
+For this official path, those trade-offs are risky:
 
----
+- Hosted LLM/API scoring breaks offline reproducibility.
+- Local dense embedding generation can push CPU-only 100K runs beyond the 300-second limit.
+- Black-box scoring makes Stage 3/4 review harder to defend.
 
-## 3. Sub-System 2: The 28-D Recruiter Matrix
+The official ranker therefore uses deterministic sparse expansion plus feature scoring. Dense embeddings are documented as a future improvement, not a dependency.
 
-Instead of a black-box model, every candidate is scored against 28 specific features mapped exactly to the Job Description.
+## Retrieval Layer
 
-### Highlights:
-- **Gaussian YOE (Years of Experience) Modeling:**
-  Instead of hard cutoffs, we use a Gaussian decay curve centered around 7.0 years.
-  ```python
-  score = 1.0 if yoe >= 7.0 else math.exp(-((yoe - 7.0) ** 2) / (2 * 2.6**2))
-  ```
-  This ensures a candidate with 6.5 years of experience scores highly (0.98) rather than being abruptly penalized.
-- **Product-Company Ratios:** The JD prefers candidates from product environments. We scan the career history against a list of known consulting firms (e.g., TCS, Wipro, Infosys). If a candidate is exclusively consulting, they face a penalty, *unless* they show deep production evidence (shipped models, scale, latency metrics).
+The retrieval layer renders weighted structured text from:
 
----
+- current title, headline, summary, location, and industry
+- career titles, companies, industries, descriptions, and durations
+- skill names, proficiency, endorsements, and duration
+- education fields
+- Redrob availability and platform signals
 
-## 4. Sub-System 3: Behavioral Multipliers
+It then adds deterministic semantic concept markers for safe sparse recall:
 
-Redrob provides deep platform signals (response rates, last active dates). Rather than treating these as additive points, we model them as a **Multiplicative Penalty**.
+- retrieval/search systems
+- vector databases and ANN search
+- RAG and agentic systems
+- recommender/matching systems
+- ranking/evaluation metrics
 
-If a candidate is the best AI engineer in the world but has a 0% recruiter response rate and hasn't logged in for 3 years, their behavioral multiplier drops to `0.1`. 
-`Final Score = Base Score * Behavioral Multiplier`
+`bm25s` is preferred for speed; `rank-bm25` remains a fallback. BM25 is only one feature in the final score, not the final judge.
 
-This mirrors reality: unresponsive candidates are functionally useless to recruiters.
+## 28-Feature Recruiter Matrix
 
----
+The feature extractor produces stable values in `[0, 1]` for:
 
-## 5. Sub-System 4: Honeypot Guardrails
+Skills:
 
-Fake profiles are rampant. We deployed 8 hard-coded heuristic detectors. If any trigger, the candidate's honeypot multiplier is set to `0.0`.
+- `core_skill_match`
+- `nice_skill_match`
+- `skill_depth_score`
+- `endorsement_trust`
+- `assessment_score_avg`
+- `disqualifier_skill_flag`
+- `keyword_stuffer_flag`
+- `github_signal`
 
-1. **The Timeline Paradox:** `yoe_total > (current_year - education_start_year)`
-2. **The "Expert" Freshman:** Claiming "Advanced" proficiency in 5+ skills but only having 1 year of total experience.
-3. **Salary Inversion:** Expected salary minimum is higher than the maximum.
-4. **Keyword Stuffing:** Identifying invisible white-text keyword blocks or statistically impossible phrase densities.
+Career:
 
----
+- `product_company_ratio`
+- `consulting_only_flag`
+- `ir_ranking_experience`
+- `production_evidence`
+- `senior_title_held`
+- `career_trajectory_score`
+- `scale_signal`
+- `code_writing_recent`
 
-## 6. Sub-System 5: Grounded Reasoning
+Experience:
 
-Stage 4 of the hackathon manually reviews the generated reasoning strings for hallucinations and obvious templating.
+- `yoe_fit_score`
+- `education_score`
+- `ml_ai_tenure_score`
+- `open_source_signal`
 
-- **No Hallucinations:** We use `_top_relevant_skills()` to cross-reference our core skills list with the candidate's *actual* JSON. If they don't have it, we don't hallucinate it.
-- **Anti-Templating Variance:** To avoid looking like a robot, we use a deterministic hash of the `candidate_id` to cycle between 4 different structural variants of the reasoning sentences (e.g., "Platform signals:" vs "Recruiter interaction profile:"). This ensures high variance in the output CSV, proving to judges that the system is dynamic.
+Behavioral:
 
----
-*Built for the Redrob AI Hackathon Stage 5 Defense.*
+- `availability_score`
+- `engagement_score`
+- `responsiveness_score`
+- `interview_reliability`
+- `profile_quality`
+- `notice_period_score`
+
+Logistics:
+
+- `location_score`
+- `relocation_willing`
+
+## Scoring
+
+```text
+base_score = weighted(
+  bm25_score,
+  technical skills,
+  production/retrieval evidence,
+  product-company evidence,
+  seniority,
+  experience,
+  logistics
+)
+
+final_score = base_score
+            * behavioral_multiplier
+            * honeypot_multiplier
+            * disqualifier_multiplier
+```
+
+The model intentionally uses multipliers rather than only additive penalties. This mirrors recruiter reality: a strong technical profile can still be unusable if it is stale, unreachable, contradictory, or impossible.
+
+## Guardrails
+
+Hard honeypots receive `honeypot_multiplier = 0.0`:
+
+- salary minimum greater than maximum
+- expert core skills with zero duration
+- multiple current jobs
+- impossible education timeline
+- career timeline inconsistent with claimed experience
+- too-short career history for claimed YOE
+- title/description contradiction
+- endorsement inflation with low profile quality
+- impossible notice period
+
+Soft disqualifiers compound through `disqualifier_multiplier`:
+
+- consulting-only career
+- pure research without deployment evidence
+- CV/speech/robotics-primary mismatch
+- AI keyword stuffing without career support
+- title hopping
+
+The consulting-only penalty is softened when the candidate has strong production evidence, because Indian services companies can still contain strong product/platform builders.
+
+## Reasoning
+
+Reasoning is deterministic and grounded:
+
+- It mentions only facts present in the candidate JSON or feature values.
+- Top ranks emphasize JD-aligned strengths.
+- Lower ranks include honest concern tone.
+- Candidate ID controls deterministic wording variation so output is reproducible without identical templates.
+
+The dashboard uses `CandidateFeatures` directly for flags, multipliers, and honeypot reasons. It does not infer guardrails by searching the reasoning text.
+
+## Validation
+
+Verified gates:
+
+```bash
+python -m compileall -q src tests rank.py apps scripts
+python -m pytest -q
+python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s
+python scripts/validate_submission.py submission.csv
+python validate_submission.py submission.csv
+```
+
+Final measured output:
+
+```text
+Runtime: 219.1s
+Loaded candidates: 100000
+Ranked pool: 100000
+Rows emitted: 100
+BM25 backend: bm25s
+Hard honeypots detected: 23247
+Hard honeypots in output: 0
+```

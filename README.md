@@ -1,129 +1,145 @@
-<div align="center">
-  <h1>🚀 Redrob HireFit Ranker v3.0</h1>
-  <p><b>A Zero-Cost, Deterministic 100K-Scale Candidate Ranking Engine</b></p>
-  
-  [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![Challenge](https://img.shields.io/badge/Redrob-India_Runs_AI-ff69b4.svg)](#)
-  [![Runtime](https://img.shields.io/badge/Pipeline-132s-brightgreen.svg)](#)
+# Redrob HireFit Ranker
 
-  <h4>🌐 <a href="https://redrob-hirefit-ranker.onrender.com">Live Dashboard App (Render)</a></h4>
-</div>
+A deterministic, CPU-only candidate ranking engine for the Redrob India Runs Data & AI Challenge.
 
----
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Challenge](https://img.shields.io/badge/Redrob-India_Runs_AI-ff69b4.svg)](#)
+[![Runtime](https://img.shields.io/badge/100K_Runtime-219.1s-brightgreen.svg)](#)
 
-## ⚡ The 132-Second Edge
+Live dashboard placeholder: [redrob-hirefit-ranker.onrender.com](https://redrob-hirefit-ranker.onrender.com)
 
-Processing 100,000 JSON resumes usually implies heavy GPU inference, dense embeddings, or slow LLM API calls. **We explicitly rejected that.** 
+## What It Does
 
-The Redrob India Runs Data & AI Challenge mandates a CPU-only, air-gapped evaluation. Our engine runs locally in **132 seconds** for **$0.00**, scoring all 100,000 candidates against the Senior AI Engineer JD using a deterministic, highly-optimized 28-dimension feature matrix. 
+The official ranker reads `candidates.jsonl`, scores all 100,000 profiles against the Senior AI Engineer JD, and writes a validator-safe `submission.csv` with:
 
-No LLM API calls during ranking. No hallucinations. No disqualifications.
+```text
+candidate_id,rank,score,reasoning
+```
 
-## 🏗️ High-Level Architecture
+The design is intentionally offline and deterministic:
+
+- No OpenAI, Claude, Gemini, or hosted API scoring during ranking.
+- No model downloads or dense embedding dependency in the official path.
+- `bm25s` lexical retrieval with `rank-bm25` fallback.
+- A 28-feature recruiter matrix for skills, career, experience, behavior, and logistics.
+- Multiplicative behavioral, honeypot, and disqualifier guardrails.
+- Grounded reasoning generated only from candidate facts and feature triggers.
+
+## Measured Reproduction
+
+Command used for the final local 100K run:
+
+```bash
+python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s
+```
+
+Measured result on the local challenge file:
+
+```text
+Wrote 100 rows to submission.csv.
+Loaded 100000 candidates; ranked pool 100000; BM25 backend bm25s.
+Runtime 219.1s.
+Honeypots detected 23247; honeypots in output 0.
+```
+
+Both validators passed:
+
+```bash
+python scripts/validate_submission.py submission.csv
+python validate_submission.py submission.csv
+```
+
+## Architecture
 
 ```mermaid
-graph TD
-    A[(candidates.jsonl)] -->|100,000 profiles| B(Lexical Filter: BM25s)
-    B -->|Batch Tokenization| C{Recruiter Engine}
-    
-    subgraph 28-D Deterministic Matrix
-    C --> D[Core Technical Skills]
-    C --> E[Production Evidence]
-    C --> F[Logistics & Relocation]
-    end
-    
-    D & E & F --> G{Guardrails}
-    
-    subgraph Multipliers
-    G -->|Multiplicative Penalty| H[Redrob Behavioral Signals]
-    G -->|0.0 Multiplier| I[Honeypot Detectors]
-    end
-    
-    H & I --> J((Final Score))
-    J --> K[Grounded Reasoner]
-    K --> L[/submission.csv/]
+flowchart TD
+    A["candidates.jsonl"] --> B["Parser"]
+    B --> C["Structured candidate text"]
+    C --> D["BM25 lexical score"]
+    C --> E["Semantic phrase/concept expansion"]
+    B --> F["28-feature recruiter matrix"]
+    D --> G["Weighted base score"]
+    F --> G
+    F --> H["Behavioral multiplier"]
+    F --> I["Honeypot multiplier"]
+    F --> J["Disqualifier multiplier"]
+    G --> K["Final score"]
+    H --> K
+    I --> K
+    J --> K
+    K --> L["Deterministic top 100"]
+    L --> M["Grounded reasoning"]
+    M --> N["submission.csv"]
 ```
 
-*(For a deep-dive into the mathematical models, Gaussian YOE curves, and honeypot heuristics, read our **[Architecture Deep-Dive](docs/ARCHITECTURE.md)**).*
+Read the full technical explanation in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## 🎯 Core Innovations
+## Dashboard And Demo
 
-1. **Deterministic AI**: We extract 28 specific features (e.g., `product_company_ratio`, `core_skill_match`) using highly tuned C-loops and regex. This means the engine is 100% interpretable. If a candidate drops in rank, we know exactly which matrix coefficient caused it.
-2. **Honeypot Guardrails**: We deployed 8 aggressive heuristics to catch fake resumes. (e.g., *Salary inversion*, *impossible education timelines*, and *skill-duration paradoxes*). Candidates hitting a honeypot receive a `0.0` multiplier.
-3. **Multiplicative Behavioral Modeling**: Instead of adding points for good behavior, we heavily penalize bad behavior. Stale profiles or low response rates act as a fractional multiplier on the candidate's base technical score.
-4. **Anti-Templated Reasoning**: Our reasoning generation uses dynamic variance keyed off candidate ID hashes to guarantee structural diversity, ensuring we pass the Stage 4 manual audit without triggering "templating" penalties.
+The repo includes a FastAPI dashboard for interview/demo use. It exposes real ranker internals, including:
 
-## 💻 Stage 5 Interview Tools
+- top feature contributions
+- behavioral, honeypot, and disqualifier multipliers
+- feature-derived flags and honeypot reasons
+- profile, skills, education, timeline, and behavioral signals
 
-We built tools specifically for live engineering interviews to demonstrate pipeline observability.
+Generate the showpiece payload from a validated full run:
 
-### Rich CLI Output (`--show-top`)
-Instantly audit the top candidates, their exact score composition, and behavioral signals in an ASCII-safe format:
 ```bash
-python rank.py --candidates ./candidates.jsonl --out ./submission.csv --show-top 3
+python scripts/generate_precomputed.py \
+  --candidates ./candidates.jsonl \
+  --submission submission.csv \
+  --out apps/api/data/precomputed.json \
+  --total-candidates 100000 \
+  --processing-time-ms 219100 \
+  --bm25-backend bm25s \
+  --honeypots-blocked 23247 \
+  --honeypots-in-output 0
 ```
 
-### 🌐 The "Showpiece + Live Proof" Interactive Dashboard
+Run the API locally:
 
-We built a **hybrid-mode real-time FastAPI dashboard** explicitly for the Stage 5 interview. It solves the "dead air" problem of waiting 132 seconds for the 100K batch to run.
-
-**🚀 Live Deployment on Render:**
-* **Web Dashboard:** [https://redrob-hirefit-ranker.onrender.com](https://redrob-hirefit-ranker.onrender.com)
-* **API Health Status:** [https://redrob-hirefit-ranker.onrender.com/api/health](https://redrob-hirefit-ranker.onrender.com/api/health)
-
-**To run the interactive web app locally:**
 ```bash
-# 1. Generate the fast-load payload from your 100K results
-python scripts/generate_precomputed.py
-
-# 2. Start the FastAPI server
+pip install -e ".[demo]"
 uvicorn apps.api.main:app --reload
 ```
-Then open **[http://localhost:8000](http://localhost:8000)** in your browser.
 
-- **Showpiece Mode (Default):** Instantly loads the 100K results in 200ms with full glassmorphic UI.
-- **Live Proof Mode:** Toggle to the "Live Proof" tab to upload a smaller `candidates.jsonl` file. Watch the engine process and render the results live in under 2 seconds.
+Then open [http://localhost:8000](http://localhost:8000).
 
-### Legacy Demos
-- **Zero-Dependency Static HTML:** `python generate_demo.py --candidates ./candidates.jsonl --submission ./submission.csv --out demo.html`
-- **HuggingFace Space (Gradio):** `python apps/space/app.py`
+## Setup
 
-## 🚀 Setup & Reproduction
-
-**1. Clone & Environment:**
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # Or .venv\Scripts\activate on Windows
-pip install -r requirements.txt
+.venv\Scripts\activate
+pip install -e ".[dev]"
 ```
 
-**2. Run the Full 100K Pipeline:**
-*(Ensure `candidates.jsonl` is in the root directory).*
+Linux/macOS activation:
+
 ```bash
-python rank.py --candidates ./candidates.jsonl --out ./submission.csv
-```
-You will see output similar to:
-```text
-Pipeline completed in 132.6s
-Wrote 100 rows to ./submission.csv. Loaded 100000 candidates.
+source .venv/bin/activate
 ```
 
-**3. Official Validation:**
-*(Download `validate_submission.py` from the official Redrob challenge instructions/repo)*
+## Validation
+
 ```bash
-python validate_submission.py ./submission.csv
+python -m compileall -q src tests rank.py apps scripts
+python -m pytest -q
+python scripts/validate_submission.py submission.csv
 ```
 
-## 📁 Repository Structure
+The official challenge validator should still be used as the final gate when available.
 
-- `rank.py` - Official one-command CLI entrypoint.
-- `src/redrob_ranker/` - Core ranking logic (Pipeline, Features, Reasoning, Retrieval).
-- `generate_demo.py` - Single-file HTML dashboard generator for Stage 5.
-- `docs/ARCHITECTURE.md` - Technical deep-dive into system trade-offs.
-- `tests/` - Strict unit tests preventing regression (run via `pytest`).
+## Repository Structure
 
----
-<div align="center">
-  <i>Built for the Redrob India Runs Data & AI Challenge.</i>
-</div>
+- `rank.py`: official one-command CLI.
+- `src/redrob_ranker/`: parsing, retrieval, feature scoring, reasoning, validation, and dashboard payload helpers.
+- `apps/api/`: FastAPI dashboard backend and tracked precomputed showpiece payload.
+- `apps/space/`: lightweight HuggingFace Space demo.
+- `scripts/`: repo-local validation and precomputed payload generation.
+- `docs/`: architecture and implementation notes.
+- `tests/`: unit and integration-style checks for ranking, guardrails, payloads, and reasoning.
+
+## AI Usage
+
+Codex was used for planning, implementation, documentation, and tests. Claude/Kimi audit notes were used as offline design-review references. Candidate ranking itself is local and deterministic; no candidate data is sent to hosted LLM APIs during ranking.

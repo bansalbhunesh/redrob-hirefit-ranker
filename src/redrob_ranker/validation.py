@@ -16,8 +16,14 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
     last_score = float("inf")
     for row in rows:
         cid = str(row.get("candidate_id", ""))
-        rank = row.get("rank")
-        score = float(row.get("score", 0))
+        try:
+            rank = int(row.get("rank", 0))
+        except (TypeError, ValueError):
+            rank = 0
+        try:
+            score = float(row.get("score", 0))
+        except (TypeError, ValueError):
+            score = -1.0
         if not CANDIDATE_ID_PATTERN.match(cid):
             errors.append(f"Invalid candidate_id: {cid}")
         if cid in ids:

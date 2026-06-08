@@ -60,12 +60,15 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 
 `--candidate-pool N` exists for demos/profiling only. The submission path should leave it at `0`.
 
-On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 242.7 seconds.
+On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 219.1 seconds. The run loaded and scored all 100,000 candidates, detected 23,247 hard honeypots, and emitted 0 hard honeypots in the top 100.
+
+The FastAPI/dashboard payload is generated from `CandidateFeatures` directly, exposing feature values, behavioral/honeypot/disqualifier multipliers, and feature-derived flags. It does not infer honeypots by searching reasoning text.
 
 ## Validation
 
 ```bash
 python -m pytest -q
 python rank.py --candidates ./candidates.jsonl --out ./submission.csv
+python scripts/validate_submission.py ./submission.csv
 python validate_submission.py ./submission.csv
 ```

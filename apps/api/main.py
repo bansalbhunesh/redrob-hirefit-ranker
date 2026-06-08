@@ -6,6 +6,7 @@ import json
 import sys
 import tempfile
 import asyncio
+import time
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from datetime import datetime
@@ -19,6 +20,7 @@ from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
+from redrob_ranker.payload import build_candidate_payload
 from redrob_ranker.pipeline import RankerConfig, run_ranking
 
 app = FastAPI(
@@ -40,9 +42,11 @@ app.add_middleware(
 BASE_DIR = Path(__file__).parent
 STATIC_DIR = BASE_DIR / "static"
 DATA_DIR = BASE_DIR / "data"
+JOB_DIR = DATA_DIR / "jobs"
 
 STATIC_DIR.mkdir(exist_ok=True)
 DATA_DIR.mkdir(exist_ok=True)
+JOB_DIR.mkdir(exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
@@ -51,143 +55,24 @@ job_store: Dict[str, Dict[str, Any]] = {}
 results_store: Dict[str, List[Dict]] = {}
 
 
-def extract_candidate_payload(candidate: dict, features: dict, score: float, rank: int, reasoning: str) -> dict:
-    """Build a rich UI payload from pipeline output."""
-    prof = candidate.get("profile", {})
-    redrob = candidate.get("redrob_signals", {})
-    skills = candidate.get("skills", [])
-    education = candidate.get("education", [])
-    career = candidate.get("career_history", [])
-    certs = candidate.get("certifications", [])
-    langs = candidate.get("languages", [])
-
-    # Honeypot detection from reasoning
-    honeypot_flag = "honeypot" in reasoning.lower()
-    honeypot_reasons = []
-    if honeypot_flag:
-        # Extract specific honeypot reasons from reasoning
-        hp_keywords = [
-            "impossible timeline", "expert-zero-duration", "multiple current jobs",
-            "salary inversion", "education impossibility", "endorsement inflation",
-            "title-description contradiction", "skill-duration paradox"
-        ]
-        for kw in hp_keywords:
-            if kw.lower() in reasoning.lower():
-                honeypot_reasons.append(kw.replace("-", " ").title())
-        if not honeypot_reasons:
-            honeypot_reasons.append("Honeypot Detected")
-
-    # Build feature breakdown (generic, handles any feature dict)
-    feature_breakdown = {}
-    if features and isinstance(features, dict):
-        for key, val in features.items():
-            if isinstance(val, (int, float)):
-                feature_breakdown[key] = round(float(val), 4)
-
-    # Behavioral signals
-    behavioral = {
-        "profile_completeness": redrob.get("profile_completeness_score", 0),
-        "open_to_work": redrob.get("open_to_work_flag", False),
-        "response_rate": redrob.get("recruiter_response_rate", 0),
-        "avg_response_time": redrob.get("avg_response_time_hours", 0),
-        "interview_completion": redrob.get("interview_completion_rate", 0),
-        "offer_acceptance": redrob.get("offer_acceptance_rate", 0),
-        "github_activity": redrob.get("github_activity_score", 0),
-        "saved_by_recruiters": redrob.get("saved_by_recruiters_30d", 0),
-        "profile_views": redrob.get("profile_views_received_30d", 0),
-        "notice_period": redrob.get("notice_period_days", 0),
-        "verified_email": redrob.get("verified_email", False),
-        "verified_phone": redrob.get("verified_phone", False),
-        "skill_assessments": redrob.get("skill_assessment_scores", {}),
-        "connection_count": redrob.get("connection_count", 0),
-        "endorsements": redrob.get("endorsements_received", 0),
-        "expected_salary": redrob.get("expected_salary_range_inr_lpa", {}),
-        "preferred_work_mode": redrob.get("preferred_work_mode", "unknown"),
-        "willing_to_relocate": redrob.get("willing_to_relocate", False),
-    }
-
-    # Career timeline
-    timeline = []
-    for job in career:
-        timeline.append({
-            "company": job.get("company", "Unknown"),
-            "title": job.get("title", "Unknown"),
-            "start": job.get("start_date", ""),
-            "end": job.get("end_date", "Present"),
-            "duration_months": job.get("duration_months", 0),
-            "is_current": job.get("is_current", False),
-            "industry": job.get("industry", "Unknown"),
-            "company_size": job.get("company_size", "Unknown"),
-        })
-
-    # Skills cloud
-    skills_cloud = []
-    for sk in skills:
-        skills_cloud.append({
-            "name": sk.get("name", "Unknown"),
-            "proficiency": sk.get("proficiency", "unknown"),
-            "endorsements": sk.get("endorsements", 0),
-            "duration_months": sk.get("duration_months", 0),
-        })
-
-    # Education
-    edu_list = []
-    for ed in education:
-        edu_list.append({
-            "institution": ed.get("institution", "Unknown"),
-            "degree": ed.get("degree", "Unknown"),
-            "field": ed.get("field_of_study", "Unknown"),
-            "start": ed.get("start_year", ""),
-            "end": ed.get("end_year", ""),
-            "grade": ed.get("grade", ""),
-            "tier": ed.get("tier", "unknown"),
-        })
-
-    # Certifications
-    cert_list = [c.get("name", "Unknown") for c in certs]
-
-    # Languages
-    lang_list = [{"language": l.get("language", ""), "proficiency": l.get("proficiency", "")} for l in langs]
-
-    # Determine tier
-    tier = "standard"
-    if rank == 1:
-        tier = "gold"
-    elif rank == 2:
-        tier = "silver"
-    elif rank == 3:
-        tier = "bronze"
-    elif honeypot_flag:
-        tier = "honeypot"
-
-    return {
-        "candidate_id": candidate.get("candidate_id", "Unknown"),
-        "rank": rank,
-        "score": round(score, 4),
-        "tier": tier,
-        "honeypot_flag": honeypot_flag,
-        "honeypot_reasons": honeypot_reasons,
-        "reasoning": reasoning,
-        "features": feature_breakdown,
-        "behavioral": behavioral,
-        "profile": {
-            "name": prof.get("anonymized_name", "Unknown"),
-            "headline": prof.get("headline", ""),
-            "summary": prof.get("summary", ""),
-            "title": prof.get("current_title", "Unknown"),
-            "company": prof.get("current_company", "Unknown"),
-            "company_size": prof.get("current_company_size", "Unknown"),
-            "industry": prof.get("current_industry", "Unknown"),
-            "location": prof.get("location", "Unknown"),
-            "country": prof.get("country", "Unknown"),
-            "yoe": float(prof.get("years_of_experience", 0.0)),
-        },
-        "timeline": timeline,
-        "skills": skills_cloud,
-        "education": edu_list,
-        "certifications": cert_list,
-        "languages": lang_list,
-    }
+def extract_candidate_payload(
+    candidate: dict,
+    features: Any,
+    score: float,
+    rank: int,
+    reasoning: str,
+    *,
+    max_score: float | None = None,
+) -> dict:
+    """Build a rich UI payload from actual feature/multiplier objects."""
+    return build_candidate_payload(
+        candidate,
+        features,
+        score,
+        rank,
+        reasoning,
+        max_score=max_score,
+    )
 
 
 # ═══════════════════════════════════════════════════════════
@@ -219,6 +104,7 @@ def get_results():
 async def rank_live(file: UploadFile = File(...)):
     """Live Proof Mode: Process ≤500 candidates synchronously, return in <2 seconds."""
     try:
+        start = time.perf_counter()
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
             in_path = base / (file.filename or "candidates.jsonl")
@@ -234,9 +120,18 @@ async def rank_live(file: UploadFile = File(...)):
 
             candidates_json = []
             raw = result.raw_ranked or []
-            for i, (candidate, features, score) in enumerate(raw):
+            selected_raw = raw[: len(result.rows)]
+            max_score = selected_raw[0][2] if selected_raw else 0.0
+            for i, (candidate, features, score) in enumerate(selected_raw):
                 reasoning = result.rows[i]["reasoning"] if i < len(result.rows) else ""
-                payload = extract_candidate_payload(candidate, features, score, i + 1, reasoning)
+                payload = extract_candidate_payload(
+                    candidate,
+                    features,
+                    score,
+                    i + 1,
+                    reasoning,
+                    max_score=max_score,
+                )
                 candidates_json.append(payload)
 
             # Pipeline stages metadata
@@ -258,7 +153,9 @@ async def rank_live(file: UploadFile = File(...)):
                     "ranked_count": len(candidates_json),
                     "honeypots_blocked": result.honeypots_detected,
                     "avg_score": round(sum(c["score"] for c in candidates_json) / max(len(candidates_json), 1), 4),
-                    "processing_time_ms": 0,  # Could be measured
+                    "processing_time_ms": round((time.perf_counter() - start) * 1000),
+                    "bm25_backend": result.bm25_backend,
+                    "honeypots_in_output": result.honeypots_in_output,
                 },
                 "pipeline": pipeline_stages,
                 "candidates": candidates_json,
@@ -271,46 +168,47 @@ async def rank_live(file: UploadFile = File(...)):
 async def batch_rank(file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
     """Batch Mode: Async processing for large files with SSE progress tracking."""
     job_id = f"batch-{datetime.now().strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:6]}"
+    job_dir = JOB_DIR / job_id
+    job_dir.mkdir(parents=True, exist_ok=True)
 
-    with tempfile.TemporaryDirectory() as tmp:
-        base = Path(tmp)
-        in_path = base / (file.filename or "candidates.jsonl")
-        in_path.write_bytes(await file.read())
+    safe_name = Path(file.filename or "candidates.jsonl").name
+    in_path = job_dir / safe_name
+    in_path.write_bytes(await file.read())
 
-        # Count total lines for progress
-        total_lines = 0
-        with open(in_path, "r", encoding="utf-8") as f:
-            for _ in f:
-                total_lines += 1
+    total_lines = 0
+    with open(in_path, "r", encoding="utf-8") as f:
+        for _ in f:
+            total_lines += 1
 
-        # Store job state
-        job_store[job_id] = {
-            "status": "queued",
-            "processed": 0,
-            "total": total_lines,
-            "current_stage": "Load",
-            "started_at": datetime.now().isoformat(),
-            "file_path": str(in_path),
-            "output_path": str(base / "ranked_candidates.csv"),
-        }
-        results_store[job_id] = []
+    job_store[job_id] = {
+        "status": "queued",
+        "processed": 0,
+        "total": total_lines,
+        "current_stage": "Load",
+        "started_at": datetime.now().isoformat(),
+        "file_path": str(in_path),
+        "output_path": str(job_dir / "ranked_candidates.csv"),
+        "processing_time_ms": 0,
+        "honeypots": 0,
+    }
+    results_store[job_id] = []
 
-        # Start background processing
-        if background_tasks:
-            background_tasks.add_task(process_batch_job, job_id)
+    if background_tasks:
+        background_tasks.add_task(process_batch_job, job_id)
 
-        return JSONResponse({
-            "job_id": job_id,
-            "status": "queued",
-            "total_candidates": total_lines,
-            "estimated_seconds": max(total_lines * 0.0015, 1),  # ~1.5ms per candidate
-        })
+    return JSONResponse({
+        "job_id": job_id,
+        "status": "queued",
+        "total_candidates": total_lines,
+        "estimated_seconds": max(total_lines * 0.0015, 1),
+    })
 
 
 def process_batch_job(job_id: str):
     """Background worker that updates job_store as it processes."""
     job = job_store[job_id]
     job["status"] = "processing"
+    start = time.perf_counter()
 
     try:
         in_path = Path(job["file_path"])
@@ -323,13 +221,27 @@ def process_batch_job(job_id: str):
         )
 
         raw = result.raw_ranked or []
-        for i, (candidate, features, score) in enumerate(raw):
+        selected_raw = raw[: len(result.rows)]
+        max_score = selected_raw[0][2] if selected_raw else 0.0
+        for i, (candidate, features, score) in enumerate(selected_raw):
             reasoning = result.rows[i]["reasoning"] if i < len(result.rows) else ""
-            payload = extract_candidate_payload(candidate, features, score, i + 1, reasoning)
+            payload = extract_candidate_payload(
+                candidate,
+                features,
+                score,
+                i + 1,
+                reasoning,
+                max_score=max_score,
+            )
             results_store[job_id].append(payload)
             job["processed"] = i + 1
             job["current_stage"] = "Reasoning"
 
+        job["honeypots"] = result.honeypots_detected
+        job["honeypots_in_output"] = result.honeypots_in_output
+        job["ranked_pool_count"] = result.ranked_pool_count
+        job["bm25_backend"] = result.bm25_backend
+        job["processing_time_ms"] = round((time.perf_counter() - start) * 1000)
         job["status"] = "complete"
         job["completed_at"] = datetime.now().isoformat()
 
@@ -399,10 +311,10 @@ def get_batch_results(job_id: str):
     pipeline_stages = [
         {"name": "Load", "status": "complete", "count": job["total"]},
         {"name": "Text", "status": "complete", "count": job["total"]},
-        {"name": "BM25", "status": "complete", "count": job["total"]},
-        {"name": "28-D Features", "status": "complete", "count": job["total"]},
+        {"name": "BM25", "status": "complete", "count": job.get("ranked_pool_count", job["total"])},
+        {"name": "28-D Features", "status": "complete", "count": job.get("ranked_pool_count", job["total"])},
         {"name": "Honeypot", "status": "complete", "count": job.get("honeypots", 0)},
-        {"name": "Behavioral", "status": "complete", "count": job["total"]},
+        {"name": "Behavioral", "status": "complete", "count": job.get("ranked_pool_count", job["total"])},
         {"name": "Rank", "status": "complete", "count": len(candidates)},
         {"name": "Reasoning", "status": "complete", "count": len(candidates)},
     ]
@@ -414,7 +326,9 @@ def get_batch_results(job_id: str):
             "ranked_count": len(candidates),
             "honeypots_blocked": job.get("honeypots", 0),
             "avg_score": round(sum(c["score"] for c in candidates) / max(len(candidates), 1), 4),
-            "processing_time_ms": 0,
+            "processing_time_ms": job.get("processing_time_ms", 0),
+            "bm25_backend": job.get("bm25_backend", "unknown"),
+            "honeypots_in_output": job.get("honeypots_in_output", 0),
         },
         "pipeline": pipeline_stages,
         "candidates": candidates,

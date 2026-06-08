@@ -28,17 +28,24 @@ def rank_sample(file_obj):
         )
 
         df = pd.read_csv(out_path)
+        features_by_id = {
+            candidate.get("candidate_id"): features
+            for candidate, features, _ in (result.raw_ranked or [])
+        }
 
         # Enhance dataframe with tier colors
         def get_tier(row):
-            rank = row.get("rank", 999)
-            if rank == 1: return "🥇 Gold"
-            elif rank == 2: return "🥈 Silver"
-            elif rank == 3: return "🥉 Bronze"
-            elif "honeypot" in str(row.get("reasoning", "")).lower(): return "🍯 Honeypot"
+            rank = int(row.get("rank", 999))
+            features = features_by_id.get(str(row.get("candidate_id", "")))
+            if features is not None and features.honeypot_multiplier <= 0.0:
+                return "Honeypot"
+            if rank == 1:
+                return "Gold"
+            if rank == 2:
+                return "Silver"
+            if rank == 3:
+                return "Bronze"
             return "Standard"
-
-        df["tier"] = df.apply(get_tier, axis=1)
 
         df["tier"] = df.apply(get_tier, axis=1)
 

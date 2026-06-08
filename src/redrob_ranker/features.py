@@ -111,6 +111,23 @@ def _contains(text: str, terms: set[str] | list[str]) -> int:
     return sum(1 for term in terms if term in text)
 
 
+NORMALIZED_MUST_HAVE_SKILLS = {
+    group: tuple(_norm(alias) for alias in aliases) for group, aliases in MUST_HAVE_SKILLS.items()
+}
+NORMALIZED_NICE_TO_HAVE_SKILLS = {
+    group: tuple(_norm(alias) for alias in aliases) for group, aliases in NICE_TO_HAVE_SKILLS.items()
+}
+NORMALIZED_RELEVANT_SKILL_ALIASES = frozenset(
+    alias
+    for aliases in list(NORMALIZED_MUST_HAVE_SKILLS.values())
+    + list(NORMALIZED_NICE_TO_HAVE_SKILLS.values())
+    for alias in aliases
+)
+NORMALIZED_CORE_SKILL_ALIASES = frozenset(
+    alias for aliases in NORMALIZED_MUST_HAVE_SKILLS.values() for alias in aliases
+)
+
+
 def _days_since(date_s: str | None) -> int:
     if not date_s:
         return 9999
@@ -159,8 +176,7 @@ def _career_text(candidate: dict) -> str:
 
 def _alias_match(candidate_terms: set[str], full_text: str, aliases: list[str]) -> float:
     score = 0.0
-    for alias in aliases:
-        alias_n = _norm(alias)
+    for alias_n in aliases:
         if alias_n in candidate_terms:
             score = max(score, 1.0)
         elif alias_n and alias_n in full_text:
@@ -246,19 +262,16 @@ def _honeypot_flags(candidate: dict, values: dict[str, float]) -> list[str]:
     if yoe >= 5 and career and career_months < expected_months * 0.45:
         flags.append("career_history_too_short_for_claimed_yoe")
 
-    core_aliases = {alias for aliases in MUST_HAVE_SKILLS.values() for alias in aliases}
-    expert_zero_core = [
-        s.get("name", "")
-        for s in skills
-        if _norm(s.get("proficiency")) == "expert"
-        and int(s.get("duration_months") or 0) == 0
-        and any(_norm(alias) in _norm(s.get("name")) for alias in core_aliases)
-    ]
-    expert_zero_any = [
-        s.get("name", "")
-        for s in skills
-        if _norm(s.get("proficiency")) == "expert" and int(s.get("duration_months") or 0) == 0
-    ]
+    core_aliases = NORMALIZED_CORE_SKILL_ALIASES
+    expert_zero_core = []
+    expert_zero_any = []
+    for skill in skills:
+        if _norm(skill.get("proficiency")) != "expert" or int(skill.get("duration_months") or 0) != 0:
+            continue
+        expert_zero_any.append(skill.get("name", ""))
+        name_n = _norm(skill.get("name"))
+        if any(alias in name_n for alias in core_aliases):
+            expert_zero_core.append(skill.get("name", ""))
     if expert_zero_core or len(expert_zero_any) >= 5:
         flags.append("expert_skill_zero_duration")
 
@@ -298,17 +311,17 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     values = {name: 0.0 for name in FEATURE_NAMES}
 
     core_score = 0.0
-    for group, aliases in MUST_HAVE_SKILLS.items():
+    for group, aliases in NORMALIZED_MUST_HAVE_SKILLS.items():
         core_score += MUST_HAVE_WEIGHTS[group] * _alias_match(terms, full_text, aliases)
     values["core_skill_match"] = clamp(core_score)
 
-    nice_hits = [_alias_match(terms, full_text, aliases) for aliases in NICE_TO_HAVE_SKILLS.values()]
+    nice_hits = [
+        _alias_match(terms, full_text, aliases) for aliases in NORMALIZED_NICE_TO_HAVE_SKILLS.values()
+    ]
     values["nice_skill_match"] = clamp(sum(nice_hits) / max(1, len(nice_hits)))
 
     matched_skill_scores = []
-    relevant_skill_names = set()
-    for aliases in list(MUST_HAVE_SKILLS.values()) + list(NICE_TO_HAVE_SKILLS.values()):
-        relevant_skill_names.update(_norm(alias) for alias in aliases)
+    relevant_skill_names = NORMALIZED_RELEVANT_SKILL_ALIASES
 
     for skill in _skill_records(candidate):
         name = _norm(skill.get("name"))

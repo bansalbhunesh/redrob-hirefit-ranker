@@ -8,6 +8,11 @@ from typing import Iterable
 from redrob_ranker.constants import IMPORTANT_PHRASES, SEMANTIC_CONCEPTS
 
 TOKEN_RE = re.compile(r"[a-z0-9_+#.]+")
+LOWERED_IMPORTANT_PHRASES = tuple(phrase.lower() for phrase in IMPORTANT_PHRASES)
+LOWERED_SEMANTIC_CONCEPTS = {
+    concept: tuple(str(alias).lower() for alias in aliases)
+    for concept, aliases in SEMANTIC_CONCEPTS.items()
+}
 
 
 def norm(value: object) -> str:
@@ -21,21 +26,22 @@ def lower(value: object) -> str:
 def tokenize(text: str) -> list[str]:
     lowered = text.lower()
     tokens = TOKEN_RE.findall(lowered)
-    for phrase in IMPORTANT_PHRASES:
+    for phrase in LOWERED_IMPORTANT_PHRASES:
         if phrase in lowered:
             tokens.append(phrase.replace("/", "_").replace(" ", "_"))
     return tokens
 
 
 def join_nonempty(parts: Iterable[object], sep: str = " ") -> str:
-    return sep.join(norm(p) for p in parts if norm(p))
+    normalized = [norm(part) for part in parts]
+    return sep.join(part for part in normalized if part)
 
 
 def semantic_concept_markers(text: str) -> list[str]:
     lowered = lower(text)
     markers: list[str] = []
-    for concept, aliases in SEMANTIC_CONCEPTS.items():
-        if any(lower(alias) in lowered for alias in aliases):
+    for concept, aliases in LOWERED_SEMANTIC_CONCEPTS.items():
+        if any(alias in lowered for alias in aliases):
             markers.append(f"concept_{concept}")
     return markers
 

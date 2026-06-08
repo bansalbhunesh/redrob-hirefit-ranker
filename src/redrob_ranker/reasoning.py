@@ -51,7 +51,7 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
     opening_variants = [
         f"{title} with {years:.1f} years at {current_company}",
         f"{years:.1f}-year {title} currently at {current_company}",
-        f"Currently {_article_for_title(title)} {title} with {years:.1f} years",
+        f"Currently {_article_for_title(title)} {title} at {current_company} with {years:.1f} years",
     ]
     variant = sum(ord(ch) for ch in str(candidate.get("candidate_id", ""))) % len(opening_variants)
     opening = opening_variants[variant]

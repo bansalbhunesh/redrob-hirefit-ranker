@@ -56,7 +56,7 @@ def print_top_n(result, n: int, elapsed: float, peak_mb: float | None) -> None:
     if not result.raw_ranked or n <= 0:
         return
     print("\n" + "=" * 80)
-    print("REDROB HIREFIT RANKER — TOP CANDIDATES")
+    print("REDROB HIREFIT RANKER - TOP CANDIDATES")
     print("=" * 80)
     print(f"Pipeline: {result.loaded_count:,} candidates -> {result.ranked_pool_count:,} ranked")
     memory_str = f" | Memory: {peak_mb:.0f}MB" if peak_mb is not None else ""
@@ -90,7 +90,7 @@ def print_top_n(result, n: int, elapsed: float, peak_mb: float | None) -> None:
         
         # Honeypot / behavioral flags
         if features.honeypot_multiplier <= 0.0:
-            print(f"   [HONEYPOT] DETECTED")
+            print("   [HONEYPOT] DETECTED")
         elif features.flags:
             print(f"   [FLAGS] {', '.join(features.flags)}")
         else:

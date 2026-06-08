@@ -4,6 +4,8 @@
 
 Rank the top 100 candidates for the Redrob **Senior AI Engineer - Founding Team** JD while satisfying CPU-only, no-network, no-GPU, sub-5-minute reproduction constraints.
 
+Final measured local run: **219.1 seconds** on 100,000 candidates with `bm25s`, 23,247 hard honeypots detected, and 0 hard honeypots in the emitted top 100.
+
 ## 2. Pipeline
 
 ```mermaid
@@ -64,3 +66,5 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
 No hosted LLM/API calls are made during ranking. The optional `bm25s` backend is preferred for speed, but `rank-bm25` fallback keeps the ranker runnable in restricted environments.
+
+The FastAPI dashboard uses the same `CandidateFeatures` objects to expose flags, multipliers, and honeypot reasons; it does not infer those values from reasoning text.
