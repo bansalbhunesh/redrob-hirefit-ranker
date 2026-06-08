@@ -393,6 +393,17 @@ NON_TARGET_TITLES = {
     "operations manager",
 }
 
+# JD explicitly devalues "recent (<12mo) LangChain-to-OpenAI" work and "framework
+# enthusiasts". These are the wrapper/framework signals; note RAG is intentionally
+# excluded (it is legitimate systems work), only the thin-wrapper tells are here.
+LLM_WRAPPER_TERMS = {
+    "langchain",
+    "llamaindex",
+    "llama index",
+    "prompt engineering",
+    "prompt chaining",
+}
+
 CV_SPEECH_ROBOTICS_TERMS = {
     "image classification",
     "computer vision",

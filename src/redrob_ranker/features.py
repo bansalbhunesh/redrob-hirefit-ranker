@@ -14,6 +14,7 @@ from redrob_ranker.constants import (
     CV_SPEECH_ROBOTICS_TERMS,
     FEATURE_NAMES,
     IR_RANKING_SIGNALS,
+    LLM_WRAPPER_TERMS,
     MUST_HAVE_SKILLS,
     MUST_HAVE_WEIGHTS,
     NICE_TO_HAVE_SKILLS,
@@ -359,6 +360,8 @@ _OPEN_SOURCE_PADDED = _pad([str(t).lower() for t in OPEN_SOURCE_SIGNALS])
 _MANAGEMENT_PADDED = _pad(["manager", "lead", "head", "vp", "director"])
 _ML_TERMS_PADDED = _pad(["machine learning", "ai", "ml", "nlp", "data science"])
 _LOCATIONS_PADDED = _pad(PREFERRED_INDIAN_LOCATIONS)
+_LLM_WRAPPER_PADDED = _pad([str(t).lower() for t in LLM_WRAPPER_TERMS])
+_JUNIOR_PADDED = _pad(["junior", "intern", "trainee", "associate", "fresher"])
 
 def compute_features(candidate: dict) -> CandidateFeatures:
     profile = candidate.get("profile", {})
@@ -540,6 +543,25 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     if hop_signal >= 1.0:
         soft_flags.append("title_hopper")
 
+    # JD: "AI experience primarily recent (<12mo) LangChain-to-OpenAI" and
+    # "framework enthusiasts" are explicitly devalued. Soft, conservative gate:
+    # only fires when wrapper terms appear AND there is no shipped retrieval/ranking
+    # depth AND ML tenure is short -- so a senior who shipped systems and also lists
+    # LangChain is never penalized.
+    wrapper_hits = _contains_padded(_LLM_WRAPPER_PADDED, full_text)
+    thin_systems = values["production_evidence"] < 0.35 and values["ir_ranking_experience"] < 0.30
+    short_ml = values["ml_ai_tenure_score"] < 0.25 or yoe < 4.0
+    if wrapper_hits >= 1 and thin_systems and short_ml:
+        soft_flags.append("llm_wrapper_only")
+
+    # JD targets a Senior role (5-9 yrs). Soft nudge for early-career profiles that
+    # also lack strong systems evidence; a 4-yr engineer who shipped ranking systems
+    # (senior_title_held or strong evidence) is intentionally exempt.
+    is_junior_title = _has_boundary(_JUNIOR_PADDED, current_title)
+    weak_systems_evidence = values["production_evidence"] < 0.6 and values["ir_ranking_experience"] < 0.6
+    if (is_junior_title or yoe < 4.0) and not values["senior_title_held"] and weak_systems_evidence:
+        soft_flags.append("junior_for_senior_role")
+
     behavioral_multiplier = compute_behavioral_multiplier(values, candidate)
     honeypot_multiplier = 0.0 if hard_flags else 1.0
     disqualifier_multiplier = compute_disqualifier_multiplier(
@@ -619,10 +641,23 @@ def compute_disqualifier_multiplier(flags: list[str], production_evidence: float
         mult *= 0.65
     if "endorsement_inflation_low_profile" in flags:
         mult *= 0.70
+    if "llm_wrapper_only" in flags:
+        mult *= 0.82
+    if "junior_for_senior_role" in flags:
+        mult *= 0.88
     return clamp(mult, 0.05, 1.0)
 
 
-def final_score(features: CandidateFeatures, retrieval_score: float = 0.0) -> float:
+# EXPERIMENTAL: weight of the optional dense-retrieval feature. Only applied when
+# semantic_score is provided (--use-embeddings); the default path is unaffected.
+SEMANTIC_WEIGHT = 0.10
+
+
+def final_score(
+    features: CandidateFeatures,
+    retrieval_score: float = 0.0,
+    semantic_score: float | None = None,
+) -> float:
     weighted_sum = BASE_FEATURE_WEIGHTS["bm25_score"] * clamp(retrieval_score)
     total_weight = BASE_FEATURE_WEIGHTS["bm25_score"]
     for name, weight in BASE_FEATURE_WEIGHTS.items():
@@ -630,7 +665,14 @@ def final_score(features: CandidateFeatures, retrieval_score: float = 0.0) -> fl
             continue
         weighted_sum += weight * features.values.get(name, 0.0)
         total_weight += weight
+    # Optional dense semantic-fit term. When None (default/official path), the
+    # computation is byte-identical to the lexical+feature scorer above.
+    if semantic_score is not None:
+        weighted_sum += SEMANTIC_WEIGHT * clamp(semantic_score)
+        total_weight += SEMANTIC_WEIGHT
     base_score = weighted_sum / total_weight
+    # Guardrails still multiply on top, so a high semantic score cannot rescue a
+    # keyword stuffer, honeypot, or disqualified profile.
     return max(
         0.0,
         base_score

@@ -3,10 +3,51 @@ import os
 import subprocess
 import sys
 
+import redrob_ranker.pipeline as pipeline_mod
 from redrob_ranker.constants import FEATURE_NAMES
 from redrob_ranker.features import CandidateFeatures
-from redrob_ranker.pipeline import RankerConfig, run_ranking
+from redrob_ranker.pipeline import RankerConfig, rank_candidates, run_ranking
 from redrob_ranker.pipeline import rows_from_ranked
+
+
+def _synthetic_candidates(n: int) -> list[dict]:
+    titles = ["Machine Learning Engineer", "NLP Engineer", "Marketing Manager",
+              "Data Scientist", "Search Engineer", "Backend Engineer"]
+    cands = []
+    for i in range(n):
+        cands.append({
+            "candidate_id": f"CAND_{i:07d}",
+            "profile": {"current_title": titles[i % len(titles)], "headline": "ranking retrieval",
+                        "summary": "Built production vector search and ranking systems at scale",
+                        "location": "Pune" if i % 2 else "Toronto",
+                        "country": "India" if i % 2 else "Canada",
+                        "years_of_experience": 4 + (i % 8), "current_company": "CRED",
+                        "current_industry": "Fintech", "current_company_size": "501-1000"},
+            "career_history": [{"company": "CRED", "title": titles[i % len(titles)],
+                                "start_date": "2019-01-01", "end_date": None, "duration_months": 48 + i % 12,
+                                "is_current": True, "industry": "Fintech", "company_size": "501-1000",
+                                "description": "Shipped embeddings retrieval reranking recommendation in production"}],
+            "education": [], "certifications": [], "languages": [],
+            "skills": [{"name": "Python", "proficiency": "advanced", "endorsements": 20, "duration_months": 60},
+                       {"name": "FAISS", "proficiency": "advanced", "endorsements": 10, "duration_months": 30}],
+            "redrob_signals": {"last_active_date": "2026-05-20", "open_to_work_flag": True,
+                               "recruiter_response_rate": 0.5 + (i % 5) / 10, "avg_response_time_hours": 12,
+                               "interview_completion_rate": 0.9, "saved_by_recruiters_30d": i % 7,
+                               "notice_period_days": 30, "verified_email": True, "verified_phone": True,
+                               "linkedin_connected": True, "willing_to_relocate": False,
+                               "github_activity_score": 40, "profile_completeness_score": 90}})
+    return cands
+
+
+def test_parallel_feature_scoring_matches_serial(monkeypatch):
+    # Force the parallel path on a small pool so the equivalence is exercised in CI.
+    monkeypatch.setattr(pipeline_mod, "_PARALLEL_MIN_POOL", 8)
+    candidates = _synthetic_candidates(64)
+    serial, _ = rank_candidates([dict(c) for c in candidates], RankerConfig(candidate_pool_size=0, workers=1))
+    parallel, _ = rank_candidates([dict(c) for c in candidates], RankerConfig(candidate_pool_size=0, workers=2))
+    assert [c["candidate_id"] for c, _, _ in serial] == [c["candidate_id"] for c, _, _ in parallel]
+    for (_, _, s_score), (_, _, p_score) in zip(serial, parallel):
+        assert abs(s_score - p_score) < 1e-12
 
 
 def test_pipeline_writes_valid_small_json(tmp_path: Path):

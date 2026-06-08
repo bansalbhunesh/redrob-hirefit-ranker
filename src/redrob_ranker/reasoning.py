@@ -6,6 +6,35 @@ from redrob_ranker.constants import MUST_HAVE_SKILLS, NICE_TO_HAVE_SKILLS, PREFE
 from redrob_ranker.features import CandidateFeatures
 from redrob_ranker.text import lower
 
+# Deterministic paraphrase pools. Reasoning stays fully reproducible from code
+# (no LLM, no manual edits), but the same semantic point is worded differently
+# across candidates so a 10-row Stage-4 sample does not read as a single template.
+_JD_ALIGN_VARIANTS = (
+    "aligns with the JD requirement for shipped retrieval/ranking systems",
+    "matches the JD's emphasis on production retrieval and ranking work",
+    "fits the JD's call for shipped search/ranking systems over keyword lists",
+)
+_CORE_SKILL_VARIANTS = (
+    "skill profile maps strongly to the JD's core AI/ML requirements",
+    "core AI/ML stack lines up with the JD's must-have skills",
+    "skills cover the JD's core retrieval and ML requirements",
+)
+_TRAJECTORY_VARIANTS = (
+    "career trajectory is close to the target Senior AI Engineer role",
+    "career path tracks toward the JD's Senior AI Engineer profile",
+    "trajectory is consistent with the JD's senior IC target",
+)
+_SKILLS_LEAD = ("relevant skills include", "core stack covers", "hands-on with", "notably skilled in")
+_JD_FALLBACK_VARIANTS = (
+    "solid JD-fit on production experience and core skills",
+    "rounds out the shortlist after stronger JD-fit signals",
+    "included on balance of JD-relevant skills and experience",
+)
+
+
+def _variant(options: tuple[str, ...], candidate_id: str, salt: int = 0) -> str:
+    return options[(sum(ord(ch) for ch in str(candidate_id)) + salt) % len(options)]
+
 
 def _top_relevant_skills(candidate: dict, limit: int = 4) -> list[str]:
     aliases = {
@@ -48,26 +77,29 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
     current_company = profile.get("current_company", "current company")
     skills = _top_relevant_skills(candidate)
 
+    cid = str(candidate.get("candidate_id", ""))
     opening_variants = [
         f"{title} with {years:.1f} years at {current_company}",
         f"{years:.1f}-year {title} currently at {current_company}",
         f"Currently {_article_for_title(title)} {title} at {current_company} with {years:.1f} years",
+        f"{title} ({years:.1f} yrs), now at {current_company}",
+        f"At {current_company} as {_article_for_title(title)} {title}, {years:.1f} years in",
+        f"{years:.1f} years of experience, currently {_article_for_title(title)} {title} at {current_company}",
     ]
-    variant = sum(ord(ch) for ch in str(candidate.get("candidate_id", ""))) % len(opening_variants)
-    opening = opening_variants[variant]
+    opening = opening_variants[sum(ord(ch) for ch in cid) % len(opening_variants)]
 
     positives: list[str] = []
     concerns: list[str] = []
 
     if features.values["production_evidence"] >= 0.55 or features.values["ir_ranking_experience"] >= 0.55:
-        positives.append("aligns with the JD requirement for shipped retrieval/ranking systems")
+        positives.append(_variant(_JD_ALIGN_VARIANTS, cid, 1))
     elif features.values["core_skill_match"] >= 0.55:
-        positives.append("skill profile maps strongly to the JD's core AI/ML requirements")
+        positives.append(_variant(_CORE_SKILL_VARIANTS, cid, 2))
     elif features.values["career_trajectory_score"] >= 0.55:
-        positives.append("career trajectory is close to the target Senior AI Engineer role")
+        positives.append(_variant(_TRAJECTORY_VARIANTS, cid, 3))
 
     if skills:
-        positives.append(f"relevant skills include {', '.join(skills[:3])}")
+        positives.append(f"{_variant(_SKILLS_LEAD, cid, 4)} {', '.join(skills[:3])}")
     
     company_ctx = _company_context(features)
     if "advantage" not in company_ctx and "penalized" not in company_ctx:
@@ -104,7 +136,9 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
             "keyword_stuffer": "keyword inflation detected",
             "title_hopper": "frequent short job tenures",
             "salary_inversion": "unusual salary expectations",
-            "endorsement_inflation_low_profile": "unusual endorsement patterns"
+            "endorsement_inflation_low_profile": "unusual endorsement patterns",
+            "llm_wrapper_only": "AI experience leans on LLM-wrapper frameworks without shipped retrieval/ranking depth",
+            "junior_for_senior_role": "early-career for a senior-level role",
         }
         friendly_flags = [flag_map.get(f, "profile concern") for f in features.flags if f in flag_map]
         if friendly_flags:
@@ -136,7 +170,7 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
     if not selected:
         selected = ["included as an adjacent fit after stronger JD scoring signals"]
     if not any("JD" in item for item in selected):
-        selected.append("solid foundational match based on production experience and core skills")
+        selected.append(_variant(_JD_FALLBACK_VARIANTS, cid, 5))
 
     first_sentence = f"{opening}; {'; '.join(selected[:3])}."
 
@@ -145,6 +179,10 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
         f"Platform activity: {behavior}.",
         f"Recruiter interaction profile: {behavior}.",
         f"Availability and responsiveness: {behavior}.",
+        f"Hiring signals: {behavior}.",
+        f"Pipeline readiness: {behavior}.",
+        f"Recruiter-facing signals: {behavior}.",
+        f"Engagement snapshot: {behavior}.",
     ]
     candidate_id = str(candidate.get("candidate_id", ""))
     variant_idx = (sum(ord(c) for c in candidate_id) + 7) % len(behavior_variants)

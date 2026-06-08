@@ -48,21 +48,30 @@ def main() -> int:
         args.bm25_backend,
     ]
 
+    def tree_rss(proc: "psutil.Process") -> int:
+        # Sum parent + worker-process RSS so the parallel path is measured honestly
+        # against the 16 GB constraint (children are spawned by ProcessPoolExecutor).
+        total = 0
+        try:
+            procs = [proc] + proc.children(recursive=True)
+        except psutil.Error:
+            procs = [proc]
+        for p in procs:
+            try:
+                total += p.memory_info().rss
+            except psutil.Error:
+                pass
+        return total
+
     start = time.perf_counter()
     peak_rss = 0
     with stdout_path.open("w", encoding="utf-8") as stdout_f, stderr_path.open("w", encoding="utf-8") as stderr_f:
         process = subprocess.Popen(cmd, stdout=stdout_f, stderr=stderr_f, env=env)
         ps_process = psutil.Process(process.pid)
         while process.poll() is None:
-            try:
-                peak_rss = max(peak_rss, ps_process.memory_info().rss)
-            except psutil.Error:
-                pass
+            peak_rss = max(peak_rss, tree_rss(ps_process))
             time.sleep(0.25)
-        try:
-            peak_rss = max(peak_rss, ps_process.memory_info().rss)
-        except psutil.Error:
-            pass
+        peak_rss = max(peak_rss, tree_rss(ps_process))
 
     elapsed = time.perf_counter() - start
     result = {

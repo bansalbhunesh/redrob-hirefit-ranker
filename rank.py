@@ -45,6 +45,24 @@ def parse_args() -> argparse.Namespace:
         help="BM25 backend. auto prefers bm25s and falls back to rank_bm25.",
     )
     parser.add_argument(
+        "--workers",
+        type=int,
+        default=0,
+        help="Feature-scoring worker processes. 0=auto (up to 8 cores for the full "
+        "pool), 1=serial. Output is identical regardless of worker count.",
+    )
+    parser.add_argument(
+        "--use-embeddings",
+        action="store_true",
+        help="EXPERIMENTAL: blend a model2vec/potion dense-retrieval feature (needs "
+        "model2vec installed; off by default and not part of the official path).",
+    )
+    parser.add_argument(
+        "--embed-model",
+        default="minishlab/potion-retrieval-32M",
+        help="Static embedding model for --use-embeddings.",
+    )
+    parser.add_argument(
         "--profile-memory",
         action="store_true",
         help="Print Python tracemalloc peak memory for local profiling.",
@@ -121,6 +139,9 @@ def main() -> None:
         candidate_pool_size=args.candidate_pool,
         max_candidates=args.max_candidates,
         bm25_backend=args.bm25_backend,
+        workers=args.workers,
+        use_embeddings=args.use_embeddings,
+        embed_model=args.embed_model,
     )
     if args.profile_memory:
         tracemalloc.start()
