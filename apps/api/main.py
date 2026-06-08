@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import json
+import sys
 import tempfile
 from pathlib import Path
+
+# Add src to python path so we can import redrob_ranker
+sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
