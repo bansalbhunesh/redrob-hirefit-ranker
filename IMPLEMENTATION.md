@@ -42,13 +42,14 @@ Logistics:
 ## Multipliers
 
 - `behavioral_multiplier`: combines open-to-work, recency, response quality, profile quality, interview reliability, recruiter saves, GitHub activity, assessments, verification, and notice period.
-- `honeypot_multiplier`: `0.0` for hard traps such as salary inversion, expert-zero-duration core skills, multiple current jobs, impossible education, or contradictory profiles.
-- `disqualifier_multiplier`: compounds consulting-only, pure-research, CV/speech/robotics-primary, keyword-stuffer, and title-hopper penalties.
+- `honeypot_multiplier`: `0.0` only for hard traps such as expert-zero-duration core skills, multiple current jobs, impossible education, impossible timeline math, or contradictory profiles.
+- `disqualifier_multiplier`: compounds consulting-only, pure-research, CV/speech/robotics-primary, keyword-stuffer, title-hopper, salary-inversion, and endorsement-inflation penalties.
 
 The CLI prints total hard honeypots detected and hard honeypots in the emitted output.
 
 `--profile-memory` is available only with `--max-candidates <= 5000`; Python `tracemalloc`
-is too slow for the official 100K reproduction path.
+is too slow for the official 100K reproduction path. For full-run wall-clock and
+RSS profiling, use `scripts/measure_runtime_memory.py`.
 
 ## Runtime
 
@@ -60,7 +61,7 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 
 `--candidate-pool N` exists for demos/profiling only. The submission path should leave it at `0`.
 
-On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 202.9 seconds. The run loaded and scored all 100,000 candidates, detected 56 hard honeypots, and emitted 0 hard honeypots in the top 100.
+On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 228.5 seconds. The run loaded and scored all 100,000 candidates, detected 56 hard honeypots, and emitted 0 hard honeypots in the top 100. A profiled full run measured peak RSS at 4.07 GB.
 
 The local silver-label harness (`scripts/build_silver_labels.py` and `scripts/evaluate_silver.py`) is for development and defense only. On the first 20K candidates, the latest validated ranker scored NDCG@10 0.8828, NDCG@50 0.8565, P@10 1.0000, and MAP 0.6890 against heuristic JD-rule labels.
 

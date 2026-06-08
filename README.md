@@ -4,7 +4,7 @@ A deterministic, CPU-only candidate ranking engine for the Redrob India Runs Dat
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Challenge](https://img.shields.io/badge/Redrob-India_Runs_AI-ff69b4.svg)](#)
-[![Runtime](https://img.shields.io/badge/100K_Runtime-202.9s-brightgreen.svg)](#)
+[![Runtime](https://img.shields.io/badge/100K_Runtime-228.5s-brightgreen.svg)](#)
 
 Live sandbox: [redrob-hirefit-ranker on HuggingFace Spaces](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)
 
@@ -38,7 +38,8 @@ Measured result on the local challenge file:
 ```text
 Wrote 100 rows to submission.csv.
 Loaded 100000 candidates; ranked pool 100000; BM25 backend bm25s.
-Runtime 202.9s.
+Runtime 228.5s.
+Peak RSS 4.07 GB in a profiled full run.
 Hard honeypots detected 56; hard honeypots in output 0.
 ```
 
@@ -102,7 +103,7 @@ python scripts/generate_precomputed.py \
   --submission submission.csv \
   --out apps/api/data/precomputed.json \
   --total-candidates 100000 \
-  --processing-time-ms 202900 \
+  --processing-time-ms 228500 \
   --bm25-backend bm25s \
   --honeypots-blocked 56 \
   --honeypots-in-output 0
@@ -123,6 +124,14 @@ Run the Gradio Space locally:
 pip install -r requirements-demo.txt
 python apps/space/app.py
 ```
+
+## 90-Second Demo Script
+
+1. Open with the thesis: "HireFit ranks careers, not keywords. The official run is CPU-only, deterministic, and validator-safe."
+2. Upload a small JSON/JSONL sample in the HuggingFace Space and export the ranked CSV.
+3. Show the top candidate reasoning and point to concrete facts: title, years, skills, production/retrieval evidence, location, notice, and response behavior.
+4. Open the dashboard/API payload and show feature contributions plus hard-vs-soft guardrails.
+5. Close with the measured full run: 100K candidates, no network, no GPU, hard honeypots excluded from the top 100.
 
 ## Setup
 
@@ -161,6 +170,12 @@ Docker reproduction:
 ```bash
 docker build -t redrob-hirefit-ranker .
 docker run --rm -v "%cd%:/data" redrob-hirefit-ranker --candidates /data/candidates.jsonl --out /data/submission.csv
+```
+
+Runtime and peak-RSS profiling:
+
+```bash
+python scripts/measure_runtime_memory.py --candidates ./candidates.jsonl --out ./submission.csv --result-json artifacts/runtime_memory_full.json
 ```
 
 ## Repository Structure

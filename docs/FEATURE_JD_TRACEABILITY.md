@@ -35,10 +35,7 @@ Hard honeypots are absolute exclusions from scoring:
 - claimed YOE contradicts career duration
 - expert core skills with zero duration
 - multiple current jobs
-- salary inversion
 - impossible education timeline
 - title-description contradictions
-- endorsement inflation on incomplete profiles
-- impossible notice period
 
-Soft disqualifiers compound through multipliers: consulting-only without production evidence, pure research without deployment, CV/speech/robotics-primary mismatch, keyword stuffing, and title hopping.
+Soft disqualifiers compound through multipliers: consulting-only without production evidence, pure research without deployment, CV/speech/robotics-primary mismatch, keyword stuffing, title hopping, salary inversion, and endorsement inflation on incomplete profiles.

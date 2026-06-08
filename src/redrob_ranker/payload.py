@@ -13,7 +13,6 @@ HARD_HONEYPOT_FLAGS = {
     "multiple_current_jobs",
     "impossible_education_timeline",
     "title_description_contradiction",
-    "impossible_notice_period",
 }
 
 

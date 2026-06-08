@@ -92,10 +92,17 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
         concerns.append(f"JD disqualifier flags: {', '.join(features.flags[:2])}")
     if features.values["career_trajectory_score"] < 0.35:
         concerns.append("current title is not a strong match for the role")
+    notice_days = signals.get("notice_period_days", "unknown")
+    response_rate = float(signals.get("recruiter_response_rate") or 0)
+    if features.behavioral_multiplier >= 0.95:
+        engagement_note = "strong availability and recruiter-response signals"
+    elif features.behavioral_multiplier >= 0.65:
+        engagement_note = "usable availability signals with some recruiter-response risk"
+    else:
+        engagement_note = "weaker availability or recruiter-response signals"
     behavior = (
-        f"response rate {signals.get('recruiter_response_rate', 0):.2f}, "
-        f"notice {signals.get('notice_period_days', 'unknown')} days, "
-        f"behavior multiplier {features.behavioral_multiplier:.2f}"
+        f"response rate {response_rate:.2f}, notice {notice_days} days; "
+        f"{engagement_note}"
     )
 
     if rank <= 20:
@@ -116,7 +123,7 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
 
     behavior_variants = [
         f"Redrob engagement: {behavior}.",
-        f"Platform activity signals: {behavior}.",
+        f"Platform activity: {behavior}.",
         f"Recruiter interaction profile: {behavior}.",
         f"Availability and responsiveness: {behavior}.",
     ]

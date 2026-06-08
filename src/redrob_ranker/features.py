@@ -334,9 +334,6 @@ def _honeypot_flags(candidate: dict, values: dict[str, float]) -> list[str]:
     if any(t in title for t in NON_TARGET_TITLES) and values["ir_ranking_experience"] >= 0.45:
         flags.append("title_description_contradiction")
 
-    if int(signals.get("notice_period_days") or 0) > 180:
-        flags.append("impossible_notice_period")
-
     return flags
 
 

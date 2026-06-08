@@ -4,7 +4,7 @@
 
 Rank the top 100 candidates for the Redrob **Senior AI Engineer - Founding Team** JD while satisfying CPU-only, no-network, no-GPU, sub-5-minute reproduction constraints.
 
-Final measured local run: **202.9 seconds** on 100,000 candidates with `bm25s`, 56 hard honeypots detected, and 0 hard honeypots in the emitted top 100.
+Final measured local run: **228.5 seconds** on 100,000 candidates with `bm25s`, 56 hard honeypots detected, and 0 hard honeypots in the emitted top 100. A profiled full run peaked at **4.07 GB RSS**.
 
 ## 2. Pipeline
 
