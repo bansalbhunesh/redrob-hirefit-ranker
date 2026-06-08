@@ -67,7 +67,16 @@ Generate an interactive, single-file HTML presentation of your results in 2 seco
 ```bash
 python generate_demo.py --candidates ./candidates.jsonl --submission ./submission.csv --out demo.html
 ```
-*(This generates a self-contained, offline HTML file with zero dependencies. You do **not** need to host it or set up a web server. Simply double-click the newly created `demo.html` file in your project folder to open it in Chrome/Edge during your interview).*
+*(This generates a self-contained, offline HTML file with zero dependencies. You do **not** need to host it or set up a web server).*
+
+**To view the dashboard, run:**
+```bash
+# On Mac/Linux:
+open demo.html
+
+# On Windows:
+start demo.html
+```
 
 ### Other Interactive Demos
 If you prefer a hosted web app interface, this repository also includes the original FastAPI and HuggingFace Gradio apps:
