@@ -8,6 +8,7 @@ import sys
 import tempfile
 import asyncio
 import time
+import shutil
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from datetime import datetime
@@ -90,8 +91,16 @@ def prune_job_stores() -> None:
         return
     oldest = sorted(job_store.items(), key=lambda item: item[1].get("started_at", ""))
     for job_id, _ in oldest[: max(0, len(job_store) - MAX_STORED_JOBS)]:
-        job_store.pop(job_id, None)
+        job = job_store.pop(job_id, None)
         results_store.pop(job_id, None)
+        job_path = Path(job.get("file_path", "")).parent if job else JOB_DIR / job_id
+        try:
+            resolved_job_path = job_path.resolve()
+            resolved_root = JOB_DIR.resolve()
+            if resolved_job_path != resolved_root and resolved_root in resolved_job_path.parents:
+                shutil.rmtree(resolved_job_path, ignore_errors=True)
+        except (OSError, RuntimeError):
+            pass
 
 
 def extract_candidate_payload(

@@ -15,10 +15,14 @@ except ImportError:  # pragma: no cover - stdlib fallback
 
 
 def _loads(line: str | bytes) -> dict:
+    if isinstance(line, bytes) and line.startswith(b"\xef\xbb\xbf"):
+        line = line[3:]
+    elif isinstance(line, str) and line.startswith("\ufeff"):
+        line = line[1:]
     if orjson is not None:
         return orjson.loads(line)
     if isinstance(line, bytes):
-        line = line.decode("utf-8")
+        line = line.decode("utf-8-sig")
     return json.loads(line)
 
 
@@ -38,7 +42,7 @@ def iter_candidates(path: Path, max_candidates: int | None = None) -> Iterator[d
         return
 
     if path.suffix == ".json":
-        data = json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
         for item in data:
             yield item
             count += 1
@@ -62,4 +66,3 @@ def write_submission(path: Path, rows: Iterable[dict]) -> None:
         writer.writeheader()
         for row in rows:
             writer.writerow(row)
-

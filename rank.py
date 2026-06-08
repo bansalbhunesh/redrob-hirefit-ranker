@@ -13,6 +13,11 @@ import time
 import tracemalloc
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parent
+SRC = ROOT / "src"
+if SRC.exists() and str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
 from redrob_ranker.pipeline import RankerConfig, run_ranking
 
 

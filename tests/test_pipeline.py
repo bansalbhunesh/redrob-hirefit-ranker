@@ -1,4 +1,7 @@
 from pathlib import Path
+import os
+import subprocess
+import sys
 
 from redrob_ranker.constants import FEATURE_NAMES
 from redrob_ranker.features import CandidateFeatures
@@ -37,6 +40,53 @@ def test_pipeline_writes_valid_small_json(tmp_path: Path):
     assert "salary_inversion" in result.raw_ranked[1][1].flags
     assert result.raw_ranked[1][1].disqualifier_multiplier < 1.0
     assert result.honeypots_in_output == 0
+    assert out.read_text(encoding="utf-8").startswith("candidate_id,rank,score,reasoning")
+
+
+def test_rank_py_runs_from_repo_without_pythonpath(tmp_path: Path):
+    sample = tmp_path / "sample.json"
+    sample.write_text(
+        """
+[
+  {
+    "candidate_id": "CAND_0000001",
+    "profile": {"current_title":"Machine Learning Engineer","headline":"ML retrieval","summary":"Built production vector search ranking systems","location":"Pune","country":"India","years_of_experience":7,"current_company":"CRED","current_industry":"Fintech"},
+    "career_history": [{"company":"CRED","title":"Machine Learning Engineer","duration_months":60,"description":"Shipped embeddings retrieval and ranking"}],
+    "education": [],
+    "skills": [{"name":"Python","proficiency":"advanced","endorsements":20,"duration_months":60},{"name":"Milvus","proficiency":"advanced","endorsements":10,"duration_months":30}],
+    "redrob_signals": {"last_active_date":"2026-05-20","open_to_work_flag":true,"recruiter_response_rate":0.8,"avg_response_time_hours":12,"interview_completion_rate":0.9,"saved_by_recruiters_30d":5,"notice_period_days":30,"verified_email":true,"verified_phone":true,"linkedin_connected":true,"willing_to_relocate":false}
+  }
+]
+""",
+        encoding="utf-8",
+    )
+    out = tmp_path / "out.csv"
+    root = Path(__file__).resolve().parents[1]
+    env = os.environ.copy()
+    env.pop("PYTHONPATH", None)
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "rank.py",
+            "--candidates",
+            str(sample),
+            "--out",
+            str(out),
+            "--top-k",
+            "1",
+            "--bm25-backend",
+            "bm25s",
+        ],
+        cwd=root,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+
+    assert completed.returncode == 0, completed.stderr
     assert out.read_text(encoding="utf-8").startswith("candidate_id,rank,score,reasoning")
 
 
