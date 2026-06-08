@@ -30,7 +30,7 @@ One command, CPU-only, no network:
 python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
-Measured full run: 100,000 candidates scored in 219.1 seconds with `bm25s`; 23,247 hard honeypots detected and 0 emitted in the top 100.
+Measured full run: 100,000 candidates scored in 215.3 seconds with `bm25s`; 23,247 hard honeypots detected and 0 emitted in the top 100.
 
 ## 7. Example Output
 

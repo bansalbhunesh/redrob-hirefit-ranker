@@ -178,6 +178,53 @@ def test_consulting_only_penalty_softens_when_production_is_real():
     assert features.disqualifier_multiplier == 0.80
 
 
+def test_cv_terms_do_not_disqualify_real_ir_candidate():
+    candidate = make_candidate()
+    candidate["profile"]["summary"] = (
+        "Built semantic search and vector search systems after earlier computer vision work "
+        "with OpenCV, image classification, and speech recognition."
+    )
+    candidate["career_history"][0]["description"] = (
+        "Shipped production semantic search, vector search, ranking, retrieval, ndcg, mrr, "
+        "and relevance systems for candidate matching."
+    )
+
+    features = compute_features(candidate)
+
+    assert features.values["ir_ranking_experience"] >= 0.3
+    assert features.values["disqualifier_skill_flag"] == 0.0
+    assert "cv_speech_robotics_primary" not in features.flags
+
+
+def test_unknown_github_and_offer_acceptance_are_not_behavior_penalties():
+    known = make_candidate()
+    known["redrob_signals"]["github_activity_score"] = 0
+    known["redrob_signals"].pop("offer_acceptance_rate", None)
+
+    unknown = make_candidate()
+    unknown["candidate_id"] = "CAND_0000005"
+    unknown["redrob_signals"]["github_activity_score"] = -1
+    unknown["redrob_signals"]["offer_acceptance_rate"] = -1
+
+    assert compute_features(unknown).behavioral_multiplier == compute_features(known).behavioral_multiplier
+
+
+def test_large_product_company_gets_product_credit():
+    candidate = make_candidate()
+    candidate["profile"]["current_company"] = "Google"
+    candidate["career_history"][0].update(
+        {
+            "company": "Google",
+            "company_size": "10001+",
+            "industry": "Software",
+        }
+    )
+
+    features = compute_features(candidate)
+
+    assert features.values["product_company_ratio"] > 0.9
+
+
 def test_honeypot_rules_catch_missing_plan_cases():
     candidate = make_candidate()
     candidate["candidate_id"] = "CAND_0000004"
@@ -223,4 +270,11 @@ def test_bm25_backend_falls_back_to_rank_bm25():
     candidates = [make_candidate(), make_candidate(candidate_id="CAND_0000002")]
     scores, backend = retrieve_pool(candidates, backend="auto")
     assert backend in {"bm25s", "rank_bm25"}
+    assert len(scores) == 2
+
+
+def test_explicit_bm25s_backend_available_for_current_environment():
+    candidates = [make_candidate(), make_candidate(candidate_id="CAND_0000002")]
+    scores, backend = retrieve_pool(candidates, backend="bm25s")
+    assert backend == "bm25s"
     assert len(scores) == 2

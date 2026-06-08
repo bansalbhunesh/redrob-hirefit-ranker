@@ -26,7 +26,7 @@ compute:
   has_network_during_ranking: false
   pre_computation_required: false
   pre_computation_time_minutes: 0
-  measured_runtime_seconds: 163.3
+  measured_runtime_seconds: 215.3
   measured_bm25_backend: "bm25s"
 
 ai_tools_used:

@@ -10,7 +10,7 @@ Rank the top 100 candidates for the Redrob Senior AI Engineer JD while satisfyin
 - Full 100K reproduction in under 5 minutes.
 - Validator-safe CSV output.
 
-The final measured local run used `bm25s`, scored all 100,000 candidates, and completed in **219.1 seconds** with zero hard honeypots in the emitted top 100.
+The final measured local run used `bm25s`, scored all 100,000 candidates, and completed in **215.3 seconds** with zero hard honeypots in the emitted top 100.
 
 ## System Overview
 
@@ -185,7 +185,7 @@ python validate_submission.py submission.csv
 Final measured output:
 
 ```text
-Runtime: 219.1s
+Runtime: 215.3s
 Loaded candidates: 100000
 Ranked pool: 100000
 Rows emitted: 100

@@ -4,7 +4,7 @@ A deterministic, CPU-only candidate ranking engine for the Redrob India Runs Dat
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Challenge](https://img.shields.io/badge/Redrob-India_Runs_AI-ff69b4.svg)](#)
-[![Runtime](https://img.shields.io/badge/100K_Runtime-219.1s-brightgreen.svg)](#)
+[![Runtime](https://img.shields.io/badge/100K_Runtime-215.3s-brightgreen.svg)](#)
 
 Live dashboard placeholder: [redrob-hirefit-ranker.onrender.com](https://redrob-hirefit-ranker.onrender.com)
 
@@ -38,7 +38,7 @@ Measured result on the local challenge file:
 ```text
 Wrote 100 rows to submission.csv.
 Loaded 100000 candidates; ranked pool 100000; BM25 backend bm25s.
-Runtime 219.1s.
+Runtime 215.3s.
 Honeypots detected 23247; honeypots in output 0.
 ```
 
@@ -91,7 +91,7 @@ python scripts/generate_precomputed.py \
   --submission submission.csv \
   --out apps/api/data/precomputed.json \
   --total-candidates 100000 \
-  --processing-time-ms 219100 \
+  --processing-time-ms 215300 \
   --bm25-backend bm25s \
   --honeypots-blocked 23247 \
   --honeypots-in-output 0

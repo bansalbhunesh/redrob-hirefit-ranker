@@ -42,20 +42,7 @@ def _bm25s_scores(texts: list[str], query: str) -> np.ndarray:
     if hasattr(retriever, "get_scores"):
         return np.asarray(retriever.get_scores(query_tokens), dtype=np.float32)
 
-    results, scores = retriever.retrieve([query_tokens], k=len(texts), show_progress=False)
-    flat_results = np.asarray(results[0])
-    flat_scores = np.asarray(scores[0], dtype=np.float32)
-    ordered_scores = np.zeros(len(texts), dtype=np.float32)
-
-    # Depending on bm25s version, results may be integer IDs or corpus objects.
-    for rank, doc_ref in enumerate(flat_results):
-        try:
-            idx = int(doc_ref)
-        except (TypeError, ValueError):
-            idx = rank
-        if 0 <= idx < len(texts):
-            ordered_scores[idx] = flat_scores[rank]
-    return ordered_scores
+    raise AttributeError("bm25s backend lacks get_scores(); use rank_bm25 fallback.")
 
 
 def bm25_scores(

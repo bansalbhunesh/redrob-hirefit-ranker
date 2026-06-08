@@ -215,7 +215,7 @@ def _is_product_job(job: dict) -> bool:
         return False
     if any(industry_term in industry for industry_term in PRODUCT_INDUSTRIES):
         return True
-    return size in {"51-200", "201-500", "501-1000", "1001-5000"} and any(
+    return size in {"51-200", "201-500", "501-1000", "1001-5000", "5001-10000", "10001+"} and any(
         t in industry for t in ["software", "tech", "data", "platform"]
     )
 
@@ -355,7 +355,6 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     values["github_signal"] = 0.0 if gh < 0 else clamp(gh / 100.0)
 
     cv_count = _contains(full_text, CV_SPEECH_ROBOTICS_TERMS)
-    values["disqualifier_skill_flag"] = 1.0 if cv_count >= 3 and values["ir_ranking_experience"] < 0.25 else 0.0
 
     product_months, consulting_months, total_months = _product_consulting_months(candidate)
     values["product_company_ratio"] = clamp(product_months / max(1, total_months))
@@ -437,7 +436,7 @@ def compute_features(candidate: dict) -> CandidateFeatures:
 
     values["disqualifier_skill_flag"] = 1.0 if (
         cv_count >= 3 and values["ir_ranking_experience"] < 0.3
-    ) else values["disqualifier_skill_flag"]
+    ) else 0.0
 
     hard_flags = _honeypot_flags(candidate, values)
     soft_flags: list[str] = []
@@ -478,12 +477,13 @@ def compute_behavioral_multiplier(values: dict[str, float], candidate: dict) -> 
     mult *= 0.8 + 0.2 * values["interview_reliability"]
     mult *= 1.05 if float(signals.get("saved_by_recruiters_30d") or 0) > 5 else 0.95 if float(signals.get("saved_by_recruiters_30d") or 0) == 0 else 1.0
     raw_github = float(signals.get("github_activity_score") or 0)
-    mult *= 1.05 if values["github_signal"] > 0.2 else 0.94 if raw_github < 0 else 1.0
+    mult *= 1.05 if values["github_signal"] > 0.2 else 1.0
     if candidate.get("redrob_signals", {}).get("skill_assessment_scores"):
         mult *= 1.05 if values["assessment_score_avg"] > 0.6 else 0.9 if values["assessment_score_avg"] < 0.4 else 1.0
         mult *= _assessment_claim_multiplier(candidate)
-    if "offer_acceptance_rate" in signals:
-        mult *= 0.85 + 0.30 * clamp(float(signals.get("offer_acceptance_rate") or 0))
+    offer_rate = signals.get("offer_acceptance_rate")
+    if offer_rate is not None and float(offer_rate) >= 0:
+        mult *= 0.85 + 0.30 * clamp(float(offer_rate))
     mult *= 1.02 if values["profile_quality"] > 0.82 else 1.0
     mult *= 1.05 if values["notice_period_score"] >= 1.0 else 0.70 if values["notice_period_score"] <= 0.2 else 1.0
     return clamp(mult, 0.25, 1.5)
