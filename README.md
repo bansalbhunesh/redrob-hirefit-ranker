@@ -62,34 +62,26 @@ Instantly audit the top candidates, their exact score composition, and behaviora
 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --show-top 3
 ```
 
-### Zero-Dependency HTML Dashboard
-Generate an interactive, single-file HTML presentation of your results in 2 seconds:
+### 🌐 The "Showpiece + Live Proof" Interactive Dashboard
+
+We built a **hybrid-mode real-time FastAPI dashboard** explicitly for the Stage 5 interview. It solves the "dead air" problem of waiting 132 seconds for the 100K batch to run.
+
+**To run the interactive web app locally:**
 ```bash
-python generate_demo.py --candidates ./candidates.jsonl --submission ./submission.csv --out demo.html
-```
-*(This generates a self-contained, offline HTML file with zero dependencies. You do **not** need to host it or set up a web server).*
+# 1. Generate the fast-load payload from your 100K results
+python scripts/generate_precomputed.py
 
-**To view the dashboard, run:**
-```bash
-# On Mac/Linux:
-open demo.html
-
-# On Windows:
-start demo.html
-```
-
-### Other Interactive Demos
-If you prefer a hosted web app interface, this repository also includes the original FastAPI and HuggingFace Gradio apps:
-
-**FastAPI Backend:**
-```bash
+# 2. Start the FastAPI server
 uvicorn apps.api.main:app --reload
 ```
+Then open **[http://localhost:8000](http://localhost:8000)** in your browser.
 
-**HuggingFace Space (Gradio):**
-```bash
-python apps/space/app.py
-```
+- **Showpiece Mode (Default):** Instantly loads the 100K results in 200ms with full glassmorphic UI.
+- **Live Proof Mode:** Toggle to the "Live Proof" tab to upload a smaller `candidates.jsonl` file. Watch the engine process and render the results live in under 2 seconds.
+
+### Legacy Demos
+- **Zero-Dependency Static HTML:** `python generate_demo.py --candidates ./candidates.jsonl --submission ./submission.csv --out demo.html`
+- **HuggingFace Space (Gradio):** `python apps/space/app.py`
 
 ## 🚀 Setup & Reproduction
 
