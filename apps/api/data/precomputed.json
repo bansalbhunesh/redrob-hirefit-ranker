@@ -1,0 +1,1010 @@
+{
+  "metadata": {
+    "total_candidates": 100000,
+    "ranked_count": 100,
+    "honeypots_blocked": 0,
+    "processing_time_ms": 132000
+  },
+  "candidates": [
+    {
+      "candidate_id": "CAND_0018499",
+      "rank": 1,
+      "score": 1.0,
+      "reasoning": "Currently a Senior Machine Learning Engineer with 7.2 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include scikit-learn, Learning to Rank, Embeddings; Noida, Uttar Pradesh is a preferred India location. Platform signals: response rate 0.61, notice 15 days, behavior multiplier 1.41.",
+      "title": "Senior Machine Learning Engineer",
+      "company": "Zomato",
+      "yoe": 7.2,
+      "location": "Noida, Uttar Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0005538",
+      "rank": 2,
+      "score": 0.925223,
+      "reasoning": "5.9-year Senior AI Engineer currently at Adobe; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include pgvector, Information Retrieval Systems, PyTorch; Kolkata, West Bengal is India-based. Platform signals: response rate 0.81, notice 90 days, behavior multiplier 1.39.",
+      "title": "Senior AI Engineer",
+      "company": "Adobe",
+      "yoe": 5.9,
+      "location": "Kolkata, West Bengal"
+    },
+    {
+      "candidate_id": "CAND_0011687",
+      "rank": 3,
+      "score": 0.919828,
+      "reasoning": "Senior NLP Engineer with 7.8 years at Niramai; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include LangChain, Semantic Search, Embeddings; Indore, Madhya Pradesh is India-based. Platform signals: response rate 0.89, notice 15 days, behavior multiplier 1.34.",
+      "title": "Senior NLP Engineer",
+      "company": "Niramai",
+      "yoe": 7.8,
+      "location": "Indore, Madhya Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0088025",
+      "rank": 4,
+      "score": 0.917992,
+      "reasoning": "Staff Machine Learning Engineer with 8.6 years at Yellow.ai; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Learning to Rank, Elasticsearch, LLMs; Jaipur, Rajasthan is India-based. Platform signals: response rate 0.83, notice 90 days, behavior multiplier 1.34.",
+      "title": "Staff Machine Learning Engineer",
+      "company": "Yellow.ai",
+      "yoe": 8.6,
+      "location": "Jaipur, Rajasthan"
+    },
+    {
+      "candidate_id": "CAND_0046525",
+      "rank": 5,
+      "score": 0.841733,
+      "reasoning": "Currently a Senior Machine Learning Engineer with 6.1 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Information Retrieval, pgvector, Sentence Transformers; Pune, Maharashtra is a preferred India location. Platform signals: response rate 0.88, notice 60 days, behavior multiplier 1.23.",
+      "title": "Senior Machine Learning Engineer",
+      "company": "Genpact AI",
+      "yoe": 6.1,
+      "location": "Pune, Maharashtra"
+    },
+    {
+      "candidate_id": "CAND_0002025",
+      "rank": 6,
+      "score": 0.81431,
+      "reasoning": "5.9-year Senior AI Engineer currently at Apple; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include FAISS, Fine-tuning LLMs, TensorFlow; Trivandrum, Kerala is India-based. Platform signals: response rate 0.80, notice 30 days, behavior multiplier 1.30.",
+      "title": "Senior AI Engineer",
+      "company": "Apple",
+      "yoe": 5.9,
+      "location": "Trivandrum, Kerala"
+    },
+    {
+      "candidate_id": "CAND_0055905",
+      "rank": 7,
+      "score": 0.799598,
+      "reasoning": "8.1-year Senior Machine Learning Engineer currently at Flipkart; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include OpenSearch, Fine-tuning LLMs, Hugging Face Transformers; minor concern: London is a logistics concern. Platform signals: response rate 0.87, notice 30 days, behavior multiplier 1.26.",
+      "title": "Senior Machine Learning Engineer",
+      "company": "Flipkart",
+      "yoe": 8.1,
+      "location": "London"
+    },
+    {
+      "candidate_id": "CAND_0030468",
+      "rank": 8,
+      "score": 0.791974,
+      "reasoning": "5.4-year Senior Applied Scientist currently at Swiggy; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include OpenSearch, Ranking Systems, Information Retrieval Systems; Indore, Madhya Pradesh is India-based. Platform signals: response rate 0.78, notice 45 days, behavior multiplier 1.27.",
+      "title": "Senior Applied Scientist",
+      "company": "Swiggy",
+      "yoe": 5.4,
+      "location": "Indore, Madhya Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0028793",
+      "rank": 9,
+      "score": 0.771961,
+      "reasoning": "Search Engineer with 7.2 years at Google; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include LoRA, QLoRA, PyTorch; Trivandrum, Kerala is India-based. Platform signals: response rate 0.57, notice 120 days, behavior multiplier 1.26.",
+      "title": "Search Engineer",
+      "company": "Google",
+      "yoe": 7.2,
+      "location": "Trivandrum, Kerala"
+    },
+    {
+      "candidate_id": "CAND_0041669",
+      "rank": 10,
+      "score": 0.768039,
+      "reasoning": "Recommendation Systems Engineer with 8.0 years at CRED; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Weaviate, Prompt Engineering, Qdrant; Noida, Uttar Pradesh is a preferred India location. Platform signals: response rate 0.77, notice 60 days, behavior multiplier 1.21.",
+      "title": "Recommendation Systems Engineer",
+      "company": "CRED",
+      "yoe": 8.0,
+      "location": "Noida, Uttar Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0016163",
+      "rank": 11,
+      "score": 0.764023,
+      "reasoning": "Applied ML Engineer with 6.7 years at Dream11; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include pgvector, TensorFlow, LoRA; Gurgaon, Haryana is a preferred India location. Platform signals: response rate 0.72, notice 120 days, behavior multiplier 1.32.",
+      "title": "Applied ML Engineer",
+      "company": "Dream11",
+      "yoe": 6.7,
+      "location": "Gurgaon, Haryana"
+    },
+    {
+      "candidate_id": "CAND_0050876",
+      "rank": 12,
+      "score": 0.760619,
+      "reasoning": "Applied ML Engineer with 6.0 years at Freshworks; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Prompt Engineering, Sentence Transformers, Qdrant; Kolkata, West Bengal is India-based. Platform signals: response rate 0.67, notice 90 days, behavior multiplier 1.30.",
+      "title": "Applied ML Engineer",
+      "company": "Freshworks",
+      "yoe": 6.0,
+      "location": "Kolkata, West Bengal"
+    },
+    {
+      "candidate_id": "CAND_0079387",
+      "rank": 13,
+      "score": 0.758342,
+      "reasoning": "Currently an AI Engineer with 6.9 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Sentence Transformers, QLoRA, scikit-learn; Trivandrum, Kerala is India-based. Platform signals: response rate 0.81, notice 30 days, behavior multiplier 1.14.",
+      "title": "AI Engineer",
+      "company": "Microsoft",
+      "yoe": 6.9,
+      "location": "Trivandrum, Kerala"
+    },
+    {
+      "candidate_id": "CAND_0001610",
+      "rank": 14,
+      "score": 0.758305,
+      "reasoning": "Machine Learning Engineer with 3.0 years at Dream11; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include scikit-learn, FAISS, PyTorch; Trivandrum, Kerala is India-based. Platform signals: response rate 0.57, notice 90 days, behavior multiplier 1.16.",
+      "title": "Machine Learning Engineer",
+      "company": "Dream11",
+      "yoe": 3.0,
+      "location": "Trivandrum, Kerala"
+    },
+    {
+      "candidate_id": "CAND_0084819",
+      "rank": 15,
+      "score": 0.756188,
+      "reasoning": "4.5-year Search Engineer currently at Dream11; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include LoRA, OpenSearch, Weaviate; Indore, Madhya Pradesh is India-based. Platform signals: response rate 0.74, notice 120 days, behavior multiplier 1.34.",
+      "title": "Search Engineer",
+      "company": "Dream11",
+      "yoe": 4.5,
+      "location": "Indore, Madhya Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0007412",
+      "rank": 16,
+      "score": 0.736705,
+      "reasoning": "Applied ML Engineer with 7.4 years at Zoho; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Milvus, scikit-learn, Pinecone; Noida, Uttar Pradesh is a preferred India location. Platform signals: response rate 0.76, notice 120 days, behavior multiplier 1.27.",
+      "title": "Applied ML Engineer",
+      "company": "Zoho",
+      "yoe": 7.4,
+      "location": "Noida, Uttar Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0008425",
+      "rank": 17,
+      "score": 0.734069,
+      "reasoning": "Currently a Senior NLP Engineer with 7.8 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Sentence Transformers, Recommendation Systems, Information Retrieval; Kolkata, West Bengal is India-based. Platform signals: response rate 0.66, notice 90 days, behavior multiplier 1.08.",
+      "title": "Senior NLP Engineer",
+      "company": "Ola",
+      "yoe": 7.8,
+      "location": "Kolkata, West Bengal"
+    },
+    {
+      "candidate_id": "CAND_0039754",
+      "rank": 18,
+      "score": 0.731854,
+      "reasoning": "Currently a Senior Applied Scientist with 16.2 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Python, OpenSearch, Elasticsearch; Indore, Madhya Pradesh is India-based. Platform signals: response rate 0.81, notice 30 days, behavior multiplier 1.14.",
+      "title": "Senior Applied Scientist",
+      "company": "Meta",
+      "yoe": 16.2,
+      "location": "Indore, Madhya Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0096142",
+      "rank": 19,
+      "score": 0.726304,
+      "reasoning": "Currently an Applied ML Engineer with 5.0 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include RAG, Weaviate, Python; Hyderabad, Telangana is a preferred India location. Platform signals: response rate 0.84, notice 120 days, behavior multiplier 1.26.",
+      "title": "Applied ML Engineer",
+      "company": "upGrad",
+      "yoe": 5.0,
+      "location": "Hyderabad, Telangana"
+    },
+    {
+      "candidate_id": "CAND_0042506",
+      "rank": 20,
+      "score": 0.726274,
+      "reasoning": "Search Engineer with 4.2 years at Verloop.io; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include FAISS, PEFT, Information Retrieval; Mumbai, Maharashtra is a preferred India location. Platform signals: response rate 0.48, notice 15 days, behavior multiplier 1.21.",
+      "title": "Search Engineer",
+      "company": "Verloop.io",
+      "yoe": 4.2,
+      "location": "Mumbai, Maharashtra"
+    },
+    {
+      "candidate_id": "CAND_0005649",
+      "rank": 21,
+      "score": 0.720397,
+      "reasoning": "7.4-year Senior Data Scientist currently at Sarvam AI; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Information Retrieval, QLoRA, RAG. Platform signals: response rate 0.57, notice 90 days, behavior multiplier 1.10.",
+      "title": "Senior Data Scientist",
+      "company": "Sarvam AI",
+      "yoe": 7.4,
+      "location": "Delhi, Delhi"
+    },
+    {
+      "candidate_id": "CAND_0040887",
+      "rank": 22,
+      "score": 0.70213,
+      "reasoning": "4.7-year Machine Learning Engineer currently at Netflix; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include PEFT, Recommendation Systems, Python; concern: Toronto is a logistics concern. Platform signals: response rate 0.84, notice 15 days, behavior multiplier 1.50.",
+      "title": "Machine Learning Engineer",
+      "company": "Netflix",
+      "yoe": 4.7,
+      "location": "Toronto"
+    },
+    {
+      "candidate_id": "CAND_0078002",
+      "rank": 23,
+      "score": 0.697686,
+      "reasoning": "Machine Learning Engineer with 6.3 years at Meta; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include QLoRA, Hugging Face Transformers, LlamaIndex. Platform signals: response rate 0.86, notice 60 days, behavior multiplier 1.22.",
+      "title": "Machine Learning Engineer",
+      "company": "Meta",
+      "yoe": 6.3,
+      "location": "Coimbatore, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0018722",
+      "rank": 24,
+      "score": 0.69044,
+      "reasoning": "Recommendation Systems Engineer with 6.6 years at Saarthi.ai; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Hugging Face Transformers, TensorFlow, scikit-learn. Platform signals: response rate 0.79, notice 90 days, behavior multiplier 1.17.",
+      "title": "Recommendation Systems Engineer",
+      "company": "Saarthi.ai",
+      "yoe": 6.6,
+      "location": "Toronto"
+    },
+    {
+      "candidate_id": "CAND_0093912",
+      "rank": 25,
+      "score": 0.684318,
+      "reasoning": "5.3-year Senior Data Scientist currently at Razorpay; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Milvus, Elasticsearch, Vector Search. Platform signals: response rate 0.66, notice 30 days, behavior multiplier 1.14.",
+      "title": "Senior Data Scientist",
+      "company": "Razorpay",
+      "yoe": 5.3,
+      "location": "Chandigarh, Chandigarh"
+    },
+    {
+      "candidate_id": "CAND_0081846",
+      "rank": 26,
+      "score": 0.683381,
+      "reasoning": "6.7-year Lead AI Engineer currently at Razorpay; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Information Retrieval, Vector Search, Learning to Rank. Platform signals: response rate 0.73, notice 30 days, behavior multiplier 0.97.",
+      "title": "Lead AI Engineer",
+      "company": "Razorpay",
+      "yoe": 6.7,
+      "location": "Jaipur, Rajasthan"
+    },
+    {
+      "candidate_id": "CAND_0074735",
+      "rank": 27,
+      "score": 0.679583,
+      "reasoning": "Applied ML Engineer with 5.5 years at Rephrase.ai; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Prompt Engineering, Semantic Search, RAG. Platform signals: response rate 0.77, notice 90 days, behavior multiplier 1.30.",
+      "title": "Applied ML Engineer",
+      "company": "Rephrase.ai",
+      "yoe": 5.5,
+      "location": "Chandigarh, Chandigarh"
+    },
+    {
+      "candidate_id": "CAND_0011162",
+      "rank": 28,
+      "score": 0.669882,
+      "reasoning": "Recommendation Systems Engineer with 5.8 years at upGrad; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include OpenSearch, FAISS, LoRA. Platform signals: response rate 0.75, notice 90 days, behavior multiplier 1.19.",
+      "title": "Recommendation Systems Engineer",
+      "company": "upGrad",
+      "yoe": 5.8,
+      "location": "Coimbatore, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0026532",
+      "rank": 29,
+      "score": 0.668297,
+      "reasoning": "4.8-year Recommendation Systems Engineer currently at Zomato; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Information Retrieval, Embeddings, pgvector. Platform signals: response rate 0.52, notice 90 days, behavior multiplier 1.03.",
+      "title": "Recommendation Systems Engineer",
+      "company": "Zomato",
+      "yoe": 4.8,
+      "location": "Chennai, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0006418",
+      "rank": 30,
+      "score": 0.667372,
+      "reasoning": "Currently a Machine Learning Engineer with 5.7 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Elasticsearch, OpenSearch, Qdrant. Platform signals: response rate 0.92, notice 60 days, behavior multiplier 1.13.",
+      "title": "Machine Learning Engineer",
+      "company": "Verloop.io",
+      "yoe": 5.7,
+      "location": "Gurgaon, Haryana"
+    },
+    {
+      "candidate_id": "CAND_0099806",
+      "rank": 31,
+      "score": 0.666902,
+      "reasoning": "AI Engineer with 4.6 years at Mad Street Den; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Qdrant, Prompt Engineering, FAISS. Platform signals: response rate 0.76, notice 30 days, behavior multiplier 1.25.",
+      "title": "AI Engineer",
+      "company": "Mad Street Den",
+      "yoe": 4.6,
+      "location": "Bhubaneswar, Odisha"
+    },
+    {
+      "candidate_id": "CAND_0093193",
+      "rank": 32,
+      "score": 0.660927,
+      "reasoning": "Currently a Senior Machine Learning Engineer with 7.9 years; skill profile maps to the JD's embeddings/vector-search requirements; relevant skills include OpenSearch, Qdrant, Vector Representations. Platform signals: response rate 0.61, notice 45 days, behavior multiplier 1.25.",
+      "title": "Senior Machine Learning Engineer",
+      "company": "Niramai",
+      "yoe": 7.9,
+      "location": "Bangalore, Karnataka"
+    },
+    {
+      "candidate_id": "CAND_0053591",
+      "rank": 33,
+      "score": 0.658,
+      "reasoning": "AI Engineer with 5.3 years at Ola; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Sentence Transformers, Embeddings, LangChain; concern: Toronto is a logistics concern. Platform signals: response rate 0.81, notice 60 days, behavior multiplier 1.25.",
+      "title": "AI Engineer",
+      "company": "Ola",
+      "yoe": 5.3,
+      "location": "Toronto"
+    },
+    {
+      "candidate_id": "CAND_0039383",
+      "rank": 34,
+      "score": 0.657258,
+      "reasoning": "Applied ML Engineer with 7.1 years at Meesho; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include FAISS, LoRA, Recommendation Systems. Platform signals: response rate 0.61, notice 90 days, behavior multiplier 1.05.",
+      "title": "Applied ML Engineer",
+      "company": "Meesho",
+      "yoe": 7.1,
+      "location": "Gurgaon, Haryana"
+    },
+    {
+      "candidate_id": "CAND_0052682",
+      "rank": 35,
+      "score": 0.653282,
+      "reasoning": "NLP Engineer with 6.6 years at Aganitha; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Python, QLoRA, Semantic Search. Platform signals: response rate 0.88, notice 30 days, behavior multiplier 1.13.",
+      "title": "NLP Engineer",
+      "company": "Aganitha",
+      "yoe": 6.6,
+      "location": "Vizag, Andhra Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0061257",
+      "rank": 36,
+      "score": 0.650467,
+      "reasoning": "8.0-year Staff Machine Learning Engineer currently at LinkedIn; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Vector Representations, Python, Information Retrieval Systems. Platform signals: response rate 0.87, notice 30 days, behavior multiplier 1.12.",
+      "title": "Staff Machine Learning Engineer",
+      "company": "LinkedIn",
+      "yoe": 8.0,
+      "location": "Noida, Uttar Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0070398",
+      "rank": 37,
+      "score": 0.650322,
+      "reasoning": "7.2-year Machine Learning Engineer currently at Genpact AI; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include LoRA, FAISS, PyTorch. Platform signals: response rate 0.60, notice 120 days, behavior multiplier 1.06.",
+      "title": "Machine Learning Engineer",
+      "company": "Genpact AI",
+      "yoe": 7.2,
+      "location": "Kochi, Kerala"
+    },
+    {
+      "candidate_id": "CAND_0052744",
+      "rank": 38,
+      "score": 0.647457,
+      "reasoning": "Currently a Senior Software Engineer (ML) with 4.9 years; skill profile maps to the JD's embeddings/vector-search requirements; relevant skills include Sentence Transformers, Pinecone, PEFT. Platform signals: response rate 0.79, notice 90 days, behavior multiplier 1.28.",
+      "title": "Senior Software Engineer (ML)",
+      "company": "Niramai",
+      "yoe": 4.9,
+      "location": "Bhubaneswar, Odisha"
+    },
+    {
+      "candidate_id": "CAND_0027691",
+      "rank": 39,
+      "score": 0.646686,
+      "reasoning": "Currently an NLP Engineer with 6.5 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Recommendation Systems, QLoRA, Weaviate. Platform signals: response rate 0.68, notice 15 days, behavior multiplier 1.05.",
+      "title": "NLP Engineer",
+      "company": "Haptik",
+      "yoe": 6.5,
+      "location": "Pune, Maharashtra"
+    },
+    {
+      "candidate_id": "CAND_0008295",
+      "rank": 40,
+      "score": 0.646551,
+      "reasoning": "6.5-year AI Research Engineer currently at Razorpay; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Python, QLoRA, Prompt Engineering. Platform signals: response rate 0.89, notice 45 days, behavior multiplier 1.28.",
+      "title": "AI Research Engineer",
+      "company": "Razorpay",
+      "yoe": 6.5,
+      "location": "Pune, Maharashtra"
+    },
+    {
+      "candidate_id": "CAND_0017960",
+      "rank": 41,
+      "score": 0.64413,
+      "reasoning": "Recommendation Systems Engineer with 7.7 years at Nykaa; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Python, QLoRA, Information Retrieval. Platform signals: response rate 0.72, notice 60 days, behavior multiplier 1.07.",
+      "title": "Recommendation Systems Engineer",
+      "company": "Nykaa",
+      "yoe": 7.7,
+      "location": "Bangalore, Karnataka"
+    },
+    {
+      "candidate_id": "CAND_0083852",
+      "rank": 42,
+      "score": 0.643524,
+      "reasoning": "Data Scientist with 6.0 years at Mad Street Den; skill profile maps to the JD's embeddings/vector-search requirements; relevant skills include Sentence Transformers, Prompt Engineering, Qdrant. Platform signals: response rate 0.85, notice 90 days, behavior multiplier 1.35.",
+      "title": "Data Scientist",
+      "company": "Mad Street Den",
+      "yoe": 6.0,
+      "location": "Ahmedabad, Gujarat"
+    },
+    {
+      "candidate_id": "CAND_0005260",
+      "rank": 43,
+      "score": 0.642944,
+      "reasoning": "Currently a Senior NLP Engineer with 5.2 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Semantic Search, Python, RAG; concern: not marked open-to-work. Platform signals: response rate 0.86, notice 60 days, behavior multiplier 1.01.",
+      "title": "Senior NLP Engineer",
+      "company": "Netflix",
+      "yoe": 5.2,
+      "location": "Chennai, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0067866",
+      "rank": 44,
+      "score": 0.638809,
+      "reasoning": "6.4-year Senior Software Engineer (ML) currently at Tech Mahindra; skill profile maps to the JD's embeddings/vector-search requirements; relevant skills include Elasticsearch, Qdrant, pgvector. Platform signals: response rate 0.79, notice 45 days, behavior multiplier 1.25.",
+      "title": "Senior Software Engineer (ML)",
+      "company": "Tech Mahindra",
+      "yoe": 6.4,
+      "location": "Noida, Uttar Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0011432",
+      "rank": 45,
+      "score": 0.638472,
+      "reasoning": "Senior Data Scientist with 7.6 years at Amazon; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include OpenSearch, PEFT, Elasticsearch. Platform signals: response rate 0.67, notice 60 days, behavior multiplier 1.18.",
+      "title": "Senior Data Scientist",
+      "company": "Amazon",
+      "yoe": 7.6,
+      "location": "Chennai, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0037566",
+      "rank": 46,
+      "score": 0.632225,
+      "reasoning": "6.9-year Machine Learning Engineer currently at LinkedIn; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Elasticsearch, LangChain, Pinecone. Platform signals: response rate 0.50, notice 15 days, behavior multiplier 1.27.",
+      "title": "Machine Learning Engineer",
+      "company": "LinkedIn",
+      "yoe": 6.9,
+      "location": "Bangalore, Karnataka"
+    },
+    {
+      "candidate_id": "CAND_0071974",
+      "rank": 47,
+      "score": 0.630857,
+      "reasoning": "Currently a Senior AI Engineer with 7.8 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Elasticsearch, Qdrant, PEFT. Platform signals: response rate 0.76, notice 45 days, behavior multiplier 1.04.",
+      "title": "Senior AI Engineer",
+      "company": "Netflix",
+      "yoe": 7.8,
+      "location": "Vizag, Andhra Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0045887",
+      "rank": 48,
+      "score": 0.628521,
+      "reasoning": "Data Scientist with 3.0 years at PharmEasy; skill profile maps to the JD's embeddings/vector-search requirements; relevant skills include Fine-tuning LLMs, Embeddings, Elasticsearch. Platform signals: response rate 0.86, notice 30 days, behavior multiplier 1.50.",
+      "title": "Data Scientist",
+      "company": "PharmEasy",
+      "yoe": 3.0,
+      "location": "Chennai, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0024620",
+      "rank": 49,
+      "score": 0.626286,
+      "reasoning": "AI Engineer with 5.9 years at PharmEasy; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Python, QLoRA, Elasticsearch. Platform signals: response rate 0.41, notice 45 days, behavior multiplier 1.13.",
+      "title": "AI Engineer",
+      "company": "PharmEasy",
+      "yoe": 5.9,
+      "location": "New York"
+    },
+    {
+      "candidate_id": "CAND_0064888",
+      "rank": 50,
+      "score": 0.622717,
+      "reasoning": "Currently an ML Engineer with 5.8 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include TensorFlow, pgvector, Embeddings. Platform signals: response rate 0.92, notice 30 days, behavior multiplier 1.20.",
+      "title": "ML Engineer",
+      "company": "Verloop.io",
+      "yoe": 5.8,
+      "location": "Vizag, Andhra Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0030953",
+      "rank": 51,
+      "score": 0.619111,
+      "reasoning": "Search Engineer with 7.8 years at Nykaa; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Learning to Rank, Qdrant, RAG; concern: not marked open-to-work. Platform signals: response rate 0.63, notice 45 days, behavior multiplier 0.95.",
+      "title": "Search Engineer",
+      "company": "Nykaa",
+      "yoe": 7.8,
+      "location": "Chennai, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0038206",
+      "rank": 52,
+      "score": 0.616779,
+      "reasoning": "Currently a Data Scientist with 3.5 years; skill profile maps to the JD's embeddings/vector-search requirements; relevant skills include Hugging Face Transformers, LlamaIndex, Semantic Search. Platform signals: response rate 0.81, notice 120 days, behavior multiplier 1.38.",
+      "title": "Data Scientist",
+      "company": "BYJU'S",
+      "yoe": 3.5,
+      "location": "Chandigarh, Chandigarh"
+    },
+    {
+      "candidate_id": "CAND_0057563",
+      "rank": 53,
+      "score": 0.615215,
+      "reasoning": "NLP Engineer with 6.8 years at Locobuzz; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Prompt Engineering, Hugging Face Transformers, RAG; concern: not marked open-to-work. Platform signals: response rate 0.83, notice 60 days, behavior multiplier 0.95.",
+      "title": "NLP Engineer",
+      "company": "Locobuzz",
+      "yoe": 6.8,
+      "location": "Indore, Madhya Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0055960",
+      "rank": 54,
+      "score": 0.611344,
+      "reasoning": "Currently an AI Specialist with 4.9 years; skill profile maps to the JD's embeddings/vector-search requirements; relevant skills include PyTorch, LLMs, Qdrant. Platform signals: response rate 0.89, notice 90 days, behavior multiplier 1.38.",
+      "title": "AI Specialist",
+      "company": "Dream11",
+      "yoe": 4.9,
+      "location": "San Francisco"
+    },
+    {
+      "candidate_id": "CAND_0030784",
+      "rank": 55,
+      "score": 0.610518,
+      "reasoning": "Currently a Data Scientist with 4.4 years; skill profile maps to the JD's embeddings/vector-search requirements; relevant skills include Python, QLoRA, Embeddings. Platform signals: response rate 0.90, notice 90 days, behavior multiplier 1.23.",
+      "title": "Data Scientist",
+      "company": "Yellow.ai",
+      "yoe": 4.4,
+      "location": "Delhi, Delhi"
+    },
+    {
+      "candidate_id": "CAND_0064326",
+      "rank": 56,
+      "score": 0.601821,
+      "reasoning": "7.6-year Search Engineer currently at Sarvam AI; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include RAG, Weaviate, scikit-learn. Platform signals: response rate 0.94, notice 45 days, behavior multiplier 1.03.",
+      "title": "Search Engineer",
+      "company": "Sarvam AI",
+      "yoe": 7.6,
+      "location": "Gurgaon, Haryana"
+    },
+    {
+      "candidate_id": "CAND_0057701",
+      "rank": 57,
+      "score": 0.60006,
+      "reasoning": "Recommendation Systems Engineer with 4.1 years at Verloop.io; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Learning to Rank, Prompt Engineering, Python. Platform signals: response rate 0.56, notice 120 days, behavior multiplier 1.11.",
+      "title": "Recommendation Systems Engineer",
+      "company": "Verloop.io",
+      "yoe": 4.1,
+      "location": "Chandigarh, Chandigarh"
+    },
+    {
+      "candidate_id": "CAND_0052328",
+      "rank": 58,
+      "score": 0.594614,
+      "reasoning": "Recommendation Systems Engineer with 6.5 years at Amazon; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include QLoRA, Learning to Rank, Sentence Transformers. Platform signals: response rate 0.79, notice 30 days, behavior multiplier 1.12.",
+      "title": "Recommendation Systems Engineer",
+      "company": "Amazon",
+      "yoe": 6.5,
+      "location": "Pune, Maharashtra"
+    },
+    {
+      "candidate_id": "CAND_0054394",
+      "rank": 59,
+      "score": 0.593784,
+      "reasoning": "Currently a Recommendation Systems Engineer with 4.1 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Fine-tuning LLMs, Prompt Engineering, scikit-learn. Platform signals: response rate 0.64, notice 30 days, behavior multiplier 1.17.",
+      "title": "Recommendation Systems Engineer",
+      "company": "PharmEasy",
+      "yoe": 4.1,
+      "location": "Pune, Maharashtra"
+    },
+    {
+      "candidate_id": "CAND_0026942",
+      "rank": 60,
+      "score": 0.590921,
+      "reasoning": "Junior ML Engineer with 6.0 years at Verloop.io; career trajectory is close to the target Senior AI Engineer role; relevant skills include Recommendation Systems, TensorFlow, scikit-learn; JD fit score components: production 0.33, core skills 0.49. Platform signals: response rate 0.84, notice 30 days, behavior multiplier 1.40.",
+      "title": "Junior ML Engineer",
+      "company": "Verloop.io",
+      "yoe": 6.0,
+      "location": "Chandigarh, Chandigarh"
+    },
+    {
+      "candidate_id": "CAND_0016659",
+      "rank": 61,
+      "score": 0.590703,
+      "reasoning": "4.4-year ML Engineer currently at Glance; skill profile maps to the JD's embeddings/vector-search requirements; relevant skills include scikit-learn, Weaviate, Information Retrieval. Platform signals: response rate 0.89, notice 45 days, behavior multiplier 1.26.",
+      "title": "ML Engineer",
+      "company": "Glance",
+      "yoe": 4.4,
+      "location": "Coimbatore, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0075249",
+      "rank": 62,
+      "score": 0.589745,
+      "reasoning": "6.2-year Applied ML Engineer currently at Zomato; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Pinecone, Milvus, Fine-tuning LLMs. Platform signals: response rate 0.82, notice 45 days, behavior multiplier 0.92.",
+      "title": "Applied ML Engineer",
+      "company": "Zomato",
+      "yoe": 6.2,
+      "location": "Ahmedabad, Gujarat"
+    },
+    {
+      "candidate_id": "CAND_0083307",
+      "rank": 63,
+      "score": 0.588463,
+      "reasoning": "7.8-year Search Engineer currently at CRED; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Python, Weaviate, PEFT. Platform signals: response rate 0.70, notice 120 days, behavior multiplier 0.99.",
+      "title": "Search Engineer",
+      "company": "CRED",
+      "yoe": 7.8,
+      "location": "Vizag, Andhra Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0061265",
+      "rank": 64,
+      "score": 0.587254,
+      "reasoning": "Recommendation Systems Engineer with 6.6 years at Zoho; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Hugging Face Transformers, QLoRA, Milvus. Platform signals: response rate 0.94, notice 120 days, behavior multiplier 0.92.",
+      "title": "Recommendation Systems Engineer",
+      "company": "Zoho",
+      "yoe": 6.6,
+      "location": "Delhi, Delhi"
+    },
+    {
+      "candidate_id": "CAND_0042100",
+      "rank": 65,
+      "score": 0.586735,
+      "reasoning": "Currently a Machine Learning Engineer with 7.3 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include QLoRA, Semantic Search, LLMs. Platform signals: response rate 0.87, notice 90 days, behavior multiplier 1.01.",
+      "title": "Machine Learning Engineer",
+      "company": "Freshworks",
+      "yoe": 7.3,
+      "location": "Singapore"
+    },
+    {
+      "candidate_id": "CAND_0075439",
+      "rank": 66,
+      "score": 0.584972,
+      "reasoning": "Currently a Machine Learning Engineer with 4.3 years; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include OpenSearch, Embeddings, Vector Search; concern: not marked open-to-work. Platform signals: response rate 0.56, notice 30 days, behavior multiplier 1.00.",
+      "title": "Machine Learning Engineer",
+      "company": "Flipkart",
+      "yoe": 4.3,
+      "location": "Vizag, Andhra Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0027801",
+      "rank": 67,
+      "score": 0.583628,
+      "reasoning": "7.4-year NLP Engineer currently at InMobi; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Milvus, QLoRA, Learning to Rank. Platform signals: response rate 0.65, notice 120 days, behavior multiplier 0.99.",
+      "title": "NLP Engineer",
+      "company": "InMobi",
+      "yoe": 7.4,
+      "location": "Hyderabad, Telangana"
+    },
+    {
+      "candidate_id": "CAND_0086154",
+      "rank": 68,
+      "score": 0.580635,
+      "reasoning": "6.8-year Data Scientist currently at Ola; skill profile maps to the JD's embeddings/vector-search requirements; relevant skills include OpenSearch, scikit-learn, Qdrant. Platform signals: response rate 0.90, notice 90 days, behavior multiplier 1.32.",
+      "title": "Data Scientist",
+      "company": "Ola",
+      "yoe": 6.8,
+      "location": "Ahmedabad, Gujarat"
+    },
+    {
+      "candidate_id": "CAND_0074225",
+      "rank": 69,
+      "score": 0.580271,
+      "reasoning": "Machine Learning Engineer with 4.3 years at Unacademy; aligns with the JD requirement for shipped retrieval/ranking systems; relevant skills include Python, Milvus, Vector Search. Platform signals: response rate 0.91, notice 120 days, behavior multiplier 1.06.",
+      "title": "Machine Learning Engineer",
+      "company": "Unacademy",
+      "yoe": 4.3,
+      "location": "Vizag, Andhra Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0087744",
+      "rank": 70,
+      "score": 0.579739,
+      "reasoning": "3.9-year Senior Software Engineer (ML) currently at Niramai; skill profile maps to the JD's embeddings/vector-search requirements; relevant skills include TensorFlow, Pinecone, pgvector. Platform signals: response rate 0.88, notice 30 days, behavior multiplier 1.37.",
+      "title": "Senior Software Engineer (ML)",
+      "company": "Niramai",
+      "yoe": 3.9,
+      "location": "Indore, Madhya Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0073314",
+      "rank": 71,
+      "score": 0.579434,
+      "reasoning": "5.2-year Senior Software Engineer (ML) currently at Aganitha; career trajectory is close to the target Senior AI Engineer role; JD fit score components: production 0.33, core skills 0.44. Platform signals: response rate 0.84, notice 60 days, behavior multiplier 1.37.",
+      "title": "Senior Software Engineer (ML)",
+      "company": "Aganitha",
+      "yoe": 5.2,
+      "location": "Noida, Uttar Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0051292",
+      "rank": 72,
+      "score": 0.57849,
+      "reasoning": "Currently an Applied ML Engineer with 5.2 years; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.52, notice 30 days, behavior multiplier 1.04.",
+      "title": "Applied ML Engineer",
+      "company": "Freshworks",
+      "yoe": 5.2,
+      "location": "Trivandrum, Kerala"
+    },
+    {
+      "candidate_id": "CAND_0083879",
+      "rank": 73,
+      "score": 0.577324,
+      "reasoning": "Machine Learning Engineer with 7.1 years at Ola; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.47, notice 30 days, behavior multiplier 0.93.",
+      "title": "Machine Learning Engineer",
+      "company": "Ola",
+      "yoe": 7.1,
+      "location": "Noida, Uttar Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0068811",
+      "rank": 74,
+      "score": 0.577285,
+      "reasoning": "8.0-year Applied ML Engineer currently at Freshworks; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.42, notice 30 days, behavior multiplier 0.92.",
+      "title": "Applied ML Engineer",
+      "company": "Freshworks",
+      "yoe": 8.0,
+      "location": "Pune, Maharashtra"
+    },
+    {
+      "candidate_id": "CAND_0007009",
+      "rank": 75,
+      "score": 0.572833,
+      "reasoning": "Currently a Recommendation Systems Engineer with 7.9 years; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.62, notice 30 days, behavior multiplier 1.02.",
+      "title": "Recommendation Systems Engineer",
+      "company": "Wysa",
+      "yoe": 7.9,
+      "location": "Noida, Uttar Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0044222",
+      "rank": 76,
+      "score": 0.570294,
+      "reasoning": "AI Engineer with 7.7 years at PolicyBazaar; concern: current title is not a strong match for the role; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.60, notice 60 days, behavior multiplier 1.10.",
+      "title": "AI Engineer",
+      "company": "PolicyBazaar",
+      "yoe": 7.7,
+      "location": "Vizag, Andhra Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0098454",
+      "rank": 77,
+      "score": 0.569859,
+      "reasoning": "6.6-year AI Specialist currently at Meesho; skill profile maps to the JD's embeddings/vector-search requirements. Platform signals: response rate 0.87, notice 60 days, behavior multiplier 1.20.",
+      "title": "AI Specialist",
+      "company": "Meesho",
+      "yoe": 6.6,
+      "location": "Indore, Madhya Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0065195",
+      "rank": 78,
+      "score": 0.569725,
+      "reasoning": "Search Engineer with 5.1 years at CRED; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.80, notice 45 days, behavior multiplier 1.02.",
+      "title": "Search Engineer",
+      "company": "CRED",
+      "yoe": 5.1,
+      "location": "Kolkata, West Bengal"
+    },
+    {
+      "candidate_id": "CAND_0020708",
+      "rank": 79,
+      "score": 0.566881,
+      "reasoning": "Search Engineer with 4.2 years at PolicyBazaar; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.84, notice 30 days, behavior multiplier 1.20.",
+      "title": "Search Engineer",
+      "company": "PolicyBazaar",
+      "yoe": 4.2,
+      "location": "Indore, Madhya Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0015967",
+      "rank": 80,
+      "score": 0.563895,
+      "reasoning": "Currently a Senior Software Engineer (ML) with 5.4 years; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.45, notice 30 days, behavior multiplier 1.02.",
+      "title": "Senior Software Engineer (ML)",
+      "company": "Razorpay",
+      "yoe": 5.4,
+      "location": "Hyderabad, Telangana"
+    },
+    {
+      "candidate_id": "CAND_0091909",
+      "rank": 81,
+      "score": 0.563742,
+      "reasoning": "Currently a Machine Learning Engineer with 6.9 years; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.65, notice 45 days, behavior multiplier 0.96.",
+      "title": "Machine Learning Engineer",
+      "company": "Rephrase.ai",
+      "yoe": 6.9,
+      "location": "Bangalore, Karnataka"
+    },
+    {
+      "candidate_id": "CAND_0077337",
+      "rank": 82,
+      "score": 0.561963,
+      "reasoning": "7.0-year Staff Machine Learning Engineer currently at Paytm; concern: JD disqualifier flags: cv_speech_robotics_primary; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.95, notice 60 days, behavior multiplier 1.34.",
+      "title": "Staff Machine Learning Engineer",
+      "company": "Paytm",
+      "yoe": 7.0,
+      "location": "Kochi, Kerala"
+    },
+    {
+      "candidate_id": "CAND_0043676",
+      "rank": 83,
+      "score": 0.558209,
+      "reasoning": "Senior Software Engineer (ML) with 6.1 years at Observe.AI; skill profile maps to the JD's embeddings/vector-search requirements. Platform signals: response rate 0.65, notice 30 days, behavior multiplier 1.14.",
+      "title": "Senior Software Engineer (ML)",
+      "company": "Observe.AI",
+      "yoe": 6.1,
+      "location": "Delhi, Delhi"
+    },
+    {
+      "candidate_id": "CAND_0031593",
+      "rank": 84,
+      "score": 0.555415,
+      "reasoning": "7.8-year Search Engineer currently at Genpact AI; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.58, notice 90 days, behavior multiplier 0.92.",
+      "title": "Search Engineer",
+      "company": "Genpact AI",
+      "yoe": 7.8,
+      "location": "Kolkata, West Bengal"
+    },
+    {
+      "candidate_id": "CAND_0099751",
+      "rank": 85,
+      "score": 0.549541,
+      "reasoning": "Currently a Junior ML Engineer with 5.5 years; skill profile maps to the JD's embeddings/vector-search requirements. Platform signals: response rate 0.64, notice 120 days, behavior multiplier 1.11.",
+      "title": "Junior ML Engineer",
+      "company": "Observe.AI",
+      "yoe": 5.5,
+      "location": "Chennai, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0061655",
+      "rank": 86,
+      "score": 0.548652,
+      "reasoning": "Machine Learning Engineer with 4.6 years at Krutrim; concern: not marked open-to-work; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.88, notice 15 days, behavior multiplier 1.04.",
+      "title": "Machine Learning Engineer",
+      "company": "Krutrim",
+      "yoe": 4.6,
+      "location": "Jaipur, Rajasthan"
+    },
+    {
+      "candidate_id": "CAND_0010257",
+      "rank": 87,
+      "score": 0.547535,
+      "reasoning": "6.5-year Senior Data Scientist currently at Google; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.72, notice 120 days, behavior multiplier 1.00.",
+      "title": "Senior Data Scientist",
+      "company": "Google",
+      "yoe": 6.5,
+      "location": "Noida, Uttar Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0061339",
+      "rank": 88,
+      "score": 0.541182,
+      "reasoning": "Currently a Search Engineer with 4.2 years; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.90, notice 90 days, behavior multiplier 0.90.",
+      "title": "Search Engineer",
+      "company": "Rephrase.ai",
+      "yoe": 4.2,
+      "location": "Chandigarh, Chandigarh"
+    },
+    {
+      "candidate_id": "CAND_0098846",
+      "rank": 89,
+      "score": 0.541048,
+      "reasoning": "AI Engineer with 7.6 years at upGrad; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.62, notice 45 days, behavior multiplier 0.98.",
+      "title": "AI Engineer",
+      "company": "upGrad",
+      "yoe": 7.6,
+      "location": "Indore, Madhya Pradesh"
+    },
+    {
+      "candidate_id": "CAND_0013613",
+      "rank": 90,
+      "score": 0.540916,
+      "reasoning": "Machine Learning Engineer with 4.7 years at Adobe; concern: Singapore is a logistics concern; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.73, notice 60 days, behavior multiplier 0.84.",
+      "title": "Machine Learning Engineer",
+      "company": "Adobe",
+      "yoe": 4.7,
+      "location": "Singapore"
+    },
+    {
+      "candidate_id": "CAND_0075574",
+      "rank": 91,
+      "score": 0.540898,
+      "reasoning": "Currently a Machine Learning Engineer with 5.7 years; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.58, notice 60 days, behavior multiplier 0.93.",
+      "title": "Machine Learning Engineer",
+      "company": "Haptik",
+      "yoe": 5.7,
+      "location": "Bangalore, Karnataka"
+    },
+    {
+      "candidate_id": "CAND_0036121",
+      "rank": 92,
+      "score": 0.540592,
+      "reasoning": "Currently an ML Engineer with 5.2 years; skill profile maps to the JD's embeddings/vector-search requirements. Platform signals: response rate 0.49, notice 60 days, behavior multiplier 1.08.",
+      "title": "ML Engineer",
+      "company": "Wysa",
+      "yoe": 5.2,
+      "location": "Chennai, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0024466",
+      "rank": 93,
+      "score": 0.536877,
+      "reasoning": "Currently a Search Engineer with 5.2 years; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.47, notice 120 days, behavior multiplier 0.93.",
+      "title": "Search Engineer",
+      "company": "PharmEasy",
+      "yoe": 5.2,
+      "location": "Toronto"
+    },
+    {
+      "candidate_id": "CAND_0080372",
+      "rank": 94,
+      "score": 0.533965,
+      "reasoning": "Computer Vision Engineer with 5.2 years at Zoho; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.63, notice 90 days, behavior multiplier 1.06.",
+      "title": "Computer Vision Engineer",
+      "company": "Zoho",
+      "yoe": 5.2,
+      "location": "Mumbai, Maharashtra"
+    },
+    {
+      "candidate_id": "CAND_0017918",
+      "rank": 95,
+      "score": 0.533529,
+      "reasoning": "ML Engineer with 3.2 years at Aganitha; skill profile maps to the JD's embeddings/vector-search requirements. Platform signals: response rate 0.67, notice 60 days, behavior multiplier 1.24.",
+      "title": "ML Engineer",
+      "company": "Aganitha",
+      "yoe": 3.2,
+      "location": "Bangalore, Karnataka"
+    },
+    {
+      "candidate_id": "CAND_0076831",
+      "rank": 96,
+      "score": 0.531418,
+      "reasoning": "Currently a Search Engineer with 4.0 years; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.50, notice 90 days, behavior multiplier 0.92.",
+      "title": "Search Engineer",
+      "company": "Krutrim",
+      "yoe": 4.0,
+      "location": "Delhi, Delhi"
+    },
+    {
+      "candidate_id": "CAND_0058575",
+      "rank": 97,
+      "score": 0.530623,
+      "reasoning": "5.8-year AI Engineer currently at Krutrim; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.69, notice 90 days, behavior multiplier 0.94.",
+      "title": "AI Engineer",
+      "company": "Krutrim",
+      "yoe": 5.8,
+      "location": "Chennai, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0014440",
+      "rank": 98,
+      "score": 0.53016,
+      "reasoning": "Currently a Recommendation Systems Engineer with 6.4 years; aligns with the JD requirement for shipped retrieval/ranking systems. Platform signals: response rate 0.64, notice 60 days, behavior multiplier 0.96.",
+      "title": "Recommendation Systems Engineer",
+      "company": "CRED",
+      "yoe": 6.4,
+      "location": "Chennai, Tamil Nadu"
+    },
+    {
+      "candidate_id": "CAND_0015578",
+      "rank": 99,
+      "score": 0.527712,
+      "reasoning": "AI Engineer with 5.4 years at Zoho; skill profile maps to the JD's embeddings/vector-search requirements. Platform signals: response rate 0.65, notice 90 days, behavior multiplier 1.01.",
+      "title": "AI Engineer",
+      "company": "Zoho",
+      "yoe": 5.4,
+      "location": "Delhi, Delhi"
+    },
+    {
+      "candidate_id": "CAND_0048375",
+      "rank": 100,
+      "score": 0.524641,
+      "reasoning": "4.4-year Computer Vision Engineer currently at Saarthi.ai; skill profile maps to the JD's embeddings/vector-search requirements. Platform signals: response rate 0.83, notice 60 days, behavior multiplier 1.08.",
+      "title": "Computer Vision Engineer",
+      "company": "Saarthi.ai",
+      "yoe": 4.4,
+      "location": "Indore, Madhya Pradesh"
+    }
+  ]
+}
