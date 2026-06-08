@@ -13,7 +13,7 @@ from redrob_ranker.pipeline import RankerConfig, run_ranking
 
 def rank_sample(file_obj):
     if file_obj is None:
-        return None, "Upload a candidates.jsonl file to begin."
+        return None, "Upload a candidates.jsonl file to begin.", 0, 0, 0, 0.0
 
     with tempfile.TemporaryDirectory() as tmp:
         base = Path(tmp)
@@ -40,19 +40,22 @@ def rank_sample(file_obj):
 
         df["tier"] = df.apply(get_tier, axis=1)
 
+        df["tier"] = df.apply(get_tier, axis=1)
+
         # Reorder columns for better display
         cols = ["rank", "candidate_id", "score", "tier", "reasoning"]
         df = df[[c for c in cols if c in df.columns]]
+        avg_score = df['score'].mean() if len(df) > 0 else 0.0
 
         status_msg = (
             f"✅ **Ranked {len(df)} candidates** from {result.loaded_count} loaded\n\n"
             f"📊 **Pipeline Stats:**\n"
             f"• Honeypots detected: {result.honeypots_detected}\n"
-            f"• Avg score: {df['score'].mean():.4f}\n"
+            f"• Avg score: {avg_score:.4f}\n"
             f"• Processing: Complete"
         )
 
-        return df, status_msg
+        return df, status_msg, result.loaded_count, len(df), result.honeypots_detected, avg_score
 
 
 # ── Custom CSS for glassmorphic dark theme ──
@@ -250,16 +253,16 @@ with gr.Blocks(
     with gr.Row():
         with gr.Column(scale=1):
             with gr.Column(elem_classes=["metric-card"]):
-                gr.Markdown("<div class='value'>100K</div><div class='label'>Candidates</div>")
+                metric_total = gr.Markdown("<div class='value'>—</div><div class='label'>Candidates</div>")
         with gr.Column(scale=1):
             with gr.Column(elem_classes=["metric-card"]):
-                gr.Markdown("<div class='value'>100</div><div class='label'>Ranked</div>")
+                metric_ranked = gr.Markdown("<div class='value'>—</div><div class='label'>Ranked</div>")
         with gr.Column(scale=1):
             with gr.Column(elem_classes=["metric-card"]):
-                gr.Markdown("<div class='value'>8</div><div class='label'>Honeypots</div>")
+                metric_honeypots = gr.Markdown("<div class='value'>—</div><div class='label'>Honeypots</div>")
         with gr.Column(scale=1):
             with gr.Column(elem_classes=["metric-card"]):
-                gr.Markdown("<div class='value'>132s</div><div class='label'>Runtime</div>")
+                metric_avg = gr.Markdown("<div class='value'>—</div><div class='label'>Avg Score</div>")
 
     # Pipeline visualization
     with gr.Row(elem_classes=["glass-panel"]):
@@ -340,7 +343,7 @@ with gr.Blocks(
 
     # Event handlers
     def process_and_detail(file_obj):
-        df, status_msg = rank_sample(file_obj)
+        df, status_msg, loaded, ranked, hps, avg = rank_sample(file_obj)
 
         # Extract honeypot rows for the explorer
         if df is not None and "tier" in df.columns:
@@ -359,13 +362,18 @@ with gr.Blocks(
             )
         else:
             detail = ("N/A", "0.0000", "N/A", "Upload a file to see details")
+            
+        m_total = f"<div class='value'>{loaded:,}</div><div class='label'>Candidates</div>"
+        m_ranked = f"<div class='value'>{ranked:,}</div><div class='label'>Ranked</div>"
+        m_hps = f"<div class='value'>{hps:,}</div><div class='label'>Honeypots</div>"
+        m_avg = f"<div class='value'>{avg:.3f}</div><div class='label'>Avg Score</div>"
 
-        return df, status_msg, hp_df, *detail
+        return df, status_msg, hp_df, detail[0], detail[1], detail[2], detail[3], m_total, m_ranked, m_hps, m_avg
 
     run_btn.click(
         process_and_detail,
         inputs=upload,
-        outputs=[table, status, honeypot_table, detail_id, detail_score, detail_tier, detail_reasoning]
+        outputs=[table, status, honeypot_table, detail_id, detail_score, detail_tier, detail_reasoning, metric_total, metric_ranked, metric_honeypots, metric_avg]
     )
 
 
