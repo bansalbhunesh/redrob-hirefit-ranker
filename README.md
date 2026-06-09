@@ -2,13 +2,16 @@
 
 > **Ranks careers, not keywords.** A fast, offline, deterministic engine that finds *hireable* engineers in a 100,000-candidate pool — built for the Redrob **Intelligent Candidate Discovery & Ranking Challenge** (Senior AI Engineer role).
 
+[![Live Demo](https://img.shields.io/badge/▶_Live_Demo-HuggingFace_Space-FF9D00.svg)](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Challenge](https://img.shields.io/badge/Redrob-India_Runs_AI-ff69b4.svg)](#)
 [![100K Runtime](https://img.shields.io/badge/100K_Runtime-under_200s_CPU-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
 [![Tests](https://img.shields.io/badge/tests-52_passing-brightgreen.svg)](#)
 
-**Live sandbox:** [redrob-hirefit-ranker on HuggingFace Spaces](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)
+### ▶ Try it live (no install)
+
+**[Open the HuggingFace Space →](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)** — it auto-ranks a sample on load; drop in your own `candidates.jsonl` (up to 100) to re-rank. Same deterministic CPU-only engine as the full 100K submission.
 
 ## Highlights
 
