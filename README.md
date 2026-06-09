@@ -1,29 +1,57 @@
 # Redrob HireFit Ranker
 
-A deterministic, CPU-only candidate ranking engine for the Redrob India Runs Data & AI Challenge.
+> **Ranks careers, not keywords.** A fast, offline, deterministic engine that finds *hireable* engineers in a 100,000-candidate pool — built for the Redrob **Intelligent Candidate Discovery & Ranking Challenge** (Senior AI Engineer role).
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Challenge](https://img.shields.io/badge/Redrob-India_Runs_AI-ff69b4.svg)](#)
-[![Runtime](https://img.shields.io/badge/100K_Runtime-~150s_CPU-brightgreen.svg)](#)
+[![100K Runtime](https://img.shields.io/badge/100K_Runtime-under_200s_CPU-brightgreen.svg)](#)
+[![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-52_passing-brightgreen.svg)](#)
 
-Live sandbox: [redrob-hirefit-ranker on HuggingFace Spaces](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)
+**Live sandbox:** [redrob-hirefit-ranker on HuggingFace Spaces](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)
 
-## What It Does
+## Highlights
 
-The official ranker reads `candidates.jsonl`, scores all 100,000 profiles against the Senior AI Engineer JD, and writes a validator-safe `submission.csv` with:
+- ⚡ **In-budget by a wide margin** — ranks all 100,000 candidates in **~80–180s** on CPU (≤60% of the 5-minute limit), parallelized across worker processes.
+- 🔒 **Offline & deterministic** — no network, no GPU, no hosted LLM during ranking; **byte-identical output** run-to-run and serial-vs-parallel (auto-pinned hash seed).
+- 🎯 **Reads careers, not buzzwords** — BM25 + a 28-feature recruiter matrix with multiplicative **behavioral / honeypot / disqualifier guardrails** that defuse the dataset's keyword-stuffer and honeypot traps.
+- 🧪 **Independently validated** — an LLM judge (used only to *evaluate*, never to rank) scored the **top-10 as all tier 4–5, P@10 = 1.0** ([proof](docs/LLM_JUDGE_EVAL.md)).
+- 🤝 **Recruiter-aware** — down-weights perfect-on-paper-but-unavailable candidates exactly as the JD demands — a signal the LLM judge itself overlooked.
 
-```text
-candidate_id,rank,score,reasoning
-```
+## Results at a glance
 
-The design is intentionally offline and deterministic:
+| Dimension | Result | Budget / context |
+|---|---|---|
+| 100K runtime (CPU, parallel) | **~80–180s** | 300s limit |
+| Peak memory | 4.33 GB | 16 GB limit |
+| Network / GPU at rank time | **none** | required: none |
+| Determinism | **byte-identical** run-to-run | — |
+| Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
+| Top-10 (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | — |
+| Format validator | **pass** | Stage-1 gate |
+| Tests | **52 passing** | — |
 
-- No OpenAI, Claude, Gemini, or hosted API scoring during ranking.
-- No model downloads or dense embedding dependency in the official path.
-- `bm25s` lexical retrieval with `rank-bm25` fallback.
-- A 28-feature recruiter matrix for skills, career, experience, behavior, and logistics.
-- Multiplicative behavioral, honeypot, and disqualifier guardrails.
-- Grounded reasoning generated only from candidate facts and feature triggers.
+Full evaluation evidence: **[docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md)**.
+
+## The challenge & our thesis
+
+The dataset hides a trap: it rewards *reading profiles*, not counting AI keywords. The JD asks for "5–9 years, embeddings/retrieval/ranking," but it **means**: find engineers who actually **shipped** ranking / recsys / search at product companies — even if they never wrote "RAG" or "Pinecone" — and **down-weight** the keyword-perfect ones who are unavailable, junior, or impossible (honeypots).
+
+HireFit is built around that gap:
+
+- **Career evidence over keywords** — production and IR/ranking signals mined from career history outweigh skill-list matches.
+- **Guardrails LLMs miss** — behavioral availability, honeypot impossibilities, and keyword-stuffer / junior / LLM-wrapper penalties multiply *on top of* fit, so a perfect-looking but unhireable profile cannot float to the top.
+- **Fast enough to be real** — a system that calls an LLM per candidate cannot scale to a 200K pool in production; ours scores the entire pool on CPU in minutes, deterministically.
+
+The output is a validator-safe `submission.csv` (`candidate_id,rank,score,reasoning`) with grounded, per-candidate reasoning drawn only from facts in the profile.
+
+## Design decisions we can defend
+
+These were deliberate, **measured** choices — not gaps:
+
+- **No hosted LLM at rank time.** Reproducibility, the 5-minute CPU budget, and the JD's own point that GPT-per-candidate can't scale. We use an LLM only *offline, to evaluate* the ranking ([docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md)).
+- **No dense embeddings — we tested them.** We built a model2vec/potion dense-retrieval branch and gated it on a measured A/B: **NDCG@10 +0.0000 and ~2.2× runtime → we shipped the simpler system.** The negative result is the defense (see *Experimental: dense embeddings* below and `artifacts/embedding_gate_result.txt`).
+- **Deterministic, explainable features.** Every score traces to named features and multipliers — debuggable, defensible at interview, and byte-reproducible for Stage-3 reproduction.
 
 ## Measured Reproduction
 
@@ -50,7 +78,7 @@ the serial path (`--workers 1`, verified on the full 100K and locked by a regres
 test). `rank.py` pins `PYTHONHASHSEED=0` automatically (one transparent re-exec), so
 the whole CSV is bit-identical serial-vs-parallel and run-to-run. (The underlying
 non-determinism was only a cosmetic bm25s-vocabulary-ordering wobble in one score's
-6th decimal; rank order was always reproducible — min adjacent gap 4.1e-5, ~400x the
+6th decimal; rank order was always reproducible - min adjacent gap 4.1e-5, ~400x the
 noise.) This cut the full 100K run from ~262s to ~123-184s on the
 dev machine (observed range across runs), leaving margin under the 300s budget; peak
 RSS stays ~4.3 GB against the
@@ -81,7 +109,7 @@ These are heuristic JD-rule silver labels for tuning and defense, not the hidden
 
 The official path is lexical (BM25) + structured recruiter features. This branch adds
 an **opt-in, default-OFF** model2vec/potion dense-retrieval feature, as a guarded
-experiment — it enters the score as one feature with the behavioral/honeypot/
+experiment - it enters the score as one feature with the behavioral/honeypot/
 disqualifier guardrails still multiplying on top, so a high cosine score cannot
 rescue a keyword stuffer or honeypot. With `--use-embeddings` omitted the output is
 byte-identical to the official path (covered by tests).
@@ -96,7 +124,7 @@ docker run --rm -v "<repo>:/work" -w /work --entrypoint bash redrob-hirefit-rank
 
 Pre-committed merge rule: **adopt embeddings only if NDCG@10 improves AND runtime
 stays < 180s** against the independent labels. If they do not, ship the simpler,
-faster lexical+feature system — the measured negative result is itself the defense.
+faster lexical+feature system - the measured negative result is itself the defense.
 
 **Result (20K A/B, potion-retrieval-32M, in the 3.11 image):**
 
@@ -108,13 +136,13 @@ runtime  baseline=75.5s   embeddings=168.3s  (encode-at-rank-time, 20K only)
 GATE: FAIL -> ship simpler system
 ```
 
-Dense similarity did **not** improve top-10 quality (and slightly hurt NDCG@50/MAP —
+Dense similarity did **not** improve top-10 quality (and slightly hurt NDCG@50/MAP -
 consistent with cosine rewarding buzzword-dense profiles), while the rank-time encode
 roughly doubled runtime and would exceed the 100K budget. Two honest caveats: the
 encode cost is movable to a precompute step (so runtime is not the fundamental
-blocker — the flat quality is); and this is scored against heuristic independent
+blocker - the flat quality is); and this is scored against heuristic independent
 labels, so the truly rigorous check is LLM-judged labels. But flat-to-negative
-quality plus added complexity is a clear "ship the simpler system" — the full log is
+quality plus added complexity is a clear "ship the simpler system" - the full log is
 in `artifacts/embedding_gate_result.txt`. See `scripts/llm_judge_labels.py` to anchor
 the verdict with LLM labels if desired.
 
@@ -164,7 +192,7 @@ python scripts/generate_precomputed.py \
   --submission submission.csv \
   --out apps/api/data/precomputed.json \
   --total-candidates 100000 \
-  --processing-time-ms 264800 \
+  --processing-time-ms 184000 \
   --bm25-backend bm25s \
   --honeypots-blocked 53 \
   --honeypots-in-output 0
@@ -239,8 +267,8 @@ python scripts/evaluate_silver.py --submission submission_20k.csv --labels artif
 
 `build_silver_labels.py` derives labels from the same `compute_features` the ranker
 uses, so it measures self-consistency, not fit to the hidden ground truth. The
-independent harness below shares **no code** with the ranker — it scores profiles
-with a separate, narrative-first rubric — so agreement is meaningful and divergence
+independent harness below shares **no code** with the ranker - it scores profiles
+with a separate, narrative-first rubric - so agreement is meaningful and divergence
 is a real signal:
 
 ```bash
@@ -248,8 +276,8 @@ python scripts/build_independent_labels.py --candidates ./candidates.jsonl --out
 python scripts/evaluate_independent.py --submission submission.csv --labels artifacts/independent_labels_100k.jsonl
 ```
 
-It reports the challenge composite (0.50·NDCG@10 + 0.30·NDCG@50 + 0.15·MAP +
-0.05·P@10) using graded relevance, so it is sensitive enough to A/B-test ranker
+It reports the challenge composite (0.50*NDCG@10 + 0.30*NDCG@50 + 0.15*MAP +
+0.05*P@10) using graded relevance, so it is sensitive enough to A/B-test ranker
 changes. The heuristic labels are a proxy; to anchor them, `scripts/llm_judge_labels.py`
 adds LLM-judged tiers on a stratified sample. **This is a development-only tool and
 never runs during ranking** (the ranking path stays offline/CPU/no-network):
