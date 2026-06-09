@@ -30,9 +30,9 @@ The design is intentionally offline and deterministic:
 Command used for the final local 100K run:
 
 ```bash
-# PYTHONHASHSEED=0 pins bm25s vocabulary ordering so the CSV is bit-identical across
-# runs and across serial/parallel. The Docker image (Stage-3 repro) sets this for you.
-PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s
+# rank.py auto-pins PYTHONHASHSEED=0 (re-execs once) so the CSV is bit-identical
+# across runs and serial-vs-parallel -- no prefix or Docker required.
+python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s
 ```
 
 Measured result on the local challenge file:
@@ -47,10 +47,11 @@ Hard honeypots detected 53; hard honeypots in output 0.
 Feature scoring runs across CPU worker processes (`--workers`, default auto up to 8
 cores), which is the dominant cost; the per-candidate scores are byte-identical to
 the serial path (`--workers 1`, verified on the full 100K and locked by a regression
-test). With `PYTHONHASHSEED=0` the whole CSV is bit-identical serial-vs-parallel and
-run-to-run; without it, one normalized score can wobble in its 6th decimal (a cosmetic
-bm25s-vocabulary-ordering artifact) — rank order is unaffected (min adjacent gap
-4.1e-5, ~400x the noise). This cut the full 100K run from ~262s to ~123-184s on the
+test). `rank.py` pins `PYTHONHASHSEED=0` automatically (one transparent re-exec), so
+the whole CSV is bit-identical serial-vs-parallel and run-to-run. (The underlying
+non-determinism was only a cosmetic bm25s-vocabulary-ordering wobble in one score's
+6th decimal; rank order was always reproducible — min adjacent gap 4.1e-5, ~400x the
+noise.) This cut the full 100K run from ~262s to ~123-184s on the
 dev machine (observed range across runs), leaving margin under the 300s budget; peak
 RSS stays ~4.3 GB against the
 16 GB limit. Re-measure inside the Python 3.11 Docker image before submitting,

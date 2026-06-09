@@ -8,6 +8,7 @@ Example:
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 import time
 import tracemalloc
@@ -19,6 +20,23 @@ if SRC.exists() and str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from redrob_ranker.pipeline import RankerConfig, run_ranking
+
+
+def _ensure_deterministic_hash_seed() -> None:
+    """Re-exec once with PYTHONHASHSEED=0 so every `python rank.py ...` is
+    byte-deterministic without the caller remembering the prefix.
+
+    bm25s assigns vocabulary term-IDs via hash-ordered structures; a random hash
+    seed shifts float-accumulation order and can flip one normalized score's 6th
+    decimal (rank order is unaffected). Pinning the seed makes the CSV bit-identical
+    run-to-run. No-op once the seed is already 0, so this re-execs at most once and
+    cannot loop. Only invoked for CLI runs (not on import), so library/web callers
+    are untouched.
+    """
+    if os.environ.get("PYTHONHASHSEED") == "0":
+        return
+    os.environ["PYTHONHASHSEED"] = "0"
+    os.execv(sys.executable, [sys.executable, *sys.argv])
 
 
 def parse_args() -> argparse.Namespace:
@@ -173,4 +191,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    _ensure_deterministic_hash_seed()
     main()

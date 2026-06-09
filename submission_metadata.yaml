@@ -14,7 +14,7 @@ team_members:
 
 github_repo: "https://github.com/bansalbhunesh/redrob-hirefit-ranker"
 sandbox_link: "https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker"
-reproduce_command: "PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv  # Docker image pins the seed automatically"
+reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv  # rank.py auto-pins PYTHONHASHSEED=0 -> bit-identical output"
 
 compute:
   platform: "Local CPU machine"
