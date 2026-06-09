@@ -53,8 +53,21 @@ def card(slide, l, t, w, h, value, label):
     box(slide, l+Inches(.12), t+Inches(.72), w-Inches(.24), Inches(.5), label, 10, MUTE)
 
 
+def scrim(slide, l, t, w, h, rgb, alpha_pct):
+    from pptx.oxml.ns import qn
+    sh = slide.shapes.add_shape(1, l, t, w, h)
+    sh.fill.solid(); sh.fill.fore_color.rgb = rgb; sh.line.fill.background(); sh.shadow.inherit = False
+    srgb = sh.fill.fore_color._xFill.find(qn('a:srgbClr'))
+    srgb.append(srgb.makeelement(qn('a:alpha'), {'val': str(int(alpha_pct * 1000))}))
+    return sh
+
+
 def title_slide():
     s = prs.slides.add_slide(BLANK); bg(s, NAVY)
+    cover = SS / "cover.png"
+    if cover.exists():
+        s.shapes.add_picture(str(cover), 0, 0, width=W, height=H)
+        scrim(s, 0, 0, Inches(7.6), H, NAVY, 62)            # left scrim for text contrast
     box(s, Inches(.9), Inches(1.1), Inches(11), Inches(.5),
         "REDROB · INDIA RUNS DATA & AI CHALLENGE", 13, MUTE, bold=True)
     box(s, Inches(.85), Inches(1.7), Inches(11.6), Inches(1.4), "HireFit Ranker", 60, WHITE, bold=True)
