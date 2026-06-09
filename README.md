@@ -38,7 +38,7 @@
 | Format validator | **pass** | Stage-1 gate |
 | Tests | **52 passing** | — |
 
-📄 **Methodology:** **[METHODOLOGY.md](METHODOLOGY.md)** · 📊 **Slide deck (PDF):** **[Redrob_HireFit_Ranker.pdf](docs/Redrob_HireFit_Ranker.pdf)** · 🧪 **Eval evidence:** **[docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md)**.
+**Methodology:** **[METHODOLOGY.md](METHODOLOGY.md)** | **Slide deck:** **[PDF](docs/Redrob_HireFit_Ranker.pdf)** / **[PPTX](docs/Redrob_HireFit_Ranker.pptx)** | **Eval evidence:** **[docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md)**.
 
 ## The challenge & our thesis
 

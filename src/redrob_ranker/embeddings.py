@@ -3,7 +3,7 @@
 Design note (why this is a *feature*, not a ranker)
 ---------------------------------------------------
 On this dataset the traps are buzzword-dense profiles (keyword stuffers) and
-impossible honeypots. A raw cosine-similarity ranker rewards exactly those — it
+impossible honeypots. A raw cosine-similarity ranker rewards exactly those - it
 sees a stuffer as "semantically very AI". So dense similarity enters the system as
 ONE additive feature inside the existing matrix, and the multiplicative behavioral
 / honeypot / disqualifier guardrails still apply on top. Embeddings widen recall
@@ -51,7 +51,7 @@ class StaticModelEmbedder:
 class HashingStubEmbedder:
     """Deterministic, dependency-free stub for tests and CI.
 
-    Not semantically meaningful — it only lets the blending/threading logic be
+    Not semantically meaningful - it only lets the blending/threading logic be
     exercised without downloading a model. Never use it for a real run.
     """
 

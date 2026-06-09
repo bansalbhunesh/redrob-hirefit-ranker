@@ -30,7 +30,7 @@ One command, CPU-only, no network:
 python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
-Measured full run: 100,000 candidates scored in 264.8 seconds with `bm25s`; peak RSS 4.07 GB; 53 hard honeypots detected and 0 emitted in the top 100. Silver-label development check on the first 20K candidates: NDCG@10 0.9088, NDCG@50 0.8482, P@10 1.0000, MAP 0.7518.
+Measured full run: 100,000 candidates scored in an observed 123-184 seconds with `bm25s`; peak RSS 4.33 GB across parent plus worker processes; 53 hard honeypots detected and 0 emitted in the top 100. Silver-label development check on the first 20K candidates: NDCG@10 0.9088, NDCG@50 0.8482, P@10 1.0000, MAP 0.7518.
 
 ## 7. Example Output
 

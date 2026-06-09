@@ -10,7 +10,7 @@ Rank the top 100 candidates for the Redrob Senior AI Engineer JD while satisfyin
 - Full 100K reproduction in under 5 minutes.
 - Validator-safe CSV output.
 
-The final measured local run used `bm25s`, scored all 100,000 candidates, and completed in **264.8 seconds** with zero hard honeypots in the emitted top 100. A profiled full run peaked at **4.07 GB RSS**.
+The final measured local runs use `bm25s`, score all 100,000 candidates, and complete in an observed **123-184 seconds** with zero hard honeypots in the emitted top 100. A profiled full run peaked at **4.33 GB RSS** across the parent plus worker processes.
 
 ## System Overview
 
@@ -45,7 +45,7 @@ For this official path, those trade-offs are risky:
 - Local dense embedding generation can push CPU-only 100K runs beyond the 300-second limit.
 - Black-box scoring makes Stage 3/4 review harder to defend.
 
-The official ranker therefore uses deterministic sparse expansion plus feature scoring. Dense embeddings are documented as a future improvement, not a dependency.
+The official ranker therefore uses deterministic sparse expansion plus feature scoring. Dense embeddings are present only as an opt-in, default-off experiment with a measured negative gate result, not as a dependency of the submitted path.
 
 ## Retrieval Layer
 
@@ -179,14 +179,14 @@ python -m compileall -q src tests rank.py apps scripts
 python -m pytest -q
 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s
 python scripts/validate_submission.py submission.csv
-python validate_submission.py submission.csv
+# Also run the official challenge validator from the downloaded bundle when available.
 ```
 
 Final measured output:
 
 ```text
-Runtime: 264.8s
-Peak RSS: 4.07 GB
+Runtime: observed local range 123-184s
+Peak RSS: 4.33 GB
 Loaded candidates: 100000
 Ranked pool: 100000
 Rows emitted: 100

@@ -61,7 +61,9 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 
 `--candidate-pool N` exists for demos/profiling only. The submission path should leave it at `0`.
 
-On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in 264.8 seconds. The run loaded and scored all 100,000 candidates, detected 53 hard honeypots, and emitted 0 hard honeypots in the top 100. A profiled full run measured peak RSS at 4.07 GB.
+On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in an observed 123-184 seconds across repeated runs. The run loaded and scored all 100,000 candidates, detected 53 hard honeypots, and emitted 0 hard honeypots in the top 100. A profiled full run measured peak RSS at 4.33 GB across the parent plus worker processes.
+
+Feature scoring is parallelized across CPU worker processes by default, capped at 8 workers for memory safety. `--workers 1` remains the serial escape hatch and produces byte-identical output.
 
 The local silver-label harness (`scripts/build_silver_labels.py` and `scripts/evaluate_silver.py`) is for development and defense only. On the first 20K candidates, the latest validated ranker scored NDCG@10 0.9088, NDCG@50 0.8482, P@10 1.0000, and MAP 0.7518 against heuristic JD-rule labels.
 
@@ -73,5 +75,5 @@ The FastAPI/dashboard payload is generated from `CandidateFeatures` directly, ex
 python -m pytest -q
 python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 python scripts/validate_submission.py ./submission.csv
-python validate_submission.py ./submission.csv
+# Also run the official challenge validator from the downloaded bundle when available.
 ```

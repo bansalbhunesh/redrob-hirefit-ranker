@@ -4,7 +4,7 @@
 
 Rank the top 100 candidates for the Redrob **Senior AI Engineer - Founding Team** JD while satisfying CPU-only, no-network, no-GPU, sub-5-minute reproduction constraints.
 
-Final measured local run: **264.8 seconds** on 100,000 candidates with `bm25s`, 53 hard honeypots detected, and 0 hard honeypots in the emitted top 100. A profiled full run peaked at **4.07 GB RSS**.
+Final measured local runs complete in an observed **123-184 seconds** on 100,000 candidates with `bm25s`, 53 hard honeypots detected, and 0 hard honeypots in the emitted top 100. A profiled full run peaked at **4.33 GB RSS** across the parent plus worker processes.
 
 ## 2. Pipeline
 
@@ -66,5 +66,7 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
 No hosted LLM/API calls are made during ranking. The optional `bm25s` backend is preferred for speed, but `rank-bm25` fallback keeps the ranker runnable in restricted environments.
+
+Feature scoring is parallelized across CPU workers by default, capped at 8 workers for memory safety. `--workers 1` remains the serial escape hatch and produces byte-identical output.
 
 The FastAPI dashboard uses the same `CandidateFeatures` objects to expose flags, multipliers, and honeypot reasons; it does not infer those values from reasoning text.
