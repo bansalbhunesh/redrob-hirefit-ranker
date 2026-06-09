@@ -8,13 +8,13 @@ section 3). Its only job is to anchor the heuristic labels in
 the ranker against something closer to the hidden ground truth than our own code.
 
 Design choices grounded in the eval literature:
-  * Stratified sampling — random 100K sampling is ~99% irrelevant and wastes the
+  * Stratified sampling - random 100K sampling is ~99% irrelevant and wastes the
     budget; we oversample the contested region (ranker top-N + heuristic top tiers)
     plus a random control, so NDCG@10 (the dominant metric) is actually informed.
   * Pointwise tiering with an explicit rubric. For the closest calls, re-run in
     --pairwise mode (less position bias than pointwise on near-ties; see
     arXiv:2406.07791) and reconcile.
-  * Caching + resume — re-runs skip already-judged ids.
+  * Caching + resume - re-runs skip already-judged ids.
 
 Privacy: the dataset is synthetic/anonymized, but we still send only a curated
 field subset (no raw identifiers), as good hygiene and a clean Stage-4/5 story.
@@ -102,17 +102,18 @@ def stratified_ids(submission: Path | None, strat_labels: Path | None,
     return chosen[:n]
 
 
-def judge(provider: str, model: str, jd: str, cand: dict) -> dict:
-    prompt = f"{RUBRIC}\n\n=== JOB DESCRIPTION ===\n{jd[:6000]}\n\n=== CANDIDATE ===\n{json.dumps(cand, ensure_ascii=False)}"
+def judge(provider: str, model: str, jd: str, cand: dict, base_url: str | None = None) -> dict:
+    prompt = f"{RUBRIC}\n\n=== JOB DESCRIPTION ===\n{jd[:12000]}\n\n=== CANDIDATE ===\n{json.dumps(cand, ensure_ascii=False)}"
     if provider == "anthropic":
         import anthropic
-        client = anthropic.Anthropic()
+        client = anthropic.Anthropic(base_url=base_url) if base_url else anthropic.Anthropic()
         msg = client.messages.create(model=model, max_tokens=120,
                                       messages=[{"role": "user", "content": prompt}])
         text = msg.content[0].text
     else:
         from openai import OpenAI
-        client = OpenAI()
+        # base_url lets us target an OpenAI-compatible gateway (e.g. aicredits.in).
+        client = OpenAI(base_url=base_url) if base_url else OpenAI()
         resp = client.chat.completions.create(model=model, max_tokens=120,
                                                messages=[{"role": "user", "content": prompt}])
         text = resp.choices[0].message.content
@@ -131,6 +132,8 @@ def main() -> None:
     ap.add_argument("--top-n", type=int, default=120)
     ap.add_argument("--provider", choices=["anthropic", "openai"], default="anthropic")
     ap.add_argument("--model", default="claude-sonnet-4-6")
+    ap.add_argument("--base-url", default=os.environ.get("OPENAI_BASE_URL"),
+                    help="OpenAI-compatible gateway base URL (e.g. https://api.aicredits.in/v1).")
     args = ap.parse_args()
 
     key = os.environ.get("ANTHROPIC_API_KEY" if args.provider == "anthropic" else "OPENAI_API_KEY")
@@ -161,7 +164,7 @@ def main() -> None:
             if cid not in todo:
                 continue
             try:
-                verdict = judge(args.provider, args.model, jd, compact_candidate(c))
+                verdict = judge(args.provider, args.model, jd, compact_candidate(c), args.base_url)
                 tier = int(verdict.get("tier", 0))
             except Exception as exc:  # noqa: BLE001 - dev tool, keep going
                 print(f"  {cid}: error {exc}", file=sys.stderr)
