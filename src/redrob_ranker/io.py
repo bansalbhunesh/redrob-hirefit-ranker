@@ -35,7 +35,10 @@ def iter_candidates(path: Path, max_candidates: int | None = None) -> Iterator[d
         with opener(path) as f:
             for raw in f:
                 if raw.strip():
-                    yield _loads(raw)
+                    item = _loads(raw)
+                    if not item.get("candidate_id"):
+                        item["candidate_id"] = f"UNKNOWN_ROW_{count}"
+                    yield item
                     count += 1
                     if max_candidates and count >= max_candidates:
                         return
@@ -44,6 +47,8 @@ def iter_candidates(path: Path, max_candidates: int | None = None) -> Iterator[d
     if path.suffix == ".json":
         data = json.loads(path.read_text(encoding="utf-8-sig"))
         for item in data:
+            if not item.get("candidate_id"):
+                item["candidate_id"] = f"UNKNOWN_ROW_{count}"
             yield item
             count += 1
             if max_candidates and count >= max_candidates:
@@ -53,7 +58,10 @@ def iter_candidates(path: Path, max_candidates: int | None = None) -> Iterator[d
     with path.open("rb") as f:
         for raw in f:
             if raw.strip():
-                yield _loads(raw)
+                item = _loads(raw)
+                if not item.get("candidate_id"):
+                    item["candidate_id"] = f"UNKNOWN_ROW_{count}"
+                yield item
                 count += 1
                 if max_candidates and count >= max_candidates:
                     return

@@ -453,12 +453,19 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     very_short_jobs = sum(1 for months in completed_tenures if months < 9)
     short_jobs = sum(1 for months in completed_tenures if months < 18)
     median_tenure = statistics.median(completed_tenures) if completed_tenures else 0
+    total_jobs = len(completed_tenures)
+    short_ratio = short_jobs / max(1, total_jobs)
+    
     hop_signal = (
         1.0
-        if (len(completed_tenures) >= 3 and median_tenure < 18) or very_short_jobs >= 3
+        if (total_jobs >= 3 and median_tenure < 18) or very_short_jobs >= 3
         else 0.6 if short_jobs >= 3
         else 0.0
     )
+    yoe = float(profile.get("years_of_experience") or 0)
+    if yoe >= 10.0 and short_ratio <= 0.4 and median_tenure >= 18:
+        hop_signal = 0.0
+
     strong_ranking_or_production = (
         values["production_evidence"] > 0.45 or values["ir_ranking_experience"] > 0.65
     )

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import concurrent.futures
 import math
 from typing import Literal
 
@@ -24,10 +25,17 @@ def normalize_scores(scores: dict[int, float]) -> dict[int, float]:
     return {k: (v - lo) / (hi - lo) for k, v in scores.items()}
 
 
+def _tokenize_all(texts: list[str]) -> list[list[str]]:
+    if len(texts) < 4000:
+        return [tokenize(t) for t in texts]
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        return list(executor.map(tokenize, texts, chunksize=2000))
+
+
 def _rank_bm25_scores(texts: list[str], query: str) -> np.ndarray:
     from rank_bm25 import BM25Okapi
 
-    tokenized = [tokenize(t) for t in texts]
+    tokenized = _tokenize_all(texts)
     bm25 = BM25Okapi(tokenized)
     return np.asarray(bm25.get_scores(tokenize(query)), dtype=np.float32)
 
@@ -35,7 +43,7 @@ def _rank_bm25_scores(texts: list[str], query: str) -> np.ndarray:
 def _bm25s_scores(texts: list[str], query: str) -> np.ndarray:
     import bm25s
 
-    tokenized = [tokenize(t) for t in texts]
+    tokenized = _tokenize_all(texts)
     retriever = bm25s.BM25()
     retriever.index(tokenized, show_progress=False)
     query_tokens = tokenize(query)

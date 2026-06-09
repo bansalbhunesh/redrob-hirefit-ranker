@@ -45,17 +45,17 @@ MAX_BATCH_UPLOAD_BYTES = _env_int("REDROB_MAX_BATCH_UPLOAD_BYTES", 16 * 1024 * 1
 MAX_STORED_JOBS = _env_int("REDROB_MAX_STORED_JOBS", 20)
 ALLOWED_ORIGINS = [
     origin.strip()
-    for origin in os.getenv("REDROB_CORS_ORIGINS", "*").split(",")
+    for origin in os.getenv("REDROB_CORS_ORIGINS", "http://localhost:3000,http://localhost:8000,http://127.0.0.1:8000").split(",")
     if origin.strip()
 ]
 
 
-# CORS is permissive by default for local demos; set REDROB_CORS_ORIGINS on public hosts.
+# CORS is restricted to localhost by default; set REDROB_CORS_ORIGINS on public hosts.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS or ["*"],
-    allow_credentials="*" not in ALLOWED_ORIGINS,
-    allow_methods=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -222,6 +222,12 @@ async def rank_live(file: UploadFile = File(...)):
 async def batch_rank(file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
     """Batch Mode: Async processing for large files with SSE progress tracking."""
     prune_job_stores()
+    active_jobs = sum(1 for j in job_store.values() if j.get("status") in ("queued", "processing"))
+    if active_jobs >= 2:
+        raise HTTPException(
+            status_code=429,
+            detail="Too many active batch jobs. Please try again later.",
+        )
     job_id = f"batch-{datetime.now().strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:6]}"
     job_dir = JOB_DIR / job_id
     job_dir.mkdir(parents=True, exist_ok=True)

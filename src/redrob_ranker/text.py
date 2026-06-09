@@ -23,9 +23,21 @@ def lower(value: object) -> str:
     return norm(value).lower()
 
 
+STOPWORDS = {
+    "a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "has", "he",
+    "in", "is", "it", "its", "of", "on", "that", "the", "to", "was", "were", "will", "with",
+    "i", "you", "they", "we", "this", "or", "but", "not", "what", "all", "were", "when",
+    "we", "there", "can", "an", "your", "which", "their", "said", "if", "do", "will",
+    "each", "about", "how", "up", "out", "them", "then", "she", "many", "some", "so",
+    "these", "would", "other", "into", "has", "more", "her", "two", "like", "him", "see",
+    "time", "could", "no", "make", "than", "first", "been", "its", "who", "now", "people",
+    "my", "made", "over", "down", "only", "way", "find", "use", "may", "water", "long",
+    "little", "very", "after", "words", "called", "just", "where", "most", "know"
+}
+
 def tokenize(text: str) -> list[str]:
     lowered = text.lower()
-    tokens = TOKEN_RE.findall(lowered)
+    tokens = [t for t in TOKEN_RE.findall(lowered) if t not in STOPWORDS]
     for phrase in LOWERED_IMPORTANT_PHRASES:
         if phrase in lowered:
             tokens.append(phrase.replace("/", "_").replace(" ", "_"))
