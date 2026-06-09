@@ -9,9 +9,13 @@
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
 [![Tests](https://img.shields.io/badge/tests-52_passing-brightgreen.svg)](#)
 
-### ▶ Try it live (no install)
+### ▶ Try it live — no install
 
-**[Open the HuggingFace Space →](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)** — it auto-ranks a sample on load; drop in your own `candidates.jsonl` (up to 100) to re-rank. Same deterministic CPU-only engine as the full 100K submission.
+| 🖥️ [**Interactive dashboard** — Render](https://redrob-hirefit-ranker.onrender.com) | 🧪 [**Runnable sandbox** — HuggingFace Space](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker) |
+|---|---|
+| The full control-room UI: live pipeline stages, honeypot blocking, and a per-candidate feature + reasoning audit. | Drop in a `candidates.jsonl` (≤100) → ranked shortlist + downloadable CSV, on the same deterministic CPU-only engine. |
+
+![Redrob HireFit Ranker — interactive ranking dashboard](docs/screenshots/dashboard.png)
 
 ## Highlights
 
@@ -179,6 +183,16 @@ flowchart TD
 Read the full technical explanation in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Dashboard And Demo
+
+**Interactive dashboard** ([live on Render](https://redrob-hirefit-ranker.onrender.com)) — the pipeline as a control room: every stage (Load → Text → BM25 → 28-D features → Honeypot → Behavioral → Rank → Reasoning) with live counts and per-candidate audit.
+
+![Pipeline architecture and KPIs](docs/screenshots/dashboard-pipeline.png)
+
+**HuggingFace Space** ([live sandbox](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)) — upload a sample, get a ranked shortlist instantly.
+
+| Sandbox UI | Ranked shortlist |
+|---|---|
+| ![HuggingFace Space](docs/screenshots/space.png) | ![Ranked shortlist](docs/screenshots/space-results.png) |
 
 The repo includes a FastAPI dashboard for interview/demo use. It exposes real ranker internals, including:
 
