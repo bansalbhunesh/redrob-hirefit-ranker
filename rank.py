@@ -23,20 +23,19 @@ from redrob_ranker.pipeline import RankerConfig, run_ranking
 
 
 def _ensure_deterministic_hash_seed() -> None:
-    """Re-exec once with PYTHONHASHSEED=0 so every `python rank.py ...` is
-    byte-deterministic without the caller remembering the prefix.
-
+    """Warns if PYTHONHASHSEED is not set to 0.
+    
     bm25s assigns vocabulary term-IDs via hash-ordered structures; a random hash
     seed shifts float-accumulation order and can flip one normalized score's 6th
     decimal (rank order is unaffected). Pinning the seed makes the CSV bit-identical
-    run-to-run. No-op once the seed is already 0, so this re-execs at most once and
-    cannot loop. Only invoked for CLI runs (not on import), so library/web callers
-    are untouched.
+    run-to-run.
     """
-    if os.environ.get("PYTHONHASHSEED") == "0":
-        return
-    os.environ["PYTHONHASHSEED"] = "0"
-    os.execv(sys.executable, [sys.executable, *sys.argv])
+    if os.environ.get("PYTHONHASHSEED") != "0":
+        print(
+            "WARNING: PYTHONHASHSEED is not set to 0. For byte-deterministic output, run:\n"
+            "    set PYTHONHASHSEED=0 && python rank.py ...",
+            file=sys.stderr
+        )
 
 
 def parse_args() -> argparse.Namespace:

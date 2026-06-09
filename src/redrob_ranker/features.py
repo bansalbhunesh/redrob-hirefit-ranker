@@ -7,6 +7,7 @@ import re
 import statistics
 from dataclasses import dataclass, field
 from datetime import date
+import os
 
 from redrob_ranker.constants import (
     BASE_FEATURE_WEIGHTS,
@@ -31,7 +32,10 @@ from redrob_ranker.constants import (
 )
 from redrob_ranker.text import candidate_text, lower
 
-REFERENCE_DATE = date(2026, 6, 8)
+# Pinned to the hackathon dataset timeframe by default to ensure reproducibility.
+# Can be overridden for live production via REDROB_REFERENCE_DATE.
+_env_date = os.environ.get("REDROB_REFERENCE_DATE")
+REFERENCE_DATE = date.fromisoformat(_env_date) if _env_date else date(2026, 6, 8)
 
 _NORM_RE = re.compile(r"[^a-z0-9+#\s]")
 
@@ -173,7 +177,7 @@ def _days_since(date_s: str | None) -> int:
     try:
         y, m, d = [int(x) for x in date_s[:10].split("-")]
         return max(0, (REFERENCE_DATE - date(y, m, d)).days)
-    except Exception:
+    except (ValueError, TypeError, IndexError):
         return 9999
 
 
@@ -364,6 +368,15 @@ _LLM_WRAPPER_PADDED = _pad([str(t).lower() for t in LLM_WRAPPER_TERMS])
 _JUNIOR_PADDED = _pad(["junior", "intern", "trainee", "associate", "fresher"])
 
 def compute_features(candidate: dict) -> CandidateFeatures:
+    if not isinstance(candidate, dict):
+        return CandidateFeatures(
+            candidate_id=str(candidate) if candidate else "UNKNOWN",
+            values={name: 0.0 for name in FEATURE_NAMES},
+            behavioral_multiplier=0.0,
+            honeypot_multiplier=0.0,
+            disqualifier_multiplier=0.0,
+            flags=["malformed_candidate"]
+        )
     profile = candidate.get("profile", {})
     signals = candidate.get("redrob_signals", {})
     full_text = _profile_text(candidate)

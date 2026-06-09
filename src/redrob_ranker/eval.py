@@ -14,6 +14,8 @@ def dcg(labels: Sequence[float], k: int) -> float:
 
 
 def ndcg_at_k(ranked_ids: Sequence[str], labels_by_id: Mapping[str, float], k: int) -> float:
+    if k <= 0:
+        return 0.0
     ranked_labels = [float(labels_by_id.get(cid, 0.0)) for cid in ranked_ids[:k]]
     ideal_labels = sorted((float(v) for v in labels_by_id.values()), reverse=True)[:k]
     ideal = dcg(ideal_labels, k)
