@@ -38,7 +38,7 @@
 | Format validator | **pass** | Stage-1 gate |
 | Tests | **52 passing** | — |
 
-Full evaluation evidence: **[docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md)**.
+📄 **Methodology document:** **[METHODOLOGY.md](METHODOLOGY.md)** — approach, technical choices, and the reasoning behind each. &nbsp;·&nbsp; Full evaluation evidence: **[docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md)**.
 
 ## The challenge & our thesis
 
