@@ -27,10 +27,13 @@ compute:
   pre_computation_required: false
   pre_computation_time_minutes: 0
   # Measured in the python:3.11-slim Docker image (the reproduction environment),
-  # full 100K pool: 193s serial on 2 CPUs (worst case), 194s with 2 workers on
-  # 2 CPUs, 177s with 4 workers on 4 CPUs; every run byte-identical to the
-  # committed submission (full matrix: docs/runtime_matrix.md).
-  measured_runtime_seconds: 193
+  # full 100K pool, fresh --no-cache build, serial on 2 CPUs (worst case):
+  # 133-187s across a quiet-host min-of-5 (2026-06-10 audit; 187s is the
+  # conservative figure reported below). Prior parallel configs: 194s with
+  # 2 workers on 2 CPUs, 177s with 4 workers on 4 CPUs (measured pre-audit;
+  # upper bounds for current code). Every run byte-identical to the committed
+  # submission (full matrix: docs/runtime_matrix.md, docs/performance_audit.md).
+  measured_runtime_seconds: 187
   measured_peak_rss_gb: 6.1
   measured_bm25_backend: "bm25s"
   feature_scoring_workers: "auto (up to 8); output identical for any worker count"
