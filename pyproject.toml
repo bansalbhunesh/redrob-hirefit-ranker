@@ -41,7 +41,9 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+# "." so `from apps.api import main` resolves under bare `pytest` too —
+# the console script, unlike `python -m pytest`, does not add the rootdir.
+pythonpath = ["src", "."]
 
 [tool.ruff]
 line-length = 100

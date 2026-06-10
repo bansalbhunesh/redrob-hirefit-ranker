@@ -27,7 +27,7 @@ jobs:
           PYTHONHASHSEED: "0"
         run: |
           set -o pipefail
-          pytest -q 2>&1 | tee /tmp/pytest.out || status=$?
+          python -m pytest -q 2>&1 | tee /tmp/pytest.out || status=$?
           echo '### pytest tail' >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           tail -40 /tmp/pytest.out >> "$GITHUB_STEP_SUMMARY"
