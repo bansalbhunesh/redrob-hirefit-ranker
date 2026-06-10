@@ -15,11 +15,20 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Dashboard backend (apps/api). starlette floor carries the PYSEC-2026-161 fix;
+# keep this extra separate from `demo` because gradio pins starlette<1.0.
+api = [
+  "fastapi>=0.136,<1",
+  "starlette>=1.0.1,<2",
+  "uvicorn>=0.30,<1",
+  "python-multipart>=0.0.18,<1",
+]
+# Gradio demos (apps/space, hf_space). gradio>=6.7 carries the PYSEC-2026-63/64/65/66
+# fixes; pillow floor carries the 2026 pillow CVE fixes pulled in via gradio.
 demo = [
   "pandas>=2.2,<3",
-  "fastapi>=0.115,<1",
-  "uvicorn>=0.30,<1",
-  "gradio>=4.44,<6",
+  "gradio>=6.7,<7",
+  "pillow>=12.2,<13",
 ]
 dev = [
   "pytest>=8,<9",
