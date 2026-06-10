@@ -39,6 +39,13 @@ naive keyword counting 0.6128 -> BM25 0.7158 (+0.103) -> +28-feature matrix
 in top-100). Dense embeddings: tested, rejected (+0.0000 NDCG@10, ~2.2x
 runtime). Every layer pays measured rent; the one that didn't was cut.
 
+## 5d. Hand-tuned weights beat a trained model (appendix)
+
+Cross-validated logistic regression on the exact same 28-feature+BM25 inputs,
+trained on the independent labels, loses to the hand weights even on those
+labels (composite 0.8238 vs 0.8811; top-100 overlap and coefficients in
+docs/learned_weights_appendix.md). Explainable hand weights ship.
+
 ## 6. Reproducibility
 
 One command, CPU-only, no network:
@@ -47,7 +54,7 @@ One command, CPU-only, no network:
 python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
-Measured full run (python:3.11 Docker, the Stage-3 environment): 100,000 candidates in ~219-256 s across 2-4 CPU configurations (worst case: serial on 2 CPUs), peak container memory ~6.1 GB vs the 16 GB budget; every run byte-identical to the committed submission. Dev machine (12 cores): ~70 s. 53 hard honeypots detected, 0 in the top 100. Full matrix: docs/runtime_matrix.md.
+Measured full run (python:3.11 Docker, the Stage-3 environment): 100,000 candidates in ~177-194 s across 2-4 CPU configurations (worst case: 193 s serial on 2 CPUs, ~36% headroom under the 300 s limit), peak container memory ~6.1 GB vs the 16 GB budget; every run byte-identical to the committed submission. 53 honeypots detected, 0 in the top 100. Full matrix: docs/runtime_matrix.md.
 
 ## 7. Example Output
 

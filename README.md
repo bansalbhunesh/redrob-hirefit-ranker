@@ -4,7 +4,7 @@
 
 [![Live Demo](https://img.shields.io/badge/▶_Live_Demo-HuggingFace_Space-FF9D00.svg)](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![100K Runtime](https://img.shields.io/badge/100K_Runtime-~220–256s_in_Docker_3.11-brightgreen.svg)](#)
+[![100K Runtime](https://img.shields.io/badge/100K_Runtime-~177–194s_in_Docker_3.11-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
 [![Tests](https://img.shields.io/badge/tests-77_passing-brightgreen.svg)](#)
 
@@ -20,7 +20,7 @@
 
 | Dimension | Result | Budget / context |
 |---|---|---|
-| 100K runtime (python:3.11 Docker, 2–4 CPUs) | **~219–256s** | 300s limit |
+| 100K runtime (python:3.11 Docker, 2–4 CPUs) | **~177–194s** (worst case: 193s serial on 2 CPUs) | 300s limit |
 | Peak memory (container, 4 workers) | ~6.1 GB | 16 GB limit |
 | Network / GPU at rank time | **none** | required: none |
 | Determinism | **byte-identical** run-to-run, serial-vs-parallel, Windows-vs-Linux | locked by golden-hash tests |
@@ -69,10 +69,10 @@ Measured result (full matrix in [docs/runtime_matrix.md](docs/runtime_matrix.md)
 ```text
 Wrote 100 rows to submission.csv.
 Loaded 100000 candidates; ranked pool 100000; BM25 backend bm25s.
-Docker python:3.11 (Stage-3 env): 235-256s serial on 2 CPUs (worst case),
-219-242s with 2 workers on 2 CPUs, 221-253s on 4 CPUs; peak container
-memory ~5.0-6.1 GB. Dev machine (12 cores, 8 workers): ~70s.
-Hard honeypots detected 53; hard honeypots in output 0.
+Docker python:3.11 (Stage-3 env): 193s serial on 2 CPUs (worst case),
+194s with 2 workers on 2 CPUs, 177s on 4 CPUs; peak container memory
+~4.9-6.1 GB. Dev machine (12 cores): ~104s serial, ~60s parallel.
+Honeypots detected 53; honeypots in output 0.
 ```
 
 Feature scoring runs across CPU worker processes (`--workers`, default auto up to
@@ -216,7 +216,11 @@ on a stratified sample (needs an API key; **development-only — never runs duri
 ranking**). Sensitivity analyses: behavioral-multiplier floor sweep in
 [docs/sensitivity_sweep.md](docs/sensitivity_sweep.md) (pre-registered decision
 rule; shipped config won), honeypot audit in
-[docs/honeypot_audit.md](docs/honeypot_audit.md).
+[docs/honeypot_audit.md](docs/honeypot_audit.md), and a learned-weights
+comparison in [docs/learned_weights_appendix.md](docs/learned_weights_appendix.md)
+(cross-validated logistic regression on the same feature inputs **loses to the
+hand-tuned weights even on the labels it was trained on** — 0.8238 vs 0.8811
+composite; hand weights ship).
 
 ## Repository structure
 

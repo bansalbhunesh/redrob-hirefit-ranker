@@ -17,7 +17,8 @@ mkdir -p "$REPO/artifacts"
 echo "== building $IMAGE ==" | tee -a "$OUT"
 docker build -t "$IMAGE" "$REPO" >/dev/null 2>&1 && echo "build ok" | tee -a "$OUT"
 
-GOLDEN_HASH="e1a696d1f575908c8544fae294e04dcbf4edd4bad8ee5215aae2072c867493f7"
+# Single source of truth: the golden constant in the regression test.
+GOLDEN_HASH=$(grep -oE 'GOLDEN_SUBMISSION_SHA256 = "[0-9a-f]{64}"' "$REPO/tests/test_submission_gate.py" | grep -oE '[0-9a-f]{64}')
 
 for cfg in "2 1" "2 2" "4 4"; do
   set -- $cfg; CPUS=$1; W=$2
