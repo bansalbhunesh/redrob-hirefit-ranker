@@ -1,6 +1,6 @@
 name: Cloud benchmark (worst-case runtime on clean hardware)
 
-# Off-laptop datapoint for the 300s runtime budget: builds the repo's own
+# Off-laptop datapoint for the 300s runtime budget (re-run: 2026-06-11 full verification): builds the repo's own
 # Docker image and times a full synthetic-100K serial run at --cpus=2 (the
 # evaluator worst case), plus a two-run byte-determinism check. Uses a
 # size-faithful generated pool — the private competition data never leaves
