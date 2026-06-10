@@ -644,7 +644,15 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     )
 
 
-def compute_behavioral_multiplier(values: dict[str, float], candidate: dict) -> float:
+# Lower clamp of the behavioral multiplier. 0.25 is the shipped behavior; the
+# sensitivity sweep (docs/sensitivity_sweep.md) measures alternatives before
+# any change is allowed to alter the submission.
+BEHAVIORAL_FLOOR_DEFAULT = 0.25
+
+
+def compute_behavioral_multiplier(
+    values: dict[str, float], candidate: dict, floor: float = BEHAVIORAL_FLOOR_DEFAULT
+) -> float:
     # Behavior may demote aggressively, but it can only mildly promote; fit must come from base score.
     signals = candidate.get("redrob_signals", {})
     mult = 1.0
@@ -664,7 +672,7 @@ def compute_behavioral_multiplier(values: dict[str, float], candidate: dict) -> 
         mult *= 0.85 + 0.30 * clamp(float(offer_rate))
     mult *= 1.02 if values["profile_quality"] > 0.82 else 1.0
     mult *= 1.05 if values["notice_period_score"] >= 1.0 else 0.70 if values["notice_period_score"] <= 0.2 else 1.0
-    return clamp(mult, 0.25, 1.10)
+    return clamp(mult, floor, 1.10)
 
 
 def _assessment_claim_multiplier(candidate: dict) -> float:

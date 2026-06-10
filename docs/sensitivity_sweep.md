@@ -24,6 +24,22 @@ report coverage %. Missing labels are never treated as tier 0.
   label in either set is written to `artifacts/sweep_unlabeled.jsonl` and labeled by ONE
   incremental LLM-judge pass before scoring. No faked labels.
 
-## Results
+## Results (run after pre-registration; shared harness, policy=exclude)
 
-_(to be filled by `scripts/sensitivity_sweep.py` — not yet run)_
+| floor | composite (independent) | composite (LLM judge) | LLM coverage | mean composite | top-100 rows changed vs shipped | new entrants |
+|---|---|---|---|---|---|---|
+| 0.25 | 0.8811 | 0.8959 | 100% | 0.8885 | 0 | 0 |
+| 0.40 | 0.8811 | 0.8959 | 100% | 0.8885 | 0 | 0 |
+| 0.55 | 0.8811 | 0.8959 | 100% | 0.8885 **<- winner** | 0 | 0 |
+| 0.70 | 0.8811 | 0.8959 | 99% | 0.8885 | 15 | 1 |
+| 0.85 | 0.8805 | 0.9036 | 86% | 0.8920 | 72 | 15 |
+| 1.00 | 0.8724 | 0.9258 | 67% | 0.8991 | 93 | 37 |
+
+Unlabeled top-100 entrants across all configurations: **0** (see `artifacts/sweep_unlabeled.jsonl`).
+
+**Comparability guard:** configs with <95% coverage on either label set (floors 0.85, 1.00) are excluded from winner selection -- their LLM-side composite is computed on a shrinking, selection-biased sample (the excluded unlabeled entrants are exactly the unavailable profiles the floor un-demotes), while the full-coverage independent composite *falls*. This is the pre-registered 'label sets disagree' regime: break toward down-weighting.
+
+**Decision per pre-registered rule:** floor = **0.55** (softest configuration among those exactly tied at the best mean composite on full coverage).
+
+The minimum behavioral multiplier inside the shipped top-100 is **0.7398**, so every tied floor (up to that value) yields a **byte-identical `submission.csv`** -- the tied configurations differ only for candidates already outside the top-100.
+**Outcome: the shipped artifact is unchanged.** The floor constant is kept at 0.25 in code: switching it to another tied value would not change a single submitted byte, and leaving the golden-locked constant untouched avoids no-op churn on the official path.
