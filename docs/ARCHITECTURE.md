@@ -37,15 +37,35 @@ flowchart LR
 
 ## Why Not Hosted LLM Or Dense Embeddings?
 
-Research supports a best-relevance pattern of retrieve, dense rerank, and cross-encoder/LLM review. That is excellent when latency, cost, and network access are available.
+Research supports a best-relevance pattern of retrieve, dense rerank, and cross-encoder/LLM
+review — on real-world data, fine-tuned contrastive encoders beat BM25 by large margins
+(ConFit v1-v3, RecSys '24 / arXiv:2502.12361). Those results shaped what we tested and what
+we claim:
 
-For this official path, those trade-offs are risky:
+- **What we measured**: a static 32M-parameter encoder (model2vec/potion-retrieval-32M, the
+  strongest class that fits the 300s CPU budget at 100K scale) scored **NDCG@10 +0.0000 at
+  ~2.2x runtime** on this pool and was rejected by the pre-committed gate. On
+  template-generated synthetic profiles, lexical coverage is near-complete, so the semantic
+  headroom that ConFit exploits on real resumes is largely absent here.
+- **What we did not measure**: fine-tuned transformer bi-encoders and cross-encoder/LLM
+  rerankers. These are *infeasibility* claims, not measured negatives — a transformer pass
+  over 100K candidates does not fit 300s on 2 CPUs (the 32M static model already cost 2.2x),
+  and hosted scoring breaks offline reproducibility and Stage 3/4 auditability.
 
-- Hosted LLM/API scoring breaks offline reproducibility.
-- Local dense embedding generation can push CPU-only 100K runs beyond the 300-second limit.
-- Black-box scoring makes Stage 3/4 review harder to defend.
+The official ranker therefore uses deterministic sparse expansion plus feature scoring.
+Dense embeddings remain an opt-in, default-off experiment with a measured negative gate
+result, not a dependency of the submitted path.
 
-The official ranker therefore uses deterministic sparse expansion plus feature scoring. Dense embeddings are present only as an opt-in, default-off experiment with a measured negative gate result, not as a dependency of the submitted path.
+## Production Roadmap: Multilingual Normalization
+
+The text normalizer in the official path is Latin-script only (`[^a-z0-9+#\s]` -> space),
+which is correct for this challenge's English-only synthetic pool but deletes Devanagari and
+other Indic scripts outright. For Bharat-scale deployment the swap is localized and the
+architecture is script-agnostic: normalization and tokenization are isolated in
+`text.py`/`features._norm`, so a Unicode-aware normalizer (NFKC fold + script-aware token
+boundaries) plus per-language alias tables drop in without touching retrieval, feature
+logic, guardrails, or the JD compiler. None of the committed artifacts depend on the
+Latin-only behavior beyond this dataset.
 
 ## Retrieval Layer
 

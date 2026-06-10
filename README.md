@@ -48,8 +48,11 @@ per-candidate reasoning drawn only from facts in the profile.
 - **No hosted LLM at rank time.** Reproducibility, the 5-minute CPU budget, and the
   JD's own point that GPT-per-candidate can't scale. An LLM is used only *offline,
   to evaluate* the ranking.
-- **No dense embeddings — we tested them.** Measured A/B gate: **NDCG@10 +0.0000 at
-  ~2.2× runtime → rejected** (details below).
+- **No dense embeddings — we tested the class that fits the budget.** Measured A/B gate
+  on a static 32M encoder (the strongest class feasible in 300s/CPU at 100K): **NDCG@10
+  +0.0000 at ~2.2× runtime → rejected**. Fine-tuned transformer encoders (ConFit-class)
+  are infeasible within the runtime budget, not measured negatives (details below and in
+  ARCHITECTURE.md).
 - **Deterministic, explainable features.** Every score traces to named features and
   multipliers; the committed CSV is locked by golden-hash regression tests
   (`tests/test_submission_gate.py`, history in
