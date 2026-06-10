@@ -27,9 +27,13 @@ jobs:
           PYTHONHASHSEED: "0"
         run: |
           set -o pipefail
+          status=0
           python -m pytest -q 2>&1 | tee /tmp/pytest.out || status=$?
-          echo '### pytest tail' >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          tail -40 /tmp/pytest.out >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          exit "${status:-0}"
+          if [ "$status" -ne 0 ]; then
+            # Surface the failure as annotations (publicly readable via the
+            # checks API) since raw logs require authentication.
+            tail -10 /tmp/pytest.out | while IFS= read -r line; do
+              echo "::error::pytest: ${line}"
+            done
+          fi
+          exit "$status"
