@@ -2,6 +2,24 @@
 
 ## Current golden artifact
 
+- `submission.csv` SHA-256: `ecb1fc5b9f481669789b8d4c9fba14bc185b85173b8a90c354e422470d2f1a63`
+
+## 2026-06-10 Phase 4 reasoning upgrade (sanctioned text-only change)
+
+Per the hardening brief's Phase 4: each top-100 row now carries one concrete,
+verbatim-grounded career fact (company + the specific ranking/search/recsys
+sentence quoted from that candidate's own `career_history`), plus wider
+deterministic variety in the behavioral sentence. Hallucination guard locked
+by tests (`tests/test_reasoning.py`): every injected company/snippet must be a
+substring of the source candidate dict; same candidate -> same reason; 600-char
+cap respected (observed max 516).
+
+Verified before promoting: `candidate_id`, `rank`, and `score` columns are
+byte-identical to the previous golden — only `reasoning` text changed (100/100
+rows). Previous golden: `e1a696d1...`.
+
+## Previous golden artifact (superseded 2026-06-10 by Phase 4)
+
 - `submission.csv` SHA-256: `e1a696d1f575908c8544fae294e04dcbf4edd4bad8ee5215aae2072c867493f7`
 - Produced by: `PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s`
 - Verified byte-identical from two independent environments:

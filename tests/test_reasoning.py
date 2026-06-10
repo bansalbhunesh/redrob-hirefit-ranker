@@ -170,3 +170,65 @@ def test_lower_rank_reasoning_uses_honest_concern_tone():
     assert "concern:" in reasoning
     assert "JD" in reasoning
     assert any(detail in reasoning for detail in ["notice period", "response rate", "current title"])
+
+
+# ---- Phase 4: injected career fact (hallucination guard) ----------------
+
+
+def _fact_candidates(n=40):
+    """Synthetic candidates with varied evidence sentences."""
+    cands = []
+    for i in range(n):
+        c = _make_candidate()
+        c["candidate_id"] = f"CAND_{1000 + i:07d}"
+        c["career_history"][0]["company"] = f"Company{i}"
+        c["career_history"][0]["description"] = (
+            f"Owned feature work stream {i}. Shipped learning-to-rank for the "
+            f"discovery feed at meaningful scale {i}. Mentored juniors."
+        )
+        cands.append(c)
+    return cands
+
+
+def test_injected_fact_substrings_exist_in_source_candidate():
+    for c in _fact_candidates():
+        features = compute_features(dict(c))
+        reason = build_reason(c, features, rank=5)
+        company = c["career_history"][0]["company"]
+        assert company in reason
+        # the quoted snippet must appear verbatim in some career description
+        if '"' in reason:
+            snippet = reason.split('"')[1]
+            assert any(
+                snippet in str(j.get("description") or "")
+                for j in c["career_history"]
+            ), snippet
+
+
+def test_reason_deterministic_across_runs():
+    c = _make_candidate()
+    features = compute_features(dict(c))
+    first = build_reason(c, features, rank=3)
+    for _ in range(5):
+        assert build_reason(c, features, rank=3) == first
+
+
+def test_reason_respects_length_cap():
+    from redrob_ranker.reasoning import MAX_REASON_LEN
+
+    long = _make_candidate()
+    long["career_history"][0]["description"] = (
+        "Shipped ranking retrieval search embeddings recommendation systems. " * 3
+    )
+    long["profile"]["current_title"] = "Senior Principal Machine Learning Engineering Lead"
+    features = compute_features(dict(long))
+    for rank in (1, 25, 80):
+        assert len(build_reason(long, features, rank)) <= MAX_REASON_LEN
+
+
+def test_no_history_candidate_still_produces_reason():
+    c = _make_candidate()
+    c["career_history"] = []
+    features = compute_features(dict(c))
+    reason = build_reason(c, features, rank=50)
+    assert len(reason) > 40
