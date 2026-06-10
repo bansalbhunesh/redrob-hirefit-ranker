@@ -562,6 +562,8 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     tokens_full = set(full_text.split(" "))
     tokens_career = set(career_text.split(" "))
     terms = _skill_terms(candidate)
+    career = candidate.get("career_history", []) or []
+    skills = _skill_records(candidate)
     values: dict[str, float] = {}
 
     core_score = 0.0
@@ -579,7 +581,7 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
 
     matched_skill_scores = []
 
-    for skill in _skill_records(candidate):
+    for skill in skills:
         name = _norm(skill.get("name"))
         if not name:
             continue
@@ -593,9 +595,9 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
         matched_skill_scores.append(0.45 * prof + 0.35 * duration + 0.20 * endorsements)
     values["skill_depth_score"] = clamp(sum(matched_skill_scores) / max(1, min(7, len(matched_skill_scores))))
 
-    if _skill_records(candidate):
+    if skills:
         credibility = []
-        for skill in _skill_records(candidate):
+        for skill in skills:
             endorsements = float(skill.get("endorsements") or 0)
             duration = float(skill.get("duration_months") or 0)
             penalty = 0.55 if endorsements > 30 and duration < 6 else 1.0
@@ -617,17 +619,17 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
 
     values["ir_ranking_experience"] = clamp(_count_tokenized(_IR_RANKING_SPLIT, tokens_career, safe_career) / 7.0)
     values["production_evidence"] = clamp(_count_tokenized(_PRODUCTION_SPLIT, tokens_career, safe_career) / 8.0)
-    if sum(1 for j in candidate.get("career_history", []) or [] if int(j.get("duration_months") or 0) >= 18) >= 2:
+    if sum(1 for j in career if int(j.get("duration_months") or 0) >= 18) >= 2:
         values["production_evidence"] = clamp(values["production_evidence"] + 0.08)
 
-    title_text = " ".join(_norm(j.get("title")) for j in candidate.get("career_history", []) or [])
+    title_text = " ".join(_norm(j.get("title")) for j in career)
     current_title = _norm(profile.get("current_title"))
-    values["senior_title_held"] = 1.0 if _has_boundary(_SENIOR_TITLES_PADDED, f"{current_title} {title_text}") and _title_score(candidate, m) > 0.55 else 0.0
-
     title_score = _title_score(candidate, m)
+    values["senior_title_held"] = 1.0 if _has_boundary(_SENIOR_TITLES_PADDED, f"{current_title} {title_text}") and title_score > 0.55 else 0.0
+
     completed_tenures = [
         int(j.get("duration_months") or 0)
-        for j in candidate.get("career_history", []) or []
+        for j in career
         if not j.get("is_current")
     ]
     very_short_jobs = sum(1 for months in completed_tenures if months < 9)
@@ -661,7 +663,6 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
         _count_tokenized(_CODE_WRITING_SPLIT, tokens_title_career, safe_title_career) / 4.0
     )
 
-    yoe = float(profile.get("years_of_experience") or 0)
     yoe_target = m.yoe_target  # 7.0 for the bundled JD (band center)
     values["yoe_fit_score"] = 1.0 if yoe >= yoe_target else clamp(math.exp(-((yoe - yoe_target) ** 2) / (2 * 2.6**2)))
     if yoe < 3:
@@ -669,7 +670,7 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     values["education_score"] = _education_score(candidate)
 
     ml_months = 0
-    for job in candidate.get("career_history", []) or []:
+    for job in career:
         text = _norm(" ".join([str(job.get("title", "")), str(job.get("description", ""))]))
         # Boolean context: early-exit boundary check equals nonzero count.
         if _has_boundary(_IR_RANKING_PADDED, text) or _has_boundary(_ML_TERMS_PADDED, text):
@@ -714,7 +715,7 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     values["relocation_willing"] = 1.0 if willing_relocate else 0.0
 
     non_target_title = _has_boundary(_NON_TARGET_PADDED, current_title)
-    skill_count = len(_skill_records(candidate))
+    skill_count = len(skills)
     stuffer_signals = 0
     if skill_count >= 12 and values["core_skill_match"] >= 0.55:
         stuffer_signals = 2
