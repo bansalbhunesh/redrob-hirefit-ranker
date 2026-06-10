@@ -61,7 +61,7 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 
 `--candidate-pool N` exists for demos/profiling only. The submission path should leave it at `0`.
 
-On the local 100K challenge file, the preferred `bm25s` backend generated the validated top-100 `submission.csv` in an observed 123-184 seconds across repeated runs. The run loaded and scored all 100,000 candidates, detected 53 hard honeypots, and emitted 0 hard honeypots in the top 100. A profiled full run measured peak RSS at 4.33 GB across the parent plus worker processes.
+In the python:3.11 Docker image the preferred `bm25s` backend generates the validated top-100 `submission.csv` in 177-194 seconds (worst case 193 s serial on 2 CPUs; ~104 s serial on a 12-core dev machine). The run scores all 100,000 candidates, detects 53 honeypots, and emits 0 in the top 100; peak container memory ~6.1 GB (docs/runtime_matrix.md).
 
 Feature scoring is parallelized across CPU worker processes by default, capped at 8 workers for memory safety. `--workers 1` remains the serial escape hatch and produces byte-identical output.
 

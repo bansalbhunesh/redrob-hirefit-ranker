@@ -10,7 +10,7 @@ Rank the top 100 candidates for the Redrob Senior AI Engineer JD while satisfyin
 - Full 100K reproduction in under 5 minutes.
 - Validator-safe CSV output.
 
-The final measured local runs use `bm25s`, score all 100,000 candidates, and complete in an observed **123-184 seconds** with zero hard honeypots in the emitted top 100. A profiled full run peaked at **4.33 GB RSS** across the parent plus worker processes.
+Measured in the python:3.11 Docker image: `bm25s` scores all 100,000 candidates in **177-194 seconds** (worst case 193 s serial on 2 CPUs) with zero honeypots in the emitted top 100 and peak container memory **~6.1 GB** (docs/runtime_matrix.md).
 
 ## System Overview
 
@@ -185,8 +185,8 @@ python scripts/validate_submission.py submission.csv
 Final measured output:
 
 ```text
-Runtime: observed local range 123-184s
-Peak RSS: 4.33 GB
+Runtime: 177-194s in the python:3.11 Docker image (worst case 193s serial-2cpu)
+Peak container memory: ~6.1 GB
 Loaded candidates: 100000
 Ranked pool: 100000
 Rows emitted: 100

@@ -41,7 +41,7 @@ profile is pushed down regardless of how strong its keywords look.
 
 | Choice | Why |
 |---|---|
-| **Feature matrix + BM25, not an LLM scoring each candidate** | An LLM-per-candidate can't scale to 100K under a real latency/cost budget (the JD makes this point itself), isn't reproducible, and needs network. We rank the whole pool on CPU in ~80–180s. |
+| **Feature matrix + BM25, not an LLM scoring each candidate** | An LLM-per-candidate can't scale to 100K under a real latency/cost budget (the JD makes this point itself), isn't reproducible, and needs network. We rank the whole pool on CPU in about 3 minutes worst-case in the eval Docker image. |
 | **No dense embeddings — *tested and rejected*** | We built a model2vec/potion dense-retrieval branch and gated it on a measured A/B: **NDCG@10 +0.0000, ~2.2× runtime → FAIL**. We shipped the simpler, faster system; the negative result is documented (`artifacts/embedding_gate_result.txt`). |
 | **Career-evidence over keywords** | Production/IR-ranking signals mined from career *history* (weights 0.13 + 0.12) outweigh skill-list matches — this is how Tier-5 candidates without the buzzwords still surface. |
 | **Multiplicative behavioral & honeypot guardrails** | A high fit score cannot rescue an impossible profile or an unavailable candidate. This encodes the JD's explicit "down-weight the unavailable" instruction. |
@@ -75,6 +75,6 @@ profile is pushed down regardless of how strong its keywords look.
 python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
-Deterministic, offline, CPU-only, ~80–180s for the full 100K pool. Full reproduction,
+Deterministic, offline, CPU-only, 177-194s for the full 100K pool in the python:3.11 Docker image. Full reproduction,
 tests, and architecture details are in [README.md](README.md) and
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

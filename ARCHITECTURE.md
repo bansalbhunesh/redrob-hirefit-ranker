@@ -4,7 +4,7 @@
 
 Rank the top 100 candidates for the Redrob **Senior AI Engineer - Founding Team** JD while satisfying CPU-only, no-network, no-GPU, sub-5-minute reproduction constraints.
 
-Final measured local runs complete in an observed **123-184 seconds** on 100,000 candidates with `bm25s`, 53 hard honeypots detected, and 0 hard honeypots in the emitted top 100. A profiled full run peaked at **4.33 GB RSS** across the parent plus worker processes.
+Measured in the python:3.11 Docker image (the Stage-3 environment): the full 100,000-candidate run completes in **177-194 seconds** across 2-4 CPU configurations (worst case 193 s serial on 2 CPUs) with peak container memory **~6.1 GB**; 53 honeypots detected and 0 in the emitted top 100 (full matrix: docs/runtime_matrix.md).
 
 ## 2. Pipeline
 
