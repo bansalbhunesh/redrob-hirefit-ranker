@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import sys
 import tempfile
@@ -18,12 +19,14 @@ import uuid
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
 from fastapi import FastAPI, File, UploadFile, BackgroundTasks, HTTPException
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 from redrob_ranker.payload import build_candidate_payload
 from redrob_ranker.pipeline import RankerConfig, run_ranking
+
+_LOG = logging.getLogger("redrob.api")
 
 app = FastAPI(
     title="Redrob HireFit Ranker",
@@ -43,9 +46,15 @@ MAX_BATCH_CANDIDATES = _env_int("REDROB_MAX_BATCH_CANDIDATES", 5000)
 MAX_LIVE_UPLOAD_BYTES = _env_int("REDROB_MAX_LIVE_UPLOAD_BYTES", 2 * 1024 * 1024)
 MAX_BATCH_UPLOAD_BYTES = _env_int("REDROB_MAX_BATCH_UPLOAD_BYTES", 16 * 1024 * 1024)
 MAX_STORED_JOBS = _env_int("REDROB_MAX_STORED_JOBS", 20)
+# Local dev plus the deployed dashboard (same-origin in production; listed so
+# preview hosts and the Render origin work without env overrides).
+_DEFAULT_ORIGINS = (
+    "http://localhost:3000,http://localhost:8000,http://127.0.0.1:8000,"
+    "https://redrob-hirefit-ranker.onrender.com"
+)
 ALLOWED_ORIGINS = [
     origin.strip()
-    for origin in os.getenv("REDROB_CORS_ORIGINS", "http://localhost:3000,http://localhost:8000,http://127.0.0.1:8000").split(",")
+    for origin in os.getenv("REDROB_CORS_ORIGINS", _DEFAULT_ORIGINS).split(",")
     if origin.strip()
 ]
 
@@ -72,8 +81,61 @@ JOB_DIR.mkdir(exist_ok=True)
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # ── In-memory job store for batch processing ──
+# NOTE: stores are per-process. Run uvicorn with workers=1 (the default); more
+# workers would split jobs/SSE streams across processes and break both.
 job_store: Dict[str, Dict[str, Any]] = {}
 results_store: Dict[str, List[Dict]] = {}
+
+
+def _resolve_git_sha() -> str:
+    """Best-effort short SHA: env override first, then .git/HEAD (no git binary)."""
+    env_sha = os.getenv("REDROB_GIT_SHA", "").strip()
+    if env_sha:
+        return env_sha[:12]
+    try:
+        git_dir = BASE_DIR.parent.parent / ".git"
+        head = (git_dir / "HEAD").read_text(encoding="utf-8").strip()
+        if head.startswith("ref:"):
+            ref = head.split(None, 1)[1]
+            return (git_dir / ref).read_text(encoding="utf-8").strip()[:12]
+        return head[:12]
+    except OSError:
+        return "unknown"
+
+
+GIT_SHA = _resolve_git_sha()
+PRECOMPUTED_FILE = DATA_DIR / "precomputed.json"
+
+# Showpiece payload, loaded once and served from memory (O(1), no per-request
+# disk read). _load_precomputed() can be retried lazily if the file appears
+# after startup.
+_precomputed_bytes: bytes | None = None
+_precomputed_mtime: float | None = None
+
+
+def _load_precomputed() -> bytes | None:
+    """(Re)load precomputed.json into memory if present and changed on disk."""
+    global _precomputed_bytes, _precomputed_mtime
+    try:
+        mtime = PRECOMPUTED_FILE.stat().st_mtime
+    except OSError:
+        _precomputed_bytes = None
+        _precomputed_mtime = None
+        return None
+    if _precomputed_bytes is None or mtime != _precomputed_mtime:
+        try:
+            raw = PRECOMPUTED_FILE.read_bytes()
+            json.loads(raw)  # refuse to cache a corrupt artifact
+        except (OSError, ValueError):
+            _precomputed_bytes = None
+            _precomputed_mtime = None
+            return None
+        _precomputed_bytes = raw
+        _precomputed_mtime = mtime
+    return _precomputed_bytes
+
+
+_load_precomputed()
 
 
 async def read_upload_limited(file: UploadFile, max_bytes: int) -> bytes:
@@ -132,20 +194,26 @@ def index():
     """Serve the single-file HTML dashboard."""
     index_file = STATIC_DIR / "index.html"
     if not index_file.exists():
-        return JSONResponse({"error": "index.html not found in static folder. Run the setup script."})
+        return JSONResponse(
+            {"error": "index.html not found in static folder. Run the setup script."},
+            status_code=503,
+        )
     return FileResponse(index_file)
 
 
 @app.get("/api/results")
 def get_results():
-    """Showpiece Mode: Serve pre-computed 100K results instantly."""
-    precomputed_file = DATA_DIR / "precomputed.json"
-    if not precomputed_file.exists():
-        return JSONResponse({
-            "error": "precomputed.json not found. Run: python scripts/generate_precomputed.py",
-            "hint": "This file is generated from your 100K run and enables the instant-load showpiece mode."
-        })
-    return FileResponse(precomputed_file)
+    """Showpiece Mode: serve the pre-computed 100K payload from memory."""
+    payload = _load_precomputed()
+    if payload is None:
+        return JSONResponse(
+            {
+                "error": "precomputed.json not found. Run: python scripts/generate_precomputed.py",
+                "hint": "This file is generated from your 100K run and enables the instant-load showpiece mode.",
+            },
+            status_code=503,
+        )
+    return Response(content=payload, media_type="application/json")
 
 
 @app.post("/api/rank")
@@ -214,8 +282,13 @@ async def rank_live(file: UploadFile = File(...)):
             })
     except HTTPException:
         raise
-    except Exception as e:
-        return JSONResponse({"error": str(e), "mode": "live"}, status_code=500)
+    except ValueError as e:
+        # Malformed JSONL / failed submission validation — caller's input.
+        raise HTTPException(status_code=422, detail=f"Could not rank upload: {e}") from e
+    except Exception:
+        # Never leak internals; details go to the server log only.
+        _LOG.exception("live ranking failed")
+        return JSONResponse({"error": "Internal ranking error.", "mode": "live"}, status_code=500)
 
 
 @app.post("/api/batch")
@@ -234,17 +307,25 @@ async def batch_rank(file: UploadFile = File(...), background_tasks: BackgroundT
 
     safe_name = Path(file.filename or "candidates.jsonl").name
     in_path = job_dir / safe_name
-    in_path.write_bytes(await read_upload_limited(file, MAX_BATCH_UPLOAD_BYTES))
+    try:
+        in_path.write_bytes(await read_upload_limited(file, MAX_BATCH_UPLOAD_BYTES))
 
-    total_lines = 0
-    with open(in_path, "r", encoding="utf-8") as f:
-        for _ in f:
-            total_lines += 1
-            if total_lines > MAX_BATCH_CANDIDATES:
-                raise HTTPException(
-                    status_code=413,
-                    detail=f"Batch demo is capped at {MAX_BATCH_CANDIDATES} candidates.",
-                )
+        total_lines = 0
+        with open(in_path, "r", encoding="utf-8") as f:
+            for _ in f:
+                total_lines += 1
+                if total_lines > MAX_BATCH_CANDIDATES:
+                    raise HTTPException(
+                        status_code=413,
+                        detail=f"Batch demo is capped at {MAX_BATCH_CANDIDATES} candidates.",
+                    )
+    except UnicodeDecodeError as e:
+        shutil.rmtree(job_dir, ignore_errors=True)
+        raise HTTPException(status_code=422, detail="Upload is not UTF-8 JSONL.") from e
+    except HTTPException:
+        # Rejected upload: do not leave the partial job directory behind.
+        shutil.rmtree(job_dir, ignore_errors=True)
+        raise
 
     job_store[job_id] = {
         "status": "queued",
@@ -323,10 +404,14 @@ def process_batch_job(job_id: str):
 @app.get("/api/stream/{job_id}")
 async def stream_progress(job_id: str):
     """SSE endpoint for batch job progress streaming."""
+    if job_id not in job_store:
+        raise HTTPException(status_code=404, detail="Job not found")
+
     async def event_generator():
         while True:
             job = job_store.get(job_id)
             if not job:
+                # Job pruned mid-stream.
                 yield f"data: {json.dumps({'type': 'error', 'message': 'Job not found'})}\n\n"
                 break
 
@@ -407,11 +492,22 @@ def get_batch_results(job_id: str):
 
 @app.get("/api/health")
 def health_check():
-    """Health check endpoint."""
+    """Health check: artifact load status + build identity, never raises."""
+    precomputed = _load_precomputed()
     return {
         "status": "ok",
         "version": "3.0.0",
+        "git_sha": GIT_SHA,
         "modes": ["showpiece", "live", "batch"],
+        "artifacts": {
+            "precomputed_loaded": precomputed is not None,
+            "precomputed_bytes": len(precomputed) if precomputed is not None else 0,
+            "dashboard_present": (STATIC_DIR / "index.html").exists(),
+        },
+        "jobs": {
+            "stored": len(job_store),
+            "active": sum(1 for j in job_store.values() if j.get("status") in ("queued", "processing")),
+        },
         "limits": {
             "live_candidates": MAX_LIVE_CANDIDATES,
             "batch_candidates": MAX_BATCH_CANDIDATES,
