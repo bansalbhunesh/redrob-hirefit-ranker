@@ -132,7 +132,7 @@ def choices():
     header(s, "WHY THESE CHOICES", "Deliberate, measured engineering")
     rows = [
         ("Feature matrix + BM25 — not an LLM per candidate",
-         "LLM-per-candidate can't scale to 100K on budget, isn't reproducible, needs network. We rank the pool on CPU in ~80–180s."),
+         "LLM-per-candidate can't scale to 100K on budget, isn't reproducible, needs network. We rank the pool on CPU in ~3 min worst-case in the eval Docker image."),
         ("No dense embeddings — tested & rejected",
          "Built a model2vec/potion branch, gated on a measured A/B: NDCG@10 +0.0000, ~2.2× runtime → FAIL. Shipped the simpler system."),
         ("Career-evidence over keywords",
@@ -152,7 +152,7 @@ def choices():
 def results():
     s = prs.slides.add_slide(BLANK); bg(s, WHITE)
     header(s, "RESULTS", "A shortlist a recruiter can trust")
-    kpis = [("~104s","100K run · CPU only"),("100% offline","no network · GPU · LLM"),
+    kpis = [("≤194s","100K in eval Docker · CPU"),("100% offline","no network · GPU · LLM"),
             ("0 / 53","honeypots in top output"),("P@10 · 1.0","independent LLM-judge")]
     cw = Inches(2.9)
     for i,(v,l) in enumerate(kpis):

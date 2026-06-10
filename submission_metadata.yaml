@@ -14,7 +14,7 @@ team_members:
 
 github_repo: "https://github.com/bansalbhunesh/redrob-hirefit-ranker"
 sandbox_link: "https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker"
-reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv  # rank.py auto-pins PYTHONHASHSEED=0 -> bit-identical output"
+reproduce_command: "PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s  # the Dockerfile pins the hash seed; set it manually for local runs -> bit-identical output"
 
 compute:
   platform: "Local CPU machine"
@@ -26,17 +26,19 @@ compute:
   has_network_during_ranking: false
   pre_computation_required: false
   pre_computation_time_minutes: 0
-  # Feature scoring is parallelised across CPU workers (--workers, default auto).
-  # Observed 100K range ~123-184s across runs on the dev machine (8 cores, Py 3.14);
-  # output is identical to --workers 1. Re-measure in the 3.11 Docker image before submit.
-  measured_runtime_seconds: 184
-  measured_peak_rss_gb: 4.33
+  # Measured in the python:3.11-slim Docker image (the reproduction environment),
+  # full 100K pool: 193s serial on 2 CPUs (worst case), 194s with 2 workers on
+  # 2 CPUs, 177s with 4 workers on 4 CPUs; every run byte-identical to the
+  # committed submission (full matrix: docs/runtime_matrix.md).
+  measured_runtime_seconds: 193
+  measured_peak_rss_gb: 6.1
   measured_bm25_backend: "bm25s"
-  feature_scoring_workers: "auto (up to 8)"
+  feature_scoring_workers: "auto (up to 8); output identical for any worker count"
 
 ai_tools_used:
   - "Codex"
   - "Claude Code (Anthropic) for runtime parallelisation, independent eval harness, soft JD penalties, reasoning variety"
+  - "Claude Code (Anthropic) for the competition-hardening pass: golden-hash reproduction gates, Docker runtime matrix, byte-identical hot-path optimization, pre-registered sensitivity sweep, honeypot audit, ablation ladder, JD compiler, grounded-reasoning upgrade"
   - "Claude/Kimi audit notes as design-review references"
 
 ai_usage_summary: |
