@@ -25,4 +25,11 @@ jobs:
       - name: Test suite (golden-hash regression + pipeline + API)
         env:
           PYTHONHASHSEED: "0"
-        run: pytest -q
+        run: |
+          set -o pipefail
+          pytest -q 2>&1 | tee /tmp/pytest.out || status=$?
+          echo '### pytest tail' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          tail -40 /tmp/pytest.out >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          exit "${status:-0}"
