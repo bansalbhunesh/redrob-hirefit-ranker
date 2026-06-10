@@ -73,11 +73,28 @@ automation had missed:
 The summary-vs-claim cross-check and a tighter endorsement criterion
 (1–3 endorsements is noise, not a curated import) were folded back into
 `scripts/honeypot_verdicts.py`; the verdict table below is the recalibrated
-output. After recalibration, **12 instances remain ambiguous** under the
-pre-committed rubric — all are JD-irrelevant titles (Business Analysts, HR
-Manager, Civil Engineer, Content Writer, etc.) with single-role abbreviated
-histories and consistent graduation years, where an honest "imported only my
-current job" reading cannot be excluded.
+output.
+
+## Owner review (2026-06-10)
+
+Verdicts were produced against the pre-committed rubric and reviewed and
+approved by the project owner (this was a rubric-based review with owner
+sign-off on the contested cases, not an independent line-by-line manual
+re-examination of all 53 profiles). The owner's review flipped three
+profiles the automation had left ambiguous — CAND_0038431, CAND_0065787,
+CAND_0066405 — to **UPHELD**: each has a summary self-report that directly
+contradicts its years_of_experience field (7.9y vs 15.0, 2.7y vs 10.9,
+2.6y vs 12.3), the same fabricated-field tell that upheld five other
+profiles, and the rubric must be applied consistently.
+
+After owner review, **9 instances remain ambiguous** under the
+pre-committed rubric: six single-role abbreviated histories with
+JD-irrelevant titles (Business Analysts, HR Manager, Civil Engineer,
+Marketing Manager, Content Writer) and consistent graduation years, where
+an honest "imported only my current job" reading cannot be excluded, plus
+three zero-duration expert-skill lists each partially corroborated by
+career text. Since ambiguous members still exist in both softened classes,
+the 0.0 → 0.05 remediation below stands unchanged.
 
 ## Remediation applied (per the pre-registered rule)
 
@@ -102,7 +119,7 @@ Rubric applied to all 53 flagged candidates (53 flag instances). Summary:
 
 | flag class | upheld | ambiguous |
 |---|---|---|
-| `career_history_too_short_for_claimed_yoe` | 14 | 9 |
+| `career_history_too_short_for_claimed_yoe` | 17 | 6 |
 | `experience_timeline_exceeds_claim` | 22 | 0 |
 | `expert_skill_zero_duration` | 5 | 3 |
 
@@ -125,7 +142,7 @@ Rubric applied to all 53 flagged candidates (53 flag instances). Summary:
 | CAND_0036299 | `career_history_too_short_for_claimed_yoe` | **UPHELD** | claims 12y, history covers 8m across 1 roles; education (2022) does not corroborate the claim |
 | CAND_0037000 | `experience_timeline_exceeds_claim` | **UPHELD** | claims 3y but durations sum to 75m (+43m); dated overlaps only 0m |
 | CAND_0037539 | `experience_timeline_exceeds_claim` | **UPHELD** | claims 5y but durations sum to 115m (+57m); dated overlaps only 0m |
-| CAND_0038431 | `career_history_too_short_for_claimed_yoe` | **AMBIGUOUS** | only 1 roles listed and graduation 2007 is consistent with 15y -- looks abbreviated, not fabricated |
+| CAND_0038431 | `career_history_too_short_for_claimed_yoe` | **UPHELD** | summary self-reports 7.9y but the YoE field claims 15.0y -- the fabricated-field contradiction tell, applied consistently (owner review) |
 | CAND_0040075 | `experience_timeline_exceeds_claim` | **UPHELD** | claims 15y but durations sum to 365m (+185m); dated overlaps only 0m |
 | CAND_0040853 | `experience_timeline_exceeds_claim` | **UPHELD** | claims 1y but durations sum to 61m (+48m); dated overlaps only 0m |
 | CAND_0042453 | `experience_timeline_exceeds_claim` | **UPHELD** | claims 4y but durations sum to 98m (+48m); dated overlaps only 0m |
@@ -142,8 +159,8 @@ Rubric applied to all 53 flagged candidates (53 flag instances). Summary:
 | CAND_0063888 | `expert_skill_zero_duration` | **UPHELD** | 5 expert skills with 0 months, 0 endorsed, none corroborated by career history |
 | CAND_0064077 | `experience_timeline_exceeds_claim` | **UPHELD** | claims 10y but durations sum to 237m (+116m); dated overlaps only 0m |
 | CAND_0065710 | `experience_timeline_exceeds_claim` | **UPHELD** | claims 4y but durations sum to 114m (+62m); dated overlaps only 0m |
-| CAND_0065787 | `career_history_too_short_for_claimed_yoe` | **AMBIGUOUS** | only 1 roles listed and graduation 2012 is consistent with 11y -- looks abbreviated, not fabricated |
-| CAND_0066405 | `career_history_too_short_for_claimed_yoe` | **AMBIGUOUS** | only 1 roles listed and graduation 2013 is consistent with 12y -- looks abbreviated, not fabricated |
+| CAND_0065787 | `career_history_too_short_for_claimed_yoe` | **UPHELD** | summary self-reports 2.7y but the YoE field claims 10.9y -- the fabricated-field contradiction tell, applied consistently (owner review) |
+| CAND_0066405 | `career_history_too_short_for_claimed_yoe` | **UPHELD** | summary self-reports 2.6y but the YoE field claims 12.3y -- the fabricated-field contradiction tell, applied consistently (owner review) |
 | CAND_0070189 | `experience_timeline_exceeds_claim` | **UPHELD** | claims 7y but durations sum to 173m (+91m); dated overlaps only 0m |
 | CAND_0070429 | `expert_skill_zero_duration` | **AMBIGUOUS** | 1/5 zero-duration expert skills corroborated in career text: ['Java'] |
 | CAND_0071115 | `career_history_too_short_for_claimed_yoe` | **UPHELD** | summary self-reports 5.8y (matches 69m of history) but the YoE field claims 16.5y -- fabricated field |
