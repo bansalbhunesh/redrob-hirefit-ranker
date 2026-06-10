@@ -125,22 +125,33 @@ def main() -> None:
         print(f"{name:<45} ind={r_ind.composite:.4f} llm={r_llm.composite:.4f} "
               f"(cov {r_llm.coverage:.0%}) mean={mean_c:.4f}", file=sys.stderr)
 
+    # Primary metric: independent composite (full coverage on any slice). The
+    # LLM column is reported for transparency but is not comparable across
+    # rungs on a dev slice (its labels were sampled around the full-pool
+    # submission -> 25-35% coverage, selection-biased under exclude policy).
     lines = ["# Ablation Ladder (Phase 3)", ""]
     lines.append(f"Dev slice: first {len(candidates):,} candidates; top-100 per rung; "
                  "shared harness, policy=exclude; composite = challenge formula.")
     lines.append("")
-    lines.append("| rung | composite (independent) | composite (LLM judge) | LLM coverage | mean | delta vs prev |")
-    lines.append("|---|---|---|---|---|---|")
+    lines.append("**Primary metric: independent-heuristic composite (full coverage).** "
+                 "The LLM-judge column is selection-biased at dev-slice coverage and "
+                 "not comparable across rungs.")
+    lines.append("")
+    lines.append("| rung | composite (independent, full coverage) | delta | LLM judge (cov) |")
+    lines.append("|---|---|---|---|")
+    prev_ind = None
     for name, r_ind, r_llm, mean_c, delta, note in rows:
         if r_ind is None:
-            lines.append(f"| {name} | — | — | — | — | {note} |")
-        else:
-            d = "—" if delta is None else f"{delta:+.4f}"
-            lines.append(f"| {name} | {r_ind.composite:.4f} | {r_llm.composite:.4f} "
-                         f"| {r_llm.coverage:.0%} | {mean_c:.4f} | {d} |")
+            lines.append(f"| {name} | — | {note} | — |")
+            continue
+        d = "—" if prev_ind is None else f"**{r_ind.composite - prev_ind:+.4f}**"
+        prev_ind = r_ind.composite
+        lines.append(f"| {name} | {r_ind.composite:.4f} | {d} "
+                     f"| {r_llm.composite:.4f} ({r_llm.coverage:.0%}) |")
     lines.append("")
-    lines.append("Rung 4 is asserted equal to the shipped pipeline configuration on the "
-                 "same slice (same code path, same config).")
+    lines.append("Rung 4 is the shipped configuration by construction (same "
+                 "rank_candidates code path and default config; the full-pool "
+                 "equivalent reproduces the golden submission hash).")
     DOC_OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"wrote {DOC_OUT}", file=sys.stderr)
 

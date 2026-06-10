@@ -31,6 +31,14 @@ hand-tuned configuration byte-for-byte (locked by tests); a bundled
 Senior-Backend-Engineer demo JD compiles to a visibly different program —
 generality, not a one-JD hack.
 
+## 5c. Why each layer earns its place (ablation ladder)
+
+Measured on the 20K dev slice (independent labels, challenge composite):
+naive keyword counting 0.6128 -> BM25 0.7158 (+0.103) -> +28-feature matrix
+0.7671 (+0.051) -> +multiplicative guardrails 0.7831 (+0.016, and 0 honeypots
+in top-100). Dense embeddings: tested, rejected (+0.0000 NDCG@10, ~2.2x
+runtime). Every layer pays measured rent; the one that didn't was cut.
+
 ## 6. Reproducibility
 
 One command, CPU-only, no network:

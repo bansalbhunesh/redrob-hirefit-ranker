@@ -108,6 +108,24 @@ MAP     0.7518
 
 These are heuristic JD-rule silver labels for tuning and defense, not the hidden challenge score.
 
+## Why each layer earns its place
+
+Measured ablation on the 20K dev slice (top-100 per rung, challenge composite
+against the full-coverage independent labels; details and the LLM-judge column
+in [docs/ablation_ladder.md](docs/ablation_ladder.md)):
+
+| rung | composite | delta |
+|---|---|---|
+| 1. naive JD-keyword count (the strawman) | 0.6128 | — |
+| 2. BM25 only | 0.7158 | **+0.1030** |
+| 3. BM25 + 28-feature recruiter matrix (multipliers off) | 0.7671 | **+0.0513** |
+| 4. full system: + behavioral/honeypot/disqualifier multipliers (shipped) | 0.7831 | **+0.0160** |
+| 5. + dense embeddings | tested, **rejected** | NDCG@10 +0.0000, ~2.2× runtime |
+
+The multiplier rung adds a measured composite gain *and* is what keeps all 53
+hard honeypots and the keyword-stuffer traps out of the top-100 — rung 3 alone
+has no such protection.
+
 ## The JD compiles into a deterministic scoring program
 
 The ranker is not hard-coded to one job description. `rank.py --jd <file>` runs a
