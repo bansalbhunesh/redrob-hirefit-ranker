@@ -73,11 +73,15 @@ def bm25_scores(
 
 
 def retrieve_pool(
-    candidates: list[dict], pool_size: int = 0, backend: Bm25Backend = "auto"
+    candidates: list[dict],
+    pool_size: int = 0,
+    backend: Bm25Backend = "auto",
+    query: str = JD_QUERY,
 ) -> tuple[dict[int, float], str]:
     """Return normalized BM25 scores and backend name.
 
     `pool_size <= 0` scores every candidate. That is the official challenge path.
+    `query` defaults to the bundled JD; rank.py --jd supplies a compiled one.
     """
 
     if not candidates:
@@ -88,7 +92,7 @@ def retrieve_pool(
         t = candidate_text(c)
         c["_cached_text"] = t  # Cache for reuse by compute_features
         texts.append(t)
-    scores, used_backend = bm25_scores(texts, backend=backend)
+    scores, used_backend = bm25_scores(texts, query=query, backend=backend)
     if pool_size > 0 and pool_size < len(scores):
         idx = np.argpartition(-scores, pool_size - 1)[:pool_size]
     else:

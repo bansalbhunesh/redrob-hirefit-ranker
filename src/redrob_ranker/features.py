@@ -177,34 +177,86 @@ def _contains(text: str, terms: set[str] | list[str]) -> int:
     return _contains_padded(_pad(terms), text)
 
 
-NORMALIZED_MUST_HAVE_SKILLS = {
-    group: tuple(_norm(alias) for alias in aliases) for group, aliases in MUST_HAVE_SKILLS.items()
-}
-NORMALIZED_NICE_TO_HAVE_SKILLS = {
-    group: tuple(_norm(alias) for alias in aliases) for group, aliases in NICE_TO_HAVE_SKILLS.items()
-}
-PADDED_MUST_HAVE_SKILLS = {
-    group: _pad(aliases) for group, aliases in NORMALIZED_MUST_HAVE_SKILLS.items()
-}
-PADDED_NICE_TO_HAVE_SKILLS = {
-    group: _pad(aliases) for group, aliases in NORMALIZED_NICE_TO_HAVE_SKILLS.items()
-}
-NORMALIZED_RELEVANT_SKILL_ALIASES = tuple(
-    alias
-    for aliases in list(NORMALIZED_MUST_HAVE_SKILLS.values())
-    + list(NORMALIZED_NICE_TO_HAVE_SKILLS.values())
-    for alias in aliases
-)
-PADDED_RELEVANT_SKILL_ALIASES = _pad(NORMALIZED_RELEVANT_SKILL_ALIASES)
-PADDED_CORE_SKILL_ALIASES = _pad(
-    alias for aliases in NORMALIZED_MUST_HAVE_SKILLS.values() for alias in aliases
-)
+class JDMatchers:
+    """All JD-derived matching structures, prebuilt from a CompiledJD.
+
+    The default instance reproduces the historical module-level constants
+    exactly; alternate JDs (rank.py --jd) get their own instance. Scoring
+    logic never changes -- only which compiled tables it matches against.
+    """
+
+    __slots__ = (
+        "jd", "weights", "normalized_must", "normalized_nice",
+        "padded_must", "padded_nice", "relevant_padded", "core_padded",
+        "title_padded", "locations_padded", "yoe_target",
+        "_relevant_name_cache",
+    )
+
+    def __init__(self, jd: "CompiledJD") -> None:
+        self.jd = jd
+        must = jd.must_have_skills_dict()
+        nice = jd.nice_to_have_skills_dict()
+        self.weights = jd.must_have_weights_dict()
+        self.normalized_must = {
+            group: tuple(_norm(alias) for alias in aliases) for group, aliases in must.items()
+        }
+        self.normalized_nice = {
+            group: tuple(_norm(alias) for alias in aliases) for group, aliases in nice.items()
+        }
+        self.padded_must = {g: _pad(a) for g, a in self.normalized_must.items()}
+        self.padded_nice = {g: _pad(a) for g, a in self.normalized_nice.items()}
+        self.relevant_padded = _pad(
+            alias
+            for aliases in list(self.normalized_must.values()) + list(self.normalized_nice.values())
+            for alias in aliases
+        )
+        self.core_padded = _pad(
+            alias for aliases in self.normalized_must.values() for alias in aliases
+        )
+        self.title_padded = {
+            _pad([t])[0]: w for t, w in jd.target_title_weights_dict().items() if _pad([t])
+        }
+        self.locations_padded = _pad(jd.preferred_locations)
+        self.yoe_target = jd.yoe_target
+        self._relevant_name_cache: dict[str, bool] = {}
+
+    def is_relevant_skill_name(self, name_n: str) -> bool:
+        cached = self._relevant_name_cache.get(name_n)
+        if cached is None:
+            cached = _has_boundary(self.relevant_padded, name_n)
+            if len(self._relevant_name_cache) < (1 << 16):
+                self._relevant_name_cache[name_n] = cached
+        return cached
 
 
-@lru_cache(maxsize=1 << 16)
-def _is_relevant_skill_name(name_n: str) -> bool:
-    """Cached: skill names repeat heavily across the pool."""
-    return _has_boundary(PADDED_RELEVANT_SKILL_ALIASES, name_n)
+def _build_default_matchers() -> JDMatchers:
+    from redrob_ranker.jd_compiler import DEFAULT_COMPILED_JD
+
+    return JDMatchers(DEFAULT_COMPILED_JD)
+
+
+_DEFAULT_MATCHERS = _build_default_matchers()
+_ALT_MATCHERS: dict[object, JDMatchers] = {}
+
+
+def _matchers_for(config) -> JDMatchers:
+    if config is None or config is _DEFAULT_MATCHERS.jd or config == _DEFAULT_MATCHERS.jd:
+        return _DEFAULT_MATCHERS
+    m = _ALT_MATCHERS.get(config)
+    if m is None:
+        m = JDMatchers(config)
+        _ALT_MATCHERS[config] = m
+    return m
+
+
+# Back-compat module-level views of the default configuration (tests and
+# scripts import these; they are the same objects the default path uses).
+NORMALIZED_MUST_HAVE_SKILLS = _DEFAULT_MATCHERS.normalized_must
+NORMALIZED_NICE_TO_HAVE_SKILLS = _DEFAULT_MATCHERS.normalized_nice
+PADDED_MUST_HAVE_SKILLS = _DEFAULT_MATCHERS.padded_must
+PADDED_NICE_TO_HAVE_SKILLS = _DEFAULT_MATCHERS.padded_nice
+PADDED_RELEVANT_SKILL_ALIASES = _DEFAULT_MATCHERS.relevant_padded
+PADDED_CORE_SKILL_ALIASES = _DEFAULT_MATCHERS.core_padded
 
 
 def _days_since(date_s: str | None) -> int:
@@ -275,10 +327,10 @@ def _alias_match(
     return 0.0
 
 
-_TARGET_TITLE_PADDED = {_pad([t])[0]: w for t, w in TARGET_TITLE_WEIGHTS.items() if _pad([t])}
+_TARGET_TITLE_PADDED = _DEFAULT_MATCHERS.title_padded
 _NON_TARGET_PADDED = _pad(NON_TARGET_TITLES)
 
-def _title_score(candidate: dict) -> float:
+def _title_score(candidate: dict, matchers: JDMatchers = _DEFAULT_MATCHERS) -> float:
     profile = candidate.get("profile", {})
     current = _norm(profile.get("current_title"))
     headline = _norm(profile.get("headline"))
@@ -287,7 +339,7 @@ def _title_score(candidate: dict) -> float:
 
     score = 0.08
     safe_text = f" {text} "
-    for pt, weight in _TARGET_TITLE_PADDED.items():
+    for pt, weight in matchers.title_padded.items():
         if pt in safe_text:
             score = max(score, weight)
     if _has_boundary(_NON_TARGET_PADDED, current):
@@ -351,7 +403,9 @@ def _education_score(candidate: dict) -> float:
     return best or 0.45
 
 
-def _honeypot_flags(candidate: dict, values: dict[str, float]) -> list[str]:
+def _honeypot_flags(
+    candidate: dict, values: dict[str, float], matchers: JDMatchers = _DEFAULT_MATCHERS
+) -> list[str]:
     flags: list[str] = []
     profile = candidate.get("profile", {})
     signals = candidate.get("redrob_signals", {})
@@ -373,7 +427,7 @@ def _honeypot_flags(candidate: dict, values: dict[str, float]) -> list[str]:
             continue
         expert_zero_any.append(skill.get("name", ""))
         name_n = _norm(skill.get("name"))
-        if _has_boundary(PADDED_CORE_SKILL_ALIASES, name_n):
+        if _has_boundary(matchers.core_padded, name_n):
             expert_zero_core.append(skill.get("name", ""))
     if len(expert_zero_core) >= 2 or len(expert_zero_any) >= 5:
         flags.append("expert_skill_zero_duration")
@@ -409,7 +463,9 @@ _LOCATIONS_PADDED = _pad(PREFERRED_INDIAN_LOCATIONS)
 _LLM_WRAPPER_PADDED = _pad([str(t).lower() for t in LLM_WRAPPER_TERMS])
 _JUNIOR_PADDED = _pad(["junior", "intern", "trainee", "associate", "fresher"])
 
-def compute_features(candidate: dict) -> CandidateFeatures:
+def compute_features(candidate: dict, config=None) -> CandidateFeatures:
+    """Score one candidate. `config` is an optional CompiledJD; None means the
+    bundled challenge JD (byte-identical to the historical constant path)."""
     if not isinstance(candidate, dict):
         return CandidateFeatures(
             candidate_id=str(candidate) if candidate else "UNKNOWN",
@@ -419,6 +475,7 @@ def compute_features(candidate: dict) -> CandidateFeatures:
             disqualifier_multiplier=0.0,
             flags=["malformed_candidate"]
         )
+    m = _matchers_for(config)
     profile = candidate.get("profile", {})
     signals = candidate.get("redrob_signals", {})
     full_text = _profile_text(candidate)
@@ -430,25 +487,25 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     values: dict[str, float] = {}
 
     core_score = 0.0
-    for group, aliases in NORMALIZED_MUST_HAVE_SKILLS.items():
-        core_score += MUST_HAVE_WEIGHTS[group] * _alias_match(
-            terms, safe_full, aliases, PADDED_MUST_HAVE_SKILLS[group]
+    for group, aliases in m.normalized_must.items():
+        core_score += m.weights[group] * _alias_match(
+            terms, safe_full, aliases, m.padded_must[group]
         )
     values["core_skill_match"] = clamp(core_score)
 
     nice_hits = [
-        _alias_match(terms, safe_full, aliases, PADDED_NICE_TO_HAVE_SKILLS[group])
-        for group, aliases in NORMALIZED_NICE_TO_HAVE_SKILLS.items()
+        _alias_match(terms, safe_full, aliases, m.padded_nice[group])
+        for group, aliases in m.normalized_nice.items()
     ]
     values["nice_skill_match"] = clamp(sum(nice_hits) / max(1, len(nice_hits)))
 
     matched_skill_scores = []
-    
+
     for skill in _skill_records(candidate):
         name = _norm(skill.get("name"))
         if not name:
             continue
-        if not _is_relevant_skill_name(name):
+        if not m.is_relevant_skill_name(name):
             continue
         prof = {"beginner": 0.35, "intermediate": 0.6, "advanced": 0.85, "expert": 1.0}.get(
             _norm(skill.get("proficiency")), 0.4
@@ -487,9 +544,9 @@ def compute_features(candidate: dict) -> CandidateFeatures:
 
     title_text = " ".join(_norm(j.get("title")) for j in candidate.get("career_history", []) or [])
     current_title = _norm(profile.get("current_title"))
-    values["senior_title_held"] = 1.0 if _has_boundary(_SENIOR_TITLES_PADDED, f"{current_title} {title_text}") and _title_score(candidate) > 0.55 else 0.0
+    values["senior_title_held"] = 1.0 if _has_boundary(_SENIOR_TITLES_PADDED, f"{current_title} {title_text}") and _title_score(candidate, m) > 0.55 else 0.0
 
-    title_score = _title_score(candidate)
+    title_score = _title_score(candidate, m)
     completed_tenures = [
         int(j.get("duration_months") or 0)
         for j in candidate.get("career_history", []) or []
@@ -522,7 +579,8 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     )
 
     yoe = float(profile.get("years_of_experience") or 0)
-    values["yoe_fit_score"] = 1.0 if yoe >= 7.0 else clamp(math.exp(-((yoe - 7.0) ** 2) / (2 * 2.6**2)))
+    yoe_target = m.yoe_target  # 7.0 for the bundled JD (band center)
+    values["yoe_fit_score"] = 1.0 if yoe >= yoe_target else clamp(math.exp(-((yoe - yoe_target) ** 2) / (2 * 2.6**2)))
     if yoe < 3:
         values["yoe_fit_score"] *= 0.55
     values["education_score"] = _education_score(candidate)
@@ -566,7 +624,7 @@ def compute_features(candidate: dict) -> CandidateFeatures:
 
     location = _norm(profile.get("location"))
     country = _norm(profile.get("country"))
-    preferred_city = _has_boundary(_LOCATIONS_PADDED, location)
+    preferred_city = _has_boundary(m.locations_padded, location)
     in_india = country == "india" or "india" in country
     willing_relocate = bool(signals.get("willing_to_relocate"))
     values["location_score"] = 1.0 if preferred_city else 0.68 if in_india else 0.42 if willing_relocate else 0.10
@@ -591,7 +649,7 @@ def compute_features(candidate: dict) -> CandidateFeatures:
         cv_count >= 3 and values["ir_ranking_experience"] < 0.3
     ) else 0.0
 
-    hard_flags = _honeypot_flags(candidate, values)
+    hard_flags = _honeypot_flags(candidate, values, m)
     soft_flags: list[str] = []
     if values["consulting_only_flag"]:
         soft_flags.append("consulting_only")

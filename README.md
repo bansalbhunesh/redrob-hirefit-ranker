@@ -112,6 +112,32 @@ MAP     0.7518
 
 These are heuristic JD-rule silver labels for tuning and defense, not the hidden challenge score.
 
+## The JD compiles into a deterministic scoring program
+
+The ranker is not hard-coded to one job description. `rank.py --jd <file>` runs a
+rule-based compiler (`src/redrob_ranker/jd_compiler.py`) that parses a plaintext JD
+into a frozen `CompiledJD` config — skill groups, group weights, title weights,
+preferred locations, experience band — which the same scoring program then executes:
+
+```bash
+# Official path (no --jd) and the compiled bundled JD are byte-identical:
+python rank.py --candidates ./candidates.jsonl --out out.csv --bm25-backend bm25s --jd job_description.txt
+# -> sha256(out.csv) == golden submission hash (locked by tests/test_jd_compiler.py)
+
+# Generality: a different JD compiles into a different program
+python rank.py --candidates ./candidates.jsonl --out backend.csv --max-candidates 20000 \
+  --bm25-backend bm25s --jd demo_jd_backend.txt
+```
+
+The parser decides *which* knobs a JD activates; a documented expansion lexicon
+(curated alias dictionaries and weight tables) decides what each knob expands to.
+Compiling the bundled challenge JD reproduces the hand-tuned configuration exactly,
+so the official path is provably unchanged. The bundled `demo_jd_backend.txt`
+(Senior Backend Engineer, Bangalore/Chennai, 4–8 yrs) compiles to a different title
+family, location set, and skill groups — and visibly reorders the pool (Chennai
+software/ML-systems profiles surface that the AI JD's tables do not prefer; the
+pool itself is AI-talent-heavy, so strong Python/distributed engineers still rank).
+
 ## Experimental: dense embeddings (branch `experiment/dense-embeddings`)
 
 The official path is lexical (BM25) + structured recruiter features. This branch adds
