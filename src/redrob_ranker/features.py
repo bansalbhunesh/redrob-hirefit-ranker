@@ -7,6 +7,7 @@ import re
 import statistics
 from dataclasses import dataclass, field
 from datetime import date
+from functools import lru_cache
 import os
 
 from redrob_ranker.constants import (
@@ -109,8 +110,24 @@ def clamp(value: float, lo: float = 0.0, hi: float = 1.0) -> float:
     return max(lo, min(hi, value))
 
 
+def _norm_str(text: str) -> str:
+    return _NORM_RE.sub(" ", text.lower()).strip()
+
+
+@lru_cache(maxsize=1 << 16)
+def _norm_cached(text: str) -> str:
+    return _norm_str(text)
+
+
 def _norm(text: object) -> str:
-    return _NORM_RE.sub(" ", str(text or "").lower()).strip()
+    s = str(text or "")
+    # Short strings (titles, companies, skills, proficiencies) repeat heavily
+    # across the 100K pool -- caching them removes most re.sub calls from the
+    # hot path. Long texts are unique per candidate, so caching would only
+    # bloat memory.
+    if len(s) <= 80:
+        return _norm_cached(s)
+    return _norm_str(s)
 
 
 def _pad(terms) -> tuple[str, ...]:
@@ -122,21 +139,34 @@ def _pad(terms) -> tuple[str, ...]:
     return tuple(padded)
 
 
-def _has_boundary(padded_terms, text: str) -> bool:
-    safe_text = f" {text} "
+def _has_boundary_safe(padded_terms, safe_text: str) -> bool:
+    """Boundary check against an already-padded (' text ') string."""
     for pt in padded_terms:
         if pt in safe_text:
             return True
     return False
 
 
-def _count_boundaries(padded_terms, text: str) -> int:
-    safe_text = f" {text} "
+def _has_boundary(padded_terms, text: str) -> bool:
+    return _has_boundary_safe(padded_terms, f" {text} ")
+
+
+def _count_in_safe(padded_terms, safe_text: str) -> int:
+    """Boundary count against an already-padded (' text ') string.
+
+    Padding once per candidate (instead of per term-list call) avoids
+    re-copying the full profile text 10+ times per candidate; this is the
+    compute_features hot path identified by cProfile.
+    """
     count = 0
     for pt in padded_terms:
         if pt in safe_text:
             count += 1
     return count
+
+
+def _count_boundaries(padded_terms, text: str) -> int:
+    return _count_in_safe(padded_terms, f" {text} ")
 
 
 def _contains_padded(padded_terms: tuple[str, ...], text: str) -> int:
@@ -169,6 +199,12 @@ PADDED_RELEVANT_SKILL_ALIASES = _pad(NORMALIZED_RELEVANT_SKILL_ALIASES)
 PADDED_CORE_SKILL_ALIASES = _pad(
     alias for aliases in NORMALIZED_MUST_HAVE_SKILLS.values() for alias in aliases
 )
+
+
+@lru_cache(maxsize=1 << 16)
+def _is_relevant_skill_name(name_n: str) -> bool:
+    """Cached: skill names repeat heavily across the pool."""
+    return _has_boundary(PADDED_RELEVANT_SKILL_ALIASES, name_n)
 
 
 def _days_since(date_s: str | None) -> int:
@@ -219,18 +255,24 @@ def _career_text(candidate: dict) -> str:
 
 def _alias_match(
     candidate_terms: set[str],
-    full_text: str,
+    safe_full_text: str,
     aliases: tuple[str, ...],
     padded_aliases: tuple[str, ...],
 ) -> float:
-    score = 0.0
-    safe_text = f" {full_text} "
-    for alias_n, alias_padded in zip(aliases, padded_aliases):
+    """Score 1.0 if any alias is a listed skill, else 0.7 on a text mention.
+
+    Equivalent to max() over per-alias scores, but checks the cheap set
+    membership for every alias first (early-exit at 1.0) before falling back
+    to substring scans of the full text. `safe_full_text` must already be
+    padded with surrounding spaces.
+    """
+    for alias_n in aliases:
         if alias_n in candidate_terms:
-            score = max(score, 1.0)
-        elif alias_padded in safe_text:
-            score = max(score, 0.7)
-    return score
+            return 1.0
+    for alias_padded in padded_aliases:
+        if alias_padded in safe_full_text:
+            return 0.7
+    return 0.0
 
 
 _TARGET_TITLE_PADDED = {_pad([t])[0]: w for t, w in TARGET_TITLE_WEIGHTS.items() if _pad([t])}
@@ -381,18 +423,21 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     signals = candidate.get("redrob_signals", {})
     full_text = _profile_text(candidate)
     career_text = _career_text(candidate)
+    # Pad the two large texts once; every boundary helper below reuses them.
+    safe_full = f" {full_text} "
+    safe_career = f" {career_text} "
     terms = _skill_terms(candidate)
     values: dict[str, float] = {}
 
     core_score = 0.0
     for group, aliases in NORMALIZED_MUST_HAVE_SKILLS.items():
         core_score += MUST_HAVE_WEIGHTS[group] * _alias_match(
-            terms, full_text, aliases, PADDED_MUST_HAVE_SKILLS[group]
+            terms, safe_full, aliases, PADDED_MUST_HAVE_SKILLS[group]
         )
     values["core_skill_match"] = clamp(core_score)
 
     nice_hits = [
-        _alias_match(terms, full_text, aliases, PADDED_NICE_TO_HAVE_SKILLS[group])
+        _alias_match(terms, safe_full, aliases, PADDED_NICE_TO_HAVE_SKILLS[group])
         for group, aliases in NORMALIZED_NICE_TO_HAVE_SKILLS.items()
     ]
     values["nice_skill_match"] = clamp(sum(nice_hits) / max(1, len(nice_hits)))
@@ -403,7 +448,7 @@ def compute_features(candidate: dict) -> CandidateFeatures:
         name = _norm(skill.get("name"))
         if not name:
             continue
-        if not _has_boundary(PADDED_RELEVANT_SKILL_ALIASES, name):
+        if not _is_relevant_skill_name(name):
             continue
         prof = {"beginner": 0.35, "intermediate": 0.6, "advanced": 0.85, "expert": 1.0}.get(
             _norm(skill.get("proficiency")), 0.4
@@ -429,14 +474,14 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     gh = float(signals.get("github_activity_score") or 0)
     values["github_signal"] = 0.0 if gh < 0 else clamp(gh / 100.0)
 
-    cv_count = _contains_padded(_CV_SPEECH_ROBOTICS_PADDED, full_text)
+    cv_count = _count_in_safe(_CV_SPEECH_ROBOTICS_PADDED, safe_full)
 
     product_months, consulting_months, total_months = _product_consulting_months(candidate)
     values["product_company_ratio"] = clamp(product_months / max(1, total_months))
     values["consulting_only_flag"] = 1.0 if total_months and consulting_months / total_months > 0.8 and values["product_company_ratio"] < 0.2 else 0.0
 
-    values["ir_ranking_experience"] = clamp(_contains_padded(_IR_RANKING_PADDED, career_text) / 7.0)
-    values["production_evidence"] = clamp(_contains_padded(_PRODUCTION_PADDED, career_text) / 8.0)
+    values["ir_ranking_experience"] = clamp(_count_in_safe(_IR_RANKING_PADDED, safe_career) / 7.0)
+    values["production_evidence"] = clamp(_count_in_safe(_PRODUCTION_PADDED, safe_career) / 8.0)
     if sum(1 for j in candidate.get("career_history", []) or [] if int(j.get("duration_months") or 0) >= 18) >= 2:
         values["production_evidence"] = clamp(values["production_evidence"] + 0.08)
 
@@ -471,9 +516,9 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     )
     title_hop_penalty = (0.18 if strong_ranking_or_production else 0.35) * hop_signal
     values["career_trajectory_score"] = clamp(0.75 * title_score + 0.25 * values["product_company_ratio"] - title_hop_penalty)
-    values["scale_signal"] = clamp(_contains_padded(_SCALE_PADDED, career_text) / 4.0)
+    values["scale_signal"] = clamp(_count_in_safe(_SCALE_PADDED, safe_career) / 4.0)
     values["code_writing_recent"] = clamp(
-        _contains_padded(_CODE_WRITING_PADDED, " ".join([current_title, career_text])) / 4.0
+        _count_in_safe(_CODE_WRITING_PADDED, f" {current_title} {career_text} ") / 4.0
     )
 
     yoe = float(profile.get("years_of_experience") or 0)
@@ -485,12 +530,13 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     ml_months = 0
     for job in candidate.get("career_history", []) or []:
         text = _norm(" ".join([str(job.get("title", "")), str(job.get("description", ""))]))
-        if _contains_padded(_IR_RANKING_PADDED, text) or _has_boundary(_ML_TERMS_PADDED, text):
+        # Boolean context: early-exit boundary check equals nonzero count.
+        if _has_boundary(_IR_RANKING_PADDED, text) or _has_boundary(_ML_TERMS_PADDED, text):
             ml_months += int(job.get("duration_months") or 0)
     values["ml_ai_tenure_score"] = clamp(ml_months / 60.0)
-    values["open_source_signal"] = clamp(_contains_padded(_OPEN_SOURCE_PADDED, full_text) / 3.0)
+    values["open_source_signal"] = clamp(_count_in_safe(_OPEN_SOURCE_PADDED, safe_full) / 3.0)
 
-    management_score = _contains_padded(_MANAGEMENT_PADDED, career_text)
+    management_score = _count_in_safe(_MANAGEMENT_PADDED, safe_career)
     last_active_days = _days_since(signals.get("last_active_date"))
     recency = 1.0 if last_active_days <= 14 else 0.9 if last_active_days <= 30 else 0.72 if last_active_days <= 60 else 0.5 if last_active_days <= 120 else 0.22
     values["availability_score"] = clamp(recency * (1.0 if signals.get("open_to_work_flag") else 0.68))
@@ -554,7 +600,7 @@ def compute_features(candidate: dict) -> CandidateFeatures:
         soft_flags.append("salary_inversion")
     if float(signals.get("profile_completeness_score") or 0) < 40 and int(signals.get("endorsements_received") or 0) > 40:
         soft_flags.append("endorsement_inflation_low_profile")
-    if _contains_padded(_PURE_RESEARCH_PADDED, career_text) and values["production_evidence"] < 0.35:
+    if _has_boundary_safe(_PURE_RESEARCH_PADDED, safe_career) and values["production_evidence"] < 0.35:
         soft_flags.append("pure_research_without_deployment")
     if values["disqualifier_skill_flag"]:
         soft_flags.append("cv_speech_robotics_primary")
@@ -568,7 +614,7 @@ def compute_features(candidate: dict) -> CandidateFeatures:
     # only fires when wrapper terms appear AND there is no shipped retrieval/ranking
     # depth AND ML tenure is short -- so a senior who shipped systems and also lists
     # LangChain is never penalized.
-    wrapper_hits = _contains_padded(_LLM_WRAPPER_PADDED, full_text)
+    wrapper_hits = _count_in_safe(_LLM_WRAPPER_PADDED, safe_full)
     thin_systems = values["production_evidence"] < 0.35 and values["ir_ranking_experience"] < 0.30
     short_ml = values["ml_ai_tenure_score"] < 0.25 or yoe < 4.0
     if wrapper_hits >= 1 and thin_systems and short_ml:
