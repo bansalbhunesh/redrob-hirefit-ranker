@@ -1,0 +1,57 @@
+name: Cloud benchmark (worst-case runtime on clean hardware)
+
+# Off-laptop datapoint for the 300s runtime budget: builds the repo's own
+# Docker image and times a full synthetic-100K serial run at --cpus=2 (the
+# evaluator worst case), plus a two-run byte-determinism check. Uses a
+# size-faithful generated pool — the private competition data never leaves
+# the dev machine.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/cloud-benchmark.yml"]
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate size-faithful 100K pool (~490 MB, seeded)
+        run: python scripts/generate_loadtest_pool.py --n 100000 --out /tmp/pool.jsonl
+
+      - name: Build reproduction image (repo Dockerfile, pinned ranking deps only)
+        run: docker build -t hirefit .
+
+      - name: "Worst case: full 100K serial at --cpus=2 (run 1)"
+        run: |
+          /usr/bin/time -v docker run --rm --cpus=2 --memory=16g \
+            -v /tmp:/data hirefit \
+            --candidates /data/pool.jsonl --out /data/run1.csv \
+            --bm25-backend bm25s --workers 1 2>&1 | grep -E "Runtime|Maximum resident"
+
+      - name: "Determinism: identical second run"
+        run: |
+          docker run --rm --cpus=2 --memory=16g -v /tmp:/data hirefit \
+            --candidates /data/pool.jsonl --out /data/run2.csv \
+            --bm25-backend bm25s --workers 1 2>&1 | grep -E "Runtime"
+          h1=$(sha256sum /tmp/run1.csv | cut -d' ' -f1)
+          h2=$(sha256sum /tmp/run2.csv | cut -d' ' -f1)
+          echo "run1: $h1"
+          echo "run2: $h2"
+          test "$h1" = "$h2" && echo "BYTE-DETERMINISTIC on cloud hardware" || exit 1
+
+      - name: "Cross-check: committed demo sample ranks identically twice"
+        run: |
+          docker run --rm -v "$PWD:/data" hirefit \
+            --candidates /data/demo_sample.jsonl --out /data/outputs/demo1.csv --bm25-backend bm25s --workers 1
+          docker run --rm -v "$PWD:/data" hirefit \
+            --candidates /data/demo_sample.jsonl --out /data/outputs/demo2.csv --bm25-backend bm25s --workers 1
+          sha256sum outputs/demo1.csv outputs/demo2.csv
+          test "$(sha256sum outputs/demo1.csv | cut -d' ' -f1)" = "$(sha256sum outputs/demo2.csv | cut -d' ' -f1)"
