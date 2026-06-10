@@ -22,6 +22,15 @@ Skills, career, experience, behavior, and logistics are scored separately so the
 
 Behavior is multiplicative because a perfect paper profile with poor response/activity is not hireable. Honeypot and disqualifier multipliers keep impossible profiles away from top ranks.
 
+## 5b. The JD compiles into a deterministic scoring program
+
+`rank.py --jd file.txt` parses any plaintext JD into a frozen `CompiledJD`
+(skill groups, weights, title family, locations, experience band) executed by
+the same scoring engine. Compiling the bundled challenge JD reproduces the
+hand-tuned configuration byte-for-byte (locked by tests); a bundled
+Senior-Backend-Engineer demo JD compiles to a visibly different program —
+generality, not a one-JD hack.
+
 ## 6. Reproducibility
 
 One command, CPU-only, no network:

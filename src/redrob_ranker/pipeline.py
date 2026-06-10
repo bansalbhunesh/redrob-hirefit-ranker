@@ -25,6 +25,16 @@ def _submission_score(raw_score: float, max_score: float) -> float:
     return max(0.0, min(raw_score / max_score, 1.0))
 
 
+# Per-worker compiled JD (None = bundled challenge JD). Set once per worker
+# process via the pool initializer so it is pickled once, not per candidate.
+_WORKER_JD = None
+
+
+def _init_worker(jd) -> None:
+    global _WORKER_JD
+    _WORKER_JD = jd
+
+
 def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
     """Top-level (picklable) worker: features + final score for one candidate.
 
@@ -32,7 +42,7 @@ def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
     output identical to the serial path (verified byte-for-byte on the 100K pool).
     """
     candidate, retrieval_score, semantic_score = args
-    features = compute_features(candidate)
+    features = compute_features(candidate, config=_WORKER_JD)
     score = final_score(features, retrieval_score, semantic_score)
     features.total = score
     return features, score
@@ -49,6 +59,9 @@ class RankerConfig:
     # EXPERIMENTAL (default OFF): blend a model2vec/potion dense-retrieval feature.
     use_embeddings: bool = False
     embed_model: str = "minishlab/potion-retrieval-32M"
+    # Optional compiled JD (rank.py --jd). None = bundled challenge JD; the
+    # None path is byte-identical to the historical pipeline.
+    jd: object | None = None
 
 
 @dataclass(slots=True)
@@ -73,9 +86,15 @@ def _resolve_workers(requested: int, pool_count: int) -> int:
 
 
 def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[tuple[dict, object, float]], str]:
-    retrieval_scores, used_backend = retrieve_pool(
-        candidates, config.candidate_pool_size, backend=config.bm25_backend
-    )
+    if config.jd is not None:
+        retrieval_scores, used_backend = retrieve_pool(
+            candidates, config.candidate_pool_size, backend=config.bm25_backend,
+            query=config.jd.jd_query,
+        )
+    else:
+        retrieval_scores, used_backend = retrieve_pool(
+            candidates, config.candidate_pool_size, backend=config.bm25_backend
+        )
     indices = (
         list(retrieval_scores.keys())
         if config.candidate_pool_size > 0
@@ -103,12 +122,20 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
     workers = _resolve_workers(config.workers, len(work))
     ranked: list[tuple[dict, object, float]] = []
     if workers == 1:
-        for item in work:
-            features, score = _score_one(item)
-            ranked.append((item[0], features, score))
+        global _WORKER_JD
+        prev_jd = _WORKER_JD
+        _WORKER_JD = config.jd
+        try:
+            for item in work:
+                features, score = _score_one(item)
+                ranked.append((item[0], features, score))
+        finally:
+            _WORKER_JD = prev_jd
     else:
         chunksize = max(1, len(work) // (workers * 8))
-        with ProcessPoolExecutor(max_workers=workers) as executor:
+        with ProcessPoolExecutor(
+            max_workers=workers, initializer=_init_worker, initargs=(config.jd,)
+        ) as executor:
             results = executor.map(_score_one, work, chunksize=chunksize)
             for item, (features, score) in zip(work, results):
                 ranked.append((item[0], features, score))

@@ -1,0 +1,9 @@
+Job Description: Senior Backend Engineer
+Company: Acme Logistics
+Location: Bangalore or Chennai, India
+Experience Required: 4-8 years
+
+You will own our order-routing platform. Strong Python required. You will
+design REST APIs, scale our distributed systems on Kafka and Spark, and keep
+search relevance for the internal catalog ranking healthy. We value
+open-source contributions on GitHub. Sub-15-day notice preferred.

@@ -69,6 +69,14 @@ def parse_args() -> argparse.Namespace:
         "pool), 1=serial. Output is identical regardless of worker count.",
     )
     parser.add_argument(
+        "--jd",
+        default=None,
+        help="Optional plaintext JD file. Compiled into a deterministic scoring "
+        "program (skill groups, title weights, locations, experience band). "
+        "Omitted = the bundled challenge JD; that path is byte-identical to "
+        "the historical pipeline.",
+    )
+    parser.add_argument(
         "--use-embeddings",
         action="store_true",
         help="EXPERIMENTAL: blend a model2vec/potion dense-retrieval feature (needs "
@@ -151,6 +159,20 @@ def main() -> None:
             "--profile-memory uses tracemalloc and is intentionally limited to "
             "--max-candidates <= 5000. Do not use it for the official full run."
         )
+    compiled_jd = None
+    if args.jd:
+        from redrob_ranker.jd_compiler import DEFAULT_COMPILED_JD, compile_jd_file
+
+        compiled_jd = compile_jd_file(args.jd)
+        if compiled_jd == DEFAULT_COMPILED_JD:
+            print(f"Compiled {args.jd}: matches the bundled challenge configuration.",
+                  file=sys.stderr)
+        else:
+            groups = [g for g, _ in compiled_jd.must_have_skills]
+            print(f"Compiled {args.jd}: groups={groups} "
+                  f"yoe={compiled_jd.yoe_band_lo:.0f}-{compiled_jd.yoe_band_hi:.0f} "
+                  f"locations={len(compiled_jd.preferred_locations)}",
+                  file=sys.stderr)
     config = RankerConfig(
         top_k=args.top_k,
         candidate_pool_size=args.candidate_pool,
@@ -159,6 +181,7 @@ def main() -> None:
         workers=args.workers,
         use_embeddings=args.use_embeddings,
         embed_model=args.embed_model,
+        jd=compiled_jd,
     )
     if args.profile_memory:
         tracemalloc.start()
