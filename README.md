@@ -4,7 +4,7 @@
 
 [![Live Demo](https://img.shields.io/badge/▶_Live_Demo-HuggingFace_Space-FF9D00.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![100K Runtime](https://img.shields.io/badge/100K_Runtime-~163–215s_in_Docker_3.11-brightgreen.svg)](#)
+[![100K Runtime](https://img.shields.io/badge/100K_Runtime-80s_cloud_·_~122s_local_Docker-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
 [![Tests](https://img.shields.io/badge/tests-100_passing-brightgreen.svg)](#)
 
@@ -20,7 +20,7 @@
 
 | Dimension | Result | Budget / context |
 |---|---|---|
-| 100K runtime (python:3.11 Docker, 2–4 CPUs) | **163s** worst-case serial on 2 CPUs (min-of-3; 215s worst observed under host load) | 300s limit |
+| 100K runtime (python:3.11 Docker, 2 CPUs, serial) | **80s** on a clean cloud runner (CI-verified, byte-deterministic); ~122s local Docker | 300s limit |
 | Peak memory (container, 4 workers) | ~6.1 GB | 16 GB limit |
 | Network / GPU at rank time | **none** | required: none |
 | Determinism | **byte-identical** run-to-run, serial-vs-parallel, Windows-vs-Linux | locked by golden-hash tests |
