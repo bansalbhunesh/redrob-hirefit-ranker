@@ -177,21 +177,29 @@ def _contains(text: str, terms: set[str] | list[str]) -> int:
     return _contains_padded(_pad(terms), text)
 
 
-def _split_padded(padded_terms) -> tuple[frozenset[str], tuple[str, ...]]:
-    """Split padded terms into (single-word set, multi-word padded tuple).
+def _split_padded(padded_terms) -> tuple[frozenset[str], tuple[tuple[str, tuple[str, ...]], ...]]:
+    """Split padded terms into (single-word set, multi-word (padded, words) tuple).
 
     For _norm()-ed text (single-space separated), a padded single-word term
     ' x ' is a substring of ' text ' exactly when x is a whitespace token of
     the text — so single-word checks can use a per-candidate token set
     instead of scanning the multi-KB string. Multi-word terms keep the
-    substring check (they must match consecutive tokens).
+    substring check (they must match consecutive tokens), but carry their
+    word tuple so callers can prune with token-set lookups first: if
+    ' a b ' is a substring of the space-padded text, then 'a' and 'b' are
+    each delimited by literal spaces there, hence members of the
+    split(" ") token set. Words are only recorded when the term's internal
+    whitespace is literal spaces (always true for _pad output); otherwise
+    the empty tuple disables pruning and the substring scan always runs.
     """
     singles: set[str] = set()
-    multis: list[str] = []
+    multis: list[tuple[str, tuple[str, ...]]] = []
     for pt in padded_terms:
         word = pt.strip()
         if " " in word:
-            multis.append(pt)
+            space_words = [w for w in word.split(" ") if w]
+            words = tuple(space_words) if space_words == word.split() else ()
+            multis.append((pt, words))
         else:
             singles.add(word)
     return frozenset(singles), tuple(multis)
@@ -201,9 +209,13 @@ def _count_tokenized(split_terms, token_set: set[str], safe_text: str) -> int:
     """Equivalent of _count_in_safe using a prebuilt token set for singles."""
     singles, multis = split_terms
     count = len(singles & token_set)
-    for pt in multis:
-        if pt in safe_text:
-            count += 1
+    for pt, words in multis:
+        for w in words:
+            if w not in token_set:
+                break
+        else:
+            if pt in safe_text:
+                count += 1
     return count
 
 
@@ -211,9 +223,13 @@ def _has_tokenized(split_terms, token_set: set[str], safe_text: str) -> bool:
     singles, multis = split_terms
     if singles & token_set:
         return True
-    for pt in multis:
-        if pt in safe_text:
-            return True
+    for pt, words in multis:
+        for w in words:
+            if w not in token_set:
+                break
+        else:
+            if pt in safe_text:
+                return True
     return False
 
 
