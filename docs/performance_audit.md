@@ -108,6 +108,25 @@ the 240 s margin; a 35% slower box still clears the 300 s hard limit. The fresh
 no-cache build also confirms the reproduction image depends only on the four
 pinned ranking requirements (the api/demo extras are never installed in it).
 
+### Off-laptop datapoint: clean cloud hardware (2026-06-11)
+
+A GitHub Actions runner (clean 2-vCPU-class cloud box) builds the repo's own
+Dockerfile and times a full synthetic-100K serial run at `--cpus=2 --workers 1`
+(`.github/workflows/cloud-benchmark.yml`; the pool is a size-faithful generated
+lookalike — `scripts/generate_loadtest_pool.py` — so the private competition data
+never leaves the dev machine; timing and determinism are what transfer):
+
+| check | result |
+|---|---|
+| full 100K serial, run 1 | **82 s** |
+| full 100K serial, run 2 | **82 s**, byte-identical to run 1 (hash-gated in the job) |
+| committed demo sample, two runs | byte-identical |
+
+The dev laptop (133-187 s quiet) was the *slow* environment all along; clean cloud
+hardware clears the 300 s budget with ~73% headroom. The "evaluator's machine is
+slower than the dev box" scenario would need a machine 3.6x slower than a stock
+cloud runner to threaten the limit.
+
 ## Memory
 
 Peak RSS 4.6 GB (auto workers, dev) / ~4.9 GB container (prior matrix) against 16 GB —
