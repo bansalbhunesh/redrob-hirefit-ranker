@@ -177,6 +177,46 @@ def _contains(text: str, terms: set[str] | list[str]) -> int:
     return _contains_padded(_pad(terms), text)
 
 
+def _split_padded(padded_terms) -> tuple[frozenset[str], tuple[str, ...]]:
+    """Split padded terms into (single-word set, multi-word padded tuple).
+
+    For _norm()-ed text (single-space separated), a padded single-word term
+    ' x ' is a substring of ' text ' exactly when x is a whitespace token of
+    the text — so single-word checks can use a per-candidate token set
+    instead of scanning the multi-KB string. Multi-word terms keep the
+    substring check (they must match consecutive tokens).
+    """
+    singles: set[str] = set()
+    multis: list[str] = []
+    for pt in padded_terms:
+        word = pt.strip()
+        if " " in word:
+            multis.append(pt)
+        else:
+            singles.add(word)
+    return frozenset(singles), tuple(multis)
+
+
+def _count_tokenized(split_terms, token_set: set[str], safe_text: str) -> int:
+    """Equivalent of _count_in_safe using a prebuilt token set for singles."""
+    singles, multis = split_terms
+    count = len(singles & token_set)
+    for pt in multis:
+        if pt in safe_text:
+            count += 1
+    return count
+
+
+def _has_tokenized(split_terms, token_set: set[str], safe_text: str) -> bool:
+    singles, multis = split_terms
+    if singles & token_set:
+        return True
+    for pt in multis:
+        if pt in safe_text:
+            return True
+    return False
+
+
 class JDMatchers:
     """All JD-derived matching structures, prebuilt from a CompiledJD.
 
@@ -187,7 +227,8 @@ class JDMatchers:
 
     __slots__ = (
         "jd", "weights", "normalized_must", "normalized_nice",
-        "padded_must", "padded_nice", "relevant_padded", "core_padded",
+        "padded_must", "padded_nice", "split_must", "split_nice",
+        "relevant_padded", "core_padded",
         "title_padded", "locations_padded", "yoe_target",
         "_relevant_name_cache",
     )
@@ -205,6 +246,8 @@ class JDMatchers:
         }
         self.padded_must = {g: _pad(a) for g, a in self.normalized_must.items()}
         self.padded_nice = {g: _pad(a) for g, a in self.normalized_nice.items()}
+        self.split_must = {g: _split_padded(p) for g, p in self.padded_must.items()}
+        self.split_nice = {g: _split_padded(p) for g, p in self.padded_nice.items()}
         self.relevant_padded = _pad(
             alias
             for aliases in list(self.normalized_must.values()) + list(self.normalized_nice.values())
@@ -307,23 +350,23 @@ def _career_text(candidate: dict) -> str:
 
 def _alias_match(
     candidate_terms: set[str],
+    token_set: set[str],
     safe_full_text: str,
     aliases: tuple[str, ...],
-    padded_aliases: tuple[str, ...],
+    split_aliases: tuple[frozenset[str], tuple[str, ...]],
 ) -> float:
     """Score 1.0 if any alias is a listed skill, else 0.7 on a text mention.
 
-    Equivalent to max() over per-alias scores, but checks the cheap set
-    membership for every alias first (early-exit at 1.0) before falling back
-    to substring scans of the full text. `safe_full_text` must already be
-    padded with surrounding spaces.
+    Equivalent to max() over per-alias scores: set membership first
+    (early-exit at 1.0), then the tokenized text check (0.7). Single-word
+    aliases use the per-candidate token set; multi-word aliases substring-scan
+    the padded text (see _split_padded for the equivalence argument).
     """
     for alias_n in aliases:
         if alias_n in candidate_terms:
             return 1.0
-    for alias_padded in padded_aliases:
-        if alias_padded in safe_full_text:
-            return 0.7
+    if _has_tokenized(split_aliases, token_set, safe_full_text):
+        return 0.7
     return 0.0
 
 
@@ -463,6 +506,17 @@ _LOCATIONS_PADDED = _pad(PREFERRED_INDIAN_LOCATIONS)
 _LLM_WRAPPER_PADDED = _pad([str(t).lower() for t in LLM_WRAPPER_TERMS])
 _JUNIOR_PADDED = _pad(["junior", "intern", "trainee", "associate", "fresher"])
 
+# Tokenized (singles-set, multis-tuple) views of the hot signal lists.
+_IR_RANKING_SPLIT = _split_padded(_IR_RANKING_PADDED)
+_CV_SPEECH_ROBOTICS_SPLIT = _split_padded(_CV_SPEECH_ROBOTICS_PADDED)
+_PRODUCTION_SPLIT = _split_padded(_PRODUCTION_PADDED)
+_PURE_RESEARCH_SPLIT = _split_padded(_PURE_RESEARCH_PADDED)
+_SCALE_SPLIT = _split_padded(_SCALE_PADDED)
+_CODE_WRITING_SPLIT = _split_padded(_CODE_WRITING_PADDED)
+_OPEN_SOURCE_SPLIT = _split_padded(_OPEN_SOURCE_PADDED)
+_MANAGEMENT_SPLIT = _split_padded(_MANAGEMENT_PADDED)
+_LLM_WRAPPER_SPLIT = _split_padded(_LLM_WRAPPER_PADDED)
+
 def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     """Score one candidate. `config` is an optional CompiledJD; None means the
     bundled challenge JD (byte-identical to the historical constant path)."""
@@ -480,21 +534,27 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     signals = candidate.get("redrob_signals", {})
     full_text = _profile_text(candidate)
     career_text = _career_text(candidate)
-    # Pad the two large texts once; every boundary helper below reuses them.
+    # Pad the two large texts once and build their token sets; every boundary
+    # helper below reuses them (single-word checks become set lookups).
+    # split(" ") -- NOT split() -- so only literal spaces delimit tokens,
+    # matching the ' term ' substring semantics exactly (_norm preserves
+    # \n/\t, and ' x ' never matched across those).
     safe_full = f" {full_text} "
     safe_career = f" {career_text} "
+    tokens_full = set(full_text.split(" "))
+    tokens_career = set(career_text.split(" "))
     terms = _skill_terms(candidate)
     values: dict[str, float] = {}
 
     core_score = 0.0
     for group, aliases in m.normalized_must.items():
         core_score += m.weights[group] * _alias_match(
-            terms, safe_full, aliases, m.padded_must[group]
+            terms, tokens_full, safe_full, aliases, m.split_must[group]
         )
     values["core_skill_match"] = clamp(core_score)
 
     nice_hits = [
-        _alias_match(terms, safe_full, aliases, m.padded_nice[group])
+        _alias_match(terms, tokens_full, safe_full, aliases, m.split_nice[group])
         for group, aliases in m.normalized_nice.items()
     ]
     values["nice_skill_match"] = clamp(sum(nice_hits) / max(1, len(nice_hits)))
@@ -531,14 +591,14 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     gh = float(signals.get("github_activity_score") or 0)
     values["github_signal"] = 0.0 if gh < 0 else clamp(gh / 100.0)
 
-    cv_count = _count_in_safe(_CV_SPEECH_ROBOTICS_PADDED, safe_full)
+    cv_count = _count_tokenized(_CV_SPEECH_ROBOTICS_SPLIT, tokens_full, safe_full)
 
     product_months, consulting_months, total_months = _product_consulting_months(candidate)
     values["product_company_ratio"] = clamp(product_months / max(1, total_months))
     values["consulting_only_flag"] = 1.0 if total_months and consulting_months / total_months > 0.8 and values["product_company_ratio"] < 0.2 else 0.0
 
-    values["ir_ranking_experience"] = clamp(_count_in_safe(_IR_RANKING_PADDED, safe_career) / 7.0)
-    values["production_evidence"] = clamp(_count_in_safe(_PRODUCTION_PADDED, safe_career) / 8.0)
+    values["ir_ranking_experience"] = clamp(_count_tokenized(_IR_RANKING_SPLIT, tokens_career, safe_career) / 7.0)
+    values["production_evidence"] = clamp(_count_tokenized(_PRODUCTION_SPLIT, tokens_career, safe_career) / 8.0)
     if sum(1 for j in candidate.get("career_history", []) or [] if int(j.get("duration_months") or 0) >= 18) >= 2:
         values["production_evidence"] = clamp(values["production_evidence"] + 0.08)
 
@@ -573,9 +633,14 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     )
     title_hop_penalty = (0.18 if strong_ranking_or_production else 0.35) * hop_signal
     values["career_trajectory_score"] = clamp(0.75 * title_score + 0.25 * values["product_company_ratio"] - title_hop_penalty)
-    values["scale_signal"] = clamp(_count_in_safe(_SCALE_PADDED, safe_career) / 4.0)
+    values["scale_signal"] = clamp(_count_tokenized(_SCALE_SPLIT, tokens_career, safe_career) / 4.0)
+    # Multi-word code terms must scan the combined title+career string (a
+    # phrase may span the boundary), but single-word terms can use the union
+    # of the two token sets.
+    safe_title_career = f" {current_title} {career_text} "
+    tokens_title_career = tokens_career | set(current_title.split(" "))
     values["code_writing_recent"] = clamp(
-        _count_in_safe(_CODE_WRITING_PADDED, f" {current_title} {career_text} ") / 4.0
+        _count_tokenized(_CODE_WRITING_SPLIT, tokens_title_career, safe_title_career) / 4.0
     )
 
     yoe = float(profile.get("years_of_experience") or 0)
@@ -592,9 +657,9 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
         if _has_boundary(_IR_RANKING_PADDED, text) or _has_boundary(_ML_TERMS_PADDED, text):
             ml_months += int(job.get("duration_months") or 0)
     values["ml_ai_tenure_score"] = clamp(ml_months / 60.0)
-    values["open_source_signal"] = clamp(_count_in_safe(_OPEN_SOURCE_PADDED, safe_full) / 3.0)
+    values["open_source_signal"] = clamp(_count_tokenized(_OPEN_SOURCE_SPLIT, tokens_full, safe_full) / 3.0)
 
-    management_score = _count_in_safe(_MANAGEMENT_PADDED, safe_career)
+    management_score = _count_tokenized(_MANAGEMENT_SPLIT, tokens_career, safe_career)
     last_active_days = _days_since(signals.get("last_active_date"))
     recency = 1.0 if last_active_days <= 14 else 0.9 if last_active_days <= 30 else 0.72 if last_active_days <= 60 else 0.5 if last_active_days <= 120 else 0.22
     values["availability_score"] = clamp(recency * (1.0 if signals.get("open_to_work_flag") else 0.68))
@@ -658,7 +723,7 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
         soft_flags.append("salary_inversion")
     if float(signals.get("profile_completeness_score") or 0) < 40 and int(signals.get("endorsements_received") or 0) > 40:
         soft_flags.append("endorsement_inflation_low_profile")
-    if _has_boundary_safe(_PURE_RESEARCH_PADDED, safe_career) and values["production_evidence"] < 0.35:
+    if _has_tokenized(_PURE_RESEARCH_SPLIT, tokens_career, safe_career) and values["production_evidence"] < 0.35:
         soft_flags.append("pure_research_without_deployment")
     if values["disqualifier_skill_flag"]:
         soft_flags.append("cv_speech_robotics_primary")
@@ -672,7 +737,7 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     # only fires when wrapper terms appear AND there is no shipped retrieval/ranking
     # depth AND ML tenure is short -- so a senior who shipped systems and also lists
     # LangChain is never penalized.
-    wrapper_hits = _count_in_safe(_LLM_WRAPPER_PADDED, safe_full)
+    wrapper_hits = _count_tokenized(_LLM_WRAPPER_SPLIT, tokens_full, safe_full)
     thin_systems = values["production_evidence"] < 0.35 and values["ir_ranking_experience"] < 0.30
     short_ml = values["ml_ai_tenure_score"] < 0.25 or yoe < 4.0
     if wrapper_hits >= 1 and thin_systems and short_ml:
