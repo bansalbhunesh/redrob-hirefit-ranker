@@ -1,0 +1,249 @@
+{"candidate_id": "CAND_0000878", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong data engineering but lacks production retrieval/ranking system experience"}
+{"candidate_id": "CAND_0001610", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "3+ yrs experience with production ranking and retrieval, minor gap in seniority and notice"}
+{"candidate_id": "CAND_0002025", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong production retrieval/ranking at product companies; recent active, 5.9 years experience"}
+{"candidate_id": "CAND_0003532", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data engineering focus; limited production ML, no retrieval/ranking or embedding system experience."}
+{"candidate_id": "CAND_0004135", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data engineering focus with minor ML, no production retrieval/ranking system experience"}
+{"candidate_id": "CAND_0004402", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built lightweight recsys with ranking but limited production infra depth and 60-day notice"}
+{"candidate_id": "CAND_0005260", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Shipped production retrieval/ranking with embeddings and eval at product companies"}
+{"candidate_id": "CAND_0005538", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built and shipped production ranking/recommendation systems at product companies"}
+{"candidate_id": "CAND_0005649", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built semantic search, ranking, embeddings, vector DBs, shipped at product companies"}
+{"candidate_id": "CAND_0006115", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Cloud engineer with no professional retrieval/ranking system experience, mostly frontend/backend"}
+{"candidate_id": "CAND_0006354", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.5 years, delivery mostly adjacent ML, limited retrieval/ranking production experience"}
+{"candidate_id": "CAND_0006399", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "QA role with no production retrieval/ranking experience, limited ML depth"}
+{"candidate_id": "CAND_0006418", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built and shipped ranking and retrieval systems with embeddings, eval frameworks, strong product focus."}
+{"candidate_id": "CAND_0006557", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong ranking, retrieval, embeddings experience; notice period longer than ideal"}
+{"candidate_id": "CAND_0006567", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built end-to-end ranking/search at product firms, strong shipping focus, Noida-based, active"}
+{"candidate_id": "CAND_0006670", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Mostly data engineering, limited ML, no retrieval/ranking, long notice period"}
+{"candidate_id": "CAND_0007411", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Shipped embedding retrieval, ranking, eval infra; strong product and production depth"}
+{"candidate_id": "CAND_0007412", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong ranking and retrieval experience; longer notice period and slightly mismatched recent titles"}
+{"candidate_id": "CAND_0008139", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Under 5 years, limited production retrieval/ranking, mostly modeling focus"}
+{"candidate_id": "CAND_0008425", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built and shipped production ranking/retrieval systems with strong ML and evaluation expertise"}
+{"candidate_id": "CAND_0009024", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built production embedding retrieval and ranking systems, strong ML and evaluation experience"}
+{"candidate_id": "CAND_0009236", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "6.3 yrs, built recommendation features but limited prod depth in embeddings/ranking infra"}
+{"candidate_id": "CAND_0009516", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built lightweight recsys but lacks strong retrieval, ranking, or production infra depth"}
+{"candidate_id": "CAND_0009691", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong production recsys and embedding search, minor gap: long notice period"}
+{"candidate_id": "CAND_0009794", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No AI engineering or retrieval systems experience; pure business analyst and marketing background."}
+{"candidate_id": "CAND_0010257", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong prod ranking/retrieval at product firms; 120-day notice is notable gap"}
+{"candidate_id": "CAND_0010283", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some vector search and recsys skills but lacks key production retrieval/ranking experience"}
+{"candidate_id": "CAND_0010541", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Has relevant ML and ranking experience but lacks strong production retrieval system depth"}
+{"candidate_id": "CAND_0010603", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Relevant ML and recommendation experience but limited production ranking system depth"}
+{"candidate_id": "CAND_0010685", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built semantic search and ranking with embeddings/FAISS; strong production and evaluation experience"}
+{"candidate_id": "CAND_0010736", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No ML or retrieval experience; career in business analysis and sales only."}
+{"candidate_id": "CAND_0010770", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Shipped ranking, retrieval with embeddings, vector DBs, strong ML and recent availability"}
+{"candidate_id": "CAND_0011162", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong production ranking and retrieval experience; minor gap in notice period and location"}
+{"candidate_id": "CAND_0011432", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong production ranking and retrieval experience; minor notice period gap."}
+{"candidate_id": "CAND_0011643", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.2 years, some relevant ML, Pinecone/FAISS experience but limited production ranking systems"}
+{"candidate_id": "CAND_0011687", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7.8 yrs, built and shipped ranking/retrieval systems with eval and embeddings"}
+{"candidate_id": "CAND_0013002", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.4 yrs, some production ranking, startup experience, but below seniority and location gap"}
+{"candidate_id": "CAND_0013440", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data-engineering focused, limited production retrieval/ranking experience, some ML but weak fit."}
+{"candidate_id": "CAND_0013456", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.7 yrs, recommendation features but light on deep retrieval engineering"}
+{"candidate_id": "CAND_0014440", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built and shipped embedding-based ranking systems in production with strong ML and eval experience"}
+{"candidate_id": "CAND_0014576", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong data engineering, minimal ML retrieval/ranking experience, no production recsys shipped"}
+{"candidate_id": "CAND_0014894", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong data/backend focus; limited direct production retrieval/ranking experience"}
+{"candidate_id": "CAND_0015143", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Mostly data engineering, limited ML, no retrieval/ranking production experience."}
+{"candidate_id": "CAND_0015265", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No AI engineering or retrieval system experience; primarily analyst and project roles"}
+{"candidate_id": "CAND_0016163", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong product embedding retrieval experience, slight notice period gap"}
+{"candidate_id": "CAND_0016217", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; mainly Java backend and self-learning AI only."}
+{"candidate_id": "CAND_0016466", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; primarily web/backend development"}
+{"candidate_id": "CAND_0016659", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.4 yrs, built lightweight recommender with production ML, Pinecone/FAISS experience"}
+{"candidate_id": "CAND_0016790", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Non-technical role, no ML or retrieval/ranking production experience"}
+{"candidate_id": "CAND_0017259", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data analyst role, minimal retrieval/ranking production experience, and long notice period"}
+{"candidate_id": "CAND_0017771", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong data engineering, some ML, limited retrieval/ranking production experience."}
+{"candidate_id": "CAND_0017960", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7+ years, shipped embedding-based search, ranking, and production ML systems recently."}
+{"candidate_id": "CAND_0018499", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built and shipped hybrid retrieval/ranking systems at product companies, strong recent activity"}
+{"candidate_id": "CAND_0018549", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built embedding-based retrieval and ranking systems at Uber and Flipkart, production experience"}
+{"candidate_id": "CAND_0018704", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Lacks production retrieval/ranking experience; mostly backend developer with some ML exposure"}
+{"candidate_id": "CAND_0018722", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built production ranking, retrieval with embeddings and eval; strong recsys experience"}
+{"candidate_id": "CAND_0019159", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Experience in recommendation and retrieval with gaps in deep engineering and recent production shipping"}
+{"candidate_id": "CAND_0021100", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data-engineering focused with limited production retrieval/ranking experience and long notice period"}
+{"candidate_id": "CAND_0021164", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Junior QA role, no production ranking or retrieval systems experience."}
+{"candidate_id": "CAND_0021827", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Good ML and some ranking; under 5 years, limited production retrieval depth"}
+{"candidate_id": "CAND_0022299", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; primarily DevOps and backend roles."}
+{"candidate_id": "CAND_0022614", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some embedding and vector DB experience but lacks production ranking/recsys system delivery"}
+{"candidate_id": "CAND_0024466", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built embedding retrieval and ranking with eval, minor gaps in location and notice period"}
+{"candidate_id": "CAND_0024620", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Led embedding-based ranking, ML pipelines, Elasticsearch; minor notice period gap"}
+{"candidate_id": "CAND_0026532", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.8 yrs exp, built retrieval/ranking with embeddings, eval framework, slight seniority gap"}
+{"candidate_id": "CAND_0027370", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong data engineering, little production retrieval/ranking, long notice period"}
+{"candidate_id": "CAND_0027691", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built production ranking and retrieval systems with embeddings and LTR at Meta and Vedantu"}
+{"candidate_id": "CAND_0027801", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong retrieval/ranking at product firms; minor long notice period gap."}
+{"candidate_id": "CAND_0027806", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking system experience; primarily backend/cloud engineering"}
+{"candidate_id": "CAND_0027815", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Software engineer with minimal production AI/ML, no retrieval/ranking shipped experience."}
+{"candidate_id": "CAND_0028793", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7+ years, shipped production retrieval/ranking/recsys at Google, Amazon, strong eval experience"}
+{"candidate_id": "CAND_0029771", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Frontend role, no production retrieval/ranking/recsys experience, long notice period"}
+{"candidate_id": "CAND_0029790", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Experience mostly data engineering; no production retrieval/ranking/recsys shipped"}
+{"candidate_id": "CAND_0030082", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No AI engineering or retrieval/ranking experience; purely PM and unrelated roles"}
+{"candidate_id": "CAND_0030348", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built embedding retrieval and ranking in production with strong evaluation, slight seniority gap"}
+{"candidate_id": "CAND_0030468", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong ranking/retrieval production in product companies; minor notice period gap."}
+{"candidate_id": "CAND_0030784", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.4 yrs, good ML but limited production ranking/retrieval, long notice period"}
+{"candidate_id": "CAND_0030904", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Cloud engineer with no professional retrieval/ranking production experience"}
+{"candidate_id": "CAND_0031331", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No relevant AI engineering or retrieval system production experience"}
+{"candidate_id": "CAND_0031489", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No AI engineering or production ML experience; current role is Business Analyst"}
+{"candidate_id": "CAND_0032374", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; mostly cloud and test automation roles"}
+{"candidate_id": "CAND_0033405", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Relevant ML and some ranking experience; fewer years, limited production retrieval depth"}
+{"candidate_id": "CAND_0033897", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data analyst with pipeline focus; no evidence of production retrieval/ranking systems"}
+{"candidate_id": "CAND_0035587", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Primarily Business Analyst with recent AI hobby projects, no production retrieval experience."}
+{"candidate_id": "CAND_0037944", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.9 yrs, shipped ranking and embedding retrieval, strong ML ops, minor seniority gap"}
+{"candidate_id": "CAND_0038586", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data engineer with some ML, but no production retrieval or ranking system experience"}
+{"candidate_id": "CAND_0038612", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking/recsys experience; mostly cloud and backend engineering"}
+{"candidate_id": "CAND_0039163", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; mostly backend and self-learning AI side projects."}
+{"candidate_id": "CAND_0039383", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong production recsys and semantic search, minor notice period and slightly outside ideal location"}
+{"candidate_id": "CAND_0039754", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Shipped large-scale retrieval/ranking systems with embeddings, hybrid search, and evaluation"}
+{"candidate_id": "CAND_0039838", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong production recsys, retrieval, embeddings experience; slightly short on years, longer notice"}
+{"candidate_id": "CAND_0041016", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Junior role, limited retrieval/ranking production experience, long notice period"}
+{"candidate_id": "CAND_0041610", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Shipped embedding retrieval, ranking, evaluation frameworks at product companies; active and available."}
+{"candidate_id": "CAND_0041669", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "8 yrs, built production ranking/retrieval systems, recent RAG and eval framework ownership"}
+{"candidate_id": "CAND_0042008", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some ML and embeddings experience but lacks production retrieval/ranking system ownership"}
+{"candidate_id": "CAND_0042100", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong ranking/recsys production at Netflix/Freshworks; 90-day notice a minor gap"}
+{"candidate_id": "CAND_0042370", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "3.3 years experience, some recommender ML but lacks seniority and deep production ranking"}
+{"candidate_id": "CAND_0042506", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.2 yrs, built semantic search with embeddings, vector DBs, strong production ranking experience"}
+{"candidate_id": "CAND_0042761", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "5 yrs exp, uses ML/embedding tools but lacks clear production ranking system ownership"}
+{"candidate_id": "CAND_0043676", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some ML and recommenders but lacks production retrieval/ranking system experience"}
+{"candidate_id": "CAND_0043829", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.8 yrs, some retrieval/IR, production ML experience but lacks depth in embeddings and recent coding"}
+{"candidate_id": "CAND_0043860", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Has relevant ML and lightweight ranking experience but junior title and some CV focus"}
+{"candidate_id": "CAND_0044154", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Mostly data engineering; minor ML, no clear retrieval/ranking system production experience"}
+{"candidate_id": "CAND_0044222", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7.7 years, shipped embedding-based retrieval, ranking models, rigorous evaluation, strong product focus"}
+{"candidate_id": "CAND_0044855", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Shipped ranking/recsys at LinkedIn, Pinecone and embeddings experience, recent active"}
+{"candidate_id": "CAND_0045966", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "DevOps focus, no production retrieval/ranking system experience, long notice period"}
+{"candidate_id": "CAND_0046064", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Extensive production ranking/search systems with embeddings, vector DB, evaluation"}
+{"candidate_id": "CAND_0046525", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built hybrid retrieval/ranking at product firms, strong recsys, active, Pune-based"}
+{"candidate_id": "CAND_0046737", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "DevOps role with minimal professional AI/ML, no retrieval/ranking production experience."}
+{"candidate_id": "CAND_0046924", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Relevant recommendation experience but lacks deep retrieval/embedding production and coding freshness"}
+{"candidate_id": "CAND_0047868", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Role is Business Analyst with no relevant AI engineering or production experience."}
+{"candidate_id": "CAND_0048003", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Frontend/devops focus; no production ML retrieval/ranking experience; long notice period"}
+{"candidate_id": "CAND_0048005", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data engineering strong, minimal retrieval/ranking ML production experience"}
+{"candidate_id": "CAND_0048558", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built recommendation features with some IR; lacks strong production ranking system experience"}
+{"candidate_id": "CAND_0049246", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production AI engineering; business analyst with side AI projects only"}
+{"candidate_id": "CAND_0049538", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong production ranking and retrieval experience, slight gap in LLM fine-tuning and hybrid search details"}
+{"candidate_id": "CAND_0049896", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7+ years, built production recsys with embeddings, Pinecone, ranking, slight location and notice gap"}
+{"candidate_id": "CAND_0050876", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong ranking/recsys experience; minor notice period and relocation gap"}
+{"candidate_id": "CAND_0050886", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Only 3.5 years, mobile/backend focus, minimal professional ML/retrieval experience"}
+{"candidate_id": "CAND_0051092", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No AI engineering experience; role is project/operations management only."}
+{"candidate_id": "CAND_0051266", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "3 years mostly backend, no production retrieval/ranking experience, long notice"}
+{"candidate_id": "CAND_0051497", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; primarily full stack developer with side ML projects only"}
+{"candidate_id": "CAND_0052328", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "6.5 yrs, shipped RAG+embedding retrieval in production at Amazon, Pune-based, active"}
+{"candidate_id": "CAND_0052682", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built large-scale recsys with embeddings, Pinecone, strong eval, recent active, 6.6 yrs"}
+{"candidate_id": "CAND_0052744", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Relevant ML experience with embeddings and vector DB but under 5 years seniority and limited shipping"}
+{"candidate_id": "CAND_0052860", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "ML but no production retrieval/ranking, heavy data infra focus, long notice period"}
+{"candidate_id": "CAND_0053527", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7 years ML, some ranking experience, but junior title and long notice period"}
+{"candidate_id": "CAND_0053591", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built semantic search, ranking models, embeddings, and A/B testing; minor notice period gap"}
+{"candidate_id": "CAND_0053605", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built lightweight production recommenders, limited depth in embedding-based retrieval and production infra"}
+{"candidate_id": "CAND_0054394", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4+ years ML with production ranking, embeddings, vector DB, near fit on experience band"}
+{"candidate_id": "CAND_0054556", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; mainly backend and devops roles"}
+{"candidate_id": "CAND_0054852", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking/ML systems; primarily backend Java developer at IT services."}
+{"candidate_id": "CAND_0055286", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No AI engineering or production ranking/retrieval system experience"}
+{"candidate_id": "CAND_0055905", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "8+ years, built production ranking/retrieval systems, strong recent activity"}
+{"candidate_id": "CAND_0056756", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No ML/retrieval engineering experience; business analyst in unrelated domains only"}
+{"candidate_id": "CAND_0057559", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Project management and marketing background with no AI engineering or retrieval experience"}
+{"candidate_id": "CAND_0057563", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built production semantic search and ranking systems with embeddings, eval, strong ML experience"}
+{"candidate_id": "CAND_0057701", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4+ years building ranking/search with embeddings, FAISS, ops; slightly below 5yr target"}
+{"candidate_id": "CAND_0058287", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some ranking/recsys exposure but limited engineering depth and seniority gap"}
+{"candidate_id": "CAND_0058688", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Shipped large-scale recommendation with embeddings, ranking, vector DB, recent, strong ML ops."}
+{"candidate_id": "CAND_0058882", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "3.6 yrs, no deep retrieval/ranking prod, lengthy notice, modest system depth"}
+{"candidate_id": "CAND_0059557", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Mostly CV and predictive modeling; lacks production ranking/retrieval system experience"}
+{"candidate_id": "CAND_0060054", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "6+ years, built production ranking/recsys at product firms, strong evaluation and embedding use"}
+{"candidate_id": "CAND_0061257", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built ranking/retrieval at LinkedIn, solid product impact, Noida-based, active and shipping"}
+{"candidate_id": "CAND_0061265", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built embedding retrieval and ranking systems at product companies with strong recent availability."}
+{"candidate_id": "CAND_0061352", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "3.5 yrs experience, some production ranking and Weaviate but notable seniority and availability gaps"}
+{"candidate_id": "CAND_0061655", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.6 years, built production recommenders with embeddings and eval rigor, slight experience gap"}
+{"candidate_id": "CAND_0062247", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7+ yrs, built production embedding retrieval and ranking systems at Google and Dream11"}
+{"candidate_id": "CAND_0062772", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Relevant ML and lightweight recsys but lacks deep retrieval or ranking at product scale"}
+{"candidate_id": "CAND_0063296", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No AI engineering or retrieval system experience; purely project and operations management"}
+{"candidate_id": "CAND_0064326", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7.6 years, shipped production ranking/retrieval with embeddings, eval frameworks, highly available"}
+{"candidate_id": "CAND_0064421", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking/recsys experience; only self-study and minor BM25 mention"}
+{"candidate_id": "CAND_0064888", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Relevant ML experience with embeddings and Elasticsearch but lacks direct production ranking system leadership"}
+{"candidate_id": "CAND_0065139", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some NLP and retrieval terms but lacks production ranking/recsys systems experience"}
+{"candidate_id": "CAND_0065195", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "5+ yrs, shipped embedding retrieval with Pinecone, strong eval focus, minor notice gap"}
+{"candidate_id": "CAND_0065878", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Shipped ranking and recommendation production systems with embeddings, strong eval and ML experience"}
+{"candidate_id": "CAND_0065991", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some ML and vector search exposure but lacks production ranking/recsys senior engineering experience"}
+{"candidate_id": "CAND_0066472", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; mainly cloud and frontend roles"}
+{"candidate_id": "CAND_0066853", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "DevOps role with minimal ML, no production retrieval/ranking experience"}
+{"candidate_id": "CAND_0066999", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built learning-to-rank and retrieval systems at Microsoft; strong production ranking experience"}
+{"candidate_id": "CAND_0067866", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Relevant ML and some retrieval experience but limited production ranking system depth"}
+{"candidate_id": "CAND_0068456", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Relevant ML experience with some recsys and infra, but <5 years and long notice."}
+{"candidate_id": "CAND_0068663", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production ranking/retrieval at product companies; primarily backend developer"}
+{"candidate_id": "CAND_0068811", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Shipped ranking and retrieval systems at product companies; strong evaluation and embedding experience"}
+{"candidate_id": "CAND_0068932", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built lightweight recommender, some vector DB use, but limited ranker depth and infra"}
+{"candidate_id": "CAND_0069440", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; QA and backend focus only"}
+{"candidate_id": "CAND_0069905", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "6+ yrs production retrieval/ranking at product firms; strong embeddings and eval experience"}
+{"candidate_id": "CAND_0069925", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Junior role, some relevant tech but lacks senior production ranking/recsys experience"}
+{"candidate_id": "CAND_0070154", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No professional retrieval/ranking production experience; primarily backend and DevOps"}
+{"candidate_id": "CAND_0070305", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Non-technical HR role, no AI engineering or production retrieval experience"}
+{"candidate_id": "CAND_0070398", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7+ years, shipped ranking/search with embeddings and FAISS, minor availability gap"}
+{"candidate_id": "CAND_0070525", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built recommendation features but lacks deep production retrieval/ranking system experience."}
+{"candidate_id": "CAND_0070751", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data engineer with minor ML, no Prod retrieval/ranking or recent coding"}
+{"candidate_id": "CAND_0071472", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; mainly backend and mobile development."}
+{"candidate_id": "CAND_0071880", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong ML but mostly CV; limited retrieval/ranking production experience"}
+{"candidate_id": "CAND_0071974", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7.8 yrs, built production retrieval, ranking, embedding, hybrid infra, strong eval"}
+{"candidate_id": "CAND_0072660", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7+ yrs, built ranking/search at product firms, semantic search with sentence-transformers/FAISS"}
+{"candidate_id": "CAND_0072768", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Under 4 years experience, good embedding/search tools but lacks senior production rank/recsys"}
+{"candidate_id": "CAND_0073638", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No professional retrieval/ranking system experience; primarily Java backend developer."}
+{"candidate_id": "CAND_0073873", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Primarily backend/data engineer; no shipped retrieval/ranking systems or strong ML production experience"}
+{"candidate_id": "CAND_0074225", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.3 years, shipped ranking/retrieval systems, strong product focus, but under experience range."}
+{"candidate_id": "CAND_0074317", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some ML and vector DB exposure but only 4.2 years and limited retrieval/ranking production"}
+{"candidate_id": "CAND_0074449", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No relevant AI engineering or retrieval/ranking experience; non-technical roles only."}
+{"candidate_id": "CAND_0074461", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data engineering with some ML but no production retrieval or ranking system experience"}
+{"candidate_id": "CAND_0074735", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built production embedding retrieval with Pinecone; 90-day notice period is minor gap"}
+{"candidate_id": "CAND_0074886", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong data engineering but no production retrieval/ranking/recsys experience"}
+{"candidate_id": "CAND_0074942", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Project Manager role; no product AI-engineering or production ranking system experience"}
+{"candidate_id": "CAND_0075249", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built embedding-based retrieval and ranking systems at product companies with strong production experience."}
+{"candidate_id": "CAND_0075439", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.3 yrs exp, shipped embedding retrieval and ranking, minor gap in total seniority"}
+{"candidate_id": "CAND_0075574", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "5.7 yrs, shipped ranking, embeddings, RAG, vector DBs, eval frameworks, strong production fit"}
+{"candidate_id": "CAND_0076643", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "DevOps role with no production retrieval/ranking/recsys experience"}
+{"candidate_id": "CAND_0076831", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4 years experience; built semantic search with embeddings and ranking; minor notice period gap"}
+{"candidate_id": "CAND_0076832", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; only self-taught ML side projects"}
+{"candidate_id": "CAND_0077285", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong recsys and embeddings experience; minor availability delay, no direct Noida/Pune yet"}
+{"candidate_id": "CAND_0077296", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some relevant ranking and recommender experience but lacks deep production retrieval expertise"}
+{"candidate_id": "CAND_0077337", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built and shipped hybrid retrieval/ranking systems at scale with strong recent activity"}
+{"candidate_id": "CAND_0077504", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Under 5 years experience, mostly predictive modeling, limited retrieval/production ranker experience"}
+{"candidate_id": "CAND_0077513", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Role mismatch; QA dev background, no production retrieval/ranking experience"}
+{"candidate_id": "CAND_0077710", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; mostly backend/cloud engineering background"}
+{"candidate_id": "CAND_0078002", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong ranking and retrieval production experience, minor gap in notice period and location"}
+{"candidate_id": "CAND_0078397", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Project Manager with AI interest, no production retrieval/ranking engineering experience"}
+{"candidate_id": "CAND_0079387", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built large-scale recsys with embeddings, vector DBs, ranking, deployed production"}
+{"candidate_id": "CAND_0079838", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data engineer with some ML, minimal hands-on retrieval/ranking production experience"}
+{"candidate_id": "CAND_0080050", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; primarily Java developer with peripheral AI interest."}
+{"candidate_id": "CAND_0080188", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; mostly frontend/backend with basic AI hobby projects"}
+{"candidate_id": "CAND_0080344", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built lightweight recsys but lacks deep production ranking and embedding system experience"}
+{"candidate_id": "CAND_0080426", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Only 1.2 years experience; mobile dev, no production retrieval/ranking system experience"}
+{"candidate_id": "CAND_0081053", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built production semantic search and ranking systems with embeddings at product companies"}
+{"candidate_id": "CAND_0081846", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built large-scale retrieval/ranking, shipped production embeddings and evaluation frameworks"}
+{"candidate_id": "CAND_0083309", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Experienced developer but no production ML retrieval/ranking or AI engineering history"}
+{"candidate_id": "CAND_0083482", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production AI retrieval/ranking experience; primarily cloud and frontend roles"}
+{"candidate_id": "CAND_0083490", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Mostly data engineering with minor ML; lacks production ranking/retrieval experience"}
+{"candidate_id": "CAND_0083790", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "3.5 years, no clear production retrieval/ranking system shipped, long notice period"}
+{"candidate_id": "CAND_0083852", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built production recommendation/ranking systems with relevant ML and embedding tech, slight notice gap"}
+{"candidate_id": "CAND_0083879", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7+ years, shipped ranking and semantic search with embeddings and vector DB in production"}
+{"candidate_id": "CAND_0085199", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4 years experience; some IR and ML but no shipped ranking/recsys production systems"}
+{"candidate_id": "CAND_0085222", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong data engineering, minimal production retrieval/ranking and long notice period"}
+{"candidate_id": "CAND_0085706", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong data engineering but lacks production retrieval/ranking system experience"}
+{"candidate_id": "CAND_0086460", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some ML and retrieval tools, but limited production ranking/recsys and long notice period"}
+{"candidate_id": "CAND_0087120", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some ML and Pinecone mention, but lacks direct ranking/retrieval production system experience"}
+{"candidate_id": "CAND_0087144", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No AI engineering or retrieval system experience; background is in project management"}
+{"candidate_id": "CAND_0088025", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Led production hybrid retrieval and ranking systems with strong eval at product companies."}
+{"candidate_id": "CAND_0088441", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some ML and IR exposure but lacks depth in production ranking/retrieval systems"}
+{"candidate_id": "CAND_0089353", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Mobile dev with minimal AI production, long notice, weak retrieval/ranking experience"}
+{"candidate_id": "CAND_0089363", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production AI retrieval/ranking experience; mostly Java dev and DevOps background."}
+{"candidate_id": "CAND_0089552", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong production ranking and retrieval experience; notice period longer than ideal"}
+{"candidate_id": "CAND_0089641", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Good software engineer but lacks professional retrieval/ranking production experience."}
+{"candidate_id": "CAND_0090265", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "QA/backend role with no production retrieval/ranking system experience"}
+{"candidate_id": "CAND_0091909", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Shipped ranking/recsys at Meta and Rephrase.ai, strong production retrieval experience"}
+{"candidate_id": "CAND_0091912", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production AI/ML, retrieval, or ranking experience; QA and frontend roles only"}
+{"candidate_id": "CAND_0091920", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some ML and OpenSearch exposure but lacks production retrieval/ranking system experience"}
+{"candidate_id": "CAND_0092255", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Has relevant ML and some ranking experience but limited production retrieval system depth"}
+{"candidate_id": "CAND_0093141", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data engineering focus, limited ML ranking experience, long notice period, no prod recsys shipped"}
+{"candidate_id": "CAND_0093193", "tier": 5, "relevance": 5.0, "source": "llm2:openai/gpt-4.1-mini", "why": "7.9 years, built production ranking/retrieval systems at product companies, strong shipping focus"}
+{"candidate_id": "CAND_0093442", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No relevant AI engineering experience; current role is non-technical business analyst."}
+{"candidate_id": "CAND_0094165", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Some relevant ML and retrieval keywords but lacks production ranking/recsys depth and seniority."}
+{"candidate_id": "CAND_0094423", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong data engineering but minimal production retrieval/ranking system experience"}
+{"candidate_id": "CAND_0094533", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "DevOps role with no production retrieval/ranking system experience."}
+{"candidate_id": "CAND_0094743", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No AI engineering or production retrieval/ranking system experience; project manager role"}
+{"candidate_id": "CAND_0094924", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Data engineering focus; minimal production retrieval/ranking experience; long notice period"}
+{"candidate_id": "CAND_0095924", "tier": 2, "relevance": 2.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Good ML adjacent skills but lacks clear production ranking/retrieval experience"}
+{"candidate_id": "CAND_0096142", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "5 yrs in ML with production ranking, embeddings, vector DB, minor 120-day notice gap"}
+{"candidate_id": "CAND_0097036", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Only 4.6 years, backend/data focus, no production retrieval/ranking experience"}
+{"candidate_id": "CAND_0097176", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Built recommendation features but limited depth in production ranking/retrieval systems"}
+{"candidate_id": "CAND_0097582", "tier": 1, "relevance": 1.0, "source": "llm2:openai/gpt-4.1-mini", "why": "No production retrieval/ranking experience; primarily web developer with minimal ML exposure"}
+{"candidate_id": "CAND_0097793", "tier": 0, "relevance": 0.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Marketing role with no relevant AI engineering or retrieval system experience."}
+{"candidate_id": "CAND_0097896", "tier": 3, "relevance": 3.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Relevant ranking/recsys experience but under 5 years and long 120-day notice period"}
+{"candidate_id": "CAND_0098846", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "Strong ranking/retrieval production experience; minor location and notice period gap"}
+{"candidate_id": "CAND_0099806", "tier": 4, "relevance": 4.0, "source": "llm2:openai/gpt-4.1-mini", "why": "4.6 years experience, shipped ranking and embedding-based retrieval systems, slight seniority gap"}
