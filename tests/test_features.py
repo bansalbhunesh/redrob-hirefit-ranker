@@ -95,8 +95,11 @@ def test_good_candidate_scores_above_trap():
     bad = compute_features(trap)
     assert good.role_fit > bad.role_fit
     assert bad.honeypot_risk > good.honeypot_risk
-    assert bad.honeypot_multiplier == 0.0
-    assert final_score(bad, 0.5) == 0.0
+    # expert_skill_zero_duration is a soft-floored class per the honeypot
+    # audit (docs/honeypot_audit.md): 0.05 instead of hard 0.0, still an
+    # effective exclusion from any top-100.
+    assert bad.honeypot_multiplier == 0.05
+    assert final_score(bad, 0.5) < 0.05 * final_score(good, 0.5)
     assert final_score(good, 0.5) > final_score(bad, 0.5)
 
 

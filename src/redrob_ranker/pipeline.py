@@ -166,9 +166,11 @@ def run_ranking(candidates_path: Path, out_path: Path, config: RankerConfig | No
     ranked, used_backend = rank_candidates(candidates, config)
     top_k = min(config.top_k, len(ranked))
     rows = rows_from_ranked(ranked, top_k)
-    honeypots_detected = sum(1 for _, features, _ in ranked if features.honeypot_multiplier <= 0.0)
+    # < 1.0 counts every honeypot-flagged candidate, whether hard-zeroed or
+    # soft-floored at 0.05 (docs/honeypot_audit.md remediation).
+    honeypots_detected = sum(1 for _, features, _ in ranked if features.honeypot_multiplier < 1.0)
     honeypots_in_output = sum(
-        1 for _, features, _ in ranked[:top_k] if features.honeypot_multiplier <= 0.0
+        1 for _, features, _ in ranked[:top_k] if features.honeypot_multiplier < 1.0
     )
     errors = validate_rows(rows, expected=top_k)
     if errors:
