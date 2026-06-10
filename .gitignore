@@ -24,3 +24,6 @@ artifacts/
 
 
 demo.html
+
+# Demo fixture used by API endpoint tests and CI
+!demo_sample.jsonl

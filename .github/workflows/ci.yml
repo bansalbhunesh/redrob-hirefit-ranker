@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install (core + api + dev extras)
+        run: |
+          pip install -e ".[api,dev]" httpx
+
+      - name: Validator gate — committed submission.csv must pass shape checks
+        run: python scripts/validate_submission.py submission.csv
+
+      - name: Test suite (golden-hash regression + pipeline + API)
+        env:
+          PYTHONHASHSEED: "0"
+        run: pytest -q
