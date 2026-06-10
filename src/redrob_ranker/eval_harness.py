@@ -111,21 +111,21 @@ def _ndcg(ranked: list[str], gains: dict[str, float], k: int) -> float:
     return dcg(ranked_gains, k) / ideal_dcg
 
 
-def _precision_at_k(ranked: list[str], tiers: dict[str, float], k: int) -> float:
+def precision_at_k(ranked: list[str], tiers: dict[str, float], k: int, thr: float = RELEVANT_TIER) -> float:
     if k <= 0 or not ranked:
         return 0.0
-    return sum(1 for cid in ranked[:k] if tiers.get(cid, 0.0) >= RELEVANT_TIER) / k
+    return sum(1 for cid in ranked[:k] if tiers.get(cid, 0.0) >= thr) / k
 
 
-def _average_precision(ranked: list[str], tiers: dict[str, float]) -> float:
-    total_relevant = sum(1 for v in tiers.values() if v >= RELEVANT_TIER)
+def average_precision(ranked: list[str], tiers: dict[str, float], thr: float = RELEVANT_TIER) -> float:
+    total_relevant = sum(1 for v in tiers.values() if v >= thr)
     if total_relevant == 0:
         return 0.0
     denom = min(total_relevant, len(ranked)) if ranked else total_relevant
     hits = 0
     psum = 0.0
     for i, cid in enumerate(ranked, start=1):
-        if tiers.get(cid, 0.0) >= RELEVANT_TIER:
+        if tiers.get(cid, 0.0) >= thr:
             hits += 1
             psum += hits / i
     return psum / denom
@@ -146,8 +146,8 @@ def evaluate(
 
     ndcg10 = _ndcg(scored, labels.gains, 10)
     ndcg50 = _ndcg(scored, labels.gains, 50)
-    mapv = _average_precision(scored, labels.tiers)
-    p10 = _precision_at_k(scored, labels.tiers, 10)
+    mapv = average_precision(scored, labels.tiers)
+    p10 = precision_at_k(scored, labels.tiers, 10)
     composite = (
         COMPOSITE_WEIGHTS["ndcg10"] * ndcg10
         + COMPOSITE_WEIGHTS["ndcg50"] * ndcg50

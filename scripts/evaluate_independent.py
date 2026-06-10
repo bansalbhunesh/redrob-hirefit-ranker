@@ -24,10 +24,15 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from redrob_ranker.eval_harness import (  # noqa: E402
     RELEVANT_TIER,
+    average_precision,
     evaluate,
     load_labels,
     load_submission,
+    precision_at_k,
 )
+
+# Re-exported for back-compat (tests and older notebooks import these from here).
+__all__ = ["average_precision", "precision_at_k", "evaluate", "load_labels", "load_submission"]
 
 
 def main() -> None:
