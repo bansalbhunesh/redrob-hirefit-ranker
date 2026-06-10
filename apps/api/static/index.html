@@ -452,7 +452,41 @@
       margin-top: 6px;
     }
 
-    /* ── LOADING SPINNER ── */
+    /* ── ERROR TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      z-index: 1100;
+      max-width: min(480px, calc(100vw - 32px));
+      background: var(--bg-card);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-left: 3px solid var(--accent-red);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--text-primary);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .toast.visible { transform: translateX(-50%) translateY(0); }
+    .toast .toast-close {
+      margin-left: auto;
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); font-size: 14px; line-height: 1;
+      padding: 2px;
+    }
+    .toast .toast-close:hover { color: var(--text-primary); }
+
+    /* ── SMALL SCREENS ── */
+    @media (max-width: 600px) {
+      .header { flex-wrap: wrap; gap: 8px; padding: 10px 14px; }
+      .metrics-grid { grid-template-columns: 1fr; }
+      .main { padding: 14px; gap: 14px; }
+      .glass-panel { padding: 14px; }
+    }
+
     /* ── LOADING SPINNER ── */
     .loading-overlay {
       position: fixed; inset: 0;
@@ -807,6 +841,11 @@
   </header>
 
   <!-- LOADING OVERLAY -->
+  <div class="toast" id="errorToast" role="alert" aria-live="assertive">
+    <span id="errorToastMsg"></span>
+    <button class="toast-close" onclick="hideToast()" aria-label="Dismiss">&#10005;</button>
+  </div>
+
   <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-text" id="loadingText">Processing candidates...</div>
@@ -993,7 +1032,7 @@
         state.candidates = [];
         state.metadata = {};
         renderAll();
-        alert('Showpiece data not found. Run: python scripts/generate_precomputed.py\\nOr switch to Live Proof mode to upload a file.');
+        showToast('Showpiece data unavailable (is the API up?). Switch to Live Proof mode to upload a file instead.');
       } finally {
         hideLoading();
       }
@@ -1045,14 +1084,14 @@
           const text = await res.text();
           throw new Error(`Server returned status ${res.status}: ${text || res.statusText || 'Unknown Error'}`);
         }
-        if (data.error) throw new Error(data.error);
+        if (!res.ok || data.error) throw new Error(apiError(data, res));
 
         state.candidates = data.candidates || [];
         state.metadata = data.metadata || {};
         state.pipeline = data.pipeline || [];
         renderAll();
       } catch (e) {
-        alert('Live processing failed: ' + e.message);
+        showToast('Live processing failed: ' + e.message);
       } finally {
         hideLoading();
       }
@@ -1072,7 +1111,7 @@
           const text = await res.text();
           throw new Error(`Server returned status ${res.status}: ${text || res.statusText || 'Unknown Error'}`);
         }
-        if (data.error) throw new Error(data.error);
+        if (!res.ok || data.error) throw new Error(apiError(data, res));
 
         state.jobId = data.job_id;
         showLoading('Batch processing...', `Job ${data.job_id} — ${data.total_candidates} candidates`);
@@ -1081,12 +1120,12 @@
         // Connect to SSE
         connectSSE(data.job_id);
       } catch (e) {
-        alert('Batch start failed: ' + e.message);
+        showToast('Batch start failed: ' + e.message);
         hideLoading();
       }
     }
 
-    function connectSSE(jobId) {
+    function connectSSE(jobId, attempt = 0) {
       if (state.eventSource) state.eventSource.close();
 
       const es = new EventSource(`/api/stream/${jobId}`);
@@ -1105,14 +1144,20 @@
         } else if (data.type === 'error') {
           es.close();
           hideLoading();
-          alert('Batch failed: ' + data.message);
+          showToast('Batch failed: ' + data.message);
         }
       };
 
       es.onerror = () => {
         es.close();
-        // Auto-reconnect after 2s
-        setTimeout(() => connectSSE(jobId), 2000);
+        // Auto-reconnect with a retry cap so a missing/pruned job (404)
+        // cannot spin forever in the background.
+        if (attempt < 5) {
+          setTimeout(() => connectSSE(jobId, attempt + 1), 2000);
+        } else {
+          hideLoading();
+          showToast('Lost connection to batch progress stream. The job may still be running — try refreshing.');
+        }
       };
     }
 
@@ -1127,12 +1172,13 @@
           const text = await res.text();
           throw new Error(`Server returned status ${res.status}: ${text || res.statusText || 'Unknown Error'}`);
         }
+        if (!res.ok) throw new Error(apiError(data, res));
         state.candidates = data.candidates || [];
         state.metadata = data.metadata || {};
         state.pipeline = data.pipeline || [];
         renderAll();
       } catch (e) {
-        alert('Failed to fetch batch results: ' + e.message);
+        showToast('Failed to fetch batch results: ' + e.message);
       } finally {
         hideLoading();
       }
@@ -1377,6 +1423,26 @@
     function hideLoading() {
       document.getElementById('loadingOverlay').classList.remove('active');
       document.getElementById('progressBar').style.display = 'none';
+    }
+
+    // ── Error toast (replaces blocking alert()) ──
+    let toastTimer = null;
+    function showToast(message) {
+      const toast = document.getElementById('errorToast');
+      document.getElementById('errorToastMsg').textContent = message;
+      toast.classList.add('visible');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 8000);
+    }
+    function hideToast() {
+      document.getElementById('errorToast').classList.remove('visible');
+      clearTimeout(toastTimer);
+    }
+
+    // FastAPI HTTPException bodies use {detail}; legacy handlers use {error}.
+    function apiError(data, res) {
+      return (data && (data.detail || data.error)) ||
+        `Server returned status ${res ? res.status : 'unknown'}`;
     }
   </script>
 </body>
