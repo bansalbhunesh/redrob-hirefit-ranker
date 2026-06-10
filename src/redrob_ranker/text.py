@@ -13,6 +13,13 @@ LOWERED_SEMANTIC_CONCEPTS = {
     concept: tuple(str(alias).lower() for alias in aliases)
     for concept, aliases in SEMANTIC_CONCEPTS.items()
 }
+# One alternation per concept: search() is true exactly when any alias occurs
+# as a plain substring, so each concept needs one pass over the text instead
+# of one pass per alias.
+_CONCEPT_PATTERNS = {
+    concept: re.compile("|".join(re.escape(alias) for alias in aliases))
+    for concept, aliases in LOWERED_SEMANTIC_CONCEPTS.items()
+}
 
 
 def norm(value: object) -> str:
@@ -52,8 +59,8 @@ def join_nonempty(parts: Iterable[object], sep: str = " ") -> str:
 def semantic_concept_markers(text: str) -> list[str]:
     lowered = lower(text)
     markers: list[str] = []
-    for concept, aliases in LOWERED_SEMANTIC_CONCEPTS.items():
-        if any(alias in lowered for alias in aliases):
+    for concept, pattern in _CONCEPT_PATTERNS.items():
+        if pattern.search(lowered):
             markers.append(f"concept_{concept}")
     return markers
 
