@@ -687,7 +687,7 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
         soft_flags.append("junior_for_senior_role")
 
     behavioral_multiplier = compute_behavioral_multiplier(values, candidate)
-    honeypot_multiplier = 0.0 if hard_flags else 1.0
+    honeypot_multiplier = _honeypot_multiplier_for(hard_flags)
     disqualifier_multiplier = compute_disqualifier_multiplier(
         soft_flags, production_evidence=values["production_evidence"]
     )
@@ -700,6 +700,29 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
         disqualifier_multiplier=disqualifier_multiplier,
         flags=hard_flags + soft_flags,
     )
+
+
+# Honeypot audit remediation (docs/honeypot_audit.md, 2026-06-10): the manual
+# review found a plausible honest data-entry explanation for SOME members of
+# these two flag classes (single-role abbreviated histories with consistent
+# graduation years; uniform zero-duration skill imports). Per the
+# pre-registered rule, those classes soften from hard 0.0 to 0.05 -- still an
+# effective exclusion (a 0.05x multiplier cannot reach the top-100) but no
+# longer an irreversible zero on evidence that admits an innocent reading.
+# Classes with self-contradicting evidence (e.g. summary-vs-claim YoE
+# mismatch) remain hard zeros.
+SOFTENED_HONEYPOT_CLASSES = frozenset({
+    "career_history_too_short_for_claimed_yoe",
+    "expert_skill_zero_duration",
+})
+
+
+def _honeypot_multiplier_for(hard_flags: list[str]) -> float:
+    if not hard_flags:
+        return 1.0
+    if all(f in SOFTENED_HONEYPOT_CLASSES for f in hard_flags):
+        return 0.05
+    return 0.0
 
 
 # Lower clamp of the behavioral multiplier. 0.25 is the shipped behavior; the
