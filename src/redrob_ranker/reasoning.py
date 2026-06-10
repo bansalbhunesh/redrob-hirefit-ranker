@@ -36,6 +36,57 @@ def _variant(options: tuple[str, ...], candidate_id: str, salt: int = 0) -> str:
     return options[(sum(ord(ch) for ch in str(candidate_id)) + salt) % len(options)]
 
 
+# Hard cap on a reasoning cell. The bundled validator imposes no length limit,
+# but CSV cells beyond this read as padding, not signal.
+MAX_REASON_LEN = 600
+
+# Ranking/search/recsys evidence terms for the injected career fact.
+_EVIDENCE_TERMS = (
+    "learning to rank", "learning-to-rank", "re-rank", "rerank", "ranking",
+    "retrieval", "recommendation", "recsys", "search", "embedding", "bm25",
+    "vector", "personalization", "relevance",
+)
+
+_FACT_LEADS = ("Evidence", "Concrete signal", "Track record", "On the record")
+
+
+def _career_fact(candidate: dict, cid: str) -> str | None:
+    """One concrete, verbatim-grounded career fact for this candidate.
+
+    Prefers a sentence from a career_history description that carries
+    ranking/search/recsys evidence (quoted verbatim with its company); falls
+    back to the longest-tenure role. Deterministic per candidate_id.
+    """
+    matches: list[tuple[str, str]] = []
+    for job in candidate.get("career_history", []) or []:
+        company = str(job.get("company") or "").strip()
+        desc = str(job.get("description") or "")
+        if not company or not desc:
+            continue
+        for sentence in desc.split(". "):
+            lowered = sentence.lower()
+            if any(term in lowered for term in _EVIDENCE_TERMS):
+                snippet = sentence.strip().rstrip(".")
+                # Skip over-long sentences instead of truncating so the quote
+                # stays verbatim (and the row under MAX_REASON_LEN).
+                if 25 <= len(snippet) <= 140:
+                    matches.append((company, snippet))
+                break  # at most one snippet per job
+    if matches:
+        idx = (sum(ord(ch) for ch in str(cid)) + 11) % len(matches)
+        company, snippet = matches[idx]
+        return f'at {company}: "{snippet}"'
+    jobs = [
+        j for j in candidate.get("career_history", []) or []
+        if str(j.get("company") or "").strip() and str(j.get("title") or "").strip()
+        and int(j.get("duration_months") or 0) > 0
+    ]
+    if not jobs:
+        return None
+    j = max(jobs, key=lambda job: int(job.get("duration_months") or 0))
+    return f"{int(j.get('duration_months') or 0)} months at {j['company']} as {j['title']}"
+
+
 def _top_relevant_skills(candidate: dict, limit: int = 4) -> list[str]:
     aliases = {
         lower(alias)
@@ -148,15 +199,28 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
     notice_days = signals.get("notice_period_days", "unknown")
     response_rate = float(signals.get("recruiter_response_rate") or 0)
     if features.behavioral_multiplier >= 0.95:
-        engagement_note = "strong availability and recruiter-response signals"
+        engagement_note = _variant((
+            "strong availability and recruiter-response signals",
+            "responsive and visibly in the market",
+            "high availability with reliable recruiter responses",
+        ), cid, 17)
     elif features.behavioral_multiplier >= 0.65:
-        engagement_note = "usable availability signals with some recruiter-response risk"
+        engagement_note = _variant((
+            "usable availability signals with some recruiter-response risk",
+            "reachable, though recruiter-response history is mixed",
+            "moderate availability; responsiveness is the watch item",
+        ), cid, 17)
     else:
-        engagement_note = "weaker availability or recruiter-response signals"
-    behavior = (
-        f"response rate {response_rate:.2f}, notice {notice_days} days; "
-        f"{engagement_note}"
-    )
+        engagement_note = _variant((
+            "weaker availability or recruiter-response signals",
+            "limited recent platform activity; outreach may be slow",
+            "low availability signals despite the on-paper fit",
+        ), cid, 17)
+    behavior = _variant((
+        f"response rate {response_rate:.2f}, notice {notice_days} days; {engagement_note}",
+        f"notice {notice_days} days, response rate {response_rate:.2f}; {engagement_note}",
+        f"{engagement_note}; response rate {response_rate:.2f}, notice {notice_days} days",
+    ), cid, 19)
 
     if rank <= 20:
         selected = positives[:3]
@@ -174,6 +238,11 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
 
     first_sentence = f"{opening}; {'; '.join(selected[:3])}."
 
+    # One concrete, verbatim-grounded career fact per row (company + the
+    # specific ranking/search/recsys evidence from that candidate's history).
+    fact = _career_fact(candidate, cid)
+    fact_sentence = f" {_variant(_FACT_LEADS, cid, 13)} {fact}." if fact else ""
+
     behavior_variants = [
         f"Redrob engagement: {behavior}.",
         f"Platform activity: {behavior}.",
@@ -183,9 +252,16 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
         f"Pipeline readiness: {behavior}.",
         f"Recruiter-facing signals: {behavior}.",
         f"Engagement snapshot: {behavior}.",
+        f"On the platform: {behavior}.",
+        f"Reachability: {behavior}.",
+        f"Process signals: {behavior}.",
+        f"Recruiter telemetry: {behavior}.",
     ]
     candidate_id = str(candidate.get("candidate_id", ""))
     variant_idx = (sum(ord(c) for c in candidate_id) + 7) % len(behavior_variants)
     second_sentence = behavior_variants[variant_idx]
 
-    return f"{first_sentence} {second_sentence}"
+    reason = f"{first_sentence}{fact_sentence} {second_sentence}"
+    if len(reason) > MAX_REASON_LEN and fact_sentence:
+        reason = f"{first_sentence} {second_sentence}"
+    return reason[:MAX_REASON_LEN]

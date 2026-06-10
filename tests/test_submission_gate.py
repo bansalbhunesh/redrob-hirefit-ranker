@@ -29,11 +29,14 @@ SUBMISSION = ROOT / "submission.csv"
 CANDIDATES = ROOT / "candidates.jsonl"
 
 # Golden hash of the committed full-pool submission (sha256, lowercase hex).
-GOLDEN_SUBMISSION_SHA256 = "e1a696d1f575908c8544fae294e04dcbf4edd4bad8ee5215aae2072c867493f7"
+# History: e1a696d1... (Phase 0 re-baseline) -> ecb1fc5b... (Phase 4 reasoning
+# upgrade: injected verbatim career facts; ranks and scores verified
+# byte-identical, only reasoning text changed; docs/golden_reproduction.md).
+GOLDEN_SUBMISSION_SHA256 = "ecb1fc5b9f481669789b8d4c9fba14bc185b85173b8a90c354e422470d2f1a63"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0).
-GOLDEN_SLICE2K_SHA256 = "455d08d4d7fd45697e7f8ee05c00c1b13f3001bd4e2123dbda2726fd2e7d5bb1"
+GOLDEN_SLICE2K_SHA256 = "509026ce41139d94d063760498d2a85e147e58d6e3a9ecd67abbda56742c528e"
 
 EXPECTED_HEADER = ["candidate_id", "rank", "score", "reasoning"]
 
