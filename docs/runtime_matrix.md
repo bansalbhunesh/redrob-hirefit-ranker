@@ -33,9 +33,11 @@ semantic divergence — whitespace-class tokenization — during development).
 
 ## Budget verdict
 
-- Hard limit 300 s: **worst case passes with ~28-46% headroom** (2026-06-10 audit:
-  163.0 s min-of-3, 215.1 s worst observed under host load, serial on 2 CPUs).
-- 240 s safety margin: all configurations and all observed runs under it.
+- Hard limit 300 s: **worst case passes with ~38-56% headroom** (2026-06-10 audit,
+  quiet-host min-of-5 on a fresh no-cache build: 133.1-187.2 s serial on 2 CPUs;
+  215.1 s worst ever observed under heavy host load).
+- 240 s safety margin: all configurations and all observed runs under it; even a
+  15%-slower evaluator box stays inside the margin.
 - Memory: peak ~6.1 GB observed (4-worker config) against the 16 GB budget —
   ~62% headroom.
 - Determinism: every matrix run, all three code versions, produced a CSV

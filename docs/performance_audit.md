@@ -86,6 +86,28 @@ Given the documented ±20% host variance, the conservative claim is: **no regres
 any run, −9% to −16% in the noise-controlled comparisons**, matching the −21% measured
 on the dominant stage in isolation.
 
+### Quiet-host confirmation (OneDrive paused, agent processes killed)
+
+Because the A/B pairs above straddled under host noise, the safety margin was
+re-measured on a quieted host: OneDrive sync stopped and all background agent
+processes terminated, five consecutive full-100K runs of a **fresh `--no-cache`
+build** (clean-build evaluator reproduction), 2-cpu serial:
+
+| run | conditions | runtime |
+|---|---|---|
+| fresh-build check | host busy | 152.9 s |
+| 1 | OneDrive off, agents on | 187.2 s |
+| 2 | agents killed mid-run | 172.5 s |
+| 3 | fully quiet | 161.8 s |
+| 4 | fully quiet | 174.1 s |
+| 5 | fully quiet | **133.1 s** |
+
+**Quiet worst case 187.2 s, fully-quiet worst 174.1 s, best 133.1 s — all golden.**
+Even an evaluator box 15% slower than the quiet worst case lands at ~215 s, inside
+the 240 s margin; a 35% slower box still clears the 300 s hard limit. The fresh
+no-cache build also confirms the reproduction image depends only on the four
+pinned ranking requirements (the api/demo extras are never installed in it).
+
 ## Memory
 
 Peak RSS 4.6 GB (auto workers, dev) / ~4.9 GB container (prior matrix) against 16 GB —
