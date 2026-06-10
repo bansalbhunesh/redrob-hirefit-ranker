@@ -13,7 +13,7 @@ team_members:
     role: "ML Engineer"
 
 github_repo: "https://github.com/bansalbhunesh/redrob-hirefit-ranker"
-sandbox_link: "https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker"
+sandbox_link: "https://huggingface.co/spaces/bansal1234/Hirefit"
 reproduce_command: "PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s  # the Dockerfile pins the hash seed; set it manually for local runs -> bit-identical output"
 
 compute:

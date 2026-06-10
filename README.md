@@ -2,15 +2,15 @@
 
 > **Ranks careers, not keywords.** A fast, offline, deterministic engine that finds *hireable* engineers in a 100,000-candidate pool — built for the Redrob **Intelligent Candidate Discovery & Ranking Challenge** (Senior AI Engineer role).
 
-[![Live Demo](https://img.shields.io/badge/▶_Live_Demo-HuggingFace_Space-FF9D00.svg)](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)
+[![Live Demo](https://img.shields.io/badge/▶_Live_Demo-HuggingFace_Space-FF9D00.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![100K Runtime](https://img.shields.io/badge/100K_Runtime-~177–194s_in_Docker_3.11-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-77_passing-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-86_passing-brightgreen.svg)](#)
 
 ### Try it live — no install
 
-| [**Interactive dashboard** — Render](https://redrob-hirefit-ranker.onrender.com) | [**Runnable sandbox** — HuggingFace Space](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker) |
+| [**Interactive dashboard** — Render](https://redrob-hirefit-ranker.onrender.com) | [**Runnable sandbox** — HuggingFace Space](https://huggingface.co/spaces/bansal1234/Hirefit) |
 |---|---|
 | The control-room UI: live pipeline stages, honeypot blocking, per-candidate feature + reasoning audit. | Drop in a `candidates.jsonl` (≤100) → ranked shortlist + downloadable CSV, same deterministic CPU-only engine. |
 
@@ -27,7 +27,7 @@
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
 | Top-10 (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
 | Format validator | **pass** | Stage-1 gate |
-| Tests | **77 passing** (incl. golden-output regression) | — |
+| Tests | **86 passing** (incl. golden-output regression) | — |
 
 **Methodology:** [METHODOLOGY.md](METHODOLOGY.md) | **Slide deck:** [PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf) / [PPTX](docs/HireFit_Ranker_Redrob_POLISHED.pptx) | **Eval evidence:** [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md)
 
@@ -182,7 +182,7 @@ Full technical explanation: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
   every pipeline stage with live counts and a per-candidate audit of real ranker
   internals: feature contributions, the three multipliers, flags, and honeypot
   reasons. Run locally: `pip install -e ".[demo]" && uvicorn apps.api.main:app --reload`.
-- **HuggingFace Space** ([live sandbox](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)) —
+- **HuggingFace Space** ([live sandbox](https://huggingface.co/spaces/bansal1234/Hirefit)) —
   upload a sample, get a ranked shortlist.
 
 | Sandbox UI | Ranked shortlist |
@@ -194,7 +194,7 @@ Full technical explanation: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ```bash
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
-python -m pytest -q                                  # 77 tests incl. golden-output regression
+python -m pytest -q                                  # 86 tests incl. golden-output regression
 python scripts/validate_submission.py submission.csv
 ```
 
@@ -229,7 +229,7 @@ composite; hand weights ship).
   validation, eval harness, dashboard payload helpers.
 - `scripts/` — validators, eval/label builders, sensitivity sweep, ablation
   study, honeypot extraction/verdicts, Docker runtime matrix.
-- `tests/` — 77 checks: ranking, guardrails, reasoning grounding, JD-compiler
+- `tests/` — 86 checks: ranking, guardrails, reasoning grounding, JD-compiler
   acceptance, and the golden-output regression gates.
 - `apps/api/`, `apps/space/`, `hf_space/` — FastAPI dashboard and Gradio demos.
 - `docs/` — architecture, methodology evidence, audits, runtime matrix.
