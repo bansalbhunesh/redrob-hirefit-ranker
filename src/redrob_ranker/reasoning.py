@@ -120,7 +120,7 @@ def _article_for_title(title: str) -> str:
 
 
 def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str:
-    profile = candidate.get("profile", {})
+    profile = candidate.get("profile") or {}
     signals = candidate.get("redrob_signals", {})
     years = float(profile.get("years_of_experience") or 0)
     title = profile.get("current_title", "candidate")

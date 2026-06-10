@@ -59,11 +59,13 @@ def semantic_concept_markers(text: str) -> list[str]:
 
 
 def candidate_text(candidate: dict) -> str:
-    profile = candidate.get("profile", {})
-    career = candidate.get("career_history", [])
-    education = candidate.get("education", [])
-    skills = candidate.get("skills", [])
-    signals = candidate.get("redrob_signals", {})
+    # `or` guards: demo upload paths can carry explicit nulls for these keys
+    # (key present, value None); identical output for well-formed records.
+    profile = candidate.get("profile") or {}
+    career = candidate.get("career_history") or []
+    education = candidate.get("education") or []
+    skills = candidate.get("skills") or []
+    signals = candidate.get("redrob_signals") or {}
 
     sections: list[str] = []
     sections.append(

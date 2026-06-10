@@ -342,7 +342,7 @@ def _profile_text(candidate: dict) -> str:
 
 
 def _career_text(candidate: dict) -> str:
-    parts = [candidate.get("profile", {}).get("summary", "")]
+    parts = [(candidate.get("profile") or {}).get("summary", "")]
     for job in candidate.get("career_history", []) or []:
         parts.extend([job.get("title", ""), job.get("description", ""), job.get("industry", "")])
     return _norm(" ".join(parts))
@@ -374,7 +374,7 @@ _TARGET_TITLE_PADDED = _DEFAULT_MATCHERS.title_padded
 _NON_TARGET_PADDED = _pad(NON_TARGET_TITLES)
 
 def _title_score(candidate: dict, matchers: JDMatchers = _DEFAULT_MATCHERS) -> float:
-    profile = candidate.get("profile", {})
+    profile = candidate.get("profile") or {}
     current = _norm(profile.get("current_title"))
     headline = _norm(profile.get("headline"))
     historical = " ".join(_norm(j.get("title")) for j in candidate.get("career_history", []) or [])
@@ -450,8 +450,8 @@ def _honeypot_flags(
     candidate: dict, values: dict[str, float], matchers: JDMatchers = _DEFAULT_MATCHERS
 ) -> list[str]:
     flags: list[str] = []
-    profile = candidate.get("profile", {})
-    signals = candidate.get("redrob_signals", {})
+    profile = candidate.get("profile") or {}
+    signals = candidate.get("redrob_signals") or {}
     career = candidate.get("career_history", []) or []
     skills = _skill_records(candidate)
 
@@ -530,8 +530,10 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
             flags=["malformed_candidate"]
         )
     m = _matchers_for(config)
-    profile = candidate.get("profile", {})
-    signals = candidate.get("redrob_signals", {})
+    # `or` guards: demo upload paths can carry explicit nulls (key present,
+    # value None); identical for well-formed records.
+    profile = candidate.get("profile") or {}
+    signals = candidate.get("redrob_signals") or {}
     full_text = _profile_text(candidate)
     career_text = _career_text(candidate)
     # Pad the two large texts once and build their token sets; every boundary
@@ -800,7 +802,7 @@ def compute_behavioral_multiplier(
     values: dict[str, float], candidate: dict, floor: float = BEHAVIORAL_FLOOR_DEFAULT
 ) -> float:
     # Behavior may demote aggressively, but it can only mildly promote; fit must come from base score.
-    signals = candidate.get("redrob_signals", {})
+    signals = candidate.get("redrob_signals") or {}
     mult = 1.0
     mult *= 1.05 if signals.get("open_to_work_flag") else 0.90
     mult *= 0.5 + 0.5 * math.sqrt(values["responsiveness_score"])
@@ -810,7 +812,7 @@ def compute_behavioral_multiplier(
     mult *= 1.03 if float(signals.get("saved_by_recruiters_30d") or 0) > 5 else 0.97 if float(signals.get("saved_by_recruiters_30d") or 0) == 0 else 1.0
     raw_github = float(signals.get("github_activity_score") or 0)
     mult *= 1.03 if values["github_signal"] > 0.2 else 1.0
-    if candidate.get("redrob_signals", {}).get("skill_assessment_scores"):
+    if (candidate.get("redrob_signals") or {}).get("skill_assessment_scores"):
         mult *= 1.05 if values["assessment_score_avg"] > 0.6 else 0.9 if values["assessment_score_avg"] < 0.4 else 1.0
         mult *= _assessment_claim_multiplier(candidate)
     offer_rate = signals.get("offer_acceptance_rate")
@@ -822,7 +824,7 @@ def compute_behavioral_multiplier(
 
 
 def _assessment_claim_multiplier(candidate: dict) -> float:
-    assessments = candidate.get("redrob_signals", {}).get("skill_assessment_scores", {}) or {}
+    assessments = (candidate.get("redrob_signals") or {}).get("skill_assessment_scores", {}) or {}
     if not assessments:
         return 1.0
 
