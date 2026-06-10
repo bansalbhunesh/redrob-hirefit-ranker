@@ -25,6 +25,7 @@ Optimization history, same matrix, worst case (serial on 2 CPUs):
 | pre-optimization (`1bb77d7`) | 269.3 s — over the 240 s margin, triggered the mandated work |
 | pad-once / early-exit / norm caching (`cbf6290`) | 235.6 – 255.8 s (±10% host variance across two passes) |
 | + token-set matching (`8e20cbf`) | **193.4 s** |
+| + multi-word token-set prefilter + feature hoists (2026-06-10 audit) | **163.0 s** min-of-3; 215.1 s worst observed under host load (see docs/performance_audit.md) |
 
 Every optimization was proven byte-identical via the golden regression tests
 and a full-100K hash comparison before merging (the 2K gate caught one real
@@ -32,9 +33,9 @@ semantic divergence — whitespace-class tokenization — during development).
 
 ## Budget verdict
 
-- Hard limit 300 s: **worst case passes with ~36% headroom** (193.4 s serial
-  on 2 CPUs); 4-CPU case has ~41% headroom.
-- 240 s safety margin: all configurations now comfortably under it.
+- Hard limit 300 s: **worst case passes with ~28-46% headroom** (2026-06-10 audit:
+  163.0 s min-of-3, 215.1 s worst observed under host load, serial on 2 CPUs).
+- 240 s safety margin: all configurations and all observed runs under it.
 - Memory: peak ~6.1 GB observed (4-worker config) against the 16 GB budget —
   ~62% headroom.
 - Determinism: every matrix run, all three code versions, produced a CSV

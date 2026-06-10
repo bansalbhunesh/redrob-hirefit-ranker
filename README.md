@@ -4,9 +4,9 @@
 
 [![Live Demo](https://img.shields.io/badge/▶_Live_Demo-HuggingFace_Space-FF9D00.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![100K Runtime](https://img.shields.io/badge/100K_Runtime-~177–194s_in_Docker_3.11-brightgreen.svg)](#)
+[![100K Runtime](https://img.shields.io/badge/100K_Runtime-~163–215s_in_Docker_3.11-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-86_passing-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-100_passing-brightgreen.svg)](#)
 
 ### Try it live — no install
 
@@ -20,14 +20,14 @@
 
 | Dimension | Result | Budget / context |
 |---|---|---|
-| 100K runtime (python:3.11 Docker, 2–4 CPUs) | **~177–194s** (worst case: 193s serial on 2 CPUs) | 300s limit |
+| 100K runtime (python:3.11 Docker, 2–4 CPUs) | **163s** worst-case serial on 2 CPUs (min-of-3; 215s worst observed under host load) | 300s limit |
 | Peak memory (container, 4 workers) | ~6.1 GB | 16 GB limit |
 | Network / GPU at rank time | **none** | required: none |
 | Determinism | **byte-identical** run-to-run, serial-vs-parallel, Windows-vs-Linux | locked by golden-hash tests |
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
 | Top-10 (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
 | Format validator | **pass** | Stage-1 gate |
-| Tests | **86 passing** (incl. golden-output regression) | — |
+| Tests | **100 passing** (incl. golden-output regression + API endpoint suite) | — |
 
 **Methodology:** [METHODOLOGY.md](METHODOLOGY.md) | **Slide deck:** [PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf) / [PPTX](docs/HireFit_Ranker_Redrob_POLISHED.pptx) | **Eval evidence:** [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md)
 
@@ -69,9 +69,10 @@ Measured result (full matrix in [docs/runtime_matrix.md](docs/runtime_matrix.md)
 ```text
 Wrote 100 rows to submission.csv.
 Loaded 100000 candidates; ranked pool 100000; BM25 backend bm25s.
-Docker python:3.11 (Stage-3 env): 193s serial on 2 CPUs (worst case),
-194s with 2 workers on 2 CPUs, 177s on 4 CPUs; peak container memory
-~4.9-6.1 GB. Dev machine (12 cores): ~104s serial, ~60s parallel.
+Docker python:3.11 (Stage-3 env): 163s serial on 2 CPUs (min-of-3 worst case;
+215s worst observed under host load), 194s with 2 workers on 2 CPUs, 177s on
+4 CPUs; peak container memory ~4.9-6.1 GB. Dev machine (12 cores): ~93s serial,
+~80s parallel (2026-06-10 audit; ±20% host variance).
 Honeypots detected 53; honeypots in output 0.
 ```
 
@@ -181,7 +182,8 @@ Full technical explanation: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - **Interactive dashboard** ([live on Render](https://redrob-hirefit-ranker.onrender.com)) —
   every pipeline stage with live counts and a per-candidate audit of real ranker
   internals: feature contributions, the three multipliers, flags, and honeypot
-  reasons. Run locally: `pip install -e ".[demo]" && uvicorn apps.api.main:app --reload`.
+  reasons. Run locally: `pip install -e ".[api]" && uvicorn apps.api.main:app --reload`
+  (single worker only — the batch job store is in-process).
 - **HuggingFace Space** ([live sandbox](https://huggingface.co/spaces/bansal1234/Hirefit)) —
   upload a sample, get a ranked shortlist.
 
