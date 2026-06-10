@@ -49,9 +49,9 @@ SWEEP_SLIDE = {
         "Coverage guard   floor 0.85–1.00 configs excluded: <95% label coverage, selection-biased",
         "Winner   shipped config — identical top-100 across floors 0.25–0.55",
     ],
-    "panel2_title": "The trap, sprung",
-    "panel2_body": "The pool plants 11 'perfect-on-paper but unavailable' seniors (response rates to 0.07) and one honeypot in gold clothing. The behavioral layer demotes all 11; the honeypot gate zeroes the 12th. An LLM judge rated one of these traps tier-5 — our deterministic signals caught what it missed.",
-    "footer": "Honest framing:  if the hidden labels ignore availability, this choice costs ~0.03 composite — we measured it, and we stand by reading the JD as the spec.",
+    "panel2_title": "We built our strongest rival — it lost",
+    "panel2_body": "A LambdaMART ranker over our own 28 features plus recovered generator structure, trained on 1,500 LLM judgments, evaluated once under a gate committed before training: 0.900 vs our 0.906. Third measured negative result — the hand-tuned ordering stands because nothing we tested beats it, not because nothing was tested.",
+    "footer": "Honest framing:  the pool plants 11 perfect-on-paper-but-unavailable seniors (response rates to 0.07) and one honeypot in gold clothing — the guardrails demote all 12; an LLM judge missed one of them.",
 }
 
 REDROB_SLIDE = {
