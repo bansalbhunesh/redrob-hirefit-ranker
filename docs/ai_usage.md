@@ -9,6 +9,12 @@ AI tools used:
   and improving reasoning variety. All changes were reviewed and verified against the
   test suite and the format validator.
 - Claude/Kimi audit notes were used as design-review references and compared against the repo before implementation.
+- Claude Code (Anthropic) for the competition-hardening pass (2026-06-10): golden-hash
+  reproduction gates, Docker runtime matrix, compute_features hot-path optimization
+  (verified byte-identical), shared eval harness, pre-registered behavioral-floor
+  sensitivity sweep, honeypot audit with manual verification, ablation ladder, the
+  JD compiler, and the grounded-reasoning upgrade. Every change was gated on the
+  full test suite plus golden-output regression tests.
 
 `scripts/llm_judge_labels.py` can optionally call a hosted LLM **for development-time
 evaluation labels only**. It is never invoked by the ranking path.
