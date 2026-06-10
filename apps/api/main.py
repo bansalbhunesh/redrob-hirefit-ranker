@@ -417,14 +417,17 @@ async def stream_progress(job_id: str):
 
             percent = round(job["processed"] / max(job["total"], 1) * 100, 1)
 
-            yield f"data: {json.dumps({
-                'type': 'progress',
-                'processed': job['processed'],
-                'total': job['total'],
-                'percent': percent,
-                'stage': job['current_stage'],
-                'status': job['status']
-            })}\n\n"
+            # Single-line f-string expression: multi-line f-string expressions
+            # are PEP 701 (Python 3.12+) and a SyntaxError on 3.11.
+            progress_event = json.dumps({
+                "type": "progress",
+                "processed": job["processed"],
+                "total": job["total"],
+                "percent": percent,
+                "stage": job["current_stage"],
+                "status": job["status"],
+            })
+            yield f"data: {progress_event}\n\n"
 
             if job["status"] in ("complete", "failed"):
                 if job["status"] == "complete":
