@@ -39,7 +39,7 @@ One command, CPU-only, no network:
 python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
-Measured full run: 100,000 candidates scored in an observed 123-184 seconds with `bm25s`; peak RSS 4.33 GB across parent plus worker processes; 53 hard honeypots detected and 0 emitted in the top 100. Silver-label development check on the first 20K candidates: NDCG@10 0.9088, NDCG@50 0.8482, P@10 1.0000, MAP 0.7518.
+Measured full run (python:3.11 Docker, the Stage-3 environment): 100,000 candidates in ~219-256 s across 2-4 CPU configurations (worst case: serial on 2 CPUs), peak container memory ~6.1 GB vs the 16 GB budget; every run byte-identical to the committed submission. Dev machine (12 cores): ~70 s. 53 hard honeypots detected, 0 in the top 100. Full matrix: docs/runtime_matrix.md.
 
 ## 7. Example Output
 

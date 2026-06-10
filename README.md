@@ -5,7 +5,7 @@
 [![Live Demo](https://img.shields.io/badge/▶_Live_Demo-HuggingFace_Space-FF9D00.svg)](https://huggingface.co/spaces/bansal1234/redrob-hirefit-ranker)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Challenge](https://img.shields.io/badge/Redrob-India_Runs_AI-ff69b4.svg)](#)
-[![100K Runtime](https://img.shields.io/badge/100K_Runtime-under_200s_CPU-brightgreen.svg)](#)
+[![100K Runtime](https://img.shields.io/badge/100K_Runtime-~220–256s_in_Docker_3.11-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
 [![Tests](https://img.shields.io/badge/tests-52_passing-brightgreen.svg)](#)
 
@@ -19,8 +19,8 @@
 
 ## Highlights
 
-- ⚡ **In-budget by a wide margin** — ranks all 100,000 candidates in **~80–180s** on CPU (≤60% of the 5-minute limit), parallelized across worker processes.
-- 🔒 **Offline & deterministic** — no network, no GPU, no hosted LLM during ranking; **byte-identical output** run-to-run and serial-vs-parallel (auto-pinned hash seed).
+- ⚡ **In-budget in the real eval environment** — ranks all 100,000 candidates in **~219–256s inside the python:3.11 Docker image** across worst-case (2 CPUs, serial) to mid-case (4 CPUs) configurations, ≥15% under the 300s limit (full matrix: [docs/runtime_matrix.md](docs/runtime_matrix.md)); ~70s on a 12-core dev machine.
+- 🔒 **Offline & deterministic** — no network, no GPU, no hosted LLM during ranking; **byte-identical output** run-to-run, serial-vs-parallel, and Windows-vs-Linux-Docker (run with `PYTHONHASHSEED=0`; the Dockerfile pins it).
 - 🎯 **Reads careers, not buzzwords** — BM25 + a 28-feature recruiter matrix with multiplicative **behavioral / honeypot / disqualifier guardrails** that defuse the dataset's keyword-stuffer and honeypot traps.
 - 🧪 **Independently validated** — an LLM judge (used only to *evaluate*, never to rank) scored the **top-10 as all tier 4–5, P@10 = 1.0** ([proof](docs/LLM_JUDGE_EVAL.md)).
 - 🤝 **Recruiter-aware** — down-weights perfect-on-paper-but-unavailable candidates exactly as the JD demands — a signal the LLM judge itself overlooked.
@@ -29,8 +29,8 @@
 
 | Dimension | Result | Budget / context |
 |---|---|---|
-| 100K runtime (CPU, parallel) | **~80–180s** | 300s limit |
-| Peak memory | 4.33 GB | 16 GB limit |
+| 100K runtime (python:3.11 Docker, 2–4 CPUs) | **~219–256s** | 300s limit |
+| Peak memory (container, 4 workers) | ~6.1 GB | 16 GB limit |
 | Network / GPU at rank time | **none** | required: none |
 | Determinism | **byte-identical** run-to-run | — |
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
@@ -65,32 +65,28 @@ These were deliberate, **measured** choices — not gaps:
 Command used for the final local 100K run:
 
 ```bash
-# rank.py auto-pins PYTHONHASHSEED=0 (re-execs once) so the CSV is bit-identical
-# across runs and serial-vs-parallel -- no prefix or Docker required.
-python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s
+# Set PYTHONHASHSEED=0 for bit-identical CSVs across runs (rank.py warns if unset;
+# the Dockerfile pins it). bm25s vocabulary ordering otherwise wobbles one score's
+# 6th decimal -- rank order is unaffected either way.
+PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s
 ```
 
-Measured result on the local challenge file:
+Measured result (full matrix in [docs/runtime_matrix.md](docs/runtime_matrix.md)):
 
 ```text
 Wrote 100 rows to submission.csv.
 Loaded 100000 candidates; ranked pool 100000; BM25 backend bm25s.
-Runtime ~123-184s (varies with machine load); peak RSS 4.33 GB (parent + workers).
+Docker python:3.11 (Stage-3 env): 235-256s serial on 2 CPUs (worst case),
+219-242s with 2 workers on 2 CPUs, 221-253s on 4 CPUs; peak container
+memory ~5.0-6.1 GB. Dev machine (12 cores, 8 workers): ~70s.
 Hard honeypots detected 53; hard honeypots in output 0.
 ```
 
 Feature scoring runs across CPU worker processes (`--workers`, default auto up to 8
-cores), which is the dominant cost; the per-candidate scores are byte-identical to
-the serial path (`--workers 1`, verified on the full 100K and locked by a regression
-test). `rank.py` pins `PYTHONHASHSEED=0` automatically (one transparent re-exec), so
-the whole CSV is bit-identical serial-vs-parallel and run-to-run. (The underlying
-non-determinism was only a cosmetic bm25s-vocabulary-ordering wobble in one score's
-6th decimal; rank order was always reproducible - min adjacent gap 4.1e-5, ~400x the
-noise.) This cut the full 100K run from ~262s to ~123-184s on the
-dev machine (observed range across runs), leaving margin under the 300s budget; peak
-RSS stays ~4.3 GB against the
-16 GB limit. Re-measure inside the Python 3.11 Docker image before submitting,
-since reproduction happens there and core counts differ.
+cores); per-candidate scores are byte-identical to the serial path (verified on the
+full 100K in Docker and locked by regression tests). Every matrix run -- Linux
+container vs Windows host, serial vs parallel -- produced a CSV byte-identical to
+the committed golden submission (sha256 in `tests/test_submission_gate.py`).
 
 Both the bundled validator and the official challenge validator passed:
 
