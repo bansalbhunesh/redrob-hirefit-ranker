@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import concurrent.futures
 import math
+import os
 from typing import Literal
 
 import numpy as np
@@ -28,7 +29,11 @@ def normalize_scores(scores: dict[int, float]) -> dict[int, float]:
 def _tokenize_all(texts: list[str]) -> list[list[str]]:
     if len(texts) < 4000:
         return [tokenize(t) for t in texts]
-    with concurrent.futures.ProcessPoolExecutor() as executor:
+    # Cap workers (audit-v2 hardening): an uncapped pool would spawn one process
+    # per core on a many-core box for plain tokenization. Output is order-stable
+    # and byte-identical regardless of worker count; this only bounds resource use.
+    workers = min(8, os.cpu_count() or 1)
+    with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as executor:
         return list(executor.map(tokenize, texts, chunksize=2000))
 
 

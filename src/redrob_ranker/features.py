@@ -595,6 +595,12 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
         matched_skill_scores.append(0.45 * prof + 0.35 * duration + 0.20 * endorsements)
     values["skill_depth_score"] = clamp(sum(matched_skill_scores) / max(1, min(7, len(matched_skill_scores))))
 
+    # Conditional features default to 0.0 so every FEATURE_NAMES entry is set
+    # explicitly; the blocks below overwrite them when skills/assessments exist.
+    # Byte-identical to the prior .get(name, 0.0) fallbacks, just no longer implicit.
+    values["endorsement_trust"] = 0.0
+    values["assessment_score_avg"] = 0.0
+
     if skills:
         credibility = []
         for skill in skills:

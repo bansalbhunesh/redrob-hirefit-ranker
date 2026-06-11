@@ -21,4 +21,11 @@ COPY rank.py ./rank.py
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir --no-deps -e .
 
+# Drop root (audit-v2 hardening): the entrypoint only reads bundled code and
+# writes to the path passed via --out (typically a mounted volume), so an
+# unprivileged UID suffices. chown /app keeps an in-container --out path writable.
+RUN useradd --create-home --uid 10001 appuser \
+    && chown -R appuser:appuser /app
+USER appuser
+
 ENTRYPOINT ["python", "rank.py"]
