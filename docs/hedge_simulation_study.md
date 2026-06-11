@@ -62,8 +62,27 @@ adjudicate this decision. The full-coverage sources can.
    the system ranking visibly-unavailable candidates above available ones —
    the opposite of the deck's thesis.
 
-## Status
+## Decision: DECLINED (2026-06-11) — the fourth measured negative result
 
-No change adopted. If a hash roll is undertaken (see
-docs/top100_ordering_audit.md for the stronger candidate), the mid hedge is a
-separate, explicitly hypothesis-betting add-on whose price is recorded above.
+The mid hedge is rejected despite the nominally positive expected value, for
+three recorded reasons:
+
+1. **The probability is worse than the breakeven suggests.** The JD
+   *explicitly instructs* down-weighting unavailable candidates; under
+   generator-tier labels that instruction is plausibly encoded, and under
+   JD-prompted LLM grading partially encoded. Betting on availability-blind
+   labels is betting against the strongest evidence available — the planted
+   11-trap structure itself.
+2. **The Stage-4 cost is real and unpriced by the composite.** A human judge
+   sampling rows 41–50 would see candidates with 0.07 response rates and
+   open_to_work=false ranked above available candidates — contradicting the
+   submission's stated thesis in exactly the rows humans read.
+3. **It spends the entry's best non-metric asset.** The project's record is
+   "pre-registered rule, followed even when a higher-measuring configuration
+   tempted us" (docs/sensitivity_sweep.md). An availability-blind hedge
+   inserted for score reasons is the opposite of that record, and this audit
+   trail would show it.
+
+This joins the dense-embeddings gate, the learned-LR study, and the LTR
+challenger as a measured option that was built, priced, and declined on the
+recorded evidence. `submission.csv` unchanged.
