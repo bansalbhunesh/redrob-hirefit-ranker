@@ -890,6 +890,12 @@ def compute_disqualifier_multiplier(flags: list[str], production_evidence: float
         mult *= 0.82
     if "junior_for_senior_role" in flags:
         mult *= 0.88
+    if "hidden_text_control_chars" in flags:
+        mult *= 0.82
+    if "prompt_injection_text" in flags:
+        mult *= 0.55
+    if "repeated_keyword_block" in flags:
+        mult *= 0.65
     return clamp(mult, 0.05, 1.0)
 
 

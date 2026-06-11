@@ -6,7 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![100K Runtime](https://img.shields.io/badge/100K_Runtime-80s_cloud_·_~125s_local_Docker-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-121_passing-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-126_passing-brightgreen.svg)](#)
 
 ### Try it live — no install
 
@@ -27,7 +27,7 @@
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
 | Top-10 quality — **dev proxy** (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
 | Format validator | **pass** (incl. candidate-pool membership) | Stage-1 gate |
-| Tests | **121 passing** (incl. golden-output regression + API endpoint suite) | — |
+| Tests | **126 passing** (incl. golden-output regression + API endpoint suite) | — |
 
 > **Metric provenance:** every ranking-quality number above is a *development
 > proxy* — independent heuristic + LLM-judge labels scored on dev samples.

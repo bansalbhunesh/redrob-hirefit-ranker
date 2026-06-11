@@ -38,6 +38,6 @@
     "composite_judge2": 0.9565,
     "judge_agreement_kappa_range": [0.918, 0.935]
   },
-  "tests_passing": 121,
+  "tests_passing": 126,
   "bm25_backend": "bm25s"
 }

@@ -167,3 +167,14 @@ Result:
 - Runtime: 556.3 seconds.
 - Name-neutralized score deltas: 0 / 100,000 nonzero.
 - Location and behavioral edits produced measurable deltas; see `docs/fairness_and_proxy_audit.md`.
+
+## Additional Branch Improvements
+
+- VM/runtime: `docs/vm_runtime_lab.md` documents the cgroup CPU quota worker-cap
+  fix. On this Docker Desktop VM, constrained 100K runtime improved from 422.9s
+  to 162.5s with byte-identical output.
+- Adversarial integrity: `docs/adversarial_integrity_audit.md` documents
+  prompt-injection, hidden-text, and repeated-keyword detection. Full-pool scan
+  flags 0 profiles after threshold tuning.
+- JD generalization: `docs/generalization_probe.md` documents supported
+  AI/search/backend JDs and fail-closed behavior for an unsupported sales role.
