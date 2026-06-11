@@ -41,3 +41,12 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
     if missing:
         errors.append(f"Missing ranks: {sorted(missing)}")
     return errors
+
+
+def validate_membership(rows: list[dict], known_ids: set[str]) -> list[str]:
+    """Reject syntactically valid candidate_ids that do not exist in the pool."""
+    return [
+        f"candidate_id not present in candidate pool: {row.get('candidate_id')}"
+        for row in rows
+        if str(row.get("candidate_id", "")) not in known_ids
+    ]

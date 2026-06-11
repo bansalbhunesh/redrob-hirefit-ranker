@@ -4,9 +4,9 @@
 
 [![Live Demo](https://img.shields.io/badge/▶_Live_Demo-HuggingFace_Space-FF9D00.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![100K Runtime](https://img.shields.io/badge/100K_Runtime-80s_cloud_·_~122s_local_Docker-brightgreen.svg)](#)
+[![100K Runtime](https://img.shields.io/badge/100K_Runtime-80s_cloud_·_~125s_local_Docker-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-105_passing-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-115_passing-brightgreen.svg)](#)
 
 ### Try it live — no install
 
@@ -20,14 +20,21 @@
 
 | Dimension | Result | Budget / context |
 |---|---|---|
-| 100K runtime (python:3.11 Docker, 2 CPUs, serial) | **80s** on a clean cloud runner (CI-verified, byte-deterministic); ~122s local Docker | 300s limit |
+| 100K runtime (python:3.11 Docker, 2 CPUs, serial) | **80s** on a clean cloud runner (CI-verified, byte-deterministic); ~125s local Docker | 300s limit |
 | Peak memory (container, 4 workers) | ~6.1 GB | 16 GB limit |
 | Network / GPU at rank time | **none** | required: none |
 | Determinism | **byte-identical** run-to-run, serial-vs-parallel, Windows-vs-Linux | locked by golden-hash tests |
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
-| Top-10 (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
-| Format validator | **pass** | Stage-1 gate |
-| Tests | **105 passing** (incl. golden-output regression + API endpoint suite) | — |
+| Top-10 quality — **dev proxy** (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
+| Format validator | **pass** (incl. candidate-pool membership) | Stage-1 gate |
+| Tests | **115 passing** (incl. golden-output regression + API endpoint suite) | — |
+
+> **Metric provenance:** every ranking-quality number above is a *development
+> proxy* — independent heuristic + LLM-judge labels scored on dev samples.
+> No official hidden labels were available before submission. All KPIs across
+> README / deck / demos trace to one file:
+> [docs/metrics_manifest.json](docs/metrics_manifest.json) (drift-gated by
+> `tests/test_metrics_manifest.py`).
 
 **Methodology:** [METHODOLOGY.md](METHODOLOGY.md) | **Slide deck:** [PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf) / [PPTX](docs/HireFit_Ranker_Redrob_POLISHED.pptx) | **Eval evidence:** [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md)
 

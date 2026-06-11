@@ -37,18 +37,17 @@ def _run(candidates: Path, out: Path, use_embeddings: bool, model: str, max_cand
 
 
 def _eval(submission: Path, labels: Path) -> dict:
-    # Reuse the independent evaluator's metric functions.
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("evaluate_independent", ROOT / "scripts" / "evaluate_independent.py")
-    ev = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(ev)
-    ranked = ev.load_submission(submission)
-    tiers, gains = ev.load_labels(labels)
+    # Score via the shared harness — the same code path every doc reports from.
+    # ("zero" policy matches evaluate_independent.py's published numbers.)
+    from redrob_ranker.eval_harness import evaluate, load_labels, load_submission
+
+    ranked = load_submission(submission)
+    result = evaluate(ranked, load_labels(labels, name="independent"), unlabeled="zero")
     return {
-        "ndcg10": ev.ndcg_at_k(ranked, gains, 10),
-        "ndcg50": ev.ndcg_at_k(ranked, gains, 50),
-        "map": ev.average_precision(ranked, tiers),
-        "p10": ev.precision_at_k(ranked, tiers, 10),
+        "ndcg10": result.ndcg10,
+        "ndcg50": result.ndcg50,
+        "map": result.map,
+        "p10": result.p10,
     }
 
 

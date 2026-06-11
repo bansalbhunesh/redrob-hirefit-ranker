@@ -1,0 +1,43 @@
+{
+  "_purpose": "Single source of truth for every KPI surfaced in README, deck, API demo, and HF Space. tests/test_metrics_manifest.py fails CI if a surface drifts from these values. Update this file FIRST, then the surfaces.",
+  "_provenance": "All ranking-quality metrics are DEVELOPMENT PROXIES (independent heuristic + LLM-judge labels on dev samples). No official hidden labels were available before submission. Runtime/memory numbers are measured; sources cited per key.",
+  "submission": {
+    "golden_sha256": "a2882cd2ae637dde59244d9c5596bc529356c843281862ceefa2f9dfb0da9922",
+    "rows": 100,
+    "total_candidates": 100000,
+    "honeypots_detected": 53,
+    "honeypots_in_top100": 0,
+    "avg_top100_score": 0.7219,
+    "membership_validated": "scripts/validate_submission.py --candidates candidates.jsonl (2026-06-12: all 100 IDs present in pool)"
+  },
+  "runtime": {
+    "_source": "docs/runtime_matrix.md",
+    "budget_s": 300,
+    "cloud_2vcpu_serial_s": 80,
+    "local_docker_serial_best_s": 124.7,
+    "local_docker_pinned_image_s": 138.3,
+    "local_docker_serial_worst_recorded_s": 193.4,
+    "worst_ever_under_host_load_s": 215.1,
+    "conservative_reported_s": 187,
+    "showpiece_recorded_run_ms": 193000,
+    "_showpiece_note": "apps/api/data/precomputed.json replays the 193.4 s worst-case serial matrix run (runtime_matrix.md row 1); it intentionally shows the conservative figure, not the best one."
+  },
+  "memory": {
+    "_source": "docs/runtime_matrix.md",
+    "peak_container_gb": 6.1,
+    "budget_gb": 16
+  },
+  "dev_proxy_eval": {
+    "_label": "dev proxy / LLM-audit — NOT the official hidden score",
+    "_source": "docs/LLM_JUDGE_EVAL.md, docs/llm_judge_eval_2.md, docs/llm_judge_eval_3.md",
+    "p10": 1.0,
+    "ndcg10": 0.8943,
+    "top10_tiers": [5, 5, 4, 4, 5, 5, 5, 5, 5, 5],
+    "composite_independent": 0.8863,
+    "composite_judge1": 0.9112,
+    "composite_judge2": 0.9565,
+    "judge_agreement_kappa_range": [0.918, 0.935]
+  },
+  "tests_passing": 115,
+  "bm25_backend": "bm25s"
+}
