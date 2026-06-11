@@ -75,6 +75,8 @@ profile is pushed down regardless of how strong its keywords look.
 python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
-Deterministic, offline, CPU-only, 177-194s for the full 100K pool in the python:3.11 Docker image. Full reproduction,
+Deterministic, offline, CPU-only: 80 s on a clean 2-vCPU cloud runner (CI-verified),
+187 s conservative worst-case serial in local Docker (full matrix:
+docs/runtime_matrix.md). Full reproduction,
 tests, and architecture details are in [README.md](README.md) and
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

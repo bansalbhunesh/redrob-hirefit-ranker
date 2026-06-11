@@ -20,3 +20,10 @@ AI tools used:
 evaluation labels only**. It is never invoked by the ranking path.
 
 No candidate ranking step calls hosted AI services. The ranker does not send candidate data to OpenAI, Anthropic, Gemini, Cohere, or any external model API during ranking.
+
+**Scope of the originality declaration.** `code_is_original_work: true` in
+`submission_metadata.yaml` means: no code copied from other entrants or from
+proprietary sources, and no collusion. It does not mean "written without AI
+assistance" — the assistants above were used as disclosed, with every change
+reviewed by the author and gated on the test suite, the golden-output
+regression tests, and the format validator.

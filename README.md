@@ -79,6 +79,13 @@ Docker python:3.11 (Stage-3 env): 163s serial on 2 CPUs (min-of-3 worst case;
 Honeypots detected 53; honeypots in output 0.
 ```
 
+**Which runtime number is canonical?** They are all real measurements of the same
+code under different conditions: **80 s** = clean 2-vCPU cloud CI runner (the
+environment closest to a fresh evaluator box); **~122 s** = local Docker, parallel
+workers; **163–187 s** = local Docker worst-case *serial* on 2 CPUs (quiet-host
+min-of-N); **215 s** = worst ever observed under heavy host load. All are well under
+the 300 s limit; `submission_metadata.yaml` reports the conservative **187 s**.
+
 Feature scoring runs across CPU worker processes (`--workers`, default auto up to
 8 cores); output is byte-identical to the serial path. Every matrix run — Linux
 container vs Windows host, serial vs parallel — reproduced the committed golden
@@ -199,7 +206,7 @@ Full technical explanation: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ```bash
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
-python -m pytest -q                                  # 86 tests incl. golden-output regression
+python -m pytest -q                                  # 100 tests incl. golden-output regression
 python scripts/validate_submission.py submission.csv
 ```
 
@@ -234,7 +241,7 @@ composite; hand weights ship).
   validation, eval harness, dashboard payload helpers.
 - `scripts/` — validators, eval/label builders, sensitivity sweep, ablation
   study, honeypot extraction/verdicts, Docker runtime matrix.
-- `tests/` — 86 checks: ranking, guardrails, reasoning grounding, JD-compiler
+- `tests/` — 100 checks: ranking, guardrails, reasoning grounding, JD-compiler
   acceptance, and the golden-output regression gates.
 - `apps/api/`, `apps/space/`, `hf_space/` — FastAPI dashboard and Gradio demos.
 - `docs/` — architecture, methodology evidence, audits, runtime matrix.
