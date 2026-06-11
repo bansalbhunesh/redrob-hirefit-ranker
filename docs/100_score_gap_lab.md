@@ -172,7 +172,7 @@ Result:
 
 - VM/runtime: `docs/vm_runtime_lab.md` documents the cgroup CPU quota worker-cap
   fix. On this Docker Desktop VM, constrained 100K runtime improved from 422.9s
-  to 162.5s with byte-identical output.
+  to 120.7s with byte-identical output.
 - Adversarial integrity: `docs/adversarial_integrity_audit.md` documents
   prompt-injection, hidden-text, and repeated-keyword detection. Full-pool scan
   flags 0 profiles after threshold tuning.

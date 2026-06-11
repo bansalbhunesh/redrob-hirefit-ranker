@@ -51,7 +51,7 @@ Same machine, same Docker Desktop setup, same mounted `candidates.jsonl`.
 | Run | Main / before patch | Lab branch / after patch | Change |
 |---|---:|---:|---:|
 | Docker 20K, `--cpus=2 --memory=16g` | 36.5s pipeline | 29.7s pipeline | 18.6% faster |
-| Docker 100K, `--cpus=2 --memory=16g` | 422.9s pipeline | 162.5s pipeline | 61.6% faster |
+| Docker 100K, `--cpus=2 --memory=16g` | 422.9s pipeline | 120.7s pipeline | 71.5% faster |
 
 The patched full Docker output is byte-identical to `submission.csv`:
 
@@ -70,4 +70,3 @@ python scripts/validate_submission.py artifacts/docker_lab_full_cgroup_patch.csv
 This branch is now materially better than `main` for constrained VM/container
 execution. It keeps the golden output unchanged while making the clean
 `--cpus=2` Docker path pass comfortably under 300 seconds on this machine.
-
