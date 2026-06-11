@@ -20,6 +20,40 @@ _PARALLEL_MIN_POOL = 4000
 _PARALLEL_WORKER_CAP = 8
 
 
+def _cgroup_cpu_quota_count() -> int | None:
+    """Return Linux cgroup CPU quota as whole cores, when constrained.
+
+    Docker Desktop and CI runners can expose the host CPU count through
+    os.cpu_count() even when the container is launched with --cpus=N. Using the
+    quota prevents process-pool oversubscription in constrained VM/container
+    runs while leaving native execution unchanged.
+    """
+    cpu_max = Path("/sys/fs/cgroup/cpu.max")
+    try:
+        quota_text = cpu_max.read_text(encoding="utf-8").strip().split()
+    except OSError:
+        quota_text = []
+    if len(quota_text) >= 2 and quota_text[0] != "max":
+        try:
+            quota = int(quota_text[0])
+            period = int(quota_text[1])
+        except ValueError:
+            quota = period = 0
+        if quota > 0 and period > 0:
+            return max(1, quota // period)
+
+    quota_file = Path("/sys/fs/cgroup/cpu/cpu.cfs_quota_us")
+    period_file = Path("/sys/fs/cgroup/cpu/cpu.cfs_period_us")
+    try:
+        quota = int(quota_file.read_text(encoding="utf-8").strip())
+        period = int(period_file.read_text(encoding="utf-8").strip())
+    except (OSError, ValueError):
+        return None
+    if quota > 0 and period > 0:
+        return max(1, quota // period)
+    return None
+
+
 def _submission_score(raw_score: float, max_score: float) -> float:
     if max_score <= 0:
         return 0.0
@@ -80,7 +114,8 @@ def _resolve_workers(requested: int, pool_count: int) -> int:
     """Return the worker count to use (1 == serial)."""
     if requested == 1 or pool_count < _PARALLEL_MIN_POOL:
         return 1
-    available = os.cpu_count() or 1
+    host_cpus = os.cpu_count() or 1
+    available = min(host_cpus, _cgroup_cpu_quota_count() or host_cpus)
     if requested > 1:
         return max(1, min(requested, available))
     return max(1, min(_PARALLEL_WORKER_CAP, available))

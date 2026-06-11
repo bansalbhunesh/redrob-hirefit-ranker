@@ -50,6 +50,24 @@ def test_parallel_feature_scoring_matches_serial(monkeypatch):
         assert abs(s_score - p_score) < 1e-12
 
 
+def test_auto_workers_respect_cgroup_cpu_quota(monkeypatch):
+    monkeypatch.setattr(pipeline_mod, "_PARALLEL_MIN_POOL", 8)
+    monkeypatch.setattr(pipeline_mod.os, "cpu_count", lambda: 16)
+    monkeypatch.setattr(pipeline_mod, "_cgroup_cpu_quota_count", lambda: 2)
+
+    assert pipeline_mod._resolve_workers(0, 64) == 2
+    assert pipeline_mod._resolve_workers(8, 64) == 2
+    assert pipeline_mod._resolve_workers(1, 64) == 1
+
+
+def test_auto_workers_use_cap_when_no_cgroup_quota(monkeypatch):
+    monkeypatch.setattr(pipeline_mod, "_PARALLEL_MIN_POOL", 8)
+    monkeypatch.setattr(pipeline_mod.os, "cpu_count", lambda: 16)
+    monkeypatch.setattr(pipeline_mod, "_cgroup_cpu_quota_count", lambda: None)
+
+    assert pipeline_mod._resolve_workers(0, 64) == 8
+
+
 def test_pipeline_writes_valid_small_json(tmp_path: Path):
     sample = tmp_path / "sample.json"
     sample.write_text(

@@ -152,3 +152,18 @@ Result:
 - Preferred India location and behavioral-neutral edits produced explicit, inspectable deltas.
 - This is useful as an audit harness, not as a claim that bias is solved.
 
+## Full Proxy Audit Result
+
+Command run on the full local pool:
+
+```bash
+python scripts/counterfactual_proxy_audit.py --candidates candidates.jsonl --out artifacts/counterfactual_proxy_audit_100k.csv --max-candidates 100000
+python scripts/summarize_counterfactual_proxy_audit.py --audit artifacts/counterfactual_proxy_audit_100k.csv --out artifacts/counterfactual_proxy_audit_100k_summary.json
+```
+
+Result:
+
+- 100,000 candidates, 400,000 counterfactual rows.
+- Runtime: 556.3 seconds.
+- Name-neutralized score deltas: 0 / 100,000 nonzero.
+- Location and behavioral edits produced measurable deltas; see `docs/fairness_and_proxy_audit.md`.
