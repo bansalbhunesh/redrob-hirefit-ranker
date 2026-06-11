@@ -1,4 +1,10 @@
-numpy>=1.26,<3
-orjson>=3.10,<4
-bm25s>=0.2,<1
-rank-bm25>=0.2.2,<1
+# Exact pins for the reproduction image (2026-06-11 audit-v2 hardening).
+# These are the resolved versions the byte-identical golden reproduction was
+# re-verified against (fresh --no-cache build on base digest ef442c44, full
+# 100K, output byte-identical to the committed submission.csv).
+# Library-style ranges live in pyproject.toml for dev installs; the Docker
+# image installs from THIS file so the July evaluation rebuild cannot drift.
+numpy==2.4.6
+orjson==3.11.9
+bm25s==0.3.9
+rank-bm25==0.2.2

@@ -101,6 +101,16 @@ recomputed outside the harness. Scope honesty, stated verbatim from the study:
 judge 1 and judge 2 scored the *same 249 ids* (kappa 0.935), so this holds out
 the **rater, not the sample**.
 
+After adoption, a third judge family (deepseek, docs/llm_judge_eval_3.md) —
+collected post-roll and therefore truly outside the selection loop — re-tested
+the adopted set: aggregate composite **+0.0124** (0.8943 → 0.9068), per-swap
+**6 confirm / 1 tie / 1 contradict**. The contradicted swap is the smallest
+(+0.0002, location-driven); the contradiction rate matches judge #3's 1.9%
+base rate on consensus pairs. The crossover holdout's "zero negatives" should
+be read with its measured power: judge 2 contradicts selector-agreed top-100
+pairs at a base rate of 0/279, so the post-adoption judge-3 test, not the
+crossover, is the load-bearing validation.
+
 On that evidence — which clears the same pre-registered +0.005 adoption bar
 the LTR challenger failed — the conservative greedy-eight three-source
 consensus swaps were adopted as a deterministic calibration pass

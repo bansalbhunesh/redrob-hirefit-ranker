@@ -4,7 +4,7 @@
 
 Rank the top 100 candidates for the Redrob **Senior AI Engineer - Founding Team** JD while satisfying CPU-only, no-network, no-GPU, sub-5-minute reproduction constraints.
 
-Measured in the python:3.11 Docker image (the Stage-3 environment): the full 100,000-candidate run completes in **177-194 seconds** across 2-4 CPU configurations (worst case 193 s serial on 2 CPUs) with peak container memory **~6.1 GB**; 53 honeypots detected and 0 in the emitted top 100 (full matrix: docs/runtime_matrix.md).
+Measured in the python:3.11 Docker image (the Stage-3 environment), current code: the full 100,000-candidate run completes in **124.7 s** worst-case serial on 2 CPUs (fresh `--no-cache` build, 2026-06-11) and **80-82 s** on a clean 2-vCPU cloud runner (CI-measured), with peak container memory **~6.1 GB**; 53 honeypots detected and 0 in the emitted top 100. `submission_metadata.yaml` reports the conservative quiet-host figure of 187 s (full matrix and optimization history: docs/runtime_matrix.md).
 
 ## 2. Pipeline
 

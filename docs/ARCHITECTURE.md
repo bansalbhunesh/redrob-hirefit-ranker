@@ -10,7 +10,7 @@ Rank the top 100 candidates for the Redrob Senior AI Engineer JD while satisfyin
 - Full 100K reproduction in under 5 minutes.
 - Validator-safe CSV output.
 
-Measured in the python:3.11 Docker image: `bm25s` scores all 100,000 candidates in **177-194 seconds** (worst case 193 s serial on 2 CPUs) with zero honeypots in the emitted top 100 and peak container memory **~6.1 GB** (docs/runtime_matrix.md).
+Measured in the python:3.11 Docker image, current code: `bm25s` scores all 100,000 candidates in **124.7 s** worst-case serial on 2 CPUs (80-82 s on a clean 2-vCPU cloud runner) with zero honeypots in the emitted top 100 and peak container memory **~6.1 GB** (docs/runtime_matrix.md).
 
 ## System Overview
 
@@ -205,7 +205,7 @@ python scripts/validate_submission.py submission.csv
 Final measured output:
 
 ```text
-Runtime: 177-194s in the python:3.11 Docker image (worst case 193s serial-2cpu)
+Runtime: 124.7s worst-case serial-2cpu in the python:3.11 Docker image (80-82s cloud 2-vCPU)
 Peak container memory: ~6.1 GB
 Loaded candidates: 100000
 Ranked pool: 100000

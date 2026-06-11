@@ -54,7 +54,7 @@ One command, CPU-only, no network:
 python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
-Measured full run (python:3.11 Docker, the Stage-3 environment): 100,000 candidates in ~177-194 s across 2-4 CPU configurations (worst case: 193 s serial on 2 CPUs, ~36% headroom under the 300 s limit), peak container memory ~6.1 GB vs the 16 GB budget; every run byte-identical to the committed submission. 53 honeypots detected, 0 in the top 100. Full matrix: docs/runtime_matrix.md.
+Measured full run (python:3.11 Docker, the Stage-3 environment), current code: 100,000 candidates in 124.7 s worst-case serial on 2 CPUs (80-82 s on a clean 2-vCPU cloud runner; ~58-73% headroom under the 300 s limit), peak container memory ~6.1 GB vs the 16 GB budget; every run byte-identical to the committed submission. 53 honeypots detected, 0 in the top 100. Full matrix: docs/runtime_matrix.md.
 
 ## 7. Example Output
 

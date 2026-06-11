@@ -109,6 +109,11 @@ python scripts/validate_submission.py submission.csv
 # The official challenge validator (hackathon bundle) is the final gate.
 ```
 
+The reproduction image is **drift-proof**: the base image is pinned by digest
+and the four ranking deps are exact-pinned in `requirements.txt`, so a rebuild
+months from now resolves the same environment the golden hash was verified on
+(fresh `--no-cache` confirmation: byte-identical, docs/runtime_matrix.md).
+
 ## Why each layer earns its place
 
 Measured ablation on the 20K dev slice (top-100 per rung, challenge composite

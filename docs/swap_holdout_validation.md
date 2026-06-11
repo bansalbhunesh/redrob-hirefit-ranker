@@ -58,3 +58,13 @@ construction), and row-by-row review of ranks 20–60.
 ## Status
 
 No change adopted in this commit. Awaiting the hash-roll decision.
+
+## Postscript (2026-06-11, post-adoption)
+
+Power audit of this study, run after the roll: across all 279 top-100 pairs
+where the two selecting sources strictly agree, the held-out judge contradicts
+**zero** — so "mined noise would show negatives" (above) overstates what this
+crossover could detect; with raters this correlated, even mined noise would
+have shown ties-or-gains. The validation that carries the adoption is the
+**post-adoption third judge family**: aggregate +0.0124, per-swap 6/1/1 —
+see docs/llm_judge_eval_3.md, "Post-adoption validation."

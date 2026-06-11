@@ -39,6 +39,17 @@ serial): **124.7 s** pipeline, byte-identical to the committed
 `submission.csv` (`a2882cd2…`), honeypots in output 0. Best worst-case serial
 figure recorded to date.
 
+## 2026-06-11 pinned-image hardening reproduction
+
+The Dockerfile now pins the base image by digest
+(`python:3.11-slim@sha256:ef442c44…`) and installs exact-pinned deps from
+requirements.txt (numpy 2.4.6, orjson 3.11.9, bm25s 0.3.9, rank-bm25 0.2.2) so
+a July evaluation rebuild resolves the verified environment instead of
+whatever the tag points to that week. Verification: fresh `--no-cache` build
+on the pinned digest, full 100K, default workers: **138.3 s** pipeline,
+honeypots 53 detected / 0 emitted, output **byte-identical** to the committed
+`submission.csv` (`a2882cd2…`).
+
 ## Budget verdict
 
 - Hard limit 300 s: **worst case passes with ~38-56% headroom** (2026-06-10 audit,

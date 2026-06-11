@@ -41,16 +41,38 @@ does the ≤100-candidate version of the same flow in the browser.
 | "At Redrob scale?" | 100K candidates in 80-82 s on a 2-vCPU cloud container (CI-measured, byte-deterministic) — linear in pool size, embarrassingly parallel across JDs, zero marginal API cost. Score updates are a re-rank, not a retrain. |
 | "Per-candidate audit?" | Every ranked candidate carries its full feature/multiplier/flag breakdown in the payload — the audit is precomputed with the rank, not reconstructed on demand. |
 
-## The three recitations (memorize)
+## The five recitations (memorize)
 
 1. **Four measured negatives, in order**: static embeddings (+0.0000 at 2.2x runtime);
    learned-LR (0.824 vs 0.881); LambdaMART challenger (-0.0061 against our +0.005
    pre-registered gate); declined availability hedge (+0.0135 only if the labels
    ignore the JD's own down-weight instruction).
 2. **The discipline line**: "We measured the config that scores higher and declined
-   it; we built our strongest rival and it lost; we unfroze exactly once, under
-   held-out validation, then froze permanently."
+   it; we built our strongest rival and it lost; we unfroze exactly once — and a
+   third judge family that didn't exist at adoption time re-tested the change
+   afterwards: +0.0124, six of eight swaps confirmed, one tie, one contested
+   (docs/llm_judge_eval_3.md). Then we froze permanently."
 3. **The Devanagari answer**: "Latin-only normalization is one module
    (`text.py`/`_norm`); the architecture is script-agnostic — the Unicode swap is a
    committed roadmap item in ARCHITECTURE.md and touches neither retrieval logic,
    features, guardrails, nor the JD compiler."
+4. **The "high availability next to a 43% response rate" answer**: "The adjective
+   reports the composite behavioral multiplier — response rate, notice period,
+   open-to-work, recency, interview reliability together
+   (`reasoning.py`, `features.py`) — and the numbers beside it are two of those raw
+   inputs, printed so a recruiter can audit the adjective rather than trust it. A
+   91% responder on a 120-day notice and a 43% responder who is open-to-work,
+   recently active, and reliable can both clear the bar; the row shows you why.
+   If Redrob would rather the adjective track response rate alone, that is a
+   one-line threshold change — the submitted artifact is frozen, so we show the
+   mapping in the dashboard's audit payload instead."
+5. **The overshoot answer (16-year profile at rank 10)**: "We demote juniors hard —
+   below-band falls off a Gaussian and under-3-years takes a further 0.55 cut
+   (`features.py`, `yoe_fit_score`) — but we deliberately do not punish surplus
+   experience by years alone: every label source we have, including all three LLM
+   judge families, rates that 16-year search veteran tier 5, and the JD asks for
+   '5–9 years' as a seniority floor in context, not a ceiling. Overshoot risk is
+   carried by the trajectory and title features instead: an overqualified profile
+   that drifted away from hands-on ranking work loses on career_trajectory, not on
+   a years arithmetic. We measured the alternative reading and the labels
+   contradict it."
