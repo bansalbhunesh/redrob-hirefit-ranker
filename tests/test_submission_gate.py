@@ -31,12 +31,17 @@ CANDIDATES = ROOT / "candidates.jsonl"
 # Golden hash of the committed full-pool submission (sha256, lowercase hex).
 # History: e1a696d1... (Phase 0 re-baseline) -> ecb1fc5b... (Phase 4 reasoning
 # upgrade: injected verbatim career facts; ranks and scores verified
-# byte-identical, only reasoning text changed; docs/golden_reproduction.md).
-GOLDEN_SUBMISSION_SHA256 = "ecb1fc5b9f481669789b8d4c9fba14bc185b85173b8a90c354e422470d2f1a63"
+# byte-identical, only reasoning text changed; docs/golden_reproduction.md)
+# -> a2882cd2... (2026-06-11 consensus calibration pass: eight three-source
+# consensus swaps with held-out validation + reasoning-variety pass; score
+# column byte-identical, 16 rows reordered; docs/top100_ordering_audit.md,
+# docs/swap_holdout_validation.md, METHODOLOGY.md §7. This is the project's
+# single unfreeze; the hash is permanent afterwards.)
+GOLDEN_SUBMISSION_SHA256 = "a2882cd2ae637dde59244d9c5596bc529356c843281862ceefa2f9dfb0da9922"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0).
-GOLDEN_SLICE2K_SHA256 = "509026ce41139d94d063760498d2a85e147e58d6e3a9ecd67abbda56742c528e"
+GOLDEN_SLICE2K_SHA256 = "db782f3e11980f0cbfd7cb93d9aacedf1c2618033c853946ee81061ac3ff3356"
 
 EXPECTED_HEADER = ["candidate_id", "rank", "score", "reasoning"]
 

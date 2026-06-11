@@ -31,6 +31,14 @@ Every optimization was proven byte-identical via the golden regression tests
 and a full-100K hash comparison before merging (the 2K gate caught one real
 semantic divergence — whitespace-class tokenization — during development).
 
+## 2026-06-11 calibration-roll reproduction
+
+Fresh `--no-cache` build of the calibrated submission (consensus calibration
+pass + reasoning-variety pass), full 100K, `--cpus=2 --workers 1` (worst-case
+serial): **124.7 s** pipeline, byte-identical to the committed
+`submission.csv` (`a2882cd2…`), honeypots in output 0. Best worst-case serial
+figure recorded to date.
+
 ## Budget verdict
 
 - Hard limit 300 s: **worst case passes with ~38-56% headroom** (2026-06-10 audit,

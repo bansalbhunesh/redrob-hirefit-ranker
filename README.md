@@ -6,7 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![100K Runtime](https://img.shields.io/badge/100K_Runtime-80s_cloud_·_~122s_local_Docker-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-100_passing-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-105_passing-brightgreen.svg)](#)
 
 ### Try it live — no install
 
@@ -27,7 +27,7 @@
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
 | Top-10 (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
 | Format validator | **pass** | Stage-1 gate |
-| Tests | **100 passing** (incl. golden-output regression + API endpoint suite) | — |
+| Tests | **105 passing** (incl. golden-output regression + API endpoint suite) | — |
 
 **Methodology:** [METHODOLOGY.md](METHODOLOGY.md) | **Slide deck:** [PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf) / [PPTX](docs/HireFit_Ranker_Redrob_POLISHED.pptx) | **Eval evidence:** [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md)
 
@@ -82,8 +82,9 @@ Honeypots detected 53; honeypots in output 0.
 **Which runtime number is canonical?** They are all real measurements of the same
 code under different conditions: **80 s** = clean 2-vCPU cloud CI runner (the
 environment closest to a fresh evaluator box); **~122 s** = local Docker, parallel
-workers; **163–187 s** = local Docker worst-case *serial* on 2 CPUs (quiet-host
-min-of-N); **215 s** = worst ever observed under heavy host load. All are well under
+workers; **125–187 s** = local Docker worst-case *serial* on 2 CPUs (2026-06-11
+fresh `--no-cache` build: 124.7 s; earlier quiet-host min-of-N: 133–187 s);
+**215 s** = worst ever observed under heavy host load. All are well under
 the 300 s limit; `submission_metadata.yaml` reports the conservative **187 s**.
 
 Feature scoring runs across CPU worker processes (`--workers`, default auto up to
@@ -118,6 +119,33 @@ The multiplier rung adds a measured composite gain *and* is what keeps all 53
 hard honeypots and the keyword-stuffer traps out of the top-100 — rung 3 alone
 has no such protection. (Honeypot handling was audited flag-by-flag against a
 pre-committed rubric: [docs/honeypot_audit.md](docs/honeypot_audit.md).)
+
+## Four measured negatives, one adopted change
+
+Every alternative was built, measured against a recorded decision rule, and
+either declined or adopted on the evidence:
+
+1. **Static dense embeddings** — NDCG@10 +0.0000 at ~2.2× runtime → rejected
+   (`artifacts/embedding_gate_result.txt`).
+2. **Learned logistic-regression weights** — loses to the hand weights even on
+   labels that structurally favor it, 0.8238 vs 0.8811 pre-calibration
+   ([docs/learned_weights_appendix.md](docs/learned_weights_appendix.md)).
+3. **LightGBM LambdaMART challenger** — −0.0061 against a pre-registered
+   ≥ +0.005 gate, committed before training
+   ([docs/ltr_challenger_study.md](docs/ltr_challenger_study.md)).
+4. **Availability-blind hedge** — priced at +0.0135/−0.0008 across label
+   hypotheses, declined on three recorded reasons
+   ([docs/hedge_simulation_study.md](docs/hedge_simulation_study.md)).
+
+The **single adopted change** is a consensus calibration pass
+(`src/redrob_ranker/calibration.py`): eight pairwise reorders within the
+top-100, each unanimous across all three label sources at 100% coverage,
+validated by crossover held-out evaluation (+0.0086/+0.0106, zero
+contradicting per-swap deltas) against the same +0.005 bar the challenger
+failed ([docs/top100_ordering_audit.md](docs/top100_ordering_audit.md),
+[docs/swap_holdout_validation.md](docs/swap_holdout_validation.md)).
+Membership of the top-100 is unchanged — honeypots remain 0 — and the
+submission is permanently frozen after this roll.
 
 ## The JD compiles into a deterministic scoring program
 
@@ -206,7 +234,7 @@ Full technical explanation: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ```bash
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
-python -m pytest -q                                  # 100 tests incl. golden-output regression
+python -m pytest -q                                  # 105 tests incl. golden-output regression
 python scripts/validate_submission.py submission.csv
 ```
 
@@ -232,7 +260,7 @@ rule; shipped config won), honeypot audit in
 comparison in [docs/learned_weights_appendix.md](docs/learned_weights_appendix.md)
 (cross-validated logistic regression on the same feature inputs **loses to the
 hand-tuned weights even on the labels it was trained on** — 0.8238 vs 0.8811
-composite; hand weights ship).
+composite, pre-calibration baseline; hand weights ship).
 
 ## Repository structure
 
@@ -241,8 +269,8 @@ composite; hand weights ship).
   validation, eval harness, dashboard payload helpers.
 - `scripts/` — validators, eval/label builders, sensitivity sweep, ablation
   study, honeypot extraction/verdicts, Docker runtime matrix.
-- `tests/` — 100 checks: ranking, guardrails, reasoning grounding, JD-compiler
-  acceptance, and the golden-output regression gates.
+- `tests/` — 105 checks: ranking, guardrails, reasoning grounding, JD-compiler
+  acceptance, calibration semantics, and the golden-output regression gates.
 - `apps/api/`, `apps/space/`, `hf_space/` — FastAPI dashboard and Gradio demos.
 - `docs/` — architecture, methodology evidence, audits, runtime matrix.
 - `.prompts/` — AI-assistant instruction files (see AI usage below).

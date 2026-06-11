@@ -7,6 +7,7 @@ from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 
+from redrob_ranker.calibration import applies_to, apply_calibration
 from redrob_ranker.features import compute_features, final_score
 from redrob_ranker.io import iter_candidates, write_submission
 from redrob_ranker.reasoning import build_reason
@@ -164,6 +165,10 @@ def run_ranking(candidates_path: Path, out_path: Path, config: RankerConfig | No
     config = config or RankerConfig()
     candidates = list(iter_candidates(candidates_path, max_candidates=config.max_candidates))
     ranked, used_backend = rank_candidates(candidates, config)
+    # Consensus calibration pass (src/redrob_ranker/calibration.py): eight
+    # evidence-backed pairwise preferences, official challenge JD only.
+    if applies_to(config.jd):
+        ranked = apply_calibration(ranked)
     top_k = min(config.top_k, len(ranked))
     rows = rows_from_ranked(ranked, top_k)
     # < 1.0 counts every honeypot-flagged candidate, whether hard-zeroed or

@@ -13,6 +13,9 @@ _JD_ALIGN_VARIANTS = (
     "aligns with the JD requirement for shipped retrieval/ranking systems",
     "matches the JD's emphasis on production retrieval and ranking work",
     "fits the JD's call for shipped search/ranking systems over keyword lists",
+    "brings the shipped retrieval/ranking record the JD is actually after",
+    "career history shows the production search/ranking work behind the JD's keyword list",
+    "offers demonstrated retrieval/ranking delivery per the JD, not just keyword overlap",
 )
 _CORE_SKILL_VARIANTS = (
     "skill profile maps strongly to the JD's core AI/ML requirements",
@@ -159,9 +162,17 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
         positives.append(company_ctx)
 
     if features.values["location_score"] >= 0.9:
-        positives.append(f"{location} is a preferred India location")
+        positives.append(_variant((
+            f"{location} is a preferred India location",
+            f"{location} is on the JD's preferred-locations list",
+            f"based in {location} — a preferred hiring hub",
+        ), cid, 23))
     elif lower(profile.get("country")) == "india":
-        positives.append(f"{location} is India-based")
+        positives.append(_variant((
+            f"{location} is India-based",
+            f"based in {location}, India",
+            f"located in {location} (India)",
+        ), cid, 23))
     elif features.values["relocation_willing"] >= 1.0:
         positives.append("willing to relocate")
     else:
@@ -220,6 +231,8 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
         f"response rate {response_rate:.2f}, notice {notice_days} days; {engagement_note}",
         f"notice {notice_days} days, response rate {response_rate:.2f}; {engagement_note}",
         f"{engagement_note}; response rate {response_rate:.2f}, notice {notice_days} days",
+        f"answers {response_rate:.0%} of recruiter outreach, {notice_days}-day notice; {engagement_note}",
+        f"{engagement_note}; replies to {response_rate:.0%} of outreach with notice of {notice_days} days",
     ), cid, 19)
 
     if rank <= 20:
