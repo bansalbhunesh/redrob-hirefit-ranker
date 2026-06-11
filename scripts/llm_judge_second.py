@@ -25,7 +25,25 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from llm_judge_labels import RUBRIC, compact_candidate, judge  # noqa: E402
+from llm_judge_labels import RUBRIC, compact_candidate  # noqa: E402
+
+_CLIENT = None
+
+
+def judge(provider: str, model: str, jd: str, cand: dict, base_url: str | None) -> dict:
+    """Same prompt as llm_judge_labels.judge, with a hard 60s request timeout."""
+    global _CLIENT
+    from openai import OpenAI
+
+    if _CLIENT is None:
+        _CLIENT = OpenAI(base_url=base_url, timeout=60.0, max_retries=2)
+    prompt = (f"{RUBRIC}\n\n=== JOB DESCRIPTION ===\n{jd[:12000]}\n\n"
+              f"=== CANDIDATE ===\n{json.dumps(cand, ensure_ascii=False)}")
+    resp = _CLIENT.chat.completions.create(
+        model=model, max_tokens=120, messages=[{"role": "user", "content": prompt}])
+    text = resp.choices[0].message.content
+    start, end = text.find("{"), text.rfind("}")
+    return json.loads(text[start:end + 1])
 
 JUDGE1 = ROOT / "docs" / "llm_judge_eval_labels.jsonl"
 

@@ -1,0 +1,249 @@
+{"candidate_id": "CAND_0000878", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: lacks retrieval/ranking production experience."}
+{"candidate_id": "CAND_0001610", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Has relevant skills but lacks seniority (3 yrs)."}
+{"candidate_id": "CAND_0002025", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, strong experience, available."}
+{"candidate_id": "CAND_0003532", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: data engineering but no retrieval/ranking systems"}
+{"candidate_id": "CAND_0004135", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML but no retrieval/ranking experience"}
+{"candidate_id": "CAND_0004402", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant ML experience but lacks deep retrieval/ranking production work."}
+{"candidate_id": "CAND_0005260", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: production retrieval/ranking systems at product companies, strong recent activity."}
+{"candidate_id": "CAND_0005538", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but minor location gap, 90-day notice period."}
+{"candidate_id": "CAND_0005649", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, strong NLP/IR background, 7.4 yrs exp."}
+{"candidate_id": "CAND_0006115", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML exposure but no production retrieval/ranking experience"}
+{"candidate_id": "CAND_0006354", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent ML but lacks retrieval/ranking depth."}
+{"candidate_id": "CAND_0006399", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "QA background, no production AI/ML experience"}
+{"candidate_id": "CAND_0006418", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor gap in LLM fine-tuning experience"}
+{"candidate_id": "CAND_0006557", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, strong experience, active"}
+{"candidate_id": "CAND_0006567", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems at Meta, strong product-engineering attitude, 7.9 yrs experience."}
+{"candidate_id": "CAND_0006670", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong DE but minimal ML/ranking experience"}
+{"candidate_id": "CAND_0007411", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: production retrieval/ranking systems, strong experience, recent activity."}
+{"candidate_id": "CAND_0007412", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor gap in notice period"}
+{"candidate_id": "CAND_0008139", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0008425", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, strong experience, recent activity."}
+{"candidate_id": "CAND_0009024", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, strong experience, available."}
+{"candidate_id": "CAND_0009236", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant but lacks deep retrieval/ranking production experience"}
+{"candidate_id": "CAND_0009516", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent ML experience, lacks retrieval/ranking systems"}
+{"candidate_id": "CAND_0009691", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit: shipped recsys at LinkedIn, but notice period long"}
+{"candidate_id": "CAND_0009794", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no relevant AI/ML experience"}
+{"candidate_id": "CAND_0010257", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor gaps in notice period and hybrid search experience."}
+{"candidate_id": "CAND_0010283", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent ML experience but lacks production retrieval/ranking systems"}
+{"candidate_id": "CAND_0010541", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Some retrieval exposure but lacks ranking depth"}
+{"candidate_id": "CAND_0010603", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "relevant but lacks retrieval/ranking depth"}
+{"candidate_id": "CAND_0010685", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: production retrieval/ranking experience, strong signals"}
+{"candidate_id": "CAND_0010736", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no AI/retrieval experience"}
+{"candidate_id": "CAND_0010770", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, strong experience in embeddings and evaluation frameworks."}
+{"candidate_id": "CAND_0011162", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped production ranking systems, strong ML depth, recent activity."}
+{"candidate_id": "CAND_0011432", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor gap in direct retrieval system experience."}
+{"candidate_id": "CAND_0011643", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent ML, no retrieval/ranking prod experience."}
+{"candidate_id": "CAND_0011687", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, strong evaluation experience, active and responsive."}
+{"candidate_id": "CAND_0013002", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Some ML but no retrieval/ranking focus, wrong seniority."}
+{"candidate_id": "CAND_0013440", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data engineering but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0013456", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant but lacks deep retrieval/ranking production experience."}
+{"candidate_id": "CAND_0014440", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped production ranking/retrieval systems, strong signals, minor notice gap."}
+{"candidate_id": "CAND_0014576", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent ML but not retrieval/ranking"}
+{"candidate_id": "CAND_0014894", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: Strong data engineering but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0015143", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data engineering but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0015265", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Marketing background, no AI/retrieval experience"}
+{"candidate_id": "CAND_0016163", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong retrieval/ranking exp, minor notice period gap."}
+{"candidate_id": "CAND_0016217", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: strong backend but no production AI/ML"}
+{"candidate_id": "CAND_0016466", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: some ML interest but no production retrieval/ranking experience."}
+{"candidate_id": "CAND_0016659", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant but lacks production retrieval/ranking depth."}
+{"candidate_id": "CAND_0016790", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no AI/retrieval experience"}
+{"candidate_id": "CAND_0017259", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: Data/Analytics focus, lacks retrieval/ranking."}
+{"candidate_id": "CAND_0017771", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data infra but weak retrieval/ranking experience"}
+{"candidate_id": "CAND_0017960", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, 7.7 yrs, strong signals."}
+{"candidate_id": "CAND_0018499", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, 7.2 yrs, strong signals."}
+{"candidate_id": "CAND_0018549", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: production retrieval/ranking at Uber/Flipkart, 6.8 yrs, strong signals"}
+{"candidate_id": "CAND_0018704", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Full stack focus, lacks production retrieval/ranking experience"}
+{"candidate_id": "CAND_0018722", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but wrong location and notice period."}
+{"candidate_id": "CAND_0019159", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant but lacks deep retrieval/ranking production experience"}
+{"candidate_id": "CAND_0021100", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data eng but minimal retrieval/ranking experience"}
+{"candidate_id": "CAND_0021164", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "QA background, no production AI experience"}
+{"candidate_id": "CAND_0021827", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant ML experience but lacks deep retrieval/ranking production work"}
+{"candidate_id": "CAND_0022299", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "DevOps background, weak ML production experience"}
+{"candidate_id": "CAND_0022614", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent ML but no retrieval/ranking systems shipped"}
+{"candidate_id": "CAND_0024466", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong retrieval/ranking experience but location mismatch."}
+{"candidate_id": "CAND_0024620", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor gaps in location and notice period."}
+{"candidate_id": "CAND_0026532", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit, minor gap: lacks LLM fine-tuning."}
+{"candidate_id": "CAND_0027370", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data eng but lacks retrieval/ranking experience"}
+{"candidate_id": "CAND_0027691", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor gaps in direct retrieval/ranking focus."}
+{"candidate_id": "CAND_0027801", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong retrieval/ranking experience but lacks recent recruiter engagement signals."}
+{"candidate_id": "CAND_0027806", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: strong backend but no production ML/retrieval experience"}
+{"candidate_id": "CAND_0027815", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent ML skills, lacks prod retrieval/ranking experience."}
+{"candidate_id": "CAND_0028793", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems at top product companies, strong evaluation rigor, relevant tech stack."}
+{"candidate_id": "CAND_0029771", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: Frontend focus, no production AI/ranking systems"}
+{"candidate_id": "CAND_0029790", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data eng but no retrieval/ranking systems"}
+{"candidate_id": "CAND_0030082", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no AI/ML production experience"}
+{"candidate_id": "CAND_0030348", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong retrieval/ranking fit, minor LLM/availability gap."}
+{"candidate_id": "CAND_0030468", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor location gap."}
+{"candidate_id": "CAND_0030784", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant but lacks production retrieval/ranking depth"}
+{"candidate_id": "CAND_0030904", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: Cloud/DevOps focus, no production AI"}
+{"candidate_id": "CAND_0031331", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no relevant AI/ML experience"}
+{"candidate_id": "CAND_0031489", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no relevant AI/ML experience"}
+{"candidate_id": "CAND_0032374", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent / weak: some ML but not retrieval/ranking"}
+{"candidate_id": "CAND_0033405", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant NLP/ML experience but lacks production retrieval/ranking systems."}
+{"candidate_id": "CAND_0033897", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent skills but lacks production AI/retrieval experience"}
+{"candidate_id": "CAND_0035587", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "Keyword overlap only, wrong role"}
+{"candidate_id": "CAND_0037944", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong retrieval/ranking experience but slightly junior."}
+{"candidate_id": "CAND_0038586", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: strong data engineering but no retrieval/ranking systems shipped."}
+{"candidate_id": "CAND_0038612", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong SWE but no production ML/retrieval"}
+{"candidate_id": "CAND_0039163", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML interest but no production retrieval/ranking experience"}
+{"candidate_id": "CAND_0039383", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped production ranking/retrieval systems, strong fit."}
+{"candidate_id": "CAND_0039754", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped ranking/search systems, 16+ yrs, strong signals."}
+{"candidate_id": "CAND_0039838", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor gaps in tenure and notice period."}
+{"candidate_id": "CAND_0041016", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Some ML but lacks retrieval/ranking."}
+{"candidate_id": "CAND_0041610", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "shipped production ranking, retrieval, search"}
+{"candidate_id": "CAND_0041669", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: production retrieval/ranking/recsys, 8yrs, recent shipping."}
+{"candidate_id": "CAND_0042008", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0042100", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, strong experience, available."}
+{"candidate_id": "CAND_0042370", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Some ML, lacks retrieval/ranking depth, below seniority."}
+{"candidate_id": "CAND_0042506", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong retrieval/ranking experience but slightly junior."}
+{"candidate_id": "CAND_0042761", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data eng but minimal ML production"}
+{"candidate_id": "CAND_0043676", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant but lacks retrieval/ranking production experience."}
+{"candidate_id": "CAND_0043829", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "relevant but lacks production retrieval/ranking depth"}
+{"candidate_id": "CAND_0043860", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Junior title, lacks retrieval/ranking depth"}
+{"candidate_id": "CAND_0044154", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data eng but weak retrieval/ranking"}
+{"candidate_id": "CAND_0044222", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: production retrieval/ranking systems, strong evaluation focus, product-company experience."}
+{"candidate_id": "CAND_0044855", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but minor gap in location and notice period."}
+{"candidate_id": "CAND_0045966", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "ML exposure limited to side projects, no production retrieval/ranking."}
+{"candidate_id": "CAND_0046064", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, 8.9 yrs experience, strong signals."}
+{"candidate_id": "CAND_0046525", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but notice period long"}
+{"candidate_id": "CAND_0046737", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent experience, lacks retrieval/ranking systems"}
+{"candidate_id": "CAND_0046924", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "ML background but not in retrieval/ranking systems."}
+{"candidate_id": "CAND_0047868", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no relevant AI/ML experience"}
+{"candidate_id": "CAND_0048003", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML interest but no production retrieval/ranking experience"}
+{"candidate_id": "CAND_0048005", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent with weak ML/retrieval experience"}
+{"candidate_id": "CAND_0048558", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Some retrieval exp, lacks depth in ranking/ship systems."}
+{"candidate_id": "CAND_0049246", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "Business Analyst with no production AI experience"}
+{"candidate_id": "CAND_0049538", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped production retrieval/ranking systems, strong fit"}
+{"candidate_id": "CAND_0049896", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but notice period and minor gaps in direct retrieval focus"}
+{"candidate_id": "CAND_0050876", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but 90-day notice period is a minor gap."}
+{"candidate_id": "CAND_0050886", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong SWE but no production retrieval/ranking"}
+{"candidate_id": "CAND_0051092", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no AI/ML experience"}
+{"candidate_id": "CAND_0051266", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML but not retrieval/ranking"}
+{"candidate_id": "CAND_0051497", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: full stack but no AI production experience"}
+{"candidate_id": "CAND_0052328", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor gaps in explicit retrieval system experience."}
+{"candidate_id": "CAND_0052682", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Production retrieval/recsys experience, strong signals, fits seniority"}
+{"candidate_id": "CAND_0052744", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: some ML but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0052860", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent skills, lacks retrieval/ranking experience"}
+{"candidate_id": "CAND_0053527", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent ML experience but lacks retrieval/ranking depth"}
+{"candidate_id": "CAND_0053591", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor location gap."}
+{"candidate_id": "CAND_0053605", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant but lacks deep retrieval/ranking production experience"}
+{"candidate_id": "CAND_0054394", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but slightly below 5-9 yrs band"}
+{"candidate_id": "CAND_0054556", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent experience, lacks production AI/retrieval systems"}
+{"candidate_id": "CAND_0054852", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "Wrong role, no production AI experience"}
+{"candidate_id": "CAND_0055286", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no ML/AI production experience."}
+{"candidate_id": "CAND_0055905", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, 8+ yrs, strong signals"}
+{"candidate_id": "CAND_0056756", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no AI/retrieval experience"}
+{"candidate_id": "CAND_0057559", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no AI/ML production experience"}
+{"candidate_id": "CAND_0057563", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped production retrieval/ranking systems, strong fit."}
+{"candidate_id": "CAND_0057701", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong retrieval/ranking experience, minor gap in years."}
+{"candidate_id": "CAND_0058287", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "ML experience but lacks retrieval/ranking production depth."}
+{"candidate_id": "CAND_0058688", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor location gap"}
+{"candidate_id": "CAND_0058882", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML but not retrieval/ranking, wrong seniority"}
+{"candidate_id": "CAND_0059557", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong ML but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0060054", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong retrieval/ranking experience but lacks hybrid search/LLMs"}
+{"candidate_id": "CAND_0061257", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped production ranking/retrieval systems, strong fit."}
+{"candidate_id": "CAND_0061265", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, 6.6 yrs, strong signals"}
+{"candidate_id": "CAND_0061352", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant but lacks retrieval/ranking depth"}
+{"candidate_id": "CAND_0061655", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but slightly below 5-9 yrs band"}
+{"candidate_id": "CAND_0062247", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: built embedding-based retrieval at Google, ranking at Dream11."}
+{"candidate_id": "CAND_0062772", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant ML experience but lacks retrieval/ranking depth."}
+{"candidate_id": "CAND_0063296", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, no relevant AI experience."}
+{"candidate_id": "CAND_0064326", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: production retrieval/ranking, strong experience, active"}
+{"candidate_id": "CAND_0064421", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: strong SWE but no production ML/retrieval experience"}
+{"candidate_id": "CAND_0064888", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Some ML but lacks retrieval/ranking systems."}
+{"candidate_id": "CAND_0065139", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML but no retrieval/ranking production experience"}
+{"candidate_id": "CAND_0065195", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but minor gap in notice period."}
+{"candidate_id": "CAND_0065878", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped ranking systems, strong eval framework, recent RAG experience."}
+{"candidate_id": "CAND_0065991", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent ML but lacks retrieval/ranking production experience."}
+{"candidate_id": "CAND_0066472", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: cloud/devops focus, lacks production ML/ranking experience"}
+{"candidate_id": "CAND_0066853", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong backend but lacks production AI/retrieval experience"}
+{"candidate_id": "CAND_0066999", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped ranking systems, strong retrieval/LLM skills, recent availability."}
+{"candidate_id": "CAND_0067866", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant ML experience but lacks deep retrieval/ranking systems."}
+{"candidate_id": "CAND_0068456", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "some ML but not retrieval/ranking, wrong seniority"}
+{"candidate_id": "CAND_0068663", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong SWE but lacks production AI/retrieval experience"}
+{"candidate_id": "CAND_0068811", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped production retrieval/ranking systems, 8 yrs, strong fit"}
+{"candidate_id": "CAND_0068932", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant but lacks deep retrieval/ranking production experience"}
+{"candidate_id": "CAND_0069440", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: backend skills but no production retrieval/ranking experience"}
+{"candidate_id": "CAND_0069905", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong retrieval/ranking experience, but notice period 90 days."}
+{"candidate_id": "CAND_0069925", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML but no retrieval/ranking production experience"}
+{"candidate_id": "CAND_0070154", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent ML skills, no production retrieval/ranking experience"}
+{"candidate_id": "CAND_0070305", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role (HR/Management)"}
+{"candidate_id": "CAND_0070398", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor gaps in location and notice period."}
+{"candidate_id": "CAND_0070525", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant ML experience, lacks retrieval/ranking depth."}
+{"candidate_id": "CAND_0070751", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong data engineering; lacks retrieval/ranking production exposure."}
+{"candidate_id": "CAND_0071472", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong backend but no production ML"}
+{"candidate_id": "CAND_0071880", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: CV/speech focus, lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0071974", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped ranking systems, strong eval expertise, fits seniority."}
+{"candidate_id": "CAND_0072660", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but location mismatch (Germany vs India)"}
+{"candidate_id": "CAND_0072768", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent ML experience but lacks retrieval/ranking production systems"}
+{"candidate_id": "CAND_0073638", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: Strong backend but no production retrieval/ranking experience"}
+{"candidate_id": "CAND_0073873", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0074225", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong ML/NLP fit, lacks production vector/ranking depth, notice period long."}
+{"candidate_id": "CAND_0074317", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent ML experience, lacks retrieval/ranking focus."}
+{"candidate_id": "CAND_0074449", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role, irrelevant experience"}
+{"candidate_id": "CAND_0074461", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data eng but minimal retrieval/ranking"}
+{"candidate_id": "CAND_0074735", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor gap in hybrid search experience"}
+{"candidate_id": "CAND_0074886", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data engineering but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0074942", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "Project Manager role, lacks production AI experience"}
+{"candidate_id": "CAND_0075249", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: production retrieval/ranking systems at product companies, strong signals"}
+{"candidate_id": "CAND_0075439", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but slightly below seniority band"}
+{"candidate_id": "CAND_0075574", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit, minor gap in location/notice period."}
+{"candidate_id": "CAND_0076643", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "DevOps focus, lacks ML production experience."}
+{"candidate_id": "CAND_0076831", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but slightly below seniority band (4 yrs vs 5-9)."}
+{"candidate_id": "CAND_0076832", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Java-focused, lacks retrieval/ranking experience."}
+{"candidate_id": "CAND_0077285", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit; minor gap in notice period."}
+{"candidate_id": "CAND_0077296", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML but lacks retrieval/ranking depth"}
+{"candidate_id": "CAND_0077337", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped retrieval/ranking systems, 7+ yrs, strong signals"}
+{"candidate_id": "CAND_0077504", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0077513", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "Keyword overlap only, lacks production ML experience."}
+{"candidate_id": "CAND_0077710", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent skills but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0078002", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems at Meta, strong recent activity."}
+{"candidate_id": "CAND_0078397", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "Wrong role, no production ML experience"}
+{"candidate_id": "CAND_0079387", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, 6.9 yrs, strong signals."}
+{"candidate_id": "CAND_0079838", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: Strong data engineering but weak ML/retrieval experience"}
+{"candidate_id": "CAND_0080050", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong SWE but lacks retrieval/ranking experience"}
+{"candidate_id": "CAND_0080188", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent skills, lacks production retrieval/ranking experience"}
+{"candidate_id": "CAND_0080344", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: some ML but lacks retrieval/ranking production experience"}
+{"candidate_id": "CAND_0080426", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "No production AI/ML experience."}
+{"candidate_id": "CAND_0081053", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit but lacks recent ranking system focus"}
+{"candidate_id": "CAND_0081846", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, strong metrics, relevant experience."}
+{"candidate_id": "CAND_0083309", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong SWE but no production ML/retrieval"}
+{"candidate_id": "CAND_0083482", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Cloud/backend focus, no production retrieval/ranking experience."}
+{"candidate_id": "CAND_0083490", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Data engineering focus, minor ML exposure, lacks retrieval/ranking."}
+{"candidate_id": "CAND_0083790", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent ML but no retrieval/ranking production experience"}
+{"candidate_id": "CAND_0083852", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "some ML but not retrieval/ranking, wrong seniority"}
+{"candidate_id": "CAND_0083879", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped ranking/retrieval systems, 7 yrs exp, NLP/recommendation expertise."}
+{"candidate_id": "CAND_0085199", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Relevant but lacks production retrieval/ranking depth."}
+{"candidate_id": "CAND_0085222", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong data engineering; weak retrieval/ranking experience."}
+{"candidate_id": "CAND_0085706", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong data engineering, weak on retrieval/ranking"}
+{"candidate_id": "CAND_0086460", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent ML but no retrieval/ranking production experience."}
+{"candidate_id": "CAND_0087120", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "some ML but not retrieval/ranking, wrong seniority"}
+{"candidate_id": "CAND_0087144", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role (Marketing/Project Mgmt)."}
+{"candidate_id": "CAND_0088025", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped hybrid retrieval, ranking, and evaluation at scale."}
+{"candidate_id": "CAND_0088441", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "ML experience but lacks retrieval/ranking production systems"}
+{"candidate_id": "CAND_0089353", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "Keyword overlap, no prod ML/retrieval experience."}
+{"candidate_id": "CAND_0089363", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "Wrong role, no production AI experience"}
+{"candidate_id": "CAND_0089552", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit with minor gaps in notice period and location."}
+{"candidate_id": "CAND_0089641", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: strong SWE but no production AI/retrieval experience"}
+{"candidate_id": "CAND_0090265", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "QA background, no production AI experience"}
+{"candidate_id": "CAND_0091909", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped production retrieval/ranking systems, strong experience, active"}
+{"candidate_id": "CAND_0091912", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "QA/full-stack background, no production ML"}
+{"candidate_id": "CAND_0091920", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data infra but lacks retrieval/ranking experience"}
+{"candidate_id": "CAND_0092255", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "ML experience but lacks retrieval/ranking depth."}
+{"candidate_id": "CAND_0093141", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data engineering but minimal production ML"}
+{"candidate_id": "CAND_0093193", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Exceptional fit: shipped ranking/retrieval at scale, strong signals"}
+{"candidate_id": "CAND_0093442", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-AI role, Marketing focus, irrelevant career history."}
+{"candidate_id": "CAND_0094165", "tier": 3, "relevance": 3.0, "source": "llm2:deepseek/deepseek-chat", "why": "Some relevant ML experience but lacks production retrieval/ranking systems."}
+{"candidate_id": "CAND_0094423", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong data engineering but weak retrieval/ranking experience"}
+{"candidate_id": "CAND_0094533", "tier": 1, "relevance": 1.0, "source": "llm2:deepseek/deepseek-chat", "why": "DevOps focus, no production ML/ranking experience."}
+{"candidate_id": "CAND_0094743", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role (Marketing/HR/Design)"}
+{"candidate_id": "CAND_0094924", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "adjacent: strong data eng but lacks retrieval/ranking systems"}
+{"candidate_id": "CAND_0095924", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Some ML exposure, lacks retrieval/ranking production experience."}
+{"candidate_id": "CAND_0096142", "tier": 5, "relevance": 5.0, "source": "llm2:deepseek/deepseek-chat", "why": "Shipped ranking systems, NLP expertise, aligns with JD."}
+{"candidate_id": "CAND_0097036", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: Some ML but lacks retrieval/ranking focus."}
+{"candidate_id": "CAND_0097176", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent ML experience, lacks production retrieval/ranking depth"}
+{"candidate_id": "CAND_0097582", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Adjacent: strong SWE but no production retrieval/ranking"}
+{"candidate_id": "CAND_0097793", "tier": 0, "relevance": 0.0, "source": "llm2:deepseek/deepseek-chat", "why": "Non-target role (Marketing)"}
+{"candidate_id": "CAND_0097896", "tier": 2, "relevance": 2.0, "source": "llm2:deepseek/deepseek-chat", "why": "Some ML but lacks retrieval/ranking/product company depth."}
+{"candidate_id": "CAND_0098846", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong fit, minor gap in hybrid retrieval experience."}
+{"candidate_id": "CAND_0099806", "tier": 4, "relevance": 4.0, "source": "llm2:deepseek/deepseek-chat", "why": "Strong retrieval/ranking experience but slightly junior."}
