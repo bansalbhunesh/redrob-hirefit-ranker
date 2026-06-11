@@ -69,6 +69,22 @@ profile is pushed down regardless of how strong its keywords look.
    recruiter-aware than the judge — we correctly down-weighted high-skill candidates
    with 12% response rate that the judge over-rated.
 
+## 5b. Four measured negative results
+
+Recited consistently across README, deck, and this document — every alternative was
+built, measured against a rule fixed in advance, and committed when it lost:
+
+1. **Static dense embeddings** (model2vec/potion-32M): NDCG@10 +0.0000 at ~2.2×
+   runtime → rejected by the pre-committed gate.
+2. **Learned logistic-regression weights**: composite 0.8238 vs 0.8811 hand-tuned,
+   even on labels that structurally favor the learner (docs/learned_weights_appendix.md).
+3. **LambdaMART challenger** on the shipped 28 features + recovered generator
+   structure, trained on ~1.5K LLM judgments: −0.0061 against a pre-registered
+   +0.005 adoption gate (docs/ltr_challenger_study.md).
+4. **Declined availability hedge**: +0.0135 only under an availability-blind label
+   hypothesis that the JD's own down-weight instruction contradicts; declined and
+   documented before any artifact change (docs/hedge_simulation_study.md).
+
 ## 6. The consensus calibration pass — the single unfreeze
 
 After the ranking was frozen, an exhaustive pairwise audit of the top-100

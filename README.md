@@ -57,6 +57,14 @@ per-candidate reasoning drawn only from facts in the profile.
   multipliers; the committed CSV is locked by golden-hash regression tests
   (`tests/test_submission_gate.py`, history in
   [docs/golden_reproduction.md](docs/golden_reproduction.md)).
+- **Four measured negative results, all committed.** (1) Static dense embeddings:
+  NDCG@10 +0.0000 at ~2.2× runtime. (2) Learned-LR weights: 0.8238 vs 0.8811
+  composite ([appendix](docs/learned_weights_appendix.md)). (3) A LambdaMART
+  challenger on our own features + recovered generator structure: −0.0061 against a
+  pre-registered +0.005 gate ([study](docs/ltr_challenger_study.md)). (4) A declined
+  availability hedge that only pays if the labels ignore the JD's own instruction
+  ([study](docs/hedge_simulation_study.md)). Nothing we tested beat the shipped
+  scorer — and everything we tested is in the repo.
 
 ## Measured reproduction
 
