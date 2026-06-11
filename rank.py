@@ -77,6 +77,12 @@ def parse_args() -> argparse.Namespace:
         "the historical pipeline.",
     )
     parser.add_argument(
+        "--no-calibration",
+        action="store_true",
+        help="Audit mode: disable the submitted challenge-JD calibration pass and "
+        "write the pre-calibration baseline ranking.",
+    )
+    parser.add_argument(
         "--use-embeddings",
         action="store_true",
         help="EXPERIMENTAL: blend a model2vec/potion dense-retrieval feature (needs "
@@ -182,6 +188,7 @@ def main() -> None:
         use_embeddings=args.use_embeddings,
         embed_model=args.embed_model,
         jd=compiled_jd,
+        apply_calibration=not args.no_calibration,
     )
     if args.profile_memory:
         tracemalloc.start()

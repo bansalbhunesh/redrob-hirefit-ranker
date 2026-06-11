@@ -178,3 +178,6 @@ Result:
   flags 0 profiles after threshold tuning.
 - JD generalization: `docs/generalization_probe.md` documents supported
   AI/search/backend JDs and fail-closed behavior for an unsupported sales role.
+- Calibration transparency: `docs/calibration_transparency_lab.md` documents
+  the `--no-calibration` audit mode and real 100K diff against the submitted
+  output.

@@ -97,6 +97,9 @@ class RankerConfig:
     # Optional compiled JD (rank.py --jd). None = bundled challenge JD; the
     # None path is byte-identical to the historical pipeline.
     jd: object | None = None
+    # Default True reproduces the submitted output. Set False for audit/diff
+    # runs that need the pre-calibration baseline.
+    apply_calibration: bool = True
 
 
 @dataclass(slots=True)
@@ -202,7 +205,7 @@ def run_ranking(candidates_path: Path, out_path: Path, config: RankerConfig | No
     ranked, used_backend = rank_candidates(candidates, config)
     # Consensus calibration pass (src/redrob_ranker/calibration.py): eight
     # evidence-backed pairwise preferences, official challenge JD only.
-    if applies_to(config.jd):
+    if config.apply_calibration and applies_to(config.jd):
         ranked = apply_calibration(ranked)
     top_k = min(config.top_k, len(ranked))
     rows = rows_from_ranked(ranked, top_k)
