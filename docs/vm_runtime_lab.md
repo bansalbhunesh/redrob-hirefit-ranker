@@ -26,6 +26,10 @@ only 2 CPUs. On this machine, that made the full 100K VM-style run slow.
 Auto worker selection uses the smaller of `os.cpu_count()` and the detected
 cgroup quota. Native runs without a quota still use the existing worker cap.
 
+The latest local lab pass also tunes feature-scoring process-pool chunks to
+four chunks per worker (`_resolve_chunksize`), reducing IPC/pickling overhead
+without changing worker count or ranking semantics.
+
 ## Worker Detection Check
 
 Constrained container:
@@ -52,6 +56,12 @@ Same machine, same Docker Desktop setup, same mounted `candidates.jsonl`.
 |---|---:|---:|---:|
 | Docker 20K, `--cpus=2 --memory=16g` | 36.5s pipeline | 29.7s pipeline | 18.6% faster |
 | Docker 100K, `--cpus=2 --memory=16g` | 422.9s pipeline | 120.7s pipeline | 71.5% faster |
+
+Latest final gate on this branch after the chunk-size tune:
+
+| Run | Pipeline | Wall | Output |
+|---|---:|---:|---|
+| Docker 100K, `--cpus=2 --memory=16g`, `redrob-lab-dominant-final` | 154.4s | 158.5s | byte-identical |
 
 The patched full Docker output is byte-identical to `submission.csv`:
 

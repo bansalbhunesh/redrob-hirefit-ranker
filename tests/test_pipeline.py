@@ -68,6 +68,12 @@ def test_auto_workers_use_cap_when_no_cgroup_quota(monkeypatch):
     assert pipeline_mod._resolve_workers(0, 64) == 8
 
 
+def test_feature_pool_chunksize_uses_four_chunks_per_worker():
+    assert pipeline_mod._resolve_chunksize(100_000, 2) == 12_500
+    assert pipeline_mod._resolve_chunksize(20_000, 2) == 2_500
+    assert pipeline_mod._resolve_chunksize(3, 8) == 1
+
+
 def test_pipeline_writes_valid_small_json(tmp_path: Path):
     sample = tmp_path / "sample.json"
     sample.write_text(

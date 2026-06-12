@@ -189,7 +189,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     }
     .ambient-bg {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background: 
+      background:
         radial-gradient(ellipse 80% 50% at 20% 40%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
         radial-gradient(ellipse 60% 40% at 80% 60%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
         radial-gradient(ellipse 50% 30% at 50% 100%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
@@ -429,6 +429,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     @keyframes fadeIn { 0% { opacity: 0; transform: translateY(20px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
     .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
     @media (max-width: 1100px) { .detail-panel { position: fixed; right: -400px; top: 0; bottom: 0; width: 380px; z-index: 200; transition: right 0.3s ease; } .detail-panel.open { right: 0; } .close-btn { display: block; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.001ms !important; } .animate-in { opacity: 1 !important; transform: none !important; } }
     .close-btn { display: none; position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
     ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: var(--bg-deep); } ::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
   </style>

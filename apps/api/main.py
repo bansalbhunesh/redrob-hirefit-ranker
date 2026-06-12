@@ -10,6 +10,8 @@ import tempfile
 import asyncio
 import time
 import shutil
+import gzip
+import io
 from pathlib import Path
 from typing import Dict, List, Any
 from datetime import datetime
@@ -57,6 +59,12 @@ ALLOWED_ORIGINS = [
     for origin in os.getenv("REDROB_CORS_ORIGINS", _DEFAULT_ORIGINS).split(",")
     if origin.strip()
 ]
+SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "no-referrer",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+}
 
 
 # CORS is restricted to localhost by default; set REDROB_CORS_ORIGINS on public hosts.
@@ -67,6 +75,14 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    response = await call_next(request)
+    for name, value in SECURITY_HEADERS.items():
+        response.headers.setdefault(name, value)
+    return response
 
 # Setup Paths
 BASE_DIR = Path(__file__).parent
@@ -96,10 +112,27 @@ def _resolve_git_sha() -> str:
         return env_sha[:12]
     try:
         git_dir = BASE_DIR.parent.parent / ".git"
+        if git_dir.is_file():
+            pointer = git_dir.read_text(encoding="utf-8").strip()
+            if pointer.startswith("gitdir:"):
+                git_dir = (BASE_DIR.parent.parent / pointer.split(":", 1)[1].strip()).resolve()
+
+        def read_git_file(rel: str) -> str:
+            path = git_dir / rel
+            if path.exists():
+                return path.read_text(encoding="utf-8").strip()
+            common_file = git_dir / "commondir"
+            if common_file.exists():
+                common_dir = (git_dir / common_file.read_text(encoding="utf-8").strip()).resolve()
+                common_path = common_dir / rel
+                if common_path.exists():
+                    return common_path.read_text(encoding="utf-8").strip()
+            raise OSError(f"git file not found: {rel}")
+
         head = (git_dir / "HEAD").read_text(encoding="utf-8").strip()
         if head.startswith("ref:"):
             ref = head.split(None, 1)[1]
-            return (git_dir / ref).read_text(encoding="utf-8").strip()[:12]
+            return read_git_file(ref)[:12]
         return head[:12]
     except OSError:
         return "unknown"
@@ -148,6 +181,28 @@ async def read_upload_limited(file: UploadFile, max_bytes: int) -> bytes:
             detail=f"Upload exceeds {max_bytes // (1024 * 1024)} MB demo limit.",
         )
     return data
+
+
+def _safe_upload_name(filename: str | None) -> str:
+    safe_name = Path(filename or "candidates.jsonl").name
+    return safe_name or "candidates.jsonl"
+
+
+def _uploaded_candidate_count(data: bytes, filename: str) -> int:
+    """Count uploaded records before ranking so demo caps are explicit."""
+    suffixes = [s.lower() for s in Path(filename).suffixes]
+    try:
+        if suffixes[-2:] == [".jsonl", ".gz"] or suffixes[-1:] == [".gz"]:
+            with gzip.GzipFile(fileobj=io.BytesIO(data)) as f:
+                return sum(1 for line in f if line.strip())
+        if suffixes[-1:] == [".json"]:
+            parsed = json.loads(data.decode("utf-8-sig"))
+            if not isinstance(parsed, list):
+                raise ValueError("JSON upload must be an array of candidates.")
+            return len(parsed)
+        return sum(1 for line in data.splitlines() if line.strip())
+    except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+        raise HTTPException(status_code=422, detail=f"Could not parse upload: {exc}") from exc
 
 
 def prune_job_stores() -> None:
@@ -228,10 +283,18 @@ async def rank_live(file: UploadFile = File(...)):
         start = time.perf_counter()
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
-            in_path = base / (file.filename or "candidates.jsonl")
+            safe_name = _safe_upload_name(file.filename)
+            in_path = base / safe_name
             out_path = base / "ranked_candidates.csv"
 
-            in_path.write_bytes(await read_upload_limited(file, MAX_LIVE_UPLOAD_BYTES))
+            upload_bytes = await read_upload_limited(file, MAX_LIVE_UPLOAD_BYTES)
+            uploaded_count = _uploaded_candidate_count(upload_bytes, safe_name)
+            if uploaded_count > MAX_LIVE_CANDIDATES:
+                raise HTTPException(
+                    status_code=413,
+                    detail=f"Live demo is capped at {MAX_LIVE_CANDIDATES} candidates.",
+                )
+            in_path.write_bytes(upload_bytes)
 
             result = run_ranking(
                 in_path,
@@ -402,8 +465,9 @@ def process_batch_job(job_id: str):
         job["completed_at"] = datetime.now().isoformat()
 
     except Exception as e:
+        _LOG.exception("batch ranking failed for job %s", job_id)
         job["status"] = "failed"
-        job["error"] = str(e)
+        job["error"] = "Batch ranking failed."
 
 
 @app.get("/api/stream/{job_id}")

@@ -803,6 +803,16 @@
       .detail-panel.open { right: 0; }
       .detail-panel .close-btn { display: block; }
     }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+      .animate-in { opacity: 1 !important; transform: none !important; }
+      .pulse { animation: none !important; }
+    }
     .close-btn {
       display: none;
       position: absolute; top: 16px; right: 16px;

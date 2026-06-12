@@ -1,5 +1,5 @@
 from redrob_ranker.constants import FEATURE_NAMES
-from redrob_ranker.features import compute_features, final_score, _contains
+from redrob_ranker.features import compute_features, final_score, _contains, _norm_str
 from redrob_ranker.retrieval import retrieve_pool
 from redrob_ranker.text import candidate_text, tokenize
 
@@ -166,6 +166,11 @@ def test_semantic_concept_expansion_catches_plain_language_retrieval():
 def test_boundary_matching_blocks_audit_false_positives():
     assert _contains("research scientist planning storage roadmap", {"search", "ann", "rag", "map"}) == 0
     assert _contains("built semantic search with ann retrieval and map evaluation", {"search", "ann", "map"}) == 3
+
+
+def test_ascii_normalizer_preserves_boundary_semantics():
+    assert _norm_str("Senior_AI/ML Engineer, C++ + C#\tRAG") == "senior ai ml engineer  c++ + c#\trag"
+    assert _contains(_norm_str("roadmaps, storage, annual"), {"map", "rag", "ann"}) == 0
 
 
 def test_short_aliases_do_not_match_inside_unrelated_words():

@@ -17,6 +17,9 @@ pytest.importorskip("httpx")
 from fastapi.testclient import TestClient  # noqa: E402
 
 from apps.api import main  # noqa: E402
+from redrob_ranker.constants import FEATURE_NAMES  # noqa: E402
+from redrob_ranker.features import CandidateFeatures  # noqa: E402
+from redrob_ranker.pipeline import RankingResult  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 DEMO_SAMPLE = ROOT / "demo_sample.jsonl"
@@ -60,10 +63,14 @@ def test_health_reports_artifacts_and_sha(client):
     body = resp.json()
     assert body["status"] == "ok"
     assert body["git_sha"] and body["git_sha"] != ""
+    if (ROOT / ".git").exists():
+        assert body["git_sha"] != "unknown"
     assert body["artifacts"]["precomputed_loaded"] is True
     assert body["artifacts"]["precomputed_bytes"] > 0
     assert body["artifacts"]["dashboard_present"] is True
     assert {"stored", "active"} <= set(body["jobs"])
+    assert resp.headers["x-content-type-options"] == "nosniff"
+    assert resp.headers["x-frame-options"] == "DENY"
 
 
 # ── /api/results (showpiece) ───────────────────────────────────────
@@ -102,6 +109,69 @@ def test_rank_live_happy_path(client):
     first = body["candidates"][0]
     assert first["rank"] == 1
     assert "candidate_id" in first
+
+
+def test_rank_live_rejects_candidate_count_over_cap(client, monkeypatch):
+    monkeypatch.setattr(main, "MAX_LIVE_CANDIDATES", 2)
+    resp = client.post(
+        "/api/rank", files={"file": ("sample.jsonl", _demo_bytes(3), "application/jsonl")}
+    )
+    assert resp.status_code == 413
+    assert "capped at 2 candidates" in resp.json()["detail"]
+
+
+def test_rank_live_sanitizes_uploaded_filename(client, monkeypatch):
+    captured = {}
+
+    def fake_run_ranking(in_path, out_path, config):
+        captured["name"] = in_path.name
+        captured["parent"] = in_path.parent
+        candidate = {
+            "candidate_id": "CAND_0000001",
+            "profile": {
+                "current_title": "Machine Learning Engineer",
+                "current_company": "CRED",
+                "location": "Pune",
+                "country": "India",
+                "years_of_experience": 7.0,
+            },
+            "skills": [],
+            "career_history": [],
+            "redrob_signals": {},
+        }
+        features = CandidateFeatures(
+            candidate_id="CAND_0000001",
+            values={name: 0.0 for name in FEATURE_NAMES},
+            behavioral_multiplier=1.0,
+            honeypot_multiplier=1.0,
+            disqualifier_multiplier=1.0,
+            flags=[],
+        )
+        return RankingResult(
+            rows=[
+                {
+                    "candidate_id": "CAND_0000001",
+                    "rank": 1,
+                    "score": "1.000000",
+                    "reasoning": "safe",
+                }
+            ],
+            loaded_count=1,
+            ranked_pool_count=1,
+            bm25_backend="bm25s",
+            honeypots_detected=0,
+            honeypots_in_output=0,
+            raw_ranked=[(candidate, features, 1.0)],
+        )
+
+    monkeypatch.setattr(main, "run_ranking", fake_run_ranking)
+    resp = client.post(
+        "/api/rank",
+        files={"file": ("../escape.jsonl", _demo_bytes(1), "application/jsonl")},
+    )
+    assert resp.status_code == 200
+    assert captured["name"] == "escape.jsonl"
+    assert captured["parent"].name
 
 
 def test_rank_live_malformed_jsonl_returns_422(client):
@@ -191,3 +261,18 @@ def test_batch_non_utf8_returns_422(client):
         "/api/batch", files={"file": ("bin.jsonl", b"\xff\xfe\x00\x01" * 10, "application/octet-stream")}
     )
     assert resp.status_code == 422
+
+
+def test_batch_internal_error_is_sanitized(client, monkeypatch):
+    def boom(*args, **kwargs):
+        raise RuntimeError("secret internal state: /etc/passwd")
+
+    monkeypatch.setattr(main, "run_ranking", boom)
+    resp = client.post(
+        "/api/batch", files={"file": ("sample.jsonl", _demo_bytes(3), "application/jsonl")}
+    )
+    assert resp.status_code == 200
+    job_id = resp.json()["job_id"]
+    assert main.job_store[job_id]["status"] == "failed"
+    assert main.job_store[job_id]["error"] == "Batch ranking failed."
+    assert "secret" not in str(main.job_store[job_id])

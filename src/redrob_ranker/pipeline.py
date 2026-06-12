@@ -124,6 +124,15 @@ def _resolve_workers(requested: int, pool_count: int) -> int:
     return max(1, min(_PARALLEL_WORKER_CAP, available))
 
 
+def _resolve_chunksize(work_count: int, workers: int) -> int:
+    """Return process-pool chunk size for feature scoring.
+
+    Four chunks per worker keeps enough load-balancing headroom while cutting
+    IPC/pickling overhead versus smaller chunks in constrained Docker runs.
+    """
+    return max(1, work_count // (workers * 4))
+
+
 def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[tuple[dict, object, float]], str]:
     if config.jd is not None:
         retrieval_scores, used_backend = retrieve_pool(
@@ -171,7 +180,7 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
         finally:
             _WORKER_JD = prev_jd
     else:
-        chunksize = max(1, len(work) // (workers * 8))
+        chunksize = _resolve_chunksize(len(work), workers)
         with ProcessPoolExecutor(
             max_workers=workers, initializer=_init_worker, initargs=(config.jd,)
         ) as executor:
