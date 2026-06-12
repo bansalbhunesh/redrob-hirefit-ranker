@@ -6,7 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![100K Runtime](https://img.shields.io/badge/100K_Runtime-80s_cloud_·_~125s_local_Docker-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-146_passing-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-147_passing-brightgreen.svg)](#)
 
 ### Try it live — no install
 
@@ -27,7 +27,7 @@
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
 | Top-10 quality — **dev proxy** (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
 | Format validator | **pass** (incl. candidate-pool membership) | Stage-1 gate |
-| Tests | **146 passing** (incl. golden-output regression + API endpoint suite) | — |
+| Tests | **147 passing** (incl. golden-output regression + API endpoint suite) | — |
 
 > **Metric provenance:** every ranking-quality number above is a *development
 > proxy* — independent heuristic + LLM-judge labels scored on dev samples.
@@ -36,7 +36,7 @@
 > [docs/metrics_manifest.json](docs/metrics_manifest.json) (drift-gated by
 > `tests/test_metrics_manifest.py`).
 
-**Methodology:** [METHODOLOGY.md](METHODOLOGY.md) | **Slide deck:** [PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf) / [PPTX](docs/HireFit_Ranker_Redrob_POLISHED.pptx) | **Eval evidence:** [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md)
+**Methodology:** [METHODOLOGY.md](METHODOLOGY.md) | **Slide deck:** [PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf) / [PPTX](docs/HireFit_Ranker_Redrob_POLISHED.pptx) | **Eval evidence:** [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) | **Second-layer eval pack:** [docs/second_layer_gap_closure.md](docs/second_layer_gap_closure.md)
 
 ## The thesis
 
