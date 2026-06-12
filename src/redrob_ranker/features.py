@@ -399,9 +399,15 @@ def _title_score(candidate: dict, matchers: JDMatchers = _DEFAULT_MATCHERS) -> f
 
     score = 0.08
     safe_text = f" {text} "
+    current_score = 0.08
+    safe_current = f" {current} {headline} "
     for pt, weight in matchers.title_padded.items():
         if pt in safe_text:
             score = max(score, weight)
+        if pt in safe_current:
+            current_score = max(current_score, weight)
+    if matchers is not _DEFAULT_MATCHERS and current_score < 0.35 and score > 0.65:
+        score = min(score, 0.55)
     if _has_boundary(_NON_TARGET_PADDED, current):
         score = min(score, 0.18)
     return clamp(score)
@@ -687,6 +693,34 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
         if _has_boundary(_IR_RANKING_PADDED, text) or _has_boundary(_ML_TERMS_PADDED, text):
             ml_months += int(job.get("duration_months") or 0)
     values["ml_ai_tenure_score"] = clamp(ml_months / 60.0)
+
+    # For compiled non-challenge JDs, reuse the legacy AI evidence fields as
+    # role-evidence fields. The default challenge JD path is untouched, so the
+    # frozen submission stays byte-identical; backend, DevOps, data/BI, and
+    # search JDs now get credit for role-specific delivery evidence in career
+    # text instead of only generic AI/retrieval signals.
+    if config is not None and not _is_default_jd(config):
+        role_evidence_hits = _count_tokenized(m.split_relevant, tokens_career, safe_career)
+        if role_evidence_hits:
+            values["ir_ranking_experience"] = max(
+                values["ir_ranking_experience"],
+                clamp(role_evidence_hits / 8.0),
+            )
+            values["production_evidence"] = max(
+                values["production_evidence"],
+                clamp(role_evidence_hits / 12.0),
+            )
+
+        role_months = 0
+        title_terms = tuple(m.title_padded.keys())
+        for job in career:
+            text = _norm(" ".join([str(job.get("title", "")), str(job.get("description", ""))]))
+            safe_job = f" {text} "
+            tokens_job = set(text.split(" "))
+            if _has_tokenized(m.split_relevant, tokens_job, safe_job) or _has_boundary(title_terms, text):
+                role_months += int(job.get("duration_months") or 0)
+        if role_months:
+            values["ml_ai_tenure_score"] = max(values["ml_ai_tenure_score"], clamp(role_months / 60.0))
     values["open_source_signal"] = clamp(_count_tokenized(_OPEN_SOURCE_SPLIT, tokens_full, safe_full) / 3.0)
 
     management_score = _count_tokenized(_MANAGEMENT_SPLIT, tokens_career, safe_career)
@@ -908,6 +942,21 @@ def compute_disqualifier_multiplier(flags: list[str], production_evidence: float
 # semantic_score is provided (--use-embeddings); the default path is unaffected.
 SEMANTIC_WEIGHT = 0.10
 
+TRANSFER_SOFT_RISK_FLAGS = {
+    "consulting_only",
+    "salary_inversion",
+    "title_hopper",
+    "endorsement_inflation_low_profile",
+    "llm_wrapper_only",
+    "junior_for_senior_role",
+}
+TRANSFER_CRITICAL_RISK_FLAGS = {
+    "keyword_stuffer",
+    "hidden_text_control_chars",
+    "prompt_injection_text",
+    "repeated_keyword_block",
+}
+
 
 def _is_default_jd(config) -> bool:
     if config is None:
@@ -958,12 +1007,15 @@ def _alternate_jd_weights(config) -> dict[str, float]:
         weights["ml_ai_tenure_score"] = 0.04
         weights["product_company_ratio"] = 0.07
     if groups & {"software_backend", "cloud_devops", "data_bi"}:
-        weights["bm25_score"] = 0.20
-        weights["core_skill_match"] = 0.10
-        weights["jd_keyword_coverage_score"] = 0.30
+        weights["bm25_score"] = 0.16
+        weights["core_skill_match"] = 0.12
+        weights["jd_keyword_coverage_score"] = 0.24
+        weights["ir_ranking_experience"] = 0.10
+        weights["production_evidence"] = 0.10
         weights["title_match_score"] = 0.24
         weights["senior_title_held"] = 0.04
         weights["career_trajectory_score"] = 0.04
+        weights["ml_ai_tenure_score"] = 0.06
         weights["product_company_ratio"] = 0.02
     return weights
 
@@ -974,7 +1026,8 @@ def final_score(
     semantic_score: float | None = None,
     config=None,
 ) -> float:
-    active_weights = BASE_FEATURE_WEIGHTS if _is_default_jd(config) else _alternate_jd_weights(config)
+    default_jd = _is_default_jd(config)
+    active_weights = BASE_FEATURE_WEIGHTS if default_jd else _alternate_jd_weights(config)
     total_weight = active_weights["bm25_score"]
     weighted_sum = active_weights["bm25_score"] * clamp(retrieval_score)
     for name, weight in active_weights.items():
@@ -988,12 +1041,35 @@ def final_score(
         weighted_sum += SEMANTIC_WEIGHT * clamp(semantic_score)
         total_weight += SEMANTIC_WEIGHT
     base_score = weighted_sum / total_weight
+    if not default_jd:
+        groups = {group for group, _ in getattr(config, "must_have_skills", ())}
+        title_fit = features.values.get("title_match_score", 0.0)
+        role_evidence = features.values.get("ir_ranking_experience", 0.0)
+        if title_fit < 0.35:
+            base_score *= 0.72 if role_evidence < 0.85 else 0.82
+        elif "software_backend" in groups and title_fit < 0.65:
+            base_score *= 0.90
     # Guardrails still multiply on top, so a high semantic score cannot rescue a
     # keyword stuffer, honeypot, or disqualified profile.
+    behavior_multiplier = features.behavioral_multiplier
+    disqualifier_multiplier = features.disqualifier_multiplier
+    if not default_jd:
+        groups = {group for group, _ in getattr(config, "must_have_skills", ())}
+        if groups & {"cloud_devops", "data_bi"}:
+            behavior_multiplier = clamp(0.88 + 0.12 * behavior_multiplier, 0.88, 1.03)
+        elif "software_backend" in groups:
+            title_fit = features.values.get("title_match_score", 0.0)
+            role_evidence = features.values.get("ir_ranking_experience", 0.0)
+            yoe_fit = features.values.get("yoe_fit_score", 0.0)
+            if title_fit >= 0.80 and role_evidence >= 0.60 and yoe_fit >= 0.75 and not features.flags:
+                behavior_multiplier = max(behavior_multiplier, 0.76)
+        if features.flags and not (set(features.flags) & TRANSFER_CRITICAL_RISK_FLAGS):
+            if set(features.flags) <= TRANSFER_SOFT_RISK_FLAGS:
+                disqualifier_multiplier = max(disqualifier_multiplier, 0.72)
     return max(
         0.0,
         base_score
-        * features.behavioral_multiplier
+        * behavior_multiplier
         * features.honeypot_multiplier
-        * features.disqualifier_multiplier,
+        * disqualifier_multiplier,
     )

@@ -280,6 +280,55 @@ ROLE_FAMILY_TRIGGERS: dict[str, tuple[str, ...]] = {
                               "cloud engineer", "infrastructure engineer"),
 }
 
+ROLE_GROUP_PRIORS: dict[str, dict[str, float]] = {
+    # A backend JD may mention internal search/relevance, but that should not
+    # make the compiled program primarily a search/AI scorer.
+    "backend_engineer": {
+        "software_backend": 1.60,
+        "python_ml_engineering": 0.90,
+        "ranking_information_retrieval": 0.45,
+    },
+    "software_engineer": {
+        "software_backend": 1.45,
+        "python_ml_engineering": 0.90,
+        "ranking_information_retrieval": 0.55,
+    },
+    "search_relevance_engineer": {
+        "ranking_information_retrieval": 1.45,
+        "embeddings_retrieval": 1.15,
+        "vector_database": 1.10,
+        "software_backend": 0.70,
+    },
+    "data_bi_analyst": {"data_bi": 1.50, "python_ml_engineering": 0.75},
+    "devops_cloud_engineer": {"cloud_devops": 1.50, "software_backend": 0.75},
+}
+
+ROLE_GROUP_ORDER: dict[str, tuple[str, ...]] = {
+    "backend_engineer": (
+        "software_backend",
+        "python_ml_engineering",
+        "ranking_information_retrieval",
+        "cloud_devops",
+        "data_bi",
+    ),
+    "software_engineer": (
+        "software_backend",
+        "python_ml_engineering",
+        "cloud_devops",
+        "data_bi",
+        "ranking_information_retrieval",
+    ),
+    "search_relevance_engineer": (
+        "ranking_information_retrieval",
+        "embeddings_retrieval",
+        "vector_database",
+        "python_ml_engineering",
+        "software_backend",
+    ),
+    "data_bi_analyst": ("data_bi", "python_ml_engineering", "software_backend"),
+    "devops_cloud_engineer": ("cloud_devops", "software_backend", "python_ml_engineering"),
+}
+
 # "Tier-1 Indian cities" expansion used when the JD says so.
 TIER1_INDIAN_CITIES: tuple[str, ...] = tuple(sorted(C.PREFERRED_INDIAN_LOCATIONS))
 
@@ -329,18 +378,22 @@ def compile_jd(text: str, source: str = "jd-text") -> CompiledJD:
     if not must_groups:
         raise ValueError("JD parser found no must-have skill concepts; refusing to compile.")
 
-    raw_weights = {g: GROUP_WEIGHT_TABLE.get(g, 0.10) for g in must_groups}
+    # 2. Role family / titles
+    families = _detect(text_l, ROLE_FAMILY_TRIGGERS)
+    family = families[0] if families else "ai_ml_engineer"
+    titles = ROLE_FAMILIES[family]
+
+    priors = ROLE_GROUP_PRIORS.get(family, {})
+    raw_weights = {
+        g: GROUP_WEIGHT_TABLE.get(g, 0.10) * priors.get(g, 1.0)
+        for g in must_groups
+    }
     wsum = sum(raw_weights.values())
     weights = {g: round(w / wsum, 6) if abs(wsum - 1.0) > 1e-9 else w
                for g, w in raw_weights.items()}
 
     must = {g: GROUP_ALIASES[g] for g in must_groups if g in GROUP_ALIASES}
     nice = {g: NICE_ALIASES[g] for g in nice_groups if g in NICE_ALIASES}
-
-    # 2. Role family / titles
-    families = _detect(text_l, ROLE_FAMILY_TRIGGERS)
-    family = families[0] if families else "ai_ml_engineer"
-    titles = ROLE_FAMILIES[family]
 
     # 3. Locations
     cities: set[str] = set()
@@ -369,7 +422,9 @@ def compile_jd(text: str, source: str = "jd-text") -> CompiledJD:
     if set(must_groups) == set(CANONICAL_MUST_GROUPS) and family == "ai_ml_engineer":
         query = CANONICAL_QUERY
     else:
-        top_aliases = [a for g in must_groups for a in GROUP_ALIASES.get(g, [])[:10]]
+        preferred_order = [g for g in ROLE_GROUP_ORDER.get(family, ()) if g in must_groups]
+        ordered_groups = preferred_order + [g for g in must_groups if g not in preferred_order]
+        top_aliases = [a for g in ordered_groups for a in GROUP_ALIASES.get(g, [])[:10]]
         title_terms = list(titles)[:6]
         query = " ".join(["senior"] + title_terms + top_aliases + ["production", "shipped", "scale"])
 

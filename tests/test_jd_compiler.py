@@ -84,6 +84,9 @@ def test_demo_jd_compiles_to_a_different_program():
     # backend title family
     titles = compiled.target_title_weights_dict()
     assert titles.get("senior backend engineer") == 1.0
+    weights = compiled.must_have_weights_dict()
+    assert weights["software_backend"] > weights["ranking_information_retrieval"]
+    assert compiled.jd_query.index("rest api") < compiled.jd_query.index("learning to rank")
     # locations: bangalore expands to both spellings, chennai detected
     assert "bengaluru" in compiled.preferred_locations
     assert "chennai" in compiled.preferred_locations
@@ -111,3 +114,43 @@ def test_alternate_jd_changes_scoring_for_backend_profile():
     # the backend JD should value this profile's titles and location more
     assert under_backend.values["career_trajectory_score"] >= under_default.values["career_trajectory_score"]
     assert under_backend.values["location_score"] > under_default.values["location_score"]
+    # alternate JDs reuse the legacy AI evidence fields as role-evidence fields,
+    # without changing the bundled AI challenge scorer.
+    assert under_default.values["ir_ranking_experience"] == 0.0
+    assert under_default.values["ml_ai_tenure_score"] == 0.0
+    assert under_backend.values["ir_ranking_experience"] > under_default.values["ir_ranking_experience"]
+    assert under_backend.values["ml_ai_tenure_score"] > under_default.values["ml_ai_tenure_score"]
+
+
+def test_alternate_jd_title_score_prioritizes_current_role_over_history():
+    from redrob_ranker.jd_compiler import compile_jd
+
+    backend_jd = compile_jd(DEMO_JD, source="demo")
+    former_software_now_ai = {
+        "candidate_id": "CAND_AI_HISTORY",
+        "profile": {"current_title": "AI Research Engineer", "headline": "AI Research Engineer",
+                    "summary": "Previously built REST APIs and Kafka services",
+                    "location": "Chennai", "country": "India", "years_of_experience": 6},
+        "career_history": [{"company": "Acme", "title": "Senior Software Engineer",
+                            "duration_months": 48,
+                            "description": "Built REST APIs on Kafka and Spark in production"}],
+        "skills": [{"name": "Python", "proficiency": "advanced", "endorsements": 15,
+                    "duration_months": 60}],
+        "redrob_signals": {"open_to_work_flag": True, "recruiter_response_rate": 0.7,
+                           "notice_period_days": 30, "last_active_date": "2026-05-20"},
+    }
+    current_backend = {
+        **former_software_now_ai,
+        "candidate_id": "CAND_BACKEND_CURRENT",
+        "profile": {
+            **former_software_now_ai["profile"],
+            "current_title": "Backend Engineer",
+            "headline": "Backend Engineer",
+        },
+    }
+
+    ai_history = compute_features(dict(former_software_now_ai), config=backend_jd)
+    backend_current = compute_features(dict(current_backend), config=backend_jd)
+
+    assert ai_history.values["title_match_score"] < backend_current.values["title_match_score"]
+    assert ai_history.values["title_match_score"] <= 0.55

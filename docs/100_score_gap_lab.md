@@ -192,10 +192,11 @@ Result:
   label gap; it proves the harness and shows where transfer is still thin.
 - Multi-JD Redrob-pool transfer eval:
   `docs/multi_jd_generalization_eval.md` scores 20,000 candidates across five
-  technical JDs with independent raw-field role rubrics. Mean composite is
-  0.6920 vs keyword baseline 0.6793. The win is uneven: AI/search are strong,
-  data is competitive, backend/devops still trail the keyword oracle.
+  technical JDs with independent raw-field role rubrics. After the transfer
+  scorer patch, mean composite is 0.7501 vs keyword baseline 0.6793. The win is
+  still uneven: AI/search/devops beat keyword, while backend and data/BI still
+  trail the keyword oracle on the 20k proxy.
 - Compiler/scoring expansion:
-  alternate technical JDs now get broader role families, expanded compiled
-  queries, `title_match_score`, `jd_keyword_coverage_score`, and alternate-JD
-  weights. The bundled challenge JD remains golden-gated and byte-identical.
+  alternate technical JDs now get role-family priors, role-evidence reuse,
+  transfer-specific risk handling, and current-title/history safeguards. The
+  bundled challenge JD remains golden-gated and byte-identical.
