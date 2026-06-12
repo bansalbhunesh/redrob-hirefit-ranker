@@ -29,10 +29,25 @@ DEMO_SAMPLE = ROOT / "demo_sample.jsonl"
 def client():
     main.job_store.clear()
     main.results_store.clear()
+    with main._rate_lock:
+        main._rate_buckets.clear()
+    with main._metrics_lock:
+        main._metrics["requests_total"] = 0
+        main._metrics["request_seconds_sum"] = 0.0
+        main._metrics["responses_by_status"].clear()
+        main._metrics["requests_by_route"].clear()
+        main._metrics["rate_limited_total"] = 0
+        main._metrics["live_rank_total"] = 0
+        main._metrics["live_rank_failures_total"] = 0
+        main._metrics["batch_jobs_total"] = 0
+        main._metrics["batch_jobs_completed_total"] = 0
+        main._metrics["batch_jobs_failed_total"] = 0
     with TestClient(main.app) as c:
         yield c
     main.job_store.clear()
     main.results_store.clear()
+    with main._rate_lock:
+        main._rate_buckets.clear()
 
 
 def _demo_bytes(n_lines: int = 5) -> bytes:
@@ -69,8 +84,41 @@ def test_health_reports_artifacts_and_sha(client):
     assert body["artifacts"]["precomputed_bytes"] > 0
     assert body["artifacts"]["dashboard_present"] is True
     assert {"stored", "active"} <= set(body["jobs"])
+    assert body["jobs"]["max_active"] == main.MAX_ACTIVE_BATCH_JOBS
+    assert body["limits"]["rate_limit_per_minute"] == main.RATE_LIMIT_PER_MINUTE
     assert resp.headers["x-content-type-options"] == "nosniff"
     assert resp.headers["x-frame-options"] == "DENY"
+    assert resp.headers["x-request-id"]
+    assert "app;dur=" in resp.headers["server-timing"]
+
+
+def test_readyz_reports_ready(client):
+    resp = client.get("/api/readyz")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "ready"
+    assert body["checks"]["precomputed_loaded"] is True
+    assert body["checks"]["dashboard_present"] is True
+
+
+def test_readyz_degraded_when_showpiece_artifact_missing(client, monkeypatch, tmp_path):
+    monkeypatch.setattr(main, "PRECOMPUTED_FILE", tmp_path / "missing.json")
+    monkeypatch.setattr(main, "_precomputed_bytes", None)
+    monkeypatch.setattr(main, "_precomputed_mtime", None)
+    resp = client.get("/api/readyz")
+    assert resp.status_code == 503
+    assert resp.json()["status"] == "degraded"
+
+
+def test_metrics_endpoint_reports_requests_and_jobs(client):
+    client.get("/api/health")
+    resp = client.get("/api/metrics")
+    assert resp.status_code == 200
+    assert "text/plain" in resp.headers["content-type"]
+    text = resp.text
+    assert "redrob_api_requests_total" in text
+    assert 'redrob_api_route_requests_total{method="GET",path="/api/health"}' in text
+    assert "redrob_api_jobs_active" in text
 
 
 # ── /api/results (showpiece) ───────────────────────────────────────
@@ -118,6 +166,34 @@ def test_rank_live_rejects_candidate_count_over_cap(client, monkeypatch):
     )
     assert resp.status_code == 413
     assert "capped at 2 candidates" in resp.json()["detail"]
+
+
+def test_rank_live_rejects_unsupported_upload_extension(client):
+    resp = client.post(
+        "/api/rank", files={"file": ("sample.txt", _demo_bytes(1), "text/plain")}
+    )
+    assert resp.status_code == 415
+    assert ".jsonl" in resp.json()["detail"]
+
+
+def test_post_rate_limit_is_enforced_before_ranking(client, monkeypatch):
+    monkeypatch.setattr(main, "RATE_LIMIT_PER_MINUTE", 1)
+    monkeypatch.setattr(main, "RATE_LIMIT_WINDOW_SECONDS", 60)
+    headers = {"x-forwarded-for": "203.0.113.10"}
+    first = client.post(
+        "/api/rank",
+        headers=headers,
+        files={"file": ("bad.jsonl", b"not json\n", "application/jsonl")},
+    )
+    assert first.status_code == 422
+    second = client.post(
+        "/api/rank",
+        headers=headers,
+        files={"file": ("bad.jsonl", b"not json\n", "application/jsonl")},
+    )
+    assert second.status_code == 429
+    assert second.headers["retry-after"]
+    assert second.json()["error"] == "Rate limit exceeded."
 
 
 def test_rank_live_sanitizes_uploaded_filename(client, monkeypatch):
@@ -221,10 +297,50 @@ def test_batch_full_cycle(client):
     assert body["metadata"]["ranked_count"] > 0
     assert body["candidates"][0]["rank"] == 1
 
+    status = client.get(f"/api/batch/{job_id}")
+    assert status.status_code == 200
+    status_body = status.json()
+    assert status_body["status"] == "complete"
+    assert status_body["results_url"] == f"/api/batch/{job_id}/results"
+    assert status_body["download_url"] == f"/api/batch/{job_id}/download"
+    assert "file_path" not in status_body
+    assert "output_path" not in status_body
+
+    download = client.get(f"/api/batch/{job_id}/download")
+    assert download.status_code == 200
+    assert "text/csv" in download.headers["content-type"]
+    assert b"candidate_id,rank,score,reasoning" in download.content[:100]
+
 
 def test_batch_results_unknown_job_404(client):
     resp = client.get("/api/batch/batch-doesnotexist/results")
     assert resp.status_code == 404
+
+
+def test_batch_status_unknown_job_404(client):
+    resp = client.get("/api/batch/batch-doesnotexist")
+    assert resp.status_code == 404
+
+
+def test_batch_download_pending_job_returns_409(client, tmp_path, monkeypatch):
+    monkeypatch.setattr(main, "JOB_DIR", tmp_path)
+    job_dir = tmp_path / "batch-pending"
+    job_dir.mkdir()
+    in_path = job_dir / "sample.jsonl"
+    in_path.write_text("{}", encoding="utf-8")
+    out_path = job_dir / "ranked_candidates.csv"
+    main.job_store["batch-pending"] = {
+        "status": "queued",
+        "processed": 0,
+        "total": 1,
+        "current_stage": "Load",
+        "started_at": "2026-06-12T00:00:00",
+        "file_path": str(in_path),
+        "output_path": str(out_path),
+    }
+    resp = client.get("/api/batch/batch-pending/download")
+    assert resp.status_code == 409
+    assert resp.json()["status"] == "queued"
 
 
 def test_stream_unknown_job_404(client):
@@ -261,6 +377,13 @@ def test_batch_non_utf8_returns_422(client):
         "/api/batch", files={"file": ("bin.jsonl", b"\xff\xfe\x00\x01" * 10, "application/octet-stream")}
     )
     assert resp.status_code == 422
+
+
+def test_batch_rejects_unsupported_upload_extension(client):
+    resp = client.post(
+        "/api/batch", files={"file": ("sample.txt", _demo_bytes(1), "text/plain")}
+    )
+    assert resp.status_code == 415
 
 
 def test_batch_internal_error_is_sanitized(client, monkeypatch):

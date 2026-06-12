@@ -6,7 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![100K Runtime](https://img.shields.io/badge/100K_Runtime-80s_cloud_·_~125s_local_Docker-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-138_passing-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-146_passing-brightgreen.svg)](#)
 
 ### Try it live — no install
 
@@ -27,7 +27,7 @@
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
 | Top-10 quality — **dev proxy** (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
 | Format validator | **pass** (incl. candidate-pool membership) | Stage-1 gate |
-| Tests | **138 passing** (incl. golden-output regression + API endpoint suite) | — |
+| Tests | **146 passing** (incl. golden-output regression + API endpoint suite) | — |
 
 > **Metric provenance:** every ranking-quality number above is a *development
 > proxy* — independent heuristic + LLM-judge labels scored on dev samples.
@@ -85,6 +85,7 @@ pip install -e .
 # Optional dashboard API
 pip install -r requirements-api.txt
 uvicorn apps.api.main:app --host 127.0.0.1 --port 8000
+# Ops checks: /api/health, /api/readyz, /api/metrics
 
 # Optional research/evaluation scripts
 pip install -r requirements-research.txt
@@ -258,7 +259,10 @@ Full technical explanation: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
   every pipeline stage with live counts and a per-candidate audit of real ranker
   internals: feature contributions, the three multipliers, flags, and honeypot
   reasons. Run locally: `pip install -e ".[api]" && uvicorn apps.api.main:app --reload`
-  (single worker only — the batch job store is in-process).
+  (single worker only — the batch job store is in-process). Backend ops are
+  covered by `/api/health`, `/api/readyz`, `/api/metrics`, request IDs, rate
+  limits, sanitized batch status, and CSV artifact download; see
+  [docs/backend_infra_hardening.md](docs/backend_infra_hardening.md).
 - **HuggingFace Space** ([live sandbox](https://huggingface.co/spaces/bansal1234/Hirefit)) —
   upload a sample, get a ranked shortlist.
 
@@ -271,7 +275,7 @@ Full technical explanation: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ```bash
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
-python -m pytest -q                                  # 105 tests incl. golden-output regression
+python -m pytest -q                                  # full suite incl. golden-output regression
 python scripts/validate_submission.py submission.csv
 ```
 

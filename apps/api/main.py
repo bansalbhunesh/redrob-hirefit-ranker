@@ -12,6 +12,8 @@ import time
 import shutil
 import gzip
 import io
+import threading
+from collections import defaultdict, deque
 from pathlib import Path
 from typing import Dict, List, Any
 from datetime import datetime
@@ -20,8 +22,8 @@ import uuid
 # Add src to python path so we can import redrob_ranker
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
 
-from fastapi import FastAPI, File, UploadFile, BackgroundTasks, HTTPException
-from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
+from fastapi import FastAPI, File, UploadFile, BackgroundTasks, HTTPException, Request
+from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -48,6 +50,9 @@ MAX_BATCH_CANDIDATES = _env_int("REDROB_MAX_BATCH_CANDIDATES", 5000)
 MAX_LIVE_UPLOAD_BYTES = _env_int("REDROB_MAX_LIVE_UPLOAD_BYTES", 2 * 1024 * 1024)
 MAX_BATCH_UPLOAD_BYTES = _env_int("REDROB_MAX_BATCH_UPLOAD_BYTES", 16 * 1024 * 1024)
 MAX_STORED_JOBS = _env_int("REDROB_MAX_STORED_JOBS", 20)
+MAX_ACTIVE_BATCH_JOBS = _env_int("REDROB_MAX_ACTIVE_BATCH_JOBS", 2)
+RATE_LIMIT_PER_MINUTE = _env_int("REDROB_RATE_LIMIT_PER_MINUTE", 120)
+RATE_LIMIT_WINDOW_SECONDS = _env_int("REDROB_RATE_LIMIT_WINDOW_SECONDS", 60)
 # Local dev plus the deployed dashboard (same-origin in production; listed so
 # preview hosts and the Render origin work without env overrides).
 _DEFAULT_ORIGINS = (
@@ -65,6 +70,31 @@ SECURITY_HEADERS = {
     "Referrer-Policy": "no-referrer",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
 }
+STARTED_AT = time.time()
+ALLOWED_UPLOAD_SUFFIXES = {
+    (".jsonl",),
+    (".json",),
+    (".gz",),
+    (".jsonl", ".gz"),
+}
+
+
+_metrics_lock = threading.Lock()
+_job_lock = threading.RLock()
+_rate_lock = threading.Lock()
+_rate_buckets: dict[str, deque[float]] = defaultdict(deque)
+_metrics: dict[str, Any] = {
+    "requests_total": 0,
+    "request_seconds_sum": 0.0,
+    "responses_by_status": defaultdict(int),
+    "requests_by_route": defaultdict(int),
+    "rate_limited_total": 0,
+    "live_rank_total": 0,
+    "live_rank_failures_total": 0,
+    "batch_jobs_total": 0,
+    "batch_jobs_completed_total": 0,
+    "batch_jobs_failed_total": 0,
+}
 
 
 # CORS is restricted to localhost by default; set REDROB_CORS_ORIGINS on public hosts.
@@ -77,11 +107,94 @@ app.add_middleware(
 )
 
 
+def _route_key(path: str) -> str:
+    if path.startswith("/api/stream/"):
+        return "/api/stream/{job_id}"
+    if path.startswith("/api/batch/"):
+        tail = path.removeprefix("/api/batch/").split("/")
+        if len(tail) >= 2 and tail[1] == "results":
+            return "/api/batch/{job_id}/results"
+        if len(tail) >= 2 and tail[1] == "download":
+            return "/api/batch/{job_id}/download"
+        return "/api/batch/{job_id}"
+    return path
+
+
+def _client_key(request: Request) -> str:
+    forwarded = request.headers.get("x-forwarded-for", "").split(",", 1)[0].strip()
+    if forwarded:
+        return forwarded
+    return request.client.host if request.client else "unknown"
+
+
+def _check_rate_limit(request: Request) -> int | None:
+    if RATE_LIMIT_PER_MINUTE <= 0 or request.method != "POST":
+        return None
+    if request.url.path not in {"/api/rank", "/api/batch"}:
+        return None
+
+    now = time.monotonic()
+    cutoff = now - max(RATE_LIMIT_WINDOW_SECONDS, 1)
+    key = f"{_client_key(request)}:{request.url.path}"
+    with _rate_lock:
+        bucket = _rate_buckets[key]
+        while bucket and bucket[0] < cutoff:
+            bucket.popleft()
+        if len(bucket) >= RATE_LIMIT_PER_MINUTE:
+            retry_after = max(1, int(bucket[0] + RATE_LIMIT_WINDOW_SECONDS - now))
+            _inc_metric("rate_limited_total")
+            return retry_after
+        bucket.append(now)
+    return None
+
+
+def _record_request(method: str, path: str, status_code: int, seconds: float) -> None:
+    route = _route_key(path)
+    with _metrics_lock:
+        _metrics["requests_total"] += 1
+        _metrics["request_seconds_sum"] += seconds
+        _metrics["responses_by_status"][str(status_code)] += 1
+        _metrics["requests_by_route"][f"{method} {route}"] += 1
+
+
+def _inc_metric(name: str, value: int = 1) -> None:
+    with _metrics_lock:
+        _metrics[name] += value
+
+
 @app.middleware("http")
-async def add_security_headers(request, call_next):
-    response = await call_next(request)
+async def add_operational_headers(request: Request, call_next):
+    request_id = request.headers.get("x-request-id", "").strip() or uuid.uuid4().hex[:12]
+    start = time.perf_counter()
+    retry_after = _check_rate_limit(request)
+    if retry_after is not None:
+        response = JSONResponse(
+            {"error": "Rate limit exceeded.", "retry_after_seconds": retry_after},
+            status_code=429,
+            headers={"Retry-After": str(retry_after)},
+        )
+    else:
+        try:
+            response = await call_next(request)
+        except Exception:
+            _record_request(request.method, request.url.path, 500, time.perf_counter() - start)
+            _LOG.exception("request failed request_id=%s path=%s", request_id, request.url.path)
+            raise
+
+    seconds = time.perf_counter() - start
+    _record_request(request.method, request.url.path, response.status_code, seconds)
+    response.headers.setdefault("X-Request-ID", request_id)
+    response.headers.setdefault("Server-Timing", f"app;dur={seconds * 1000:.1f}")
     for name, value in SECURITY_HEADERS.items():
         response.headers.setdefault(name, value)
+    _LOG.info(
+        "request method=%s path=%s status=%s duration_ms=%.1f request_id=%s",
+        request.method,
+        request.url.path,
+        response.status_code,
+        seconds * 1000,
+        request_id,
+    )
     return response
 
 # Setup Paths
@@ -188,6 +301,17 @@ def _safe_upload_name(filename: str | None) -> str:
     return safe_name or "candidates.jsonl"
 
 
+def _validate_upload_name(filename: str | None) -> str:
+    safe_name = _safe_upload_name(filename)
+    suffixes = tuple(s.lower() for s in Path(safe_name).suffixes)
+    if suffixes not in ALLOWED_UPLOAD_SUFFIXES:
+        raise HTTPException(
+            status_code=415,
+            detail="Upload must be .jsonl, .json, .jsonl.gz, or .gz.",
+        )
+    return safe_name
+
+
 def _uploaded_candidate_count(data: bytes, filename: str) -> int:
     """Count uploaded records before ranking so demo caps are explicit."""
     suffixes = [s.lower() for s in Path(filename).suffixes]
@@ -200,18 +324,60 @@ def _uploaded_candidate_count(data: bytes, filename: str) -> int:
             if not isinstance(parsed, list):
                 raise ValueError("JSON upload must be an array of candidates.")
             return len(parsed)
-        return sum(1 for line in data.splitlines() if line.strip())
+        text = data.decode("utf-8-sig")
+        return sum(1 for line in text.splitlines() if line.strip())
     except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
         raise HTTPException(status_code=422, detail=f"Could not parse upload: {exc}") from exc
 
 
+def _active_job_count() -> int:
+    with _job_lock:
+        return sum(1 for j in job_store.values() if j.get("status") in ("queued", "processing"))
+
+
+def _dashboard_present() -> bool:
+    return (STATIC_DIR / "index.html").exists() or (BASE_DIR.parent.parent / "index.html").exists()
+
+
+def _job_snapshot(job_id: str) -> dict | None:
+    with _job_lock:
+        job = job_store.get(job_id)
+        if not job:
+            return None
+        safe = {
+            "job_id": job_id,
+            "status": job.get("status"),
+            "processed": job.get("processed", 0),
+            "total": job.get("total", 0),
+            "percent": round(job.get("processed", 0) / max(job.get("total", 0), 1) * 100, 1),
+            "current_stage": job.get("current_stage"),
+            "started_at": job.get("started_at"),
+            "completed_at": job.get("completed_at"),
+            "processing_time_ms": job.get("processing_time_ms", 0),
+            "honeypots": job.get("honeypots", 0),
+            "honeypots_in_output": job.get("honeypots_in_output", 0),
+            "ranked_pool_count": job.get("ranked_pool_count", 0),
+            "bm25_backend": job.get("bm25_backend", "unknown"),
+        }
+        if job.get("status") == "failed":
+            safe["error"] = job.get("error", "Batch ranking failed.")
+        if job.get("status") == "complete":
+            safe["results_url"] = f"/api/batch/{job_id}/results"
+            safe["download_url"] = f"/api/batch/{job_id}/download"
+        return safe
+
+
 def prune_job_stores() -> None:
-    if len(job_store) <= MAX_STORED_JOBS:
-        return
-    oldest = sorted(job_store.items(), key=lambda item: item[1].get("started_at", ""))
-    for job_id, _ in oldest[: max(0, len(job_store) - MAX_STORED_JOBS)]:
-        job = job_store.pop(job_id, None)
-        results_store.pop(job_id, None)
+    with _job_lock:
+        if len(job_store) <= MAX_STORED_JOBS:
+            return
+        oldest = sorted(job_store.items(), key=lambda item: item[1].get("started_at", ""))
+        pruned = []
+        for job_id, _ in oldest[: max(0, len(job_store) - MAX_STORED_JOBS)]:
+            job = job_store.pop(job_id, None)
+            results_store.pop(job_id, None)
+            pruned.append((job_id, job))
+    for job_id, job in pruned:
         job_path = Path(job.get("file_path", "")).parent if job else JOB_DIR / job_id
         try:
             resolved_job_path = job_path.resolve()
@@ -283,7 +449,7 @@ async def rank_live(file: UploadFile = File(...)):
         start = time.perf_counter()
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
-            safe_name = _safe_upload_name(file.filename)
+            safe_name = _validate_upload_name(file.filename)
             in_path = base / safe_name
             out_path = base / "ranked_candidates.csv"
 
@@ -296,7 +462,8 @@ async def rank_live(file: UploadFile = File(...)):
                 )
             in_path.write_bytes(upload_bytes)
 
-            result = run_ranking(
+            result = await asyncio.to_thread(
+                run_ranking,
                 in_path,
                 out_path,
                 RankerConfig(
@@ -305,6 +472,7 @@ async def rank_live(file: UploadFile = File(...)):
                     max_candidates=MAX_LIVE_CANDIDATES,
                 ),
             )
+            _inc_metric("live_rank_total")
 
             candidates_json = []
             raw = result.raw_ranked or []
@@ -351,9 +519,11 @@ async def rank_live(file: UploadFile = File(...)):
     except HTTPException:
         raise
     except ValueError as e:
+        _inc_metric("live_rank_failures_total")
         # Malformed JSONL / failed submission validation — caller's input.
         raise HTTPException(status_code=422, detail=f"Could not rank upload: {e}") from e
     except Exception:
+        _inc_metric("live_rank_failures_total")
         # Never leak internals; details go to the server log only.
         _LOG.exception("live ranking failed")
         return JSONResponse({"error": "Internal ranking error.", "mode": "live"}, status_code=500)
@@ -363,8 +533,8 @@ async def rank_live(file: UploadFile = File(...)):
 async def batch_rank(file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
     """Batch Mode: Async processing for large files with SSE progress tracking."""
     prune_job_stores()
-    active_jobs = sum(1 for j in job_store.values() if j.get("status") in ("queued", "processing"))
-    if active_jobs >= 2:
+    active_jobs = _active_job_count()
+    if active_jobs >= MAX_ACTIVE_BATCH_JOBS:
         raise HTTPException(
             status_code=429,
             detail="Too many active batch jobs. Please try again later.",
@@ -373,40 +543,36 @@ async def batch_rank(file: UploadFile = File(...), background_tasks: BackgroundT
     job_dir = JOB_DIR / job_id
     job_dir.mkdir(parents=True, exist_ok=True)
 
-    safe_name = Path(file.filename or "candidates.jsonl").name
+    safe_name = _validate_upload_name(file.filename)
     in_path = job_dir / safe_name
     try:
-        in_path.write_bytes(await read_upload_limited(file, MAX_BATCH_UPLOAD_BYTES))
-
-        total_lines = 0
-        with open(in_path, "r", encoding="utf-8") as f:
-            for _ in f:
-                total_lines += 1
-                if total_lines > MAX_BATCH_CANDIDATES:
-                    raise HTTPException(
-                        status_code=413,
-                        detail=f"Batch demo is capped at {MAX_BATCH_CANDIDATES} candidates.",
-                    )
-    except UnicodeDecodeError as e:
-        shutil.rmtree(job_dir, ignore_errors=True)
-        raise HTTPException(status_code=422, detail="Upload is not UTF-8 JSONL.") from e
+        upload_bytes = await read_upload_limited(file, MAX_BATCH_UPLOAD_BYTES)
+        total_lines = _uploaded_candidate_count(upload_bytes, safe_name)
+        if total_lines > MAX_BATCH_CANDIDATES:
+            raise HTTPException(
+                status_code=413,
+                detail=f"Batch demo is capped at {MAX_BATCH_CANDIDATES} candidates.",
+            )
+        in_path.write_bytes(upload_bytes)
     except HTTPException:
         # Rejected upload: do not leave the partial job directory behind.
         shutil.rmtree(job_dir, ignore_errors=True)
         raise
 
-    job_store[job_id] = {
-        "status": "queued",
-        "processed": 0,
-        "total": total_lines,
-        "current_stage": "Load",
-        "started_at": datetime.now().isoformat(),
-        "file_path": str(in_path),
-        "output_path": str(job_dir / "ranked_candidates.csv"),
-        "processing_time_ms": 0,
-        "honeypots": 0,
-    }
-    results_store[job_id] = []
+    with _job_lock:
+        job_store[job_id] = {
+            "status": "queued",
+            "processed": 0,
+            "total": total_lines,
+            "current_stage": "Load",
+            "started_at": datetime.now().isoformat(),
+            "file_path": str(in_path),
+            "output_path": str(job_dir / "ranked_candidates.csv"),
+            "processing_time_ms": 0,
+            "honeypots": 0,
+        }
+        results_store[job_id] = []
+    _inc_metric("batch_jobs_total")
 
     if background_tasks:
         background_tasks.add_task(process_batch_job, job_id)
@@ -421,8 +587,9 @@ async def batch_rank(file: UploadFile = File(...), background_tasks: BackgroundT
 
 def process_batch_job(job_id: str):
     """Background worker that updates job_store as it processes."""
-    job = job_store[job_id]
-    job["status"] = "processing"
+    with _job_lock:
+        job = job_store[job_id]
+        job["status"] = "processing"
     start = time.perf_counter()
 
     try:
@@ -452,33 +619,40 @@ def process_batch_job(job_id: str):
                 reasoning,
                 max_score=max_score,
             )
-            results_store[job_id].append(payload)
-            job["processed"] = i + 1
-            job["current_stage"] = "Reasoning"
+            with _job_lock:
+                results_store[job_id].append(payload)
+                job["processed"] = i + 1
+                job["current_stage"] = "Reasoning"
 
-        job["honeypots"] = result.honeypots_detected
-        job["honeypots_in_output"] = result.honeypots_in_output
-        job["ranked_pool_count"] = result.ranked_pool_count
-        job["bm25_backend"] = result.bm25_backend
-        job["processing_time_ms"] = round((time.perf_counter() - start) * 1000)
-        job["status"] = "complete"
-        job["completed_at"] = datetime.now().isoformat()
+        with _job_lock:
+            job["honeypots"] = result.honeypots_detected
+            job["honeypots_in_output"] = result.honeypots_in_output
+            job["ranked_pool_count"] = result.ranked_pool_count
+            job["bm25_backend"] = result.bm25_backend
+            job["processing_time_ms"] = round((time.perf_counter() - start) * 1000)
+            job["status"] = "complete"
+            job["completed_at"] = datetime.now().isoformat()
+        _inc_metric("batch_jobs_completed_total")
 
     except Exception as e:
         _LOG.exception("batch ranking failed for job %s", job_id)
-        job["status"] = "failed"
-        job["error"] = "Batch ranking failed."
+        with _job_lock:
+            job["status"] = "failed"
+            job["error"] = "Batch ranking failed."
+            job["processing_time_ms"] = round((time.perf_counter() - start) * 1000)
+        _inc_metric("batch_jobs_failed_total")
 
 
 @app.get("/api/stream/{job_id}")
 async def stream_progress(job_id: str):
     """SSE endpoint for batch job progress streaming."""
-    if job_id not in job_store:
+    if _job_snapshot(job_id) is None:
         raise HTTPException(status_code=404, detail="Job not found")
 
     async def event_generator():
         while True:
-            job = job_store.get(job_id)
+            with _job_lock:
+                job = dict(job_store.get(job_id) or {})
             if not job:
                 # Job pruned mid-stream.
                 yield f"data: {json.dumps({'type': 'error', 'message': 'Job not found'})}\n\n"
@@ -521,9 +695,13 @@ async def stream_progress(job_id: str):
 @app.get("/api/batch/{job_id}/results")
 def get_batch_results(job_id: str):
     """Get completed batch job results."""
-    job = job_store.get(job_id)
-    if not job:
+    snapshot = _job_snapshot(job_id)
+    if not snapshot:
         return JSONResponse({"error": "Job not found"}, status_code=404)
+
+    with _job_lock:
+        job = dict(job_store[job_id])
+        candidates = list(results_store.get(job_id, []))
 
     if job["status"] != "complete":
         return JSONResponse({
@@ -532,8 +710,6 @@ def get_batch_results(job_id: str):
             "total": job["total"],
             "percent": round(job["processed"] / max(job["total"], 1) * 100, 1),
         })
-
-    candidates = results_store.get(job_id, [])
 
     pipeline_stages = [
         {"name": "Load", "status": "complete", "count": job["total"]},
@@ -562,6 +738,34 @@ def get_batch_results(job_id: str):
     })
 
 
+@app.get("/api/batch/{job_id}")
+def get_batch_status(job_id: str):
+    """Return sanitized batch job state without exposing filesystem paths."""
+    snapshot = _job_snapshot(job_id)
+    if not snapshot:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    return snapshot
+
+
+@app.get("/api/batch/{job_id}/download")
+def download_batch_csv(job_id: str):
+    """Download the completed CSV artifact for a batch job."""
+    snapshot = _job_snapshot(job_id)
+    if not snapshot:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    if snapshot["status"] != "complete":
+        return JSONResponse({"error": "Batch job is not complete.", "status": snapshot["status"]}, status_code=409)
+    with _job_lock:
+        out_path = Path(job_store[job_id]["output_path"])
+    if not out_path.exists():
+        return JSONResponse({"error": "Batch CSV artifact is missing."}, status_code=410)
+    return FileResponse(
+        out_path,
+        media_type="text/csv",
+        filename=f"{job_id}-ranked_candidates.csv",
+    )
+
+
 @app.get("/api/health")
 def health_check():
     """Health check: artifact load status + build identity, never raises."""
@@ -570,21 +774,115 @@ def health_check():
         "status": "ok",
         "version": "3.0.0",
         "git_sha": GIT_SHA,
+        "uptime_seconds": round(time.time() - STARTED_AT, 3),
         "modes": ["showpiece", "live", "batch"],
         "artifacts": {
             "precomputed_loaded": precomputed is not None,
             "precomputed_bytes": len(precomputed) if precomputed is not None else 0,
-            "dashboard_present": (STATIC_DIR / "index.html").exists()
-            or (BASE_DIR.parent.parent / "index.html").exists(),
+            "dashboard_present": _dashboard_present(),
         },
         "jobs": {
             "stored": len(job_store),
-            "active": sum(1 for j in job_store.values() if j.get("status") in ("queued", "processing")),
+            "active": _active_job_count(),
+            "max_active": MAX_ACTIVE_BATCH_JOBS,
         },
         "limits": {
             "live_candidates": MAX_LIVE_CANDIDATES,
             "batch_candidates": MAX_BATCH_CANDIDATES,
             "live_upload_mb": round(MAX_LIVE_UPLOAD_BYTES / (1024 * 1024), 2),
             "batch_upload_mb": round(MAX_BATCH_UPLOAD_BYTES / (1024 * 1024), 2),
+            "rate_limit_per_minute": RATE_LIMIT_PER_MINUTE,
         },
     }
+
+
+@app.get("/api/healthz")
+def healthz():
+    """Kubernetes/Render-style liveness alias."""
+    return health_check()
+
+
+@app.get("/api/readyz")
+def readiness_check():
+    """Readiness check: fail closed if the dashboard artifact is not deploy-ready."""
+    precomputed = _load_precomputed()
+    ready = precomputed is not None and _dashboard_present()
+    body = {
+        "status": "ready" if ready else "degraded",
+        "version": "3.0.0",
+        "git_sha": GIT_SHA,
+        "checks": {
+            "precomputed_loaded": precomputed is not None,
+            "dashboard_present": _dashboard_present(),
+            "job_store_available": True,
+        },
+    }
+    return JSONResponse(body, status_code=200 if ready else 503)
+
+
+def _metric_label(value: str) -> str:
+    return value.replace("\\", "\\\\").replace('"', '\\"')
+
+
+@app.get("/api/metrics")
+def metrics():
+    """Prometheus-style plain-text metrics for demo ops visibility."""
+    precomputed = _load_precomputed()
+    with _metrics_lock:
+        snapshot = {
+            "requests_total": _metrics["requests_total"],
+            "request_seconds_sum": _metrics["request_seconds_sum"],
+            "responses_by_status": dict(_metrics["responses_by_status"]),
+            "requests_by_route": dict(_metrics["requests_by_route"]),
+            "rate_limited_total": _metrics["rate_limited_total"],
+            "live_rank_total": _metrics["live_rank_total"],
+            "live_rank_failures_total": _metrics["live_rank_failures_total"],
+            "batch_jobs_total": _metrics["batch_jobs_total"],
+            "batch_jobs_completed_total": _metrics["batch_jobs_completed_total"],
+            "batch_jobs_failed_total": _metrics["batch_jobs_failed_total"],
+        }
+
+    lines = [
+        "# HELP redrob_api_requests_total Total HTTP requests.",
+        "# TYPE redrob_api_requests_total counter",
+        f"redrob_api_requests_total {snapshot['requests_total']}",
+        "# HELP redrob_api_request_seconds_sum Cumulative request latency.",
+        "# TYPE redrob_api_request_seconds_sum counter",
+        f"redrob_api_request_seconds_sum {snapshot['request_seconds_sum']:.6f}",
+        "# HELP redrob_api_uptime_seconds Process uptime.",
+        "# TYPE redrob_api_uptime_seconds gauge",
+        f"redrob_api_uptime_seconds {time.time() - STARTED_AT:.3f}",
+        "# HELP redrob_api_precomputed_loaded Whether the showpiece artifact is loaded.",
+        "# TYPE redrob_api_precomputed_loaded gauge",
+        f"redrob_api_precomputed_loaded {1 if precomputed is not None else 0}",
+        "# HELP redrob_api_jobs_stored In-memory batch jobs currently retained.",
+        "# TYPE redrob_api_jobs_stored gauge",
+        f"redrob_api_jobs_stored {len(job_store)}",
+        "# HELP redrob_api_jobs_active Active queued/processing batch jobs.",
+        "# TYPE redrob_api_jobs_active gauge",
+        f"redrob_api_jobs_active {_active_job_count()}",
+        "# HELP redrob_api_rate_limited_total Requests rejected by in-process rate limit.",
+        "# TYPE redrob_api_rate_limited_total counter",
+        f"redrob_api_rate_limited_total {snapshot['rate_limited_total']}",
+        "# HELP redrob_api_live_rank_total Successful live rank requests.",
+        "# TYPE redrob_api_live_rank_total counter",
+        f"redrob_api_live_rank_total {snapshot['live_rank_total']}",
+        "# HELP redrob_api_live_rank_failures_total Failed live rank requests.",
+        "# TYPE redrob_api_live_rank_failures_total counter",
+        f"redrob_api_live_rank_failures_total {snapshot['live_rank_failures_total']}",
+        "# HELP redrob_api_batch_jobs_total Accepted batch jobs.",
+        "# TYPE redrob_api_batch_jobs_total counter",
+        f"redrob_api_batch_jobs_total {snapshot['batch_jobs_total']}",
+        f"redrob_api_batch_jobs_completed_total {snapshot['batch_jobs_completed_total']}",
+        f"redrob_api_batch_jobs_failed_total {snapshot['batch_jobs_failed_total']}",
+    ]
+    for status, count in sorted(snapshot["responses_by_status"].items()):
+        lines.append(f'redrob_api_responses_total{{status="{_metric_label(status)}"}} {count}')
+    for route, count in sorted(snapshot["requests_by_route"].items()):
+        method, _, path = route.partition(" ")
+        lines.append(
+            'redrob_api_route_requests_total{'
+            f'method="{_metric_label(method)}",path="{_metric_label(path)}"'
+            f"}} {count}"
+        )
+    return PlainTextResponse("\n".join(lines) + "\n", media_type="text/plain; version=0.0.4")

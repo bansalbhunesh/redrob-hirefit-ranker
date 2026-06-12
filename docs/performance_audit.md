@@ -156,6 +156,19 @@ no streaming loader needed; not near the 8 GB half-budget mark.
 - Tests: `tests/test_api_endpoints.py` — 14 cases covering happy path, 404, 413, 422,
   429, 503 and no-leak-on-500 for every route. Suite: 86 → **100 passed**.
 
+### Lab follow-up: backend infra hardening
+
+Branch `codex/100-score-gap-lab` adds the operational surface that was still missing:
+
+- `/api/healthz`, `/api/readyz`, and `/api/metrics`.
+- `X-Request-ID` and `Server-Timing` on responses.
+- In-process rate limiting for `/api/rank` and `/api/batch`.
+- `asyncio.to_thread(...)` offload for live ranking so CPU work does not block
+  the FastAPI event loop.
+- Sanitized `/api/batch/{job_id}` status and `/api/batch/{job_id}/download` CSV export.
+- Explicit upload extension policy: `.jsonl`, `.json`, `.jsonl.gz`, `.gz`.
+- Backend infra runbook: `docs/backend_infra_hardening.md`.
+
 ## C — Frontend (timeboxed)
 
 - Blocking `alert()` error dialogs replaced with a dismissible dark-theme toast.
@@ -180,6 +193,6 @@ no streaming loader needed; not near the 8 GB half-budget mark.
   Unicode-bearing text.
 - **bm25s index internals** (~15s/100K): third-party numpy code; pinned dependency, no
   safe local optimization.
-- **async offload of run_ranking in /api/rank** (blocks the event loop for the demo's
-  ≤500-candidate uploads, ~1-2s): acceptable for a demo dashboard; noted for any
-  production deployment.
+- **Multi-worker job store**: still intentionally not done. The batch job store is
+  process-local; production multi-worker mode needs Redis/Postgres/object storage and
+  a deployed migration, not a last-minute in-memory disguise.
