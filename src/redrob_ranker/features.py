@@ -539,8 +539,48 @@ _AI_CURRENT_TITLE_PADDED = _pad([
 _GENERIC_ENGINEERING_TITLE_PADDED = _pad([
     "software engineer",
     "senior software engineer",
+    "staff software engineer",
+    "principal software engineer",
     "software developer",
     "full stack",
+    "fullstack",
+])
+_GENERIC_ANALYTICS_TITLE_PADDED = _pad([
+    "analyst",
+    "business analyst",
+    "reporting analyst",
+    "analytics consultant",
+])
+_DIRECT_BACKEND_TITLE_PADDED = _pad([
+    "senior backend engineer",
+    "staff backend engineer",
+    "principal backend engineer",
+    "backend engineer",
+    "platform engineer",
+    "api developer",
+])
+_DIRECT_DATA_TITLE_PADDED = _pad([
+    "senior data analyst",
+    "data analyst",
+    "business intelligence developer",
+    "bi developer",
+    "analytics engineer",
+    "data engineer",
+    "business analyst",
+    "reporting analyst",
+])
+_NON_DATA_CURRENT_TITLE_PADDED = _pad([
+    "software engineer",
+    "senior software engineer",
+    "software developer",
+    "backend engineer",
+    "full stack",
+    "fullstack",
+    "frontend engineer",
+    "devops engineer",
+    "cloud engineer",
+    "mobile developer",
+    "qa engineer",
 ])
 
 _BACKEND_API_PADDED = _pad([
@@ -562,9 +602,32 @@ _BACKEND_INFRA_PADDED = _pad([
     "docker", "kubernetes", "terraform", "aws", "azure", "gcp", "ci cd",
     "ci/cd", "jenkins", "github actions", "deployment", "deployments",
 ])
+_BACKEND_SURFACE_PADDED = _pad([
+    "api", "rest", "restful", "graphql", "grpc", "json", "xml", "http", "https",
+    "oauth", "jwt", "sso", "authentication", "authorization", "backend",
+    "server side", "server", "microservice", "microservices", "service",
+    "services", "endpoint", "endpoints", "middleware", "database", "db", "sql",
+    "nosql", "postgres", "postgresql", "mysql", "mongodb", "redis", "cassandra",
+    "dynamodb", "sqlite", "oracle", "mssql", "elasticsearch", "cache", "caching",
+    "memcached", "kafka", "rabbitmq", "sqs", "sns", "message queue", "event",
+    "pubsub", "pub sub", "docker", "kubernetes", "k8s", "ci cd", "ci/cd",
+    "jenkins", "gitlab", "github actions", "terraform", "ansible", "aws", "gcp",
+    "azure", "cloud", "ec2", "s3", "lambda", "java", "spring", "spring boot",
+    "hibernate", "jpa", "maven", "gradle", "python", "django", "flask",
+    "fastapi", "celery", "nodejs", "node js", "express", "nestjs", "typescript",
+    "go", "golang", "gin", "ruby", "rails", "php", "laravel", "symfony", "c#",
+    ".net", "asp.net", "git", "github", "bitbucket", "agile", "scrum", "jira",
+    "confluence", "unit test", "integration test", "tdd", "bdd", "swagger",
+    "postman", "openapi",
+])
 _FRONTEND_PADDED = _pad([
     "frontend", "front end", "react", "angular", "vue", "html", "css",
     "figma", "ui", "ux", "wordpress", "shopify",
+])
+_NON_BACKEND_ENGINEERING_PADDED = _pad([
+    "android", "ios", "react native", "flutter", "mobile", "qa", "quality assurance",
+    "test automation", "selenium", "manual testing", "frontend", "front end", "ui",
+    "ux", "wordpress", "shopify",
 ])
 
 _DATA_SQL_PADDED = _pad([
@@ -589,6 +652,28 @@ _DATA_IMPACT_PADDED = _pad([
     "automated reporting", "hours per week", "decision", "revenue",
     "cost reduction", "self service", "adoption",
 ])
+_DATA_SURFACE_PADDED = _pad([
+    "excel", "spreadsheet", "pivot", "vlookup", "macro", "report", "reports",
+    "reporting", "dashboard", "dashboards", "kpi", "kpis", "metrics", "okr",
+    "okrs", "north star", "business intelligence", "bi", "analytics",
+    "data analysis", "insight", "insights", "trend", "trends", "forecast",
+    "forecasting", "sql", "mysql", "postgresql", "oracle", "sql server", "tsql",
+    "plsql", "query", "queries", "join", "joins", "subquery", "group by",
+    "order by", "table", "tables", "schema", "database", "relational", "rdbms",
+    "data warehouse", "warehouse", "etl", "elt", "pipeline", "data pipeline",
+    "snowflake", "bigquery", "redshift", "azure synapse", "databricks", "dbt",
+    "airflow", "talend", "informatica", "ssis", "tableau", "power bi",
+    "powerbi", "looker", "qlik", "qlikview", "qliksense", "metabase",
+    "superset", "grafana", "kibana", "chart", "charts", "graph",
+    "visualization", "sap", "salesforce", "crm", "erp", "google analytics",
+    "ga4", "mixpanel", "amplitude", "segment", "looker studio", "data studio",
+    "r", "sas", "spss", "stata", "matlab", "python", "pandas", "numpy",
+    "statistics", "statistical", "regression", "correlation", "hypothesis",
+    "p value", "a b test", "ab test", "experiment", "experimental", "cohort",
+    "funnel", "retention", "stakeholder", "stakeholders", "executive",
+    "executives", "business user", "presentation", "slide", "deck",
+    "storytelling", "narrative",
+])
 
 # Tokenized (singles-set, multis-tuple) views of the hot signal lists.
 _IR_RANKING_SPLIT = _split_padded(_IR_RANKING_PADDED)
@@ -602,16 +687,23 @@ _MANAGEMENT_SPLIT = _split_padded(_MANAGEMENT_PADDED)
 _LLM_WRAPPER_SPLIT = _split_padded(_LLM_WRAPPER_PADDED)
 _AI_CURRENT_TITLE_SPLIT = _split_padded(_AI_CURRENT_TITLE_PADDED)
 _GENERIC_ENGINEERING_TITLE_SPLIT = _split_padded(_GENERIC_ENGINEERING_TITLE_PADDED)
+_GENERIC_ANALYTICS_TITLE_SPLIT = _split_padded(_GENERIC_ANALYTICS_TITLE_PADDED)
+_DIRECT_BACKEND_TITLE_SPLIT = _split_padded(_DIRECT_BACKEND_TITLE_PADDED)
+_DIRECT_DATA_TITLE_SPLIT = _split_padded(_DIRECT_DATA_TITLE_PADDED)
+_NON_DATA_CURRENT_TITLE_SPLIT = _split_padded(_NON_DATA_CURRENT_TITLE_PADDED)
 _BACKEND_API_SPLIT = _split_padded(_BACKEND_API_PADDED)
 _BACKEND_DB_SPLIT = _split_padded(_BACKEND_DB_PADDED)
 _BACKEND_SCALE_SPLIT = _split_padded(_BACKEND_SCALE_PADDED)
 _BACKEND_INFRA_SPLIT = _split_padded(_BACKEND_INFRA_PADDED)
+_BACKEND_SURFACE_SPLIT = _split_padded(_BACKEND_SURFACE_PADDED)
 _FRONTEND_SPLIT = _split_padded(_FRONTEND_PADDED)
+_NON_BACKEND_ENGINEERING_SPLIT = _split_padded(_NON_BACKEND_ENGINEERING_PADDED)
 _DATA_SQL_SPLIT = _split_padded(_DATA_SQL_PADDED)
 _DATA_WAREHOUSE_SPLIT = _split_padded(_DATA_WAREHOUSE_PADDED)
 _DATA_VIZ_SPLIT = _split_padded(_DATA_VIZ_PADDED)
 _DATA_ETL_SPLIT = _split_padded(_DATA_ETL_PADDED)
 _DATA_IMPACT_SPLIT = _split_padded(_DATA_IMPACT_PADDED)
+_DATA_SURFACE_SPLIT = _split_padded(_DATA_SURFACE_PADDED)
 
 
 def _category_depth(counts: tuple[int, ...], thresholds: tuple[float, ...]) -> float:
@@ -780,6 +872,19 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     # text instead of only generic AI/retrieval signals.
     if config is not None and not _is_default_jd(config):
         groups = {group for group, _ in getattr(config, "must_have_skills", ())}
+        title_family_blob = " ".join(
+            _norm(title) for title, _ in getattr(config, "target_title_weights", ())
+        )
+        primary_backend_role = (
+            "senior backend engineer" in title_family_blob
+            or "staff backend engineer" in title_family_blob
+            or "backend engineer" in title_family_blob
+        )
+        primary_data_role = (
+            "senior data analyst" in title_family_blob
+            or "business intelligence developer" in title_family_blob
+            or "bi developer" in title_family_blob
+        )
         role_evidence_hits = _count_tokenized(m.split_relevant, tokens_career, safe_career)
         if role_evidence_hits:
             values["ir_ranking_experience"] = max(
@@ -802,34 +907,65 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
         if role_months:
             values["ml_ai_tenure_score"] = max(values["ml_ai_tenure_score"], clamp(role_months / 60.0))
 
-        if "software_backend" in groups:
+        current_tokens = set(current_title.split(" "))
+        safe_current = f" {current_title} "
+
+        if "software_backend" in groups and not primary_data_role:
+            direct_backend_title = _has_tokenized(_DIRECT_BACKEND_TITLE_SPLIT, current_tokens, safe_current)
             api_hits = _count_tokenized(_BACKEND_API_SPLIT, tokens_full, safe_full)
             db_hits = _count_tokenized(_BACKEND_DB_SPLIT, tokens_full, safe_full)
             scale_hits = _count_tokenized(_BACKEND_SCALE_SPLIT, tokens_full, safe_full)
             infra_hits = _count_tokenized(_BACKEND_INFRA_SPLIT, tokens_full, safe_full)
+            surface_hits = _count_tokenized(_BACKEND_SURFACE_SPLIT, tokens_full, safe_full)
             backend_depth = _category_depth(
                 (api_hits, db_hits, scale_hits, infra_hits),
                 (3.0, 3.0, 2.0, 3.0),
             )
+            backend_surface = clamp(surface_hits / 15.0)
+            backend_composite = clamp(0.60 * backend_surface + 0.40 * backend_depth)
             api_score = clamp(api_hits / 3.0)
             db_score = clamp(db_hits / 3.0)
             scale_score = clamp(scale_hits / 2.0)
             infra_score = clamp(infra_hits / 3.0)
-            values["ir_ranking_experience"] = max(values["ir_ranking_experience"], backend_depth)
+            values["jd_keyword_coverage_score"] = max(values["jd_keyword_coverage_score"], backend_surface)
+            values["ir_ranking_experience"] = max(values["ir_ranking_experience"], backend_composite)
             values["production_evidence"] = max(
                 values["production_evidence"],
-                clamp(0.35 * api_score + 0.30 * db_score + 0.20 * scale_score + 0.15 * infra_score),
+                clamp(
+                    0.26 * api_score
+                    + 0.22 * db_score
+                    + 0.16 * scale_score
+                    + 0.12 * infra_score
+                    + 0.24 * backend_surface
+                ),
             )
-            values["scale_signal"] = max(values["scale_signal"], scale_score)
-            values["code_writing_recent"] = max(values["code_writing_recent"], clamp(0.65 * api_score + 0.35 * db_score))
+            values["scale_signal"] = max(values["scale_signal"], clamp(max(scale_score, 0.55 * backend_surface)))
+            values["code_writing_recent"] = max(
+                values["code_writing_recent"],
+                clamp(0.50 * api_score + 0.30 * db_score + 0.20 * backend_surface),
+            )
 
-            current_tokens = set(current_title.split(" "))
-            safe_current = f" {current_title} "
+            if primary_backend_role and direct_backend_title:
+                direct_title_score = 0.98
+                values["title_match_score"] = max(values["title_match_score"], direct_title_score)
+                values["career_trajectory_score"] = max(
+                    values["career_trajectory_score"],
+                    clamp(0.75 * direct_title_score + 0.25 * values["product_company_ratio"] - title_hop_penalty),
+                )
+
             generic_engineering_title = _has_tokenized(
                 _GENERIC_ENGINEERING_TITLE_SPLIT, current_tokens, safe_current
             )
             frontend_hits = _count_tokenized(_FRONTEND_SPLIT, tokens_full, safe_full)
-            if generic_engineering_title and backend_depth >= 0.52 and (api_hits + db_hits) > frontend_hits + 2:
+            non_backend_hits = _count_tokenized(_NON_BACKEND_ENGINEERING_SPLIT, tokens_full, safe_full)
+            backend_term_advantage = (api_hits + db_hits + infra_hits) > (frontend_hits + non_backend_hits + 2)
+            if (
+                primary_backend_role
+                and
+                generic_engineering_title
+                and backend_term_advantage
+                and (backend_surface > 0.40 or backend_depth > 0.30)
+            ):
                 inferred_title_score = 0.92
                 values["title_match_score"] = max(values["title_match_score"], inferred_title_score)
                 values["career_trajectory_score"] = max(
@@ -838,20 +974,41 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
                 )
 
         if "data_bi" in groups:
+            direct_data_title = _has_tokenized(_DIRECT_DATA_TITLE_SPLIT, current_tokens, safe_current)
+            non_data_current_title = _has_tokenized(
+                _NON_DATA_CURRENT_TITLE_SPLIT, current_tokens, safe_current
+            )
             sql_hits = _count_tokenized(_DATA_SQL_SPLIT, tokens_full, safe_full)
             warehouse_hits = _count_tokenized(_DATA_WAREHOUSE_SPLIT, tokens_full, safe_full)
             viz_hits = _count_tokenized(_DATA_VIZ_SPLIT, tokens_full, safe_full)
             etl_hits = _count_tokenized(_DATA_ETL_SPLIT, tokens_full, safe_full)
             impact_hits = _count_tokenized(_DATA_IMPACT_SPLIT, tokens_full, safe_full)
+            data_surface_hits = _count_tokenized(_DATA_SURFACE_SPLIT, tokens_full, safe_full)
             data_depth = _category_depth(
                 (sql_hits, warehouse_hits, viz_hits, etl_hits, impact_hits),
                 (2.0, 2.0, 2.0, 2.0, 2.0),
             )
+            data_surface = clamp(data_surface_hits / 12.0)
             sql_score = clamp(sql_hits / 2.0)
             warehouse_score = clamp(warehouse_hits / 2.0)
             viz_score = clamp(viz_hits / 2.0)
             etl_score = clamp(etl_hits / 2.0)
             impact_score = clamp(impact_hits / 2.0)
+            if primary_data_role and direct_data_title:
+                direct_title_score = 0.98
+                values["title_match_score"] = max(values["title_match_score"], direct_title_score)
+                values["career_trajectory_score"] = max(
+                    values["career_trajectory_score"],
+                    clamp(0.75 * direct_title_score + 0.25 * values["product_company_ratio"] - title_hop_penalty),
+                )
+                values["jd_keyword_coverage_score"] = max(values["jd_keyword_coverage_score"], data_surface)
+            elif primary_data_role and non_data_current_title and values["title_match_score"] > 0.82:
+                values["title_match_score"] = 0.82
+                values["career_trajectory_score"] = min(
+                    values["career_trajectory_score"],
+                    clamp(0.75 * values["title_match_score"] + 0.25 * values["product_company_ratio"] - title_hop_penalty),
+                )
+
             values["ir_ranking_experience"] = max(values["ir_ranking_experience"], data_depth)
             values["production_evidence"] = max(
                 values["production_evidence"],
@@ -864,6 +1021,22 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
                 ),
             )
             values["scale_signal"] = max(values["scale_signal"], impact_score)
+            generic_analytics_title = _has_tokenized(
+                _GENERIC_ANALYTICS_TITLE_SPLIT, current_tokens, safe_current
+            )
+            if (
+                primary_data_role
+                and
+                not non_data_current_title
+                and generic_analytics_title
+                and (data_surface > 0.50 or data_depth > 0.30)
+            ):
+                inferred_title_score = 0.90
+                values["title_match_score"] = max(values["title_match_score"], inferred_title_score)
+                values["career_trajectory_score"] = max(
+                    values["career_trajectory_score"],
+                    clamp(0.75 * inferred_title_score + 0.25 * values["product_company_ratio"] - title_hop_penalty),
+                )
     values["open_source_signal"] = clamp(_count_tokenized(_OPEN_SOURCE_SPLIT, tokens_full, safe_full) / 3.0)
 
     management_score = _count_tokenized(_MANAGEMENT_SPLIT, tokens_career, safe_career)
