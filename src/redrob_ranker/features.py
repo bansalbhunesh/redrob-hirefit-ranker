@@ -244,7 +244,7 @@ class JDMatchers:
     __slots__ = (
         "jd", "weights", "normalized_must", "normalized_nice",
         "padded_must", "padded_nice", "split_must", "split_nice",
-        "relevant_padded", "core_padded",
+        "relevant_padded", "split_relevant", "core_padded",
         "title_padded", "locations_padded", "yoe_target",
         "_relevant_name_cache",
     )
@@ -269,6 +269,7 @@ class JDMatchers:
             for aliases in list(self.normalized_must.values()) + list(self.normalized_nice.values())
             for alias in aliases
         )
+        self.split_relevant = _split_padded(self.relevant_padded)
         self.core_padded = _pad(
             alias for aliases in self.normalized_must.values() for alias in aliases
         )
@@ -572,6 +573,9 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
             terms, tokens_full, safe_full, aliases, m.split_must[group]
         )
     values["core_skill_match"] = clamp(core_score)
+    values["jd_keyword_coverage_score"] = clamp(
+        _count_tokenized(m.split_relevant, tokens_full, safe_full) / 12.0
+    )
 
     nice_hits = [
         _alias_match(terms, tokens_full, safe_full, aliases, m.split_nice[group])
@@ -631,6 +635,7 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     title_text = " ".join(_norm(j.get("title")) for j in career)
     current_title = _norm(profile.get("current_title"))
     title_score = _title_score(candidate, m)
+    values["title_match_score"] = title_score
     values["senior_title_held"] = 1.0 if _has_boundary(_SENIOR_TITLES_PADDED, f"{current_title} {title_text}") and title_score > 0.55 else 0.0
 
     completed_tenures = [
@@ -904,14 +909,75 @@ def compute_disqualifier_multiplier(flags: list[str], production_evidence: float
 SEMANTIC_WEIGHT = 0.10
 
 
+def _is_default_jd(config) -> bool:
+    if config is None:
+        return True
+    from redrob_ranker.jd_compiler import DEFAULT_COMPILED_JD
+
+    return config == DEFAULT_COMPILED_JD
+
+
+def _alternate_jd_weights(config) -> dict[str, float]:
+    """Feature weights for compiled non-challenge JDs.
+
+    The default challenge JD keeps BASE_FEATURE_WEIGHTS exactly. Alternate JDs
+    need more mass on compiled title/core-skill/BM25 evidence and less on
+    challenge-specific AI tenure/retrieval features.
+    """
+    groups = {group for group, _ in getattr(config, "must_have_skills", ())}
+    weights = {
+        "bm25_score": 0.24,
+        "core_skill_match": 0.20,
+        "jd_keyword_coverage_score": 0.12,
+        "nice_skill_match": 0.04,
+        "skill_depth_score": 0.08,
+        "endorsement_trust": 0.02,
+        "assessment_score_avg": 0.02,
+        "github_signal": 0.02,
+        "product_company_ratio": 0.04,
+        "ir_ranking_experience": 0.02,
+        "production_evidence": 0.08,
+        "title_match_score": 0.22,
+        "senior_title_held": 0.04,
+        "career_trajectory_score": 0.06,
+        "scale_signal": 0.03,
+        "code_writing_recent": 0.05,
+        "yoe_fit_score": 0.08,
+        "education_score": 0.02,
+        "ml_ai_tenure_score": 0.01,
+        "open_source_signal": 0.01,
+        "location_score": 0.04,
+        "relocation_willing": 0.01,
+        "notice_period_score": 0.01,
+    }
+    if "ranking_information_retrieval" in groups:
+        weights["ir_ranking_experience"] = 0.10
+        weights["bm25_score"] = 0.16
+        weights["code_writing_recent"] = 0.04
+    if groups & {"embeddings_retrieval", "vector_database", "llm_production"}:
+        weights["ml_ai_tenure_score"] = 0.04
+        weights["product_company_ratio"] = 0.07
+    if groups & {"software_backend", "cloud_devops", "data_bi"}:
+        weights["bm25_score"] = 0.20
+        weights["core_skill_match"] = 0.10
+        weights["jd_keyword_coverage_score"] = 0.30
+        weights["title_match_score"] = 0.24
+        weights["senior_title_held"] = 0.04
+        weights["career_trajectory_score"] = 0.04
+        weights["product_company_ratio"] = 0.02
+    return weights
+
+
 def final_score(
     features: CandidateFeatures,
     retrieval_score: float = 0.0,
     semantic_score: float | None = None,
+    config=None,
 ) -> float:
-    weighted_sum = BASE_FEATURE_WEIGHTS["bm25_score"] * clamp(retrieval_score)
-    total_weight = BASE_FEATURE_WEIGHTS["bm25_score"]
-    for name, weight in BASE_FEATURE_WEIGHTS.items():
+    active_weights = BASE_FEATURE_WEIGHTS if _is_default_jd(config) else _alternate_jd_weights(config)
+    total_weight = active_weights["bm25_score"]
+    weighted_sum = active_weights["bm25_score"] * clamp(retrieval_score)
+    for name, weight in active_weights.items():
         if name == "bm25_score":
             continue
         weighted_sum += weight * features.values.get(name, 0.0)

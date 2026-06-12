@@ -98,6 +98,7 @@ SEMANTIC_CONCEPTS = {
 
 FEATURE_NAMES = [
     "core_skill_match",
+    "jd_keyword_coverage_score",
     "nice_skill_match",
     "skill_depth_score",
     "endorsement_trust",
@@ -109,6 +110,7 @@ FEATURE_NAMES = [
     "consulting_only_flag",
     "ir_ranking_experience",
     "production_evidence",
+    "title_match_score",
     "senior_title_held",
     "career_trajectory_score",
     "scale_signal",

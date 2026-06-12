@@ -107,6 +107,15 @@ GROUP_TRIGGERS: dict[str, tuple[str, ...]] = {
     "python_ml_engineering": ("python",),
     "eval_frameworks": ("ndcg", "mrr", "map", "a/b test", "evaluation framework",
                         "offline benchmark", "eval framework"),
+    "software_backend": ("software development", "software engineer", "software developer",
+                         "backend", "back-end", "rest api", "restful", "microservice",
+                         "java", "javascript", "typescript", "node.js", "nodejs", "react",
+                         "c#", ".net", "spring boot", "object-oriented"),
+    "data_bi": ("business intelligence", "bi developer", "data analyst", "data engineer",
+                "data warehouse", "etl", "sql", "power bi", "tableau", "snowflake",
+                "looker", "analytics engineer"),
+    "cloud_devops": ("devops", "site reliability", "sre", "aws", "azure", "gcp",
+                     "kubernetes", "docker", "terraform", "ci/cd", "cloud platform"),
 }
 
 # Trigger phrases for nice-to-have groups.
@@ -123,12 +132,72 @@ NICE_TRIGGERS: dict[str, tuple[str, ...]] = {
 # JD activates a subset, weights are taken from this table and renormalized
 # to sum to 1.0 over the active groups.
 GROUP_WEIGHT_TABLE: dict[str, float] = dict(C.MUST_HAVE_WEIGHTS)
+GROUP_WEIGHT_TABLE.update({
+    "software_backend": 0.30,
+    "data_bi": 0.30,
+    "cloud_devops": 0.25,
+})
 
 # Alias expansions per group: the same curated dictionaries the constants
 # use. (Single source of truth — importing keeps lexicon and constants from
 # drifting apart.)
-GROUP_ALIASES: dict[str, list[str]] = dict(C.MUST_HAVE_SKILLS)
+EXTRA_GROUP_ALIASES: dict[str, list[str]] = {
+    "software_backend": [
+        "software engineering",
+        "software development",
+        "backend",
+        "back-end",
+        "rest api",
+        "restful api",
+        "microservices",
+        "distributed systems",
+        "java",
+        "spring boot",
+        "javascript",
+        "typescript",
+        "node.js",
+        "nodejs",
+        "react",
+        "c#",
+        ".net",
+        "object-oriented",
+        "system design",
+    ],
+    "data_bi": [
+        "business intelligence",
+        "bi developer",
+        "data analyst",
+        "data analytics",
+        "data warehouse",
+        "etl",
+        "sql",
+        "power bi",
+        "tableau",
+        "looker",
+        "snowflake",
+        "redshift",
+        "analytics engineering",
+        "dashboard",
+    ],
+    "cloud_devops": [
+        "devops",
+        "site reliability",
+        "sre",
+        "aws",
+        "azure",
+        "gcp",
+        "kubernetes",
+        "docker",
+        "terraform",
+        "ci/cd",
+        "jenkins",
+        "cloud platform",
+        "infrastructure as code",
+    ],
+}
+GROUP_ALIASES: dict[str, list[str]] = {**C.MUST_HAVE_SKILLS, **EXTRA_GROUP_ALIASES}
 NICE_ALIASES: dict[str, list[str]] = dict(C.NICE_TO_HAVE_SKILLS)
+CANONICAL_MUST_GROUPS = frozenset(C.MUST_HAVE_SKILLS)
 
 # Role families: canonical role detected in the JD header -> related-title
 # weight table. The ai/ml family is the hand-tuned challenge table.
@@ -148,12 +217,67 @@ ROLE_FAMILIES: dict[str, dict[str, float]] = {
         "frontend engineer": 0.2,
         "mobile developer": 0.18,
     },
+    "search_relevance_engineer": {
+        "search relevance engineer": 1.0,
+        "relevance engineer": 0.98,
+        "search engineer": 0.96,
+        "information retrieval engineer": 0.94,
+        "machine learning engineer": 0.82,
+        "data scientist": 0.76,
+        "software engineer": 0.58,
+        "backend engineer": 0.42,
+    },
+    "software_engineer": {
+        "senior software engineer": 1.0,
+        "software engineer": 0.96,
+        "software developer": 0.94,
+        "full stack developer": 0.88,
+        "full stack engineer": 0.88,
+        "backend engineer": 0.86,
+        "java developer": 0.82,
+        "frontend engineer": 0.72,
+        "web developer": 0.70,
+        "application developer": 0.68,
+        "data analyst": 0.18,
+        "business analyst": 0.16,
+    },
+    "data_bi_analyst": {
+        "senior data analyst": 1.0,
+        "business intelligence developer": 1.0,
+        "bi developer": 0.96,
+        "data analyst": 0.94,
+        "analytics engineer": 0.90,
+        "data engineer": 0.82,
+        "business analyst": 0.78,
+        "database developer": 0.76,
+        "software engineer": 0.38,
+        "backend engineer": 0.34,
+    },
+    "devops_cloud_engineer": {
+        "senior devops engineer": 1.0,
+        "devops engineer": 0.96,
+        "site reliability engineer": 0.94,
+        "sre": 0.94,
+        "cloud engineer": 0.90,
+        "platform engineer": 0.88,
+        "infrastructure engineer": 0.84,
+        "backend engineer": 0.52,
+        "software engineer": 0.42,
+    },
 }
 
 ROLE_FAMILY_TRIGGERS: dict[str, tuple[str, ...]] = {
     "ai_ml_engineer": ("ai engineer", "ml engineer", "machine learning engineer",
                        "applied scientist", "intelligence layer"),
     "backend_engineer": ("backend engineer", "back-end engineer", "platform engineer"),
+    "search_relevance_engineer": ("search relevance engineer", "search engineer",
+                                  "relevance engineer", "information retrieval engineer"),
+    "software_engineer": ("software engineer", "software developer", "full stack developer",
+                          "java developer", "frontend engineer", "web developer"),
+    "data_bi_analyst": ("business intelligence", "bi developer", "data analyst",
+                        "analytics engineer", "data engineer"),
+    "devops_cloud_engineer": ("devops engineer", "site reliability engineer", "sre",
+                              "cloud engineer", "infrastructure engineer"),
 }
 
 # "Tier-1 Indian cities" expansion used when the JD says so.
@@ -242,10 +366,10 @@ def compile_jd(text: str, source: str = "jd-text") -> CompiledJD:
     # 6. BM25 query. When the detected structure covers the full canonical
     #    concept set (the challenge JD case), emit the canonical query
     #    verbatim; otherwise assemble a query from the detected pieces.
-    if set(must_groups) == set(GROUP_ALIASES) and family == "ai_ml_engineer":
+    if set(must_groups) == set(CANONICAL_MUST_GROUPS) and family == "ai_ml_engineer":
         query = CANONICAL_QUERY
     else:
-        top_aliases = [a for g in must_groups for a in GROUP_ALIASES.get(g, [])[:4]]
+        top_aliases = [a for g in must_groups for a in GROUP_ALIASES.get(g, [])[:10]]
         title_terms = list(titles)[:6]
         query = " ".join(["senior"] + title_terms + top_aliases + ["production", "shipped", "scale"])
 

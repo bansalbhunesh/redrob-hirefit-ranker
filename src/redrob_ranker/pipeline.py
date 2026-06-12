@@ -78,7 +78,7 @@ def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
     """
     candidate, retrieval_score, semantic_score = args
     features = compute_features(candidate, config=_WORKER_JD)
-    score = final_score(features, retrieval_score, semantic_score)
+    score = final_score(features, retrieval_score, semantic_score, config=_WORKER_JD)
     features.total = score
     return features, score
 

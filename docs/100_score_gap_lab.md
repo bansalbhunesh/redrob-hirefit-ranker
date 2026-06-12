@@ -181,3 +181,21 @@ Result:
 - Calibration transparency: `docs/calibration_transparency_lab.md` documents
   the `--no-calibration` audit mode and real 100K diff against the submitted
   output.
+
+## External / Multi-JD Evidence Added
+
+- External public pairwise fit eval:
+  `docs/external_blind_pairwise_eval.md` scores the Hugging Face
+  `cnamuangtoun/resume-job-description-fit` test split. Current result is
+  diagnostic, not a trophy: HireFit AUC 0.5458 vs keyword-overlap 0.5549 on
+  1,317 supported technical rows. This does **not** close the official hidden
+  label gap; it proves the harness and shows where transfer is still thin.
+- Multi-JD Redrob-pool transfer eval:
+  `docs/multi_jd_generalization_eval.md` scores 20,000 candidates across five
+  technical JDs with independent raw-field role rubrics. Mean composite is
+  0.6920 vs keyword baseline 0.6793. The win is uneven: AI/search are strong,
+  data is competitive, backend/devops still trail the keyword oracle.
+- Compiler/scoring expansion:
+  alternate technical JDs now get broader role families, expanded compiled
+  queries, `title_match_score`, `jd_keyword_coverage_score`, and alternate-JD
+  weights. The bundled challenge JD remains golden-gated and byte-identical.
