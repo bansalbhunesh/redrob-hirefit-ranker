@@ -36,7 +36,7 @@ STOPWORDS = {
 }
 
 def tokenize(text: str) -> list[str]:
-    lowered = text.lower()
+    lowered = text if text.islower() else text.lower()
     tokens = [t for t in TOKEN_RE.findall(lowered) if t not in STOPWORDS]
     for phrase in LOWERED_IMPORTANT_PHRASES:
         if phrase in lowered:
@@ -49,8 +49,7 @@ def join_nonempty(parts: Iterable[object], sep: str = " ") -> str:
     return sep.join(part for part in normalized if part)
 
 
-def semantic_concept_markers(text: str) -> list[str]:
-    lowered = lower(text)
+def semantic_concept_markers(lowered: str) -> list[str]:
     markers: list[str] = []
     for concept, aliases in LOWERED_SEMANTIC_CONCEPTS.items():
         if any(alias in lowered for alias in aliases):
@@ -126,7 +125,8 @@ def candidate_text(candidate: dict) -> str:
         )
     )
     rendered = "\n".join(s for s in sections if s)
-    markers = semantic_concept_markers(rendered)
+    lowered = rendered.lower()
+    markers = semantic_concept_markers(lowered)
     if markers:
         rendered = f"{rendered}\n{' '.join(markers)}"
     return rendered

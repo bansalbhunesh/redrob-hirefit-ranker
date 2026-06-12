@@ -11,7 +11,7 @@ import asyncio
 import time
 import shutil
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 from datetime import datetime
 import uuid
 
@@ -83,6 +83,8 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 # ── In-memory job store for batch processing ──
 # NOTE: stores are per-process. Run uvicorn with workers=1 (the default); more
 # workers would split jobs/SSE streams across processes and break both.
+# For multi-worker production, replace these dictionaries with Redis or another
+# shared job store.
 job_store: Dict[str, Dict[str, Any]] = {}
 results_store: Dict[str, List[Dict]] = {}
 
@@ -194,8 +196,11 @@ def index():
     """Serve the single-file HTML dashboard."""
     index_file = STATIC_DIR / "index.html"
     if not index_file.exists():
+        root_index = BASE_DIR.parent.parent / "index.html"
+        if root_index.exists():
+            return FileResponse(root_index)
         return JSONResponse(
-            {"error": "index.html not found in static folder. Run the setup script."},
+            {"error": "index.html not found in static folder or repository root. Run the setup script."},
             status_code=503,
         )
     return FileResponse(index_file)
@@ -505,7 +510,8 @@ def health_check():
         "artifacts": {
             "precomputed_loaded": precomputed is not None,
             "precomputed_bytes": len(precomputed) if precomputed is not None else 0,
-            "dashboard_present": (STATIC_DIR / "index.html").exists(),
+            "dashboard_present": (STATIC_DIR / "index.html").exists()
+            or (BASE_DIR.parent.parent / "index.html").exists(),
         },
         "jobs": {
             "stored": len(job_store),

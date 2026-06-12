@@ -8,7 +8,6 @@ import argparse
 import csv
 import json
 import os
-from pathlib import Path
 from datetime import datetime
 
 
@@ -273,8 +272,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     .metric-card .change { font-size: 12px; font-weight: 600; margin-top: 8px; }
     .metric-card .change.positive { color: var(--accent-green); }
     .metric-card .change.negative { color: var(--accent-red); }
-    .metric-card.glow-cyan { box-shadow: 0 0 30px var(--glow-cyan); }
-    .metric-card.glow-purple { box-shadow: 0 0 30px var(--glow-purple); }
+    .metric-card.glow-cyan { box-shadow: 0 0 30px var(--glow-cyan); animation: pulseCyan 4s infinite ease-in-out; }
+    .metric-card.glow-purple { box-shadow: 0 0 30px var(--glow-purple); animation: pulsePurple 4s infinite ease-in-out reverse; }
+    @keyframes pulseCyan { 0%, 100% { box-shadow: 0 0 15px var(--glow-cyan); } 50% { box-shadow: 0 0 35px var(--glow-cyan); } }
+    @keyframes pulsePurple { 0%, 100% { box-shadow: 0 0 15px var(--glow-purple); } 50% { box-shadow: 0 0 35px var(--glow-purple); } }
 
     .pipeline {
       display: flex; align-items: center; gap: 8px; padding: 16px;
@@ -425,8 +426,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     .honeypot-toggle { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: var(--radius-sm); background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-secondary); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); margin-bottom: 16px; }
     .honeypot-toggle:hover { border-color: var(--accent-red); color: var(--accent-red); }
     .honeypot-toggle.active { background: rgba(248, 113, 113, 0.1); border-color: var(--accent-red); color: var(--accent-red); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-in { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn { 0% { opacity: 0; transform: translateY(20px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+    .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
     @media (max-width: 1100px) { .detail-panel { position: fixed; right: -400px; top: 0; bottom: 0; width: 380px; z-index: 200; transition: right 0.3s ease; } .detail-panel.open { right: 0; } .close-btn { display: block; } }
     .close-btn { display: none; position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
     ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: var(--bg-deep); } ::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
@@ -654,7 +655,7 @@ def main():
         f.write(html_out)
 
     file_size = os.path.getsize(args.out)
-    print(f"✅ Done! {args.out} ({file_size:,} bytes)")
+    print(f"Done! {args.out} ({file_size:,} bytes)")
     print(f"   Open {args.out} in your browser. Zero dependencies, fully offline.")
 
 

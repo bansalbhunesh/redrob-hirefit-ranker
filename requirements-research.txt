@@ -1,0 +1,8 @@
+# Optional dependencies for research, deck, and evaluation scripts.
+# The core deterministic ranker does not import these at runtime.
+python-pptx>=0.6.23
+openai>=1.14.0
+xgboost>=2.0.3
+scikit-learn>=1.4.1
+model2vec>=0.2.0
+torch>=2.0.0

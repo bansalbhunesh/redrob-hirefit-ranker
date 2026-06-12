@@ -6,7 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![100K Runtime](https://img.shields.io/badge/100K_Runtime-80s_cloud_·_~125s_local_Docker-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-127_passing-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-128_passing-brightgreen.svg)](#)
 
 ### Try it live — no install
 
@@ -27,7 +27,7 @@
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
 | Top-10 quality — **dev proxy** (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
 | Format validator | **pass** (incl. candidate-pool membership) | Stage-1 gate |
-| Tests | **127 passing** (incl. golden-output regression + API endpoint suite) | — |
+| Tests | **128 passing** (incl. golden-output regression + API endpoint suite) | — |
 
 > **Metric provenance:** every ranking-quality number above is a *development
 > proxy* — independent heuristic + LLM-judge labels scored on dev samples.
@@ -72,6 +72,23 @@ per-candidate reasoning drawn only from facts in the profile.
   availability hedge that only pays if the labels ignore the JD's own instruction
   ([study](docs/hedge_simulation_study.md)). Nothing we tested beat the shipped
   scorer — and everything we tested is in the repo.
+
+## Local setup
+
+```bash
+git clone --recursive <repo-url>
+cd <repo-dir>
+
+pip install -r requirements.txt
+pip install -e .
+
+# Optional dashboard API
+pip install -r requirements-api.txt
+uvicorn apps.api.main:app --host 127.0.0.1 --port 8000
+
+# Optional research/evaluation scripts
+pip install -r requirements-research.txt
+```
 
 ## Measured reproduction
 

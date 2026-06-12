@@ -46,6 +46,14 @@ def test_index_serves_dashboard(client):
     assert "text/html" in resp.headers["content-type"]
 
 
+def test_index_falls_back_to_root_dashboard(client, monkeypatch, tmp_path):
+    monkeypatch.setattr(main, "STATIC_DIR", tmp_path)
+    resp = client.get("/")
+    assert resp.status_code == 200
+    assert "text/html" in resp.headers["content-type"]
+    assert b"Redrob HireFit Ranker" in resp.content
+
+
 def test_health_reports_artifacts_and_sha(client):
     resp = client.get("/api/health")
     assert resp.status_code == 200
