@@ -76,7 +76,7 @@ def make_candidate(**overrides):
 def test_feature_matrix_has_stable_32_keys():
     features = compute_features(make_candidate())
     assert set(FEATURE_NAMES) == set(features.values)
-    assert len(features.values) == 32
+    assert len(features.values) == 33
     for name, value in features.values.items():
         assert 0.0 <= value <= 1.0, name
 

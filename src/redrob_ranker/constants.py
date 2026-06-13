@@ -129,6 +129,7 @@ FEATURE_NAMES = [
     "relocation_willing",
     "backend_depth_score",
     "data_bi_depth_score",
+    "hyre_similarity",
 ]
 
 BASE_FEATURE_WEIGHTS = {
