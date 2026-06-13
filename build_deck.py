@@ -197,10 +197,10 @@ def enterprise():
     s = prs.slides.add_slide(BLANK); bg(s, WHITE)
     header(s, "ENTERPRISE UPGRADE", "Lab Architecture vs Baseline Prototype")
     box(s, Inches(.7), Inches(1.9), Inches(11.9), Inches(4.5),
-        "•  TEST COVERAGE (114 ➔ 167): Expanded coverage by +46%, including 12 rigorous counterfactual tests bounding location, gender, and name proxies mathematically.\n\n"
+        "•  TEST COVERAGE (115 ➔ 163): Expanded coverage by +42%, including 13 rigorous counterfactual tests bounding location, gender, and name proxies mathematically.\n\n"
         "•  BACKEND STORAGE (Dicts ➔ SQLite): Migrated from volatile in-memory storage to a persistent SQLite WAL database, ensuring batch operations survive server restarts.\n\n"
         "•  API SECURITY (Open ➔ X-Demo-Token): Guarded all write-endpoints with token authentication to prevent unauthorized abuse in production.\n\n"
-        "•  SYSTEM RATING (89/100 ➔ 91/100): Successfully closed the 100-score gap while maintaining sub-80s execution time and zero honeypots.", 16, SLATE)
+        "•  SYSTEM RATING (89/100 ➔ 91/100 self-assessed; independent forensic audit ~88/100): Closed the 100-score gap with the official ranking now byte-reproducible in the pinned Docker image; ~80s on a cloud 2-vCPU runner (~130-155s in local Docker); zero honeypots in the top 100.", 16, SLATE)
 
 
 def close():
