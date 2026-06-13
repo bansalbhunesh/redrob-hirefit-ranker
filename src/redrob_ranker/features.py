@@ -408,6 +408,8 @@ def _title_score(candidate: dict, matchers: JDMatchers = _DEFAULT_MATCHERS) -> f
             current_score = max(current_score, weight)
     if matchers is not _DEFAULT_MATCHERS and current_score < 0.35 and score > 0.65:
         score = min(score, 0.55)
+    elif matchers is not _DEFAULT_MATCHERS and current_score < 0.65 and score > 0.85:
+        score = min(score, 0.72)
     if _has_boundary(_NON_TARGET_PADDED, current):
         score = min(score, 0.18)
     return clamp(score)
@@ -872,18 +874,17 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     # text instead of only generic AI/retrieval signals.
     if config is not None and not _is_default_jd(config):
         groups = {group for group, _ in getattr(config, "must_have_skills", ())}
-        title_family_blob = " ".join(
-            _norm(title) for title, _ in getattr(config, "target_title_weights", ())
-        )
+        target_titles = tuple(_norm(title) for title, _ in getattr(config, "target_title_weights", ()))
+        primary_title = target_titles[0] if target_titles else ""
         primary_backend_role = (
-            "senior backend engineer" in title_family_blob
-            or "staff backend engineer" in title_family_blob
-            or "backend engineer" in title_family_blob
+            "senior backend engineer" in primary_title
+            or "staff backend engineer" in primary_title
+            or "backend engineer" in primary_title
         )
         primary_data_role = (
-            "senior data analyst" in title_family_blob
-            or "business intelligence developer" in title_family_blob
-            or "bi developer" in title_family_blob
+            "senior data analyst" in primary_title
+            or "business intelligence developer" in primary_title
+            or "bi developer" in primary_title
         )
         role_evidence_hits = _count_tokenized(m.split_relevant, tokens_career, safe_career)
         if role_evidence_hits:
@@ -956,14 +957,40 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
             generic_engineering_title = _has_tokenized(
                 _GENERIC_ENGINEERING_TITLE_SPLIT, current_tokens, safe_current
             )
+            fullstack_current_title = "fullstack" in current_tokens or "full stack" in safe_current
+            ml_title_qualifier = (
+                "ml" in current_tokens
+                or "ai" in current_tokens
+                or "machine learning" in safe_current
+                or "data scientist" in safe_current
+            )
             frontend_hits = _count_tokenized(_FRONTEND_SPLIT, tokens_full, safe_full)
             non_backend_hits = _count_tokenized(_NON_BACKEND_ENGINEERING_SPLIT, tokens_full, safe_full)
             backend_term_advantage = (api_hits + db_hits + infra_hits) > (frontend_hits + non_backend_hits + 2)
+            strong_generic_backend = (
+                values["core_skill_match"] >= 0.72
+                or (backend_depth >= 0.80 and (api_hits + db_hits) >= 5)
+            )
+            if (
+                primary_backend_role
+                and ml_title_qualifier
+                and values["core_skill_match"] < 0.70
+                and backend_composite < 0.85
+                and values["title_match_score"] > 0.60
+            ):
+                values["title_match_score"] = 0.60
+                values["career_trajectory_score"] = min(
+                    values["career_trajectory_score"],
+                    clamp(0.75 * values["title_match_score"] + 0.25 * values["product_company_ratio"] - title_hop_penalty),
+                )
             if (
                 primary_backend_role
                 and
                 generic_engineering_title
                 and backend_term_advantage
+                and strong_generic_backend
+                and (not fullstack_current_title or values["core_skill_match"] >= 0.72)
+                and (not ml_title_qualifier or values["core_skill_match"] >= 0.70)
                 and (backend_surface > 0.40 or backend_depth > 0.30)
             ):
                 inferred_title_score = 0.92
@@ -1290,6 +1317,13 @@ def _alternate_jd_weights(config) -> dict[str, float]:
     challenge-specific AI tenure/retrieval features.
     """
     groups = {group for group, _ in getattr(config, "must_have_skills", ())}
+    target_titles = tuple(_norm(title) for title, _ in getattr(config, "target_title_weights", ()))
+    primary_title = target_titles[0] if target_titles else ""
+    primary_backend_role = (
+        "senior backend engineer" in primary_title
+        or "staff backend engineer" in primary_title
+        or "backend engineer" in primary_title
+    )
     weights = {
         "bm25_score": 0.24,
         "core_skill_match": 0.20,
@@ -1333,6 +1367,13 @@ def _alternate_jd_weights(config) -> dict[str, float]:
         weights["career_trajectory_score"] = 0.04
         weights["ml_ai_tenure_score"] = 0.06
         weights["product_company_ratio"] = 0.02
+    if primary_backend_role:
+        weights["core_skill_match"] = 0.14
+        weights["jd_keyword_coverage_score"] = 0.28
+        weights["ir_ranking_experience"] = 0.12
+        weights["production_evidence"] = 0.12
+        weights["title_match_score"] = 0.16
+        weights["career_trajectory_score"] = 0.03
     return weights
 
 
@@ -1379,7 +1420,9 @@ def final_score(
             yoe_fit = features.values.get("yoe_fit_score", 0.0)
             flags = set(features.flags)
             soft_or_clean = not flags or flags <= TRANSFER_SOFT_RISK_FLAGS
-            if title_fit >= 0.95 and role_evidence >= 0.50 and yoe_fit >= 0.75 and soft_or_clean:
+            if title_fit >= 0.98 and role_evidence >= 0.70 and yoe_fit >= 0.75 and soft_or_clean:
+                behavior_multiplier = max(behavior_multiplier, 0.94)
+            elif title_fit >= 0.95 and role_evidence >= 0.50 and yoe_fit >= 0.75 and soft_or_clean:
                 behavior_multiplier = max(behavior_multiplier, 0.88)
             elif title_fit >= 0.80 and role_evidence >= 0.60 and yoe_fit >= 0.75 and soft_or_clean:
                 behavior_multiplier = max(behavior_multiplier, 0.76)

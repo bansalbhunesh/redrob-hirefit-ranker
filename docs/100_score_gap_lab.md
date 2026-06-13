@@ -193,14 +193,18 @@ Result:
 - Multi-JD Redrob-pool transfer eval:
   `docs/multi_jd_generalization_eval.md` scores 20,000 candidates across five
   technical JDs with independent raw-field role rubrics. After the role-depth
-  and surface/title tuning patches, mean composite is 0.7852 vs keyword baseline
-  0.6793. The win is still uneven: AI/search/data-BI/devops beat keyword, while
-  backend improved but still trails the keyword oracle on the 20k proxy.
+  and surface/title tuning patches, mean composite is 0.7893 vs keyword baseline
+  0.6793. `docs/multi_jd_generalization_eval_100k.md` repeats the same benchmark
+  across the full 100,000-candidate pool: mean composite is 0.7608 vs keyword
+  baseline 0.6602. The win is still uneven: AI/search/data-BI/devops beat keyword
+  at both sizes, while backend improved sharply but still trails the keyword
+  oracle by 0.0446 on 20k and 0.0066 on 100k.
 - Compiler/scoring expansion:
   alternate technical JDs now get role-family priors, role-evidence reuse,
   transfer-specific risk handling, current-title/history safeguards,
-  backend/data depth extractors, backend surface coverage, and data-primary
-  title separation. The bundled challenge JD remains golden-gated and
+  backend/data depth extractors, backend surface coverage, data-primary title
+  separation, backend-primary surface-weight calibration, and stricter
+  current-title dominance. The bundled challenge JD remains golden-gated and
   byte-identical.
 - External role-depth mining:
   `docs/external_role_depth_terms.md` scans the downloaded public datasets and

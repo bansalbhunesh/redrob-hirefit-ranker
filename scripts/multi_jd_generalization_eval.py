@@ -314,14 +314,19 @@ def write_markdown(path: Path, summary: dict) -> None:
         f"- Mean HireFit composite: {summary['mean_hirefit_composite']:.4f}",
         f"- Mean keyword-baseline composite: {summary['mean_keyword_composite']:.4f}",
         "",
-        "| role | HireFit composite | keyword composite | NDCG@10 | P@10 | seconds |",
-        "|---|---:|---:|---:|---:|---:|",
+        "| role | HireFit composite | keyword composite | "
+        "HireFit NDCG@10 | keyword NDCG@10 | HireFit NDCG@50 | keyword NDCG@50 | "
+        "HireFit MAP | keyword MAP | HireFit P@10 | keyword P@10 | seconds |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in summary["roles"]:
         lines.append(
             f"| {row['role']} | {row['hirefit']['composite']:.4f} | "
             f"{row['keyword']['composite']:.4f} | {row['hirefit']['ndcg10']:.4f} | "
-            f"{row['hirefit']['p10']:.4f} | {row['seconds']:.1f} |"
+            f"{row['keyword']['ndcg10']:.4f} | {row['hirefit']['ndcg50']:.4f} | "
+            f"{row['keyword']['ndcg50']:.4f} | {row['hirefit']['map']:.4f} | "
+            f"{row['keyword']['map']:.4f} | {row['hirefit']['p10']:.4f} | "
+            f"{row['keyword']['p10']:.4f} | {row['seconds']:.1f} |"
         )
     lines.extend([
         "",
