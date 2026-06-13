@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MODELS_DIR = ROOT / "models"
 
 # 28 core features + 1 hyre feature = 29 features
-INPUT_DIM = 29
+INPUT_DIM = 33
 HIDDEN_DIM = 64
 
 ROLE_FAMILIES = [
