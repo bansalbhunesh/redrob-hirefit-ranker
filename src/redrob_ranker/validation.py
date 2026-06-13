@@ -14,6 +14,7 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
     ids = set()
     ranks = set()
     last_score = float("inf")
+    last_cid = ""
     for row in rows:
         cid = str(row.get("candidate_id", ""))
         try:
@@ -36,7 +37,17 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
             errors.append(f"Score out of range at rank {rank}: {score}")
         if score > last_score:
             errors.append(f"Score increases at rank {rank}.")
+        # Mirror the official validator's tie-break rule: when two consecutive rows
+        # share the same score, candidate_id must be ascending. Two distinct raw
+        # scores can round to the same 6-decimal submission score, so guard it here
+        # to ensure we never ship a CSV the official validator would auto-reject.
+        if score == last_score and cid < last_cid:
+            errors.append(
+                f"Equal scores at rank {rank}: tie-break requires candidate_id "
+                f"ascending ({last_cid} > {cid})."
+            )
         last_score = score
+        last_cid = cid
     missing = set(range(1, expected + 1)) - ranks
     if missing:
         errors.append(f"Missing ranks: {sorted(missing)}")
