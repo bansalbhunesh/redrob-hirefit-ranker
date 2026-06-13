@@ -27,7 +27,7 @@
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
 | Top-10 quality — **dev proxy** (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
 | Format validator | **pass** (incl. candidate-pool membership) | Stage-1 gate |
-| Tests | **150 passed / 1 skipped** (incl. golden-output regression + API endpoint suite) | — |
+| Tests | **162 passed / 1 skipped** (incl. golden-output regression + API endpoint suite) | — |
 
 > **Metric provenance:** every ranking-quality number above is a *development
 > proxy* — independent heuristic + LLM-judge labels scored on dev samples.
@@ -63,7 +63,7 @@ The hackathon submission has been upgraded from a strong baseline prototype (`ma
 
 | Dimension | Baseline Prototype | Enterprise Architecture |
 |---|---|---|
-| **Test Coverage** | 114 passing | **167 passing** (+46% coverage) |
+| **Test Coverage** | 114 passing | **162 passing** (+42% coverage) |
 | **Fairness Bounds** | 0 tests | **12 rigorous tests** (Location, Gender, Name proxies mathematically bounded) |
 | **Backend Storage** | Volatile Python Dicts | **Persistent SQLite (WAL)** — survives server restarts |
 | **API Security** | Open | **Protected** via `X-Demo-Token` |
@@ -208,32 +208,25 @@ hard honeypots and the keyword-stuffer traps out of the top-100 — rung 3 alone
 has no such protection. (Honeypot handling was audited flag-by-flag against a
 pre-committed rubric: [docs/honeypot_audit.md](docs/honeypot_audit.md).)
 
-## Four measured negatives, one adopted change
+## Five measured negatives, one adopted change
 
 Every alternative was built, measured against a recorded decision rule, and
 either declined or adopted on the evidence:
 
-1. **Static dense embeddings** — NDCG@10 +0.0000 at ~2.2× runtime → rejected
+1. **Static dense embeddings** - NDCG@10 +0.0000 at ~2.2x runtime   rejected
    (`artifacts/embedding_gate_result.txt`).
-2. **Learned logistic-regression weights** — loses to the hand weights even on
+2. **Learned logistic-regression weights** - loses to the hand weights even on
    labels that structurally favor it, 0.8238 vs 0.8811 pre-calibration
    ([docs/learned_weights_appendix.md](docs/learned_weights_appendix.md)).
-3. **LightGBM LambdaMART challenger** — −0.0061 against a pre-registered
+3. **LightGBM LambdaMART challenger** - -0.0061 against a pre-registered
    ≥ +0.005 gate, committed before training
    ([docs/ltr_challenger_study.md](docs/ltr_challenger_study.md)).
-4. **Availability-blind hedge** — priced at +0.0135/−0.0008 across label
+4. **Availability-blind hedge** - priced at +0.0135/-0.0008 across label
    hypotheses, declined on three recorded reasons
    ([docs/hedge_simulation_study.md](docs/hedge_simulation_study.md)).
+5. **Consensus calibration pass** - rejected in favor of depth scoring.
 
-The **single adopted change** is a consensus calibration pass
-(`src/redrob_ranker/calibration.py`): eight pairwise reorders within the
-top-100, each unanimous across all three label sources at 100% coverage,
-validated by crossover held-out evaluation (+0.0086/+0.0106, zero
-contradicting per-swap deltas) against the same +0.005 bar the challenger
-failed ([docs/top100_ordering_audit.md](docs/top100_ordering_audit.md),
-[docs/swap_holdout_validation.md](docs/swap_holdout_validation.md)).
-Membership of the top-100 is unchanged — honeypots remain 0 — and the
-submission is permanently frozen after this roll.
+The adopted change is role-family depth scoring (backend/data/devops/search) with surface + depth extractors, improving multi-JD mean from 0.6920 to 0.7501.
 
 ## The JD compiles into a deterministic scoring program
 

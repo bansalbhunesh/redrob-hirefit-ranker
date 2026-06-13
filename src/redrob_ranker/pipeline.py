@@ -7,7 +7,6 @@ from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 
-from redrob_ranker.learned_reranker import LearnedReRanker
 from redrob_ranker.features import compute_features, final_score
 from redrob_ranker.io import iter_candidates, write_submission
 from redrob_ranker.reasoning import build_reason
