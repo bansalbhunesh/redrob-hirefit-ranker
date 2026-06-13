@@ -10,6 +10,7 @@ those labels and a simple keyword baseline.
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import json
 import math
 import re
@@ -28,8 +29,10 @@ if str(SRC) not in sys.path:
 from redrob_ranker.eval_harness import LabelSet, evaluate  # noqa: E402
 from redrob_ranker.io import iter_candidates  # noqa: E402
 from redrob_ranker.jd_compiler import compile_jd  # noqa: E402
-from redrob_ranker.pipeline import RankerConfig, rank_candidates  # noqa: E402
-from redrob_ranker.text import candidate_text  # noqa: E402
+from redrob_ranker.features import compute_features, final_score  # noqa: E402
+from redrob_ranker.pipeline import _resolve_chunksize, _resolve_workers  # noqa: E402
+from redrob_ranker.retrieval import _tokenize_all, normalize_scores  # noqa: E402
+from redrob_ranker.text import candidate_text, tokenize  # noqa: E402
 
 TOKEN_RE = re.compile(r"[a-z0-9+#.]{2,}")
 REFERENCE_DATE = date(2026, 6, 8)
@@ -124,6 +127,45 @@ class RoleScores:
     seconds: float
 
 
+class PreparedPool:
+    """Reusable corpus state for scoring several JDs over the same pool."""
+
+    def __init__(self, candidates: list[dict]) -> None:
+        import bm25s
+
+        self.candidates = candidates
+        texts: list[str] = []
+        for candidate in candidates:
+            text = candidate_text(candidate)
+            candidate["_cached_text"] = text
+            texts.append(text)
+            candidate["_eval_blobs"] = _raw_blobs_uncached(candidate)
+        self.retriever = bm25s.BM25()
+        self.retriever.index(_tokenize_all(texts), show_progress=False)
+
+    def retrieval_scores(self, query: str) -> dict[int, float]:
+        import numpy as np
+
+        scores = np.asarray(self.retriever.get_scores(tokenize(query)), dtype=np.float32)
+        return normalize_scores({idx: float(score) for idx, score in enumerate(scores)})
+
+
+_WORKER_JD = None
+
+
+def _init_worker(jd) -> None:
+    global _WORKER_JD
+    _WORKER_JD = jd
+
+
+def _score_candidate(args: tuple[dict, float]) -> tuple[dict, object, float]:
+    candidate, retrieval_score = args
+    features = compute_features(candidate, config=_WORKER_JD)
+    score = final_score(features, retrieval_score, config=_WORKER_JD)
+    features.total = score
+    return candidate, features, score
+
+
 def _norm(text: object) -> str:
     return " ".join(m.group(0) for m in TOKEN_RE.finditer(str(text or "").lower()))
 
@@ -148,7 +190,7 @@ def _days_since(value: object) -> int:
     return max(0, (REFERENCE_DATE - date(y, m, d)).days)
 
 
-def _raw_blobs(candidate: dict) -> tuple[str, str, str, str]:
+def _raw_blobs_uncached(candidate: dict) -> tuple[str, str, str, str]:
     profile = candidate.get("profile") or {}
     career = candidate.get("career_history") or []
     title_blob = _norm(" ".join(
@@ -162,6 +204,15 @@ def _raw_blobs(candidate: dict) -> tuple[str, str, str, str]:
     skill_blob = _norm(" ".join(str(skill.get("name", "")) for skill in candidate.get("skills", []) or []))
     full_blob = _norm(candidate_text(candidate))
     return title_blob, career_blob, skill_blob, full_blob
+
+
+def _raw_blobs(candidate: dict) -> tuple[str, str, str, str]:
+    cached = candidate.get("_eval_blobs")
+    if cached is not None:
+        return cached
+    blobs = _raw_blobs_uncached(candidate)
+    candidate["_eval_blobs"] = blobs
+    return blobs
 
 
 def _simple_honeypot(candidate: dict) -> bool:
@@ -280,15 +331,60 @@ def keyword_baseline_order(candidates: list[dict], spec: dict[str, object]) -> l
     return [c["candidate_id"] for c in sorted(candidates, key=score)]
 
 
-def evaluate_role(candidates: list[dict], role: str, spec: dict[str, object], workers: int) -> RoleScores:
+def rank_prepared(
+    prepared: PreparedPool,
+    compiled,
+    workers: int,
+) -> list[tuple[dict, object, float]]:
+    retrieval_scores = prepared.retrieval_scores(compiled.jd_query)
+    work = [
+        (candidate, retrieval_scores.get(idx, 0.0))
+        for idx, candidate in enumerate(prepared.candidates)
+    ]
+    resolved_workers = _resolve_workers(workers, len(work))
+    ranked: list[tuple[dict, object, float]] = []
+    if resolved_workers == 1:
+        global _WORKER_JD
+        previous_jd = _WORKER_JD
+        _WORKER_JD = compiled
+        try:
+            for item in work:
+                ranked.append(_score_candidate(item))
+        finally:
+            _WORKER_JD = previous_jd
+    else:
+        chunksize = _resolve_chunksize(len(work), resolved_workers)
+        with concurrent.futures.ProcessPoolExecutor(
+            max_workers=resolved_workers,
+            initializer=_init_worker,
+            initargs=(compiled,),
+        ) as executor:
+            ranked = list(executor.map(_score_candidate, work, chunksize=chunksize))
+
+    ranked.sort(key=lambda item: (-item[2], item[0]["candidate_id"]))
+    return ranked
+
+
+def evaluate_role(
+    candidates: list[dict],
+    role: str,
+    spec: dict[str, object],
+    workers: int,
+    prepared: PreparedPool | None = None,
+) -> RoleScores:
     start = time.time()
     compiled = compile_jd(str(spec["jd"]), source=f"multi-jd:{role}")
     labels = build_labels(candidates, role, spec)
-    ranked, _ = rank_candidates(
-        candidates,
-        RankerConfig(candidate_pool_size=0, bm25_backend="bm25s", workers=workers,
-                     jd=compiled, apply_calibration=False),
-    )
+    if prepared is None:
+        from redrob_ranker.pipeline import RankerConfig, rank_candidates
+
+        ranked, _ = rank_candidates(
+            candidates,
+            RankerConfig(candidate_pool_size=0, bm25_backend="bm25s", workers=workers,
+                         jd=compiled, apply_calibration=False),
+        )
+    else:
+        ranked = rank_prepared(prepared, compiled, workers=workers)
     hirefit_ids = [candidate["candidate_id"] for candidate, _, _ in ranked]
     keyword_ids = keyword_baseline_order(candidates, spec)
     hirefit = evaluate(hirefit_ids, labels, unlabeled="exclude").as_row()
@@ -311,6 +407,7 @@ def write_markdown(path: Path, summary: dict) -> None:
         "",
         f"- Candidates scored per JD: {summary['candidate_count']:,}",
         f"- Roles: {len(summary['roles'])}",
+        f"- Corpus/index preparation seconds: {summary.get('preparation_seconds', 0.0):.1f}",
         f"- Mean HireFit composite: {summary['mean_hirefit_composite']:.4f}",
         f"- Mean keyword-baseline composite: {summary['mean_keyword_composite']:.4f}",
         "",
@@ -346,16 +443,30 @@ def main() -> int:
     parser.add_argument("--max-candidates", type=int, default=20_000)
     parser.add_argument("--roles", nargs="*", default=list(REFERENCE_ROLES))
     parser.add_argument("--workers", type=int, default=0)
+    parser.add_argument(
+        "--no-prepare-pool",
+        action="store_true",
+        help="Disable reusable corpus/index preparation and use the historical per-role ranker path.",
+    )
     parser.add_argument("--out-json", type=Path, default=ROOT / "artifacts" / "multi_jd_generalization_eval.json")
     parser.add_argument("--out-md", type=Path, default=ROOT / "docs" / "multi_jd_generalization_eval.md")
     args = parser.parse_args()
 
     candidates = list(iter_candidates(args.candidates, max_candidates=args.max_candidates))
+    prep_start = time.time()
+    prepared = None if args.no_prepare_pool else PreparedPool(candidates)
+    preparation_seconds = round(time.time() - prep_start, 2) if prepared is not None else 0.0
     role_rows: list[dict] = []
     for role in args.roles:
         if role not in REFERENCE_ROLES:
             raise SystemExit(f"Unknown role {role!r}; choices: {', '.join(REFERENCE_ROLES)}")
-        result = evaluate_role(candidates, role, REFERENCE_ROLES[role], workers=args.workers)
+        result = evaluate_role(
+            candidates,
+            role,
+            REFERENCE_ROLES[role],
+            workers=args.workers,
+            prepared=prepared,
+        )
         role_rows.append({
             "role": result.role,
             "hirefit": result.hirefit,
@@ -373,6 +484,7 @@ def main() -> int:
     mean_keyword = sum(float(row["keyword"]["composite"]) for row in role_rows) / len(role_rows)
     summary = {
         "candidate_count": len(candidates),
+        "preparation_seconds": preparation_seconds,
         "roles": role_rows,
         "mean_hirefit_composite": round(mean_hirefit, 4),
         "mean_keyword_composite": round(mean_keyword, 4),

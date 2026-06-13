@@ -1368,12 +1368,14 @@ def _alternate_jd_weights(config) -> dict[str, float]:
         weights["ml_ai_tenure_score"] = 0.06
         weights["product_company_ratio"] = 0.02
     if primary_backend_role:
-        weights["core_skill_match"] = 0.14
-        weights["jd_keyword_coverage_score"] = 0.28
-        weights["ir_ranking_experience"] = 0.12
-        weights["production_evidence"] = 0.12
-        weights["title_match_score"] = 0.16
-        weights["career_trajectory_score"] = 0.03
+        weights["bm25_score"] = 0.22
+        weights["core_skill_match"] = 0.16
+        weights["jd_keyword_coverage_score"] = 0.40
+        weights["ir_ranking_experience"] = 0.14
+        weights["production_evidence"] = 0.14
+        weights["title_match_score"] = 0.05
+        weights["career_trajectory_score"] = 0.00
+        weights["product_company_ratio"] = 0.00
     return weights
 
 
