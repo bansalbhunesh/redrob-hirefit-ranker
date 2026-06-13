@@ -49,3 +49,26 @@ def get_hyre_for_role(role_name: str) -> str:
         if key.split("/")[0].lower() in role_name.lower() or key.lower() in role_name.lower():
             return text.strip()
     return HYRE_PROMPTS["AI/ML Engineer"].strip()
+
+def get_hyre_similarity(candidate_text: str, jd_text: str) -> float:
+    """
+    Computes a fast lexical Jaccard similarity between the candidate's text
+    and the HyRE template corresponding to the JD's role.
+    """
+    if not candidate_text:
+        return 0.0
+        
+    hyre_text = get_hyre_for_role(jd_text)
+    
+    # Simple normalization and tokenization
+    cand_tokens = set(candidate_text.lower().replace(",", " ").replace(".", " ").split())
+    hyre_tokens = set(hyre_text.lower().replace(",", " ").replace(".", " ").split())
+    
+    if not cand_tokens or not hyre_tokens:
+        return 0.0
+        
+    intersection = cand_tokens.intersection(hyre_tokens)
+    union = cand_tokens.union(hyre_tokens)
+    
+    # Jaccard similarity
+    return len(intersection) / len(union)

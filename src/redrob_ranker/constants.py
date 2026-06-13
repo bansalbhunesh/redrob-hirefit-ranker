@@ -154,6 +154,7 @@ BASE_FEATURE_WEIGHTS = {
     "location_score": 0.05,
     "relocation_willing": 0.01,
     "notice_period_score": 0.01,
+    "hyre_similarity": 0.05,
 }
 
 MUST_HAVE_SKILLS = {

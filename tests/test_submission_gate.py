@@ -35,12 +35,12 @@ CANDIDATES = ROOT / "candidates.jsonl"
 # -> a2882cd2... (2026-06-11 consensus calibration pass: eight three-source
 # consensus swaps with held-out validation + reasoning-variety pass; score
 # column byte-identical, 16 rows reordered; docs/top100_ordering_audit.md,
-# docs/swap_holdout_validation.md, METHODOLOGY.md §7. This
-GOLDEN_SUBMISSION_SHA256 = "589cb62649b2807f863a76aa9634fae42bdf3a2377ce273db0bde949a822f600"
+# -> 6b284271... (2026-06-13 Grand Champion: Wired HyRE and MMoE into production pipeline)
+GOLDEN_SUBMISSION_SHA256 = "6b284271f9260b51a956589199b2c1d1d43cdc1c2d127e977a3ae217cc4c1798"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0).
-GOLDEN_SLICE2K_SHA256 = "db782f3e11980f0cbfd7cb93d9aacedf1c2618033c853946ee81061ac3ff3356"
+GOLDEN_SLICE2K_SHA256 = "7918db85054634578a79a7df011d3d5e12734ac726e00ef2a846bbf2ceee455d"
 
 EXPECTED_HEADER = ["candidate_id", "rank", "score", "reasoning"]
 

@@ -1186,6 +1186,12 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
         soft_flags, production_evidence=values["production_evidence"]
     )
 
+    from redrob_ranker.hyre_prompts import get_hyre_similarity
+    from redrob_ranker.jd_compiler import DEFAULT_COMPILED_JD
+    jd_text = config.jd_query if config else DEFAULT_COMPILED_JD.jd_query
+    hyre_sim = get_hyre_similarity(full_text, jd_text)
+    values["hyre_similarity"] = hyre_sim
+
     return CandidateFeatures(
         candidate_id=candidate["candidate_id"],
         values={name: clamp(values.get(name, 0.0)) for name in FEATURE_NAMES},

@@ -157,8 +157,40 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
             for item, (features, score) in zip(work, results):
                 ranked.append((item[0], features, score))
 
-    ranked.sort(key=lambda item: (-item[2], item[0]["candidate_id"]))
-    
+    if config.jd is not None:
+        try:
+            import numpy as np
+            from redrob_ranker.moe_scorer import get_moe_scorer, INPUT_DIM
+            moe = get_moe_scorer()
+            fnames = [
+                "core_skill_match", "jd_keyword_coverage_score", "nice_skill_match",
+                "skill_depth_score", "endorsement_trust", "assessment_score_avg",
+                "disqualifier_skill_flag", "keyword_stuffer_flag", "github_signal",
+                "product_company_ratio", "consulting_only_flag", "ir_ranking_experience",
+                "production_evidence", "title_match_score", "senior_title_held",
+                "career_trajectory_score", "scale_signal", "code_writing_recent",
+                "yoe_fit_score", "education_score", "ml_ai_tenure_score",
+                "open_source_signal", "availability_score", "engagement_score",
+                "responsiveness_score", "interview_reliability", "profile_quality",
+                "notice_period_score", "location_score", "relocation_willing",
+                "backend_depth_score", "data_bi_depth_score", "hyre_similarity"
+            ][:INPUT_DIM]
+            
+            X = []
+            for item in ranked:
+                v = item[1].values
+                vec = [v.get(fn, 0.0) for fn in fnames]
+                X.append(vec)
+            X = np.array(X)
+            
+            jd_text = config.jd.jd_query
+            scores = moe.score_candidates(jd_text, X)
+            
+            # Update the scores in the ranked list
+            ranked = [(item[0], item[1], float(scores[i])) for i, item in enumerate(ranked)]
+        except Exception as e:
+            print(f"MMoE scoring failed, falling back to heuristic stack: {e}")
+
     ranked.sort(key=lambda item: (-item[2], item[0]["candidate_id"]))
     return ranked, used_backend
 
