@@ -36,7 +36,12 @@ CANDIDATES = ROOT / "candidates.jsonl"
 # consensus swaps with held-out validation + reasoning-variety pass; score
 # column byte-identical, 16 rows reordered; docs/top100_ordering_audit.md,
 # -> 6b284271... (2026-06-13 Grand Champion: Wired HyRE and MMoE into production pipeline)
-GOLDEN_SUBMISSION_SHA256 = "6b284271f9260b51a956589199b2c1d1d43cdc1c2d127e977a3ae217cc4c1798"
+# -> fdfd3f35... (2026-06-14 reproducibility fix: regenerated inside the pinned,
+#    thread-locked Docker image so the golden is byte-identical regardless of the
+#    host CPU count -- verified at --cpus=2 AND --cpus=4. The prior 6b284271 was
+#    minted on a many-thread host and did NOT reproduce at --cpus=2 (BLAS
+#    float-reduction order). 16 near-tie placements changed; honeypots still 0.)
+GOLDEN_SUBMISSION_SHA256 = "fdfd3f3590720e1260822b6729b2851dc8daca9f3f859cefc3df184bbbd4c5db"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0).

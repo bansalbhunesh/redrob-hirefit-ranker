@@ -19,6 +19,14 @@ SRC = ROOT / "src"
 if SRC.exists() and str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
+# Pin BLAS/threadpool thread counts to 1 BEFORE numpy/bm25s are imported so the
+# BM25 float-reduction order (and therefore the generated submission.csv) is
+# byte-identical regardless of the host's CPU/thread count. Verified: identical
+# output at --cpus=2 and --cpus=4 in the pinned Docker image. setdefault keeps
+# any explicit override a caller already set.
+for _thread_var in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+    os.environ.setdefault(_thread_var, "1")
+
 from redrob_ranker.pipeline import RankerConfig, run_ranking
 
 

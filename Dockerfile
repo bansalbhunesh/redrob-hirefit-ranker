@@ -9,6 +9,14 @@ ENV PYTHONUNBUFFERED=1
 # accumulation in BM25 scoring) is identical across runs -> byte-stable output.
 # Rank order is already reproducible regardless; this makes the CSV bit-identical.
 ENV PYTHONHASHSEED=0
+# Pin BLAS thread counts to 1 so BM25 float-reduction order (and the generated
+# submission.csv) is byte-identical regardless of the host's CPU count. Verified
+# identical output at --cpus=2 and --cpus=4; without this a many-core host yields
+# a different (still deterministic) ranking.
+ENV OPENBLAS_NUM_THREADS=1
+ENV OMP_NUM_THREADS=1
+ENV MKL_NUM_THREADS=1
+ENV NUMEXPR_NUM_THREADS=1
 
 WORKDIR /app
 
