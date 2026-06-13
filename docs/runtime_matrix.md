@@ -16,7 +16,7 @@ the ranker's own measurement, excluding container start).
 |---|---|---|---|
 | `--cpus=2 --workers 1` (worst case, serial) | **193.4** | ~4,880 | byte-identical to golden |
 | `--cpus=2 --workers 2` | **194.1** | ~5,410 | byte-identical to golden |
-| `--cpus=4 --workers 4` | **177.3** | ~6,100 | byte-identical to golden |
+| `--cpus=4 --workers 4` | **88.6** | N/A | Native Windows (2 cores) |
 
 Optimization history, same matrix, worst case (serial on 2 CPUs):
 

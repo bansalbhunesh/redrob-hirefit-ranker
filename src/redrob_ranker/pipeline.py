@@ -158,6 +158,8 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
                 ranked.append((item[0], features, score))
 
     ranked.sort(key=lambda item: (-item[2], item[0]["candidate_id"]))
+    
+    ranked.sort(key=lambda item: (-item[2], item[0]["candidate_id"]))
     return ranked, used_backend
 
 

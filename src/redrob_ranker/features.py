@@ -1181,6 +1181,7 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
 
     behavioral_multiplier = compute_behavioral_multiplier(values, candidate)
     honeypot_multiplier = _honeypot_multiplier_for(hard_flags)
+
     disqualifier_multiplier = compute_disqualifier_multiplier(
         soft_flags, production_evidence=values["production_evidence"]
     )
