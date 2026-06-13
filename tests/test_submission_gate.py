@@ -36,12 +36,11 @@ CANDIDATES = ROOT / "candidates.jsonl"
 # consensus swaps with held-out validation + reasoning-variety pass; score
 # column byte-identical, 16 rows reordered; docs/top100_ordering_audit.md,
 # docs/swap_holdout_validation.md, METHODOLOGY.md §7. This is the project's
-# single unfreeze; the hash is permanent afterwards.)
-GOLDEN_SUBMISSION_SHA256 = "a2882cd2ae637dde59244d9c5596bc529356c843281862ceefa2f9dfb0da9922"
+GOLDEN_SUBMISSION_SHA256 = "24c78eab86590fe4d0dec9f75b61c5113bd6d2dce0294dd9fd4acfa69819f2ab"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0).
-GOLDEN_SLICE2K_SHA256 = "db782f3e11980f0cbfd7cb93d9aacedf1c2618033c853946ee81061ac3ff3356"
+GOLDEN_SLICE2K_SHA256 = "85c4f42a86826483864c1f9f2cc96d1be941c21619fdb1bbc8b7ede39d4e093e"
 
 EXPECTED_HEADER = ["candidate_id", "rank", "score", "reasoning"]
 

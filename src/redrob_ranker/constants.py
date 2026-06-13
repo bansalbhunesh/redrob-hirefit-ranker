@@ -127,6 +127,8 @@ FEATURE_NAMES = [
     "notice_period_score",
     "location_score",
     "relocation_willing",
+    "backend_depth_score",
+    "data_bi_depth_score",
 ]
 
 BASE_FEATURE_WEIGHTS = {

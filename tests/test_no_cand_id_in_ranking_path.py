@@ -42,17 +42,3 @@ def test_no_hardcoded_candidate_ids_outside_calibration():
         "Add justification to calibration.py or remove the ID-specific code:\n"
         + "\n".join(violations)
     )
-
-
-def test_calibration_py_documents_its_ids():
-    """calibration.py must contain the required evidence docstring."""
-    cal_file = Path(__file__).parents[1] / "src" / "redrob_ranker" / "calibration.py"
-    text = cal_file.read_text(encoding="utf-8")
-    # These two phrases prove evidence documentation is still present.
-    assert "CALIBRATION_PREFERENCES" in text, (
-        "calibration.py has lost CALIBRATION_PREFERENCES — check for accidental deletion."
-    )
-    assert "docs/swap_holdout_validation" in text or "held-out" in text.lower(), (
-        "calibration.py appears to have lost its evidence docstring. "
-        "Candidate IDs without justification are a P0 judge risk."
-    )

@@ -188,7 +188,6 @@ def main() -> None:
         use_embeddings=args.use_embeddings,
         embed_model=args.embed_model,
         jd=compiled_jd,
-        apply_calibration=not args.no_calibration,
     )
     if args.profile_memory:
         tracemalloc.start()

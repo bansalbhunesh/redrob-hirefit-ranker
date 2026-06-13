@@ -2,7 +2,7 @@
   "_purpose": "Single source of truth for every KPI surfaced in README, deck, API demo, and HF Space. tests/test_metrics_manifest.py fails CI if a surface drifts from these values. Update this file FIRST, then the surfaces.",
   "_provenance": "All ranking-quality metrics are DEVELOPMENT PROXIES (independent heuristic + LLM-judge labels on dev samples). No official hidden labels were available before submission. Runtime/memory numbers are measured; sources cited per key.",
   "submission": {
-    "golden_sha256": "a2882cd2ae637dde59244d9c5596bc529356c843281862ceefa2f9dfb0da9922",
+    "golden_sha256": "24c78eab86590fe4d0dec9f75b61c5113bd6d2dce0294dd9fd4acfa69819f2ab",
     "rows": 100,
     "total_candidates": 100000,
     "honeypots_detected": 53,
@@ -38,8 +38,8 @@
     "composite_judge2": 0.9565,
     "judge_agreement_kappa_range": [0.918, 0.935]
   },
-  "tests_collected": 168,
-  "tests_passing": 167,
+  "tests_collected": 163,
+  "tests_passing": 162,
   "tests_skipped": 1,
   "bm25_backend": "bm25s"
 }

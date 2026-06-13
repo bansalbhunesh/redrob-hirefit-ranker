@@ -931,6 +931,7 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
                 (api_hits, db_hits, scale_hits, infra_hits),
                 (3.0, 3.0, 2.0, 3.0),
             )
+            values["backend_depth_score"] = backend_depth
             backend_surface = clamp(surface_hits / 15.0)
             backend_composite = clamp(0.60 * backend_surface + 0.40 * backend_depth)
             api_score = clamp(api_hits / 3.0)
@@ -1034,6 +1035,7 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
                 (sql_hits, warehouse_hits, viz_hits, etl_hits, impact_hits),
                 (2.0, 2.0, 2.0, 2.0, 2.0),
             )
+            values["data_bi_depth_score"] = data_depth
             data_surface = clamp(data_surface_hits / 12.0)
             sql_score = clamp(sql_hits / 2.0)
             warehouse_score = clamp(warehouse_hits / 2.0)
