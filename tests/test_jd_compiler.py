@@ -11,7 +11,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from redrob_ranker import constants as C
-from redrob_ranker.features import compute_features
+from redrob_ranker.features import compute_features, final_score
 from redrob_ranker.jd_compiler import (
     DEFAULT_COMPILED_JD,
     CompiledJD,
@@ -154,3 +154,111 @@ def test_alternate_jd_title_score_prioritizes_current_role_over_history():
 
     assert ai_history.values["title_match_score"] < backend_current.values["title_match_score"]
     assert ai_history.values["title_match_score"] <= 0.55
+
+
+def test_backend_transfer_requires_career_delivery_for_production_credit():
+    from redrob_ranker.jd_compiler import compile_jd
+
+    backend_jd = compile_jd(DEMO_JD, source="demo")
+    base = {
+        "candidate_id": "CAND_BACKEND_SURFACE",
+        "profile": {
+            "current_title": "Software Engineer",
+            "headline": "Software Engineer",
+            "summary": "Backend REST API Kafka Spark SQL microservices platform.",
+            "location": "Chennai",
+            "country": "India",
+            "years_of_experience": 6,
+        },
+        "career_history": [{
+            "company": "Acme",
+            "title": "Software Engineer",
+            "duration_months": 60,
+            "is_current": True,
+            "industry": "Software",
+            "description": "Maintained internal tooling and wrote documentation.",
+        }],
+        "skills": [
+            {"name": "REST API", "proficiency": "advanced", "endorsements": 12, "duration_months": 36},
+            {"name": "Kafka", "proficiency": "advanced", "endorsements": 8, "duration_months": 36},
+            {"name": "Spark", "proficiency": "advanced", "endorsements": 8, "duration_months": 36},
+            {"name": "SQL", "proficiency": "advanced", "endorsements": 8, "duration_months": 36},
+        ],
+        "redrob_signals": {},
+    }
+    delivery = {
+        **base,
+        "candidate_id": "CAND_BACKEND_DELIVERY",
+        "career_history": [{
+            **base["career_history"][0],
+            "description": (
+                "Shipped production REST APIs and Kafka microservices, improving "
+                "latency and throughput for a distributed platform at scale."
+            ),
+        }],
+    }
+
+    surface_features = compute_features(dict(base), config=backend_jd)
+    delivery_features = compute_features(dict(delivery), config=backend_jd)
+
+    assert delivery_features.values["production_evidence"] > surface_features.values["production_evidence"]
+    assert surface_features.values["ir_ranking_experience"] <= 0.72
+
+
+def test_backend_transfer_routes_senior_software_delivery_above_ai_title_bleed():
+    from redrob_ranker.jd_compiler import compile_jd
+
+    backend_jd = compile_jd(DEMO_JD, source="demo")
+    delivery = {
+        "candidate_id": "CAND_SENIOR_SOFTWARE_DELIVERY",
+        "profile": {
+            "current_title": "Senior Software Engineer",
+            "headline": "Senior Software Engineer",
+            "summary": "Backend API platform engineer.",
+            "location": "Chennai",
+            "country": "India",
+            "years_of_experience": 6,
+        },
+        "career_history": [{
+            "company": "Acme",
+            "title": "Senior Software Engineer",
+            "duration_months": 60,
+            "is_current": True,
+            "industry": "Software",
+            "description": (
+                "Shipped production REST APIs and Kafka microservices, improving "
+                "latency and throughput for a distributed backend platform."
+            ),
+        }],
+        "skills": [
+            {"name": "REST API", "proficiency": "advanced", "endorsements": 10, "duration_months": 36},
+            {"name": "Kafka", "proficiency": "advanced", "endorsements": 10, "duration_months": 36},
+            {"name": "SQL", "proficiency": "advanced", "endorsements": 10, "duration_months": 36},
+        ],
+        "redrob_signals": {"recruiter_response_rate": 0.05, "last_active_date": "2025-10-01"},
+    }
+    ai_bleed = {
+        **delivery,
+        "candidate_id": "CAND_AI_TITLE_BLEED",
+        "profile": {
+            **delivery["profile"],
+            "current_title": "Senior Software Engineer ML",
+            "headline": "Senior Software Engineer ML",
+            "summary": "ML models and backend keywords with limited production delivery.",
+        },
+        "career_history": [{
+            **delivery["career_history"][0],
+            "description": "Built prototype ML features and maintained backend API documentation.",
+        }],
+        "skills": [
+            *delivery["skills"],
+            {"name": "Python", "proficiency": "expert", "endorsements": 10, "duration_months": 36},
+        ],
+    }
+
+    delivery_features = compute_features(dict(delivery), config=backend_jd)
+    bleed_features = compute_features(dict(ai_bleed), config=backend_jd)
+
+    assert final_score(delivery_features, 0.5, config=backend_jd) > final_score(
+        bleed_features, 0.5, config=backend_jd
+    )

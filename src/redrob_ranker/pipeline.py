@@ -14,44 +14,15 @@ from redrob_ranker.reasoning import build_reason
 from redrob_ranker.retrieval import Bm25Backend, retrieve_pool
 from redrob_ranker.validation import validate_rows
 
+# Import the shared cgroup helper. The underscore alias keeps existing test
+# monkeypatches working without changes:
+#   monkeypatch.setattr(pipeline_mod, "_cgroup_cpu_quota_count", lambda: 2)
+from redrob_ranker._cgroup import cgroup_cpu_quota_count as _cgroup_cpu_quota_count
+
 # Below this pool size, process-pool startup/IPC overhead outweighs the win, so we
 # stay serial. This also keeps the demo API/Gradio paths (small uploads) single-process.
 _PARALLEL_MIN_POOL = 4000
 _PARALLEL_WORKER_CAP = 8
-
-
-def _cgroup_cpu_quota_count() -> int | None:
-    """Return Linux cgroup CPU quota as whole cores, when constrained.
-
-    Docker Desktop and CI runners can expose the host CPU count through
-    os.cpu_count() even when the container is launched with --cpus=N. Using the
-    quota prevents process-pool oversubscription in constrained VM/container
-    runs while leaving native execution unchanged.
-    """
-    cpu_max = Path("/sys/fs/cgroup/cpu.max")
-    try:
-        quota_text = cpu_max.read_text(encoding="utf-8").strip().split()
-    except OSError:
-        quota_text = []
-    if len(quota_text) >= 2 and quota_text[0] != "max":
-        try:
-            quota = int(quota_text[0])
-            period = int(quota_text[1])
-        except ValueError:
-            quota = period = 0
-        if quota > 0 and period > 0:
-            return max(1, quota // period)
-
-    quota_file = Path("/sys/fs/cgroup/cpu/cpu.cfs_quota_us")
-    period_file = Path("/sys/fs/cgroup/cpu/cpu.cfs_period_us")
-    try:
-        quota = int(quota_file.read_text(encoding="utf-8").strip())
-        period = int(period_file.read_text(encoding="utf-8").strip())
-    except (OSError, ValueError):
-        return None
-    if quota > 0 and period > 0:
-        return max(1, quota // period)
-    return None
 
 
 def _submission_score(raw_score: float, max_score: float) -> float:

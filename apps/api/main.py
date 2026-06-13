@@ -18,6 +18,8 @@ from pathlib import Path
 from typing import Dict, List, Any
 from datetime import datetime
 import uuid
+import secrets
+import sqlite3  # noqa: F401 — kept for sqlite3.OperationalError in health checks
 
 # Add src to python path so we can import redrob_ranker
 sys.path.append(str(Path(__file__).parent.parent.parent / "src"))
@@ -71,6 +73,9 @@ SECURITY_HEADERS = {
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
 }
 STARTED_AT = time.time()
+# Optional demo auth gate. Set REDROB_DEMO_TOKEN env in production to require
+# an X-Demo-Token header on write endpoints. Unset = open for local dev.
+DEMO_TOKEN = os.getenv("REDROB_DEMO_TOKEN", "").strip()
 ALLOWED_UPLOAD_SUFFIXES = {
     (".jsonl",),
     (".json",),
@@ -80,7 +85,6 @@ ALLOWED_UPLOAD_SUFFIXES = {
 
 
 _metrics_lock = threading.Lock()
-_job_lock = threading.RLock()
 _rate_lock = threading.Lock()
 _rate_buckets: dict[str, deque[float]] = defaultdict(deque)
 _metrics: dict[str, Any] = {
@@ -204,18 +208,30 @@ DATA_DIR = BASE_DIR / "data"
 JOB_DIR = DATA_DIR / "jobs"
 
 STATIC_DIR.mkdir(exist_ok=True)
+
+# Setup Paths
+BASE_DIR = Path(__file__).parent
+STATIC_DIR = BASE_DIR / "static"
+DATA_DIR = BASE_DIR / "data"
+JOB_DIR = DATA_DIR / "jobs"
+
+STATIC_DIR.mkdir(exist_ok=True)
 DATA_DIR.mkdir(exist_ok=True)
 JOB_DIR.mkdir(exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
-# ── In-memory job store for batch processing ──
-# NOTE: stores are per-process. Run uvicorn with workers=1 (the default); more
-# workers would split jobs/SSE streams across processes and break both.
-# For multi-worker production, replace these dictionaries with Redis or another
-# shared job store.
-job_store: Dict[str, Dict[str, Any]] = {}
-results_store: Dict[str, List[Dict]] = {}
+# ── Persistent SQLite job store (apps/api/data/jobs.db) ─────────────────
+# JobStore is thread-safe (internal RLock + WAL SQLite). Jobs survive process
+# restarts and are inspectable with: sqlite3 apps/api/data/jobs.db
+# Run uvicorn with workers=1; SSE streams are per-process and cannot be shared
+# across workers without an external pub/sub layer.
+_HERE = Path(__file__).parent
+if str(_HERE) not in sys.path:
+    sys.path.insert(0, str(_HERE))
+from _job_store import JobStore  # noqa: E402
+
+_store = JobStore(DATA_DIR / "jobs.db")
 
 
 def _resolve_git_sha() -> str:
@@ -331,8 +347,19 @@ def _uploaded_candidate_count(data: bytes, filename: str) -> int:
 
 
 def _active_job_count() -> int:
-    with _job_lock:
-        return sum(1 for j in job_store.values() if j.get("status") in ("queued", "processing"))
+    return _store.count_active()
+
+
+def _check_demo_token(request: Request) -> None:
+    """Raise 401 if REDROB_DEMO_TOKEN is set and the header is missing/wrong."""
+    if not DEMO_TOKEN:
+        return
+    header = request.headers.get("X-Demo-Token", "").strip()
+    if not secrets.compare_digest(header, DEMO_TOKEN):
+        raise HTTPException(
+            status_code=401,
+            detail="X-Demo-Token header required. Contact the demo owner for access.",
+        )
 
 
 def _dashboard_present() -> bool:
@@ -340,52 +367,34 @@ def _dashboard_present() -> bool:
 
 
 def _job_snapshot(job_id: str) -> dict | None:
-    with _job_lock:
-        job = job_store.get(job_id)
-        if not job:
-            return None
-        safe = {
-            "job_id": job_id,
-            "status": job.get("status"),
-            "processed": job.get("processed", 0),
-            "total": job.get("total", 0),
-            "percent": round(job.get("processed", 0) / max(job.get("total", 0), 1) * 100, 1),
-            "current_stage": job.get("current_stage"),
-            "started_at": job.get("started_at"),
-            "completed_at": job.get("completed_at"),
-            "processing_time_ms": job.get("processing_time_ms", 0),
-            "honeypots": job.get("honeypots", 0),
-            "honeypots_in_output": job.get("honeypots_in_output", 0),
-            "ranked_pool_count": job.get("ranked_pool_count", 0),
-            "bm25_backend": job.get("bm25_backend", "unknown"),
-        }
-        if job.get("status") == "failed":
-            safe["error"] = job.get("error", "Batch ranking failed.")
-        if job.get("status") == "complete":
-            safe["results_url"] = f"/api/batch/{job_id}/results"
-            safe["download_url"] = f"/api/batch/{job_id}/download"
-        return safe
+    job = _store.get_job(job_id)
+    if not job:
+        return None
+    safe = {
+        "job_id": job_id,
+        "status": job.get("status"),
+        "processed": job.get("processed", 0),
+        "total": job.get("total", 0),
+        "percent": round(job.get("processed", 0) / max(job.get("total", 0), 1) * 100, 1),
+        "current_stage": job.get("current_stage"),
+        "started_at": job.get("started_at"),
+        "completed_at": job.get("completed_at"),
+        "processing_time_ms": job.get("processing_time_ms", 0),
+        "honeypots": job.get("honeypots", 0),
+        "honeypots_in_output": job.get("honeypots_in_output", 0),
+        "ranked_pool_count": job.get("ranked_pool_count", 0),
+        "bm25_backend": job.get("bm25_backend") or "unknown",
+    }
+    if job.get("status") == "failed":
+        safe["error"] = job.get("error", "Batch ranking failed.")
+    if job.get("status") == "complete":
+        safe["results_url"] = f"/api/batch/{job_id}/results"
+        safe["download_url"] = f"/api/batch/{job_id}/download"
+    return safe
 
 
 def prune_job_stores() -> None:
-    with _job_lock:
-        if len(job_store) <= MAX_STORED_JOBS:
-            return
-        oldest = sorted(job_store.items(), key=lambda item: item[1].get("started_at", ""))
-        pruned = []
-        for job_id, _ in oldest[: max(0, len(job_store) - MAX_STORED_JOBS)]:
-            job = job_store.pop(job_id, None)
-            results_store.pop(job_id, None)
-            pruned.append((job_id, job))
-    for job_id, job in pruned:
-        job_path = Path(job.get("file_path", "")).parent if job else JOB_DIR / job_id
-        try:
-            resolved_job_path = job_path.resolve()
-            resolved_root = JOB_DIR.resolve()
-            if resolved_job_path != resolved_root and resolved_root in resolved_job_path.parents:
-                shutil.rmtree(resolved_job_path, ignore_errors=True)
-        except (OSError, RuntimeError):
-            pass
+    _store.prune(MAX_STORED_JOBS, JOB_DIR)
 
 
 def extract_candidate_payload(
@@ -443,8 +452,9 @@ def get_results():
 
 
 @app.post("/api/rank")
-async def rank_live(file: UploadFile = File(...)):
+async def rank_live(request: Request, file: UploadFile = File(...)):
     """Live Proof Mode: Process ≤500 candidates synchronously, return in <2 seconds."""
+    _check_demo_token(request)
     try:
         start = time.perf_counter()
         with tempfile.TemporaryDirectory() as tmp:
@@ -530,8 +540,9 @@ async def rank_live(file: UploadFile = File(...)):
 
 
 @app.post("/api/batch")
-async def batch_rank(file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
+async def batch_rank(request: Request, file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
     """Batch Mode: Async processing for large files with SSE progress tracking."""
+    _check_demo_token(request)
     prune_job_stores()
     active_jobs = _active_job_count()
     if active_jobs >= MAX_ACTIVE_BATCH_JOBS:
@@ -559,19 +570,13 @@ async def batch_rank(file: UploadFile = File(...), background_tasks: BackgroundT
         shutil.rmtree(job_dir, ignore_errors=True)
         raise
 
-    with _job_lock:
-        job_store[job_id] = {
-            "status": "queued",
-            "processed": 0,
-            "total": total_lines,
-            "current_stage": "Load",
-            "started_at": datetime.now().isoformat(),
-            "file_path": str(in_path),
-            "output_path": str(job_dir / "ranked_candidates.csv"),
-            "processing_time_ms": 0,
-            "honeypots": 0,
-        }
-        results_store[job_id] = []
+    _store.create_job(
+        job_id=job_id,
+        total=total_lines,
+        file_path=str(in_path),
+        output_path=str(job_dir / "ranked_candidates.csv"),
+        started_at=datetime.now().isoformat(),
+    )
     _inc_metric("batch_jobs_total")
 
     if background_tasks:
@@ -586,10 +591,13 @@ async def batch_rank(file: UploadFile = File(...), background_tasks: BackgroundT
 
 
 def process_batch_job(job_id: str):
-    """Background worker that updates job_store as it processes."""
-    with _job_lock:
-        job = job_store[job_id]
-        job["status"] = "processing"
+    """Background worker that writes progress to the persistent SQLite job store."""
+    job = _store.get_job(job_id)
+    if not job:
+        _LOG.error("process_batch_job: job_id=%s not found in store", job_id)
+        return
+    _store.update_job(job_id, status="processing")
+    _store.log_event(job_id, "started")
     start = time.perf_counter()
 
     try:
@@ -609,6 +617,7 @@ def process_batch_job(job_id: str):
         raw = result.raw_ranked or []
         selected_raw = raw[: len(result.rows)]
         max_score = selected_raw[0][2] if selected_raw else 0.0
+        payloads: list[dict] = []
         for i, (candidate, features, score) in enumerate(selected_raw):
             reasoning = result.rows[i]["reasoning"] if i < len(result.rows) else ""
             payload = extract_candidate_payload(
@@ -619,27 +628,37 @@ def process_batch_job(job_id: str):
                 reasoning,
                 max_score=max_score,
             )
-            with _job_lock:
-                results_store[job_id].append(payload)
-                job["processed"] = i + 1
-                job["current_stage"] = "Reasoning"
+            payloads.append(payload)
+            # Throttled DB progress updates: write every 50 candidates to
+            # reduce contention while keeping SSE latency acceptable.
+            if (i + 1) % 50 == 0 or i == len(selected_raw) - 1:
+                _store.update_job(job_id, processed=i + 1, current_stage="Reasoning")
 
-        with _job_lock:
-            job["honeypots"] = result.honeypots_detected
-            job["honeypots_in_output"] = result.honeypots_in_output
-            job["ranked_pool_count"] = result.ranked_pool_count
-            job["bm25_backend"] = result.bm25_backend
-            job["processing_time_ms"] = round((time.perf_counter() - start) * 1000)
-            job["status"] = "complete"
-            job["completed_at"] = datetime.now().isoformat()
+        _store.add_results(job_id, payloads)
+        elapsed_ms = round((time.perf_counter() - start) * 1000)
+        _store.update_job(
+            job_id,
+            honeypots=result.honeypots_detected,
+            honeypots_in_output=result.honeypots_in_output,
+            ranked_pool_count=result.ranked_pool_count,
+            bm25_backend=result.bm25_backend,
+            processing_time_ms=elapsed_ms,
+            status="complete",
+            completed_at=datetime.now().isoformat(),
+        )
+        _store.log_event(job_id, "completed", f"elapsed_ms={elapsed_ms}")
         _inc_metric("batch_jobs_completed_total")
 
-    except Exception as e:
+    except Exception:
         _LOG.exception("batch ranking failed for job %s", job_id)
-        with _job_lock:
-            job["status"] = "failed"
-            job["error"] = "Batch ranking failed."
-            job["processing_time_ms"] = round((time.perf_counter() - start) * 1000)
+        elapsed_ms = round((time.perf_counter() - start) * 1000)
+        _store.update_job(
+            job_id,
+            status="failed",
+            error="Batch ranking failed.",
+            processing_time_ms=elapsed_ms,
+        )
+        _store.log_event(job_id, "failed")
         _inc_metric("batch_jobs_failed_total")
 
 
@@ -651,8 +670,7 @@ async def stream_progress(job_id: str):
 
     async def event_generator():
         while True:
-            with _job_lock:
-                job = dict(job_store.get(job_id) or {})
+            job = _store.get_job(job_id) or {}
             if not job:
                 # Job pruned mid-stream.
                 yield f"data: {json.dumps({'type': 'error', 'message': 'Job not found'})}\n\n"
@@ -699,9 +717,10 @@ def get_batch_results(job_id: str):
     if not snapshot:
         return JSONResponse({"error": "Job not found"}, status_code=404)
 
-    with _job_lock:
-        job = dict(job_store[job_id])
-        candidates = list(results_store.get(job_id, []))
+    job = _store.get_job(job_id)
+    if not job:
+        return JSONResponse({"error": "Job not found"}, status_code=404)
+    candidates = _store.get_results(job_id) if job.get("status") == "complete" else []
 
     if job["status"] != "complete":
         return JSONResponse({
@@ -755,9 +774,9 @@ def download_batch_csv(job_id: str):
         return JSONResponse({"error": "Job not found"}, status_code=404)
     if snapshot["status"] != "complete":
         return JSONResponse({"error": "Batch job is not complete.", "status": snapshot["status"]}, status_code=409)
-    with _job_lock:
-        out_path = Path(job_store[job_id]["output_path"])
-    if not out_path.exists():
+    job_full = _store.get_job(job_id)
+    out_path = Path(job_full["output_path"]) if job_full else None
+    if not out_path or not out_path.exists():
         return JSONResponse({"error": "Batch CSV artifact is missing."}, status_code=410)
     return FileResponse(
         out_path,
@@ -782,8 +801,8 @@ def health_check():
             "dashboard_present": _dashboard_present(),
         },
         "jobs": {
-            "stored": len(job_store),
-            "active": _active_job_count(),
+            "stored": _store.count_stored(),
+            "active": _store.count_active(),
             "max_active": MAX_ACTIVE_BATCH_JOBS,
         },
         "limits": {
@@ -814,7 +833,7 @@ def readiness_check():
         "checks": {
             "precomputed_loaded": precomputed is not None,
             "dashboard_present": _dashboard_present(),
-            "job_store_available": True,
+            "job_store_available": _store.is_writable(),
         },
     }
     return JSONResponse(body, status_code=200 if ready else 503)
@@ -857,7 +876,7 @@ def metrics():
         f"redrob_api_precomputed_loaded {1 if precomputed is not None else 0}",
         "# HELP redrob_api_jobs_stored In-memory batch jobs currently retained.",
         "# TYPE redrob_api_jobs_stored gauge",
-        f"redrob_api_jobs_stored {len(job_store)}",
+        f"redrob_api_jobs_stored {_store.count_stored()}",
         "# HELP redrob_api_jobs_active Active queued/processing batch jobs.",
         "# TYPE redrob_api_jobs_active gauge",
         f"redrob_api_jobs_active {_active_job_count()}",

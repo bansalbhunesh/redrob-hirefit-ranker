@@ -604,6 +604,12 @@ _BACKEND_INFRA_PADDED = _pad([
     "docker", "kubernetes", "terraform", "aws", "azure", "gcp", "ci cd",
     "ci/cd", "jenkins", "github actions", "deployment", "deployments",
 ])
+_BACKEND_DELIVERY_PADDED = _pad([
+    "api", "apis", "rest api", "microservice", "microservices", "distributed",
+    "kafka", "spark", "production", "deployed", "shipped", "launched",
+    "latency", "throughput", "scale", "scaled", "service", "services",
+    "platform",
+])
 _BACKEND_SURFACE_PADDED = _pad([
     "api", "rest", "restful", "graphql", "grpc", "json", "xml", "http", "https",
     "oauth", "jwt", "sso", "authentication", "authorization", "backend",
@@ -697,6 +703,7 @@ _BACKEND_API_SPLIT = _split_padded(_BACKEND_API_PADDED)
 _BACKEND_DB_SPLIT = _split_padded(_BACKEND_DB_PADDED)
 _BACKEND_SCALE_SPLIT = _split_padded(_BACKEND_SCALE_PADDED)
 _BACKEND_INFRA_SPLIT = _split_padded(_BACKEND_INFRA_PADDED)
+_BACKEND_DELIVERY_SPLIT = _split_padded(_BACKEND_DELIVERY_PADDED)
 _BACKEND_SURFACE_SPLIT = _split_padded(_BACKEND_SURFACE_PADDED)
 _FRONTEND_SPLIT = _split_padded(_FRONTEND_PADDED)
 _NON_BACKEND_ENGINEERING_SPLIT = _split_padded(_NON_BACKEND_ENGINEERING_PADDED)
@@ -918,6 +925,8 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
             scale_hits = _count_tokenized(_BACKEND_SCALE_SPLIT, tokens_full, safe_full)
             infra_hits = _count_tokenized(_BACKEND_INFRA_SPLIT, tokens_full, safe_full)
             surface_hits = _count_tokenized(_BACKEND_SURFACE_SPLIT, tokens_full, safe_full)
+            career_delivery_hits = _count_tokenized(_BACKEND_DELIVERY_SPLIT, tokens_career, safe_career)
+            career_production_hits = _count_tokenized(_PRODUCTION_SPLIT, tokens_career, safe_career)
             backend_depth = _category_depth(
                 (api_hits, db_hits, scale_hits, infra_hits),
                 (3.0, 3.0, 2.0, 3.0),
@@ -930,16 +939,27 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
             infra_score = clamp(infra_hits / 3.0)
             values["jd_keyword_coverage_score"] = max(values["jd_keyword_coverage_score"], backend_surface)
             values["ir_ranking_experience"] = max(values["ir_ranking_experience"], backend_composite)
+            backend_production = clamp(
+                0.26 * api_score
+                + 0.22 * db_score
+                + 0.16 * scale_score
+                + 0.12 * infra_score
+                + 0.24 * backend_surface
+            )
+            # RUM-style near-miss guard for alternate backend JDs: skills/profile
+            # surface can create high lexical overlap, but production credit
+            # should require career-history delivery evidence.
+            career_delivery_score = clamp(career_delivery_hits / 4.0)
+            explicit_production_score = clamp(career_production_hits / 2.0)
+            backend_production_cap = clamp(
+                0.40 + 0.40 * career_delivery_score + 0.20 * explicit_production_score
+            )
             values["production_evidence"] = max(
                 values["production_evidence"],
-                clamp(
-                    0.26 * api_score
-                    + 0.22 * db_score
-                    + 0.16 * scale_score
-                    + 0.12 * infra_score
-                    + 0.24 * backend_surface
-                ),
+                min(backend_production, backend_production_cap),
             )
+            if career_delivery_hits <= 3 and career_production_hits == 0 and not direct_backend_title:
+                values["ir_ranking_experience"] = min(values["ir_ranking_experience"], 0.72)
             values["scale_signal"] = max(values["scale_signal"], clamp(max(scale_score, 0.55 * backend_surface)))
             values["code_writing_recent"] = max(
                 values["code_writing_recent"],
@@ -999,7 +1019,6 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
                     values["career_trajectory_score"],
                     clamp(0.75 * inferred_title_score + 0.25 * values["product_company_ratio"] - title_hop_penalty),
                 )
-
         if "data_bi" in groups:
             direct_data_title = _has_tokenized(_DIRECT_DATA_TITLE_SPLIT, current_tokens, safe_current)
             non_data_current_title = _has_tokenized(
@@ -1412,8 +1431,16 @@ def final_score(
     # keyword stuffer, honeypot, or disqualified profile.
     behavior_multiplier = features.behavioral_multiplier
     disqualifier_multiplier = features.disqualifier_multiplier
+    role_multiplier = 1.0
     if not default_jd:
         groups = {group for group, _ in getattr(config, "must_have_skills", ())}
+        target_titles = tuple(_norm(title) for title, _ in getattr(config, "target_title_weights", ()))
+        primary_title = target_titles[0] if target_titles else ""
+        primary_backend_role = (
+            "senior backend engineer" in primary_title
+            or "staff backend engineer" in primary_title
+            or "backend engineer" in primary_title
+        )
         if groups & {"cloud_devops", "data_bi"}:
             behavior_multiplier = clamp(0.88 + 0.12 * behavior_multiplier, 0.88, 1.03)
         elif "software_backend" in groups:
@@ -1431,10 +1458,29 @@ def final_score(
         if features.flags and not (set(features.flags) & TRANSFER_CRITICAL_RISK_FLAGS):
             if set(features.flags) <= TRANSFER_SOFT_RISK_FLAGS:
                 disqualifier_multiplier = max(disqualifier_multiplier, 0.95)
+        if primary_backend_role:
+            title_fit = features.values.get("title_match_score", 0.0)
+            role_evidence = features.values.get("ir_ranking_experience", 0.0)
+            production = features.values.get("production_evidence", 0.0)
+            if (
+                0.94 <= title_fit < 0.98
+                and features.values.get("senior_title_held", 0.0) >= 0.5
+                and production >= 0.68
+                and role_evidence >= 0.75
+            ):
+                role_multiplier *= 1.12
+            if (
+                0.90 <= title_fit < 0.95
+                and features.values.get("core_skill_match", 0.0) >= 0.95
+                and production < 0.62
+                and features.values.get("ml_ai_tenure_score", 0.0) >= 0.80
+            ):
+                role_multiplier *= 0.88
     return max(
         0.0,
         base_score
         * behavior_multiplier
         * features.honeypot_multiplier
-        * disqualifier_multiplier,
+        * disqualifier_multiplier
+        * role_multiplier,
     )

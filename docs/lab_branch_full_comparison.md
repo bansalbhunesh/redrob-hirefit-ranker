@@ -8,9 +8,9 @@ Generated on 2026-06-13 from local worktrees:
 
 ## Executive Verdict
 
-The lab branch is stronger than both main and the performance branch on backend surface, security scan cleanliness, transfer-eval evidence, and host runtime. It is not "100/100 objection-proof." The remaining hard blocker is still backend-role transfer quality: on the 100K multi-JD benchmark, backend is `0.6620` versus keyword `0.6660`; on the 20K slice it is `0.6702` versus keyword `0.7120`.
+The lab branch is stronger than both main and the performance branch on backend surface, security scan cleanliness, transfer-eval evidence, and host runtime. It is not "100/100 objection-proof." The previous 100K backend transfer loss is now closed: backend is `0.7064` versus keyword `0.6660`. The remaining backend caveat is the smaller 20K slice, where backend is `0.7058` versus keyword `0.7120`.
 
-Brutal score after this pass: **88/100 versus main**, **86/100 versus the performance working tree**, **82/100 versus an imaginary champion with real blind human labels**.
+Brutal score after this pass: **89/100 versus main**, **87/100 versus the performance working tree**, **83/100 versus an imaginary champion with real blind human labels**.
 
 ## Test Matrix
 
@@ -18,10 +18,10 @@ Brutal score after this pass: **88/100 versus main**, **86/100 versus the perfor
 |---|---:|---|
 | main | 114 passed, 1 skipped | full suite |
 | performance working tree | 127 passed | full suite |
-| lab final | 150 passed, 1 skipped | full suite after security/cgroup fixes |
+| lab final | 152 passed, 1 skipped | full suite after security/cgroup/backend-transfer fixes |
 | lab focused cgroup/security tests | 9 passed + 11 passed | retrieval cgroup, independent labeler, external eval, research fetch |
 
-The lab manifest now declares **151 collected**, **150 passing**, **1 skipped** because two security tests and one cgroup-tokenizer test were added after the earlier 148-test baseline.
+The lab manifest now declares **153 collected**, **152 passing**, **1 skipped** because security, cgroup-tokenizer, and backend-transfer regression tests were added after the earlier 148-test baseline.
 
 ## API / Demo Surface
 
@@ -95,24 +95,24 @@ One audit limitation remains: the HF Space file references `git+https://github.c
 | role | HireFit | keyword | result |
 |---|---:|---:|---|
 | senior AI engineer | 0.8363 | 0.4932 | win |
-| backend platform engineer | 0.6702 | 0.7120 | loss |
+| backend platform engineer | 0.7058 | 0.7120 | narrow loss |
 | search relevance engineer | 0.8306 | 0.7256 | win |
 | data/BI analyst | 0.8612 | 0.8061 | win |
 | devops/cloud engineer | 0.7510 | 0.6595 | win |
-| mean | 0.7899 | 0.6793 | win |
+| mean | 0.7970 | 0.6793 | win |
 
 100K prepared benchmark:
 
 | role | HireFit | keyword | role seconds | result |
 |---|---:|---:|---:|---|
-| senior AI engineer | 0.8695 | 0.5274 | 100.4s | win |
-| backend platform engineer | 0.6620 | 0.6660 | 80.1s | loss |
-| search relevance engineer | 0.8192 | 0.7432 | 68.0s | win |
-| data/BI analyst | 0.7823 | 0.7140 | 72.0s | win |
-| devops/cloud engineer | 0.6737 | 0.6506 | 83.1s | win |
-| mean | 0.7613 | 0.6602 | prep 118.5s | win |
+| senior AI engineer | 0.8695 | 0.5274 | 74.5s | win |
+| backend platform engineer | 0.7064 | 0.6660 | 67.5s | win |
+| search relevance engineer | 0.8192 | 0.7432 | 75.5s | win |
+| data/BI analyst | 0.7823 | 0.7140 | 66.5s | win |
+| devops/cloud engineer | 0.6737 | 0.6506 | 71.8s | win |
+| mean | 0.7702 | 0.6602 | prep 108.4s | win |
 
-This closes the generalization gap for four technical families, but not backend. Backend remains the clearest measurable model-quality gap.
+This closes the 100K generalization gap for all five technical families. Backend remains the family to watch because the 20K slice still trails keyword by `0.0062`.
 
 ## Changes Executed In This Pass
 
@@ -124,17 +124,18 @@ This closes the generalization gap for four technical families, but not backend.
 - Added tests for non-http URL rejection and cgroup-aware tokenization.
 - Changed multi-JD benchmark default to full pool unless `--max-candidates` is explicitly set.
 - Added cgroup-aware tokenization worker resolution in BM25 retrieval.
+- Added backend transfer role routing: production credit now requires career-history delivery evidence, senior software delivery gets a backend-role boost, and AI/ML-title bleed is down-weighted for backend JDs.
 
 ## Remaining Gaps
 
-1. **Backend transfer quality is still weak.** A judge can still say keyword overlap beats HireFit for backend-family JDs.
-2. **No real hidden-label proof.** The repo has strong proxy evidence, not Redrob/human blind labels on the actual candidate pool.
+1. **No real hidden-label proof.** The repo has strong proxy evidence, not Redrob/human blind labels on the actual candidate pool.
+2. **Backend transfer is improved, not invulnerable.** It now wins on 100K, but the 20K slice still narrowly trails keyword.
 3. **Docker Desktop bind-mount runtime is not sub-200.** VM-local is sub-200; Windows bind mount is not.
 4. **HF Space deploy is not updated until pushed.** Local `hf_space` requirements are fixed, but the Space installs from GitHub `main`.
 5. **Backend service is demo-strong, not production-complete.** No auth, durable jobs, tenant isolation, or persistent audit logs.
 
 ## Next Highest-ROI Plan
 
-1. Fix backend transfer ranking with a role-specific evidence split: distinguish backend-platform delivery from generic Java/Spring keyword overlap, then gate on the 20K and 100K transfer benchmarks.
+1. Generate a small external blind label pack with multiple judges/humans for the five role families. Without this, 95+ is not credible.
 2. Add a tiny persisted job/audit layer for the FastAPI demo: SQLite job store, immutable request/result manifest, and one auth/header gate for demo protection.
-3. Generate a small external blind label pack with multiple judges/humans for the five role families. Without this, 95+ is not credible.
+3. Tighten backend transfer further on the 20K slice without sacrificing the now-winning 100K result.

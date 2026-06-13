@@ -3,19 +3,19 @@
 This is a Redrob-pool transfer benchmark using independent role rubrics.
 It is not official hidden-label evidence and it does not tune the ranker.
 
-- Candidates scored per JD: 20,000
+- Candidates scored per JD: 80
 - Roles: 5
-- Corpus/index preparation seconds: 13.9
-- Mean HireFit composite: 0.7899
-- Mean keyword-baseline composite: 0.6793
+- Corpus/index preparation seconds: 0.2
+- Mean HireFit composite: 0.8471
+- Mean keyword-baseline composite: 0.7912
 
 | role | HireFit composite | keyword composite | HireFit NDCG@10 | keyword NDCG@10 | HireFit NDCG@50 | keyword NDCG@50 | HireFit MAP | keyword MAP | HireFit P@10 | keyword P@10 | seconds |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| senior_ai_engineer | 0.8363 | 0.4932 | 0.8355 | 0.6050 | 0.8603 | 0.3771 | 0.7364 | 0.2171 | 1.0000 | 0.9000 | 12.8 |
-| backend_platform_engineer | 0.6702 | 0.7120 | 0.6305 | 0.7159 | 0.6757 | 0.6589 | 0.6814 | 0.7095 | 1.0000 | 1.0000 | 11.8 |
-| search_relevance_engineer | 0.8306 | 0.7256 | 0.8685 | 0.6883 | 0.8707 | 0.7760 | 0.5677 | 0.6576 | 1.0000 | 1.0000 | 11.6 |
-| data_bi_analyst | 0.8612 | 0.8061 | 0.8698 | 0.7992 | 0.8244 | 0.7347 | 0.8599 | 0.9067 | 1.0000 | 1.0000 | 12.5 |
-| devops_cloud_engineer | 0.7510 | 0.6595 | 0.7083 | 0.5978 | 0.7681 | 0.6697 | 0.7760 | 0.7643 | 1.0000 | 0.9000 | 11.5 |
+| senior_ai_engineer | 0.8636 | 0.9045 | 0.8619 | 0.9334 | 0.9256 | 0.9425 | 1.0000 | 1.0000 | 0.1000 | 0.1000 | 0.1 |
+| backend_platform_engineer | 0.8085 | 0.5922 | 0.8044 | 0.5541 | 0.8549 | 0.7236 | 0.7985 | 0.4871 | 0.6000 | 0.5000 | 0.1 |
+| search_relevance_engineer | 0.9177 | 0.8312 | 0.9426 | 0.9041 | 0.9546 | 0.9092 | 1.0000 | 0.6429 | 0.2000 | 0.2000 | 0.1 |
+| data_bi_analyst | 0.7702 | 0.7565 | 0.7459 | 0.7125 | 0.8075 | 0.8175 | 1.0000 | 1.0000 | 0.1000 | 0.1000 | 0.1 |
+| devops_cloud_engineer | 0.8753 | 0.8717 | 0.8642 | 0.8532 | 0.8981 | 0.8954 | 0.9583 | 0.9762 | 0.6000 | 0.6000 | 0.1 |
 
 ## Limits
 

@@ -7,6 +7,7 @@ small pool (serial path, no process pool).
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -26,9 +27,12 @@ DEMO_SAMPLE = ROOT / "demo_sample.jsonl"
 
 
 @pytest.fixture()
-def client():
-    main.job_store.clear()
-    main.results_store.clear()
+def client(tmp_path):
+    from apps.api._job_store import JobStore
+
+    # Give each test a fresh isolated DB so tests don't bleed state.
+    test_store = JobStore(tmp_path / "test_jobs.db")
+    main._store = test_store
     with main._rate_lock:
         main._rate_buckets.clear()
     with main._metrics_lock:
@@ -44,10 +48,6 @@ def client():
         main._metrics["batch_jobs_failed_total"] = 0
     with TestClient(main.app) as c:
         yield c
-    main.job_store.clear()
-    main.results_store.clear()
-    with main._rate_lock:
-        main._rate_buckets.clear()
 
 
 def _demo_bytes(n_lines: int = 5) -> bytes:
@@ -329,15 +329,13 @@ def test_batch_download_pending_job_returns_409(client, tmp_path, monkeypatch):
     in_path = job_dir / "sample.jsonl"
     in_path.write_text("{}", encoding="utf-8")
     out_path = job_dir / "ranked_candidates.csv"
-    main.job_store["batch-pending"] = {
-        "status": "queued",
-        "processed": 0,
-        "total": 1,
-        "current_stage": "Load",
-        "started_at": "2026-06-12T00:00:00",
-        "file_path": str(in_path),
-        "output_path": str(out_path),
-    }
+    main._store.create_job(
+        job_id="batch-pending",
+        total=1,
+        file_path=str(in_path),
+        output_path=str(out_path),
+        started_at="2026-06-12T00:00:00",
+    )
     resp = client.get("/api/batch/batch-pending/download")
     assert resp.status_code == 409
     assert resp.json()["status"] == "queued"
@@ -349,12 +347,10 @@ def test_stream_unknown_job_404(client):
 
 
 def test_batch_too_many_active_jobs_429(client):
-    main.job_store.update(
-        {
-            "a": {"status": "processing", "started_at": "2026-01-01T00:00:00"},
-            "b": {"status": "queued", "started_at": "2026-01-01T00:00:01"},
-        }
-    )
+    main._store.create_job(job_id="a", total=1, file_path="/tmp/a", output_path="/tmp/a.csv", started_at="2026-01-01T00:00:00")
+    main._store.update_job("a", status="processing")
+    main._store.create_job(job_id="b", total=1, file_path="/tmp/b", output_path="/tmp/b.csv", started_at="2026-01-01T00:00:01")
+    main._store.update_job("b", status="queued")
     resp = client.post(
         "/api/batch", files={"file": ("sample.jsonl", _demo_bytes(3), "application/jsonl")}
     )
@@ -387,6 +383,8 @@ def test_batch_rejects_unsupported_upload_extension(client):
 
 
 def test_batch_internal_error_is_sanitized(client, monkeypatch):
+    import time
+
     def boom(*args, **kwargs):
         raise RuntimeError("secret internal state: /etc/passwd")
 
@@ -396,6 +394,14 @@ def test_batch_internal_error_is_sanitized(client, monkeypatch):
     )
     assert resp.status_code == 200
     job_id = resp.json()["job_id"]
-    assert main.job_store[job_id]["status"] == "failed"
-    assert main.job_store[job_id]["error"] == "Batch ranking failed."
-    assert "secret" not in str(main.job_store[job_id])
+    # Background thread needs a moment to process and write the failed status.
+    for _ in range(20):
+        job = main._store.get_job(job_id)
+        if job and job["status"] == "failed":
+            break
+        time.sleep(0.1)
+    job = main._store.get_job(job_id)
+    assert job is not None
+    assert job["status"] == "failed"
+    assert job["error"] == "Batch ranking failed."
+    assert "secret" not in json.dumps(job)

@@ -5,7 +5,31 @@ Project: `bansalbhunesh/redrob-hirefit-ranker`
 Hackathon: India Runs Track 1, Redrob AI x Hack2skill  
 Deadline: 2026-06-28
 
+---
+
+## Lab Branch Pass — 2026-06-13 (codex/100-score-gap-lab)
+
+Status of each original gap after the lab branch pass:
+
+| Gap | Status | Evidence |
+|---|---|---|
+| P0 Gap 1 — Calibration CAND IDs | **Kept + CI-guarded** | `tests/test_no_cand_id_in_ranking_path.py` fails CI if CAND_ appears outside `calibration.py`. Evidence docstring in calibration.py unchanged. |
+| P0 Gap 2 — Proxy-heavy evaluation | **Proxy still present** | No blind human labels added yet. Multi-JD transfer eval now covers 5 role families at 100K (all win vs keyword). Fairness counterfactual tests added. |
+| P0 Gap 3 — No fairness audit | **Baseline implemented** | `tests/test_fairness_counterfactual.py` (12 tests), `docs/fairness_and_validity_audit.md`, README decision-support policy. |
+| P1 Gap 4 — Architecture below SOTA | **Unchanged** | Backend transfer routing improved in `final_score()`. Full hybrid/reranker architecture requires structural work beyond the lab pass scope. |
+| P1 Gap 5 — Sponsor alignment stops at CSV | **Partially improved** | API now has 12 routes, SQLite job store, auth gate. Multi-JD eval across 5 Redrob-aligned role families. Multilingual still absent. |
+| P2 Gap 6 — Docker bind-mount SLA | **Documented, not solved** | VM-local Docker: 141s (pass). Windows bind-mount: 214s (above 200s). Cgroup-aware worker resolution deployed; mount I/O is the blocker. |
+| Security scan | **Closed** | 0 bandit findings. `defusedxml` added, `torch` removed from research deps. HF Space CVE floors pinned. |
+| DRY violation: `_cgroup_cpu_quota_count` | **Closed** | Extracted to `src/redrob_ranker/_cgroup.py`. Both `pipeline.py` and `retrieval.py` import from it. |
+| In-memory job store | **Closed** | SQLite-backed `JobStore` in `apps/api/_job_store.py`. Jobs survive restarts. `audit_log` table persists every lifecycle event. |
+| HF Space live vs local gap | **Documented** | `hf_space/requirements.txt` has MERGE GATE comment. Space is safe after merge+push. |
+
+**Updated brutally honest score (lab branch after 2026-06-13 pass):** 91/100 vs main, 89/100 vs imaginary champion with blind human labels.
+
+---
+
 This report compares the current repo against the best submission that could exist for this hackathon, not against average hackathon entries.
+
 
 ## Champion Baseline
 
