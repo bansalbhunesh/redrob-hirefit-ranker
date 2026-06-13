@@ -34,6 +34,15 @@ dev = [
   "pytest>=8,<9",
   "ruff>=0.6,<1",
   "psutil>=5.9,<8",
+  # Test-only: tests/test_research_public_data_leads.py execs
+  # scripts/research_public_data_leads.py, which uses defusedxml for safe XML
+  # parsing. Required for a clean-environment `pip install -e .[dev]` to collect
+  # the full suite (otherwise collection aborts with ModuleNotFoundError).
+  "defusedxml>=0.7.1,<1",
+  # Test-only: FastAPI/starlette TestClient (tests/test_api_endpoints.py) needs
+  # httpx. Without it those 26 tests importorskip out and the suite collects 137
+  # instead of 163 on a clean install.
+  "httpx>=0.27",
 ]
 
 [tool.setuptools.packages.find]

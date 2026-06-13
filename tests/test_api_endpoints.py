@@ -72,13 +72,33 @@ def test_index_falls_back_to_root_dashboard(client, monkeypatch, tmp_path):
     assert b"Redrob HireFit Ranker" in resp.content
 
 
+def _git_head_resolvable() -> bool:
+    """True only if .git/HEAD (following worktree gitdir pointers) is actually
+    readable in THIS environment. Mirrors apps.api.main._resolve_git_sha so the
+    assertion below never fails merely because a worktree `.git` pointer cannot be
+    resolved here (e.g. a git worktree mounted into a container without its parent
+    gitdir, or a slim image with no git binary) — in those cases "unknown" is the
+    correct, graceful result and must not fail the suite."""
+    try:
+        git_dir = ROOT / ".git"
+        if not git_dir.exists():
+            return False
+        if git_dir.is_file():
+            pointer = git_dir.read_text(encoding="utf-8").strip()
+            if pointer.startswith("gitdir:"):
+                git_dir = (ROOT / pointer.split(":", 1)[1].strip()).resolve()
+        return (git_dir / "HEAD").exists()
+    except OSError:
+        return False
+
+
 def test_health_reports_artifacts_and_sha(client):
     resp = client.get("/api/health")
     assert resp.status_code == 200
     body = resp.json()
     assert body["status"] == "ok"
     assert body["git_sha"] and body["git_sha"] != ""
-    if (ROOT / ".git").exists():
+    if _git_head_resolvable():
         assert body["git_sha"] != "unknown"
     assert body["artifacts"]["precomputed_loaded"] is True
     assert body["artifacts"]["precomputed_bytes"] > 0
