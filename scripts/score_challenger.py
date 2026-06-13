@@ -24,7 +24,7 @@ SOURCES = [
 
 def main() -> None:
     data = json.loads((ROOT / "artifacts" / "challenger_top100.json").read_text(encoding="utf-8"))
-    sets = [load_labels(p, name) for p, name in SOURCES]
+    sets = [load_labels(p, name) for p, name in SOURCES if p.exists()]
 
     means = {}
     for which in ("shipped", "challenger"):

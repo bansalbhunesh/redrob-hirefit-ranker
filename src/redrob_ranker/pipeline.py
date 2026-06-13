@@ -182,9 +182,6 @@ def run_ranking(candidates_path: Path, out_path: Path, config: RankerConfig | No
     config = config or RankerConfig()
     candidates = list(iter_candidates(candidates_path, max_candidates=config.max_candidates))
     ranked, used_backend = rank_candidates(candidates, config)
-    # Stage 2: LightGBM LambdaMART Learned Re-Ranker
-    reranker = LearnedReRanker("reranker_lgbm.txt")
-    ranked = reranker.rerank(ranked)
     top_k = min(config.top_k, len(ranked))
     rows = rows_from_ranked(ranked, top_k)
     # < 1.0 counts every honeypot-flagged candidate, whether hard-zeroed or
