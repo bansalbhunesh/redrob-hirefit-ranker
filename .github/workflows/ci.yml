@@ -11,7 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: true
+          # Do NOT fetch the hf_space submodule in CI. It is the external
+          # HuggingFace Space repo, which rate-limits CI runners (HTTP 429) and
+          # can be unreachable/private/down — and it is not needed to build or
+          # test the ranker. test_hf_space_hero_matches_manifest skips when
+          # hf_space/app.py is absent, so the suite stays green here.
+          submodules: false
 
       - uses: actions/setup-python@v5
         with:

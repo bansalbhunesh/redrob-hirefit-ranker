@@ -14,6 +14,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = json.loads((ROOT / "docs" / "metrics_manifest.json").read_text(encoding="utf-8"))
 README = (ROOT / "README.md").read_text(encoding="utf-8")
@@ -80,6 +82,10 @@ def test_precomputed_payload_matches_manifest():
     assert meta["bm25_backend"] == MANIFEST["bm25_backend"]
 
 
+@pytest.mark.skipif(
+    not (ROOT / "hf_space" / "app.py").exists(),
+    reason="hf_space submodule not checked out (CI uses submodules: false)",
+)
 def test_hf_space_hero_matches_manifest():
     app = (ROOT / "hf_space" / "app.py").read_text(encoding="utf-8")
     sub = MANIFEST["submission"]
