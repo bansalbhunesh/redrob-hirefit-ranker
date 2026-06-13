@@ -2,7 +2,12 @@
 
 ## Current golden artifact
 
-- `submission.csv` SHA-256: `ecb1fc5b9f481669789b8d4c9fba14bc185b85173b8a90c354e422470d2f1a63`
+- `submission.csv` SHA-256: `fdfd3f3590720e1260822b6729b2851dc8daca9f3f859cefc3df184bbbd4c5db`
+  (2026-06-14: regenerated in the pinned, thread-locked Docker image so the hash
+  is byte-identical across CPU counts — see `docs/reproducibility_notes.md`).
+  Lineage: `e1a696d1` → `ecb1fc5b` (Phase-4 reasoning) → `a2882cd2` (consensus
+  ordering pass, since removed) → `6b284271` (HyRE/MMoE wiring) → `fdfd3f35`
+  (reproducibility fix).
 
 ## 2026-06-10 Phase 4 reasoning upgrade (sanctioned text-only change)
 
@@ -72,3 +77,8 @@ rule in `docs/sensitivity_sweep.md` and update both hashes in the same commit.
   order unaffected).
 - `submission.csv` uses CRLF row terminators on all platforms (csv module with
   `newline=""`), so hashes are OS-independent.
+- BLAS/threadpool thread counts are pinned to 1 (Dockerfile `ENV` + `rank.py`),
+  so BM25 float-reduction order — and the output hash — is identical regardless
+  of host CPU count (verified at `--cpus=2` and `--cpus=4`). Earlier goldens
+  (e.g. `6b284271`) were minted at a higher thread count and did not reproduce at
+  `--cpus=2`; the pin removes that dependency (docs/reproducibility_notes.md).

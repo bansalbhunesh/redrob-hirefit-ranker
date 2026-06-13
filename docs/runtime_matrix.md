@@ -1,5 +1,9 @@
 # Docker Runtime Matrix (Phase 0.1)
 
+> **Note.** Dated entries below reference earlier goldens (`a2882cd2…`). The
+> current golden is `fdfd3f35…` (2026-06-14 reproducibility fix), byte-identical
+> across CPU counts — see `docs/reproducibility_notes.md`.
+
 Environment: `python:3.11-slim` image (the Stage-3 reproduction environment),
 Docker Desktop on Windows 11 / WSL2 (12 host CPUs, **8.15 GB VM memory** — the
 host VM cannot model the full 16 GB budget; the container cap used was 6 GB and

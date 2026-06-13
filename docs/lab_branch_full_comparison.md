@@ -1,5 +1,9 @@
 # Lab Branch Full Comparison
 
+> **Historical snapshot (2026-06-13), superseded.** The lab branch has since been
+> merged into `main`; the current suite is **163 passed / 0 skipped** and the golden
+> is `fdfd3f35…`. Counts and hashes below are as-measured on 2026-06-13.
+
 Generated on 2026-06-13 from local worktrees:
 
 - `main`: `C:\Users\bhune\india-runs-compare-main`

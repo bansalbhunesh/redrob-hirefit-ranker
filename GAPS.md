@@ -60,7 +60,7 @@ Primary research sources are documented in `RESEARCH.md`. The most important ext
 | Technical depth | Deterministic BM25 + 28 feature matrix + guardrails + calibration | Hybrid lexical/semantic retrieval, learned/listwise reranking, calibrated trust layer | 6.5/10 |
 | ML rigor | Good ablations, but proxy labels, shared LLM samples, ID-level calibration | Blind held-out labels, no ID tuning, real/public benchmark validation | 4/10 |
 | Result quality | Likely strong on this synthetic JD and output format | Strong under hidden labels, role transfer, and adversarial resumes | 6/10 |
-| Reproduction safety | Docker, pinned deps, CI, 105 tests passing | Full artifact freshness, benchmark gates, data membership validation, no stale scripts | 7/10 |
+| Reproduction safety | Docker, pinned deps, CI, 163 tests passing, golden byte-reproducible across CPU counts | Full artifact freshness, benchmark gates, data membership validation, no stale scripts | 7/10 |
 | Demo quality | Render/FastAPI/Gradio demos, feature payloads | Production-like recruiter workflow, durable jobs, exports, freshness sync | 7/10 |
 | Presentation | Strong README/docs/polished deck | Single source of truth, no metric ambiguity, no stale artifacts | 7/10 |
 | Sponsor alignment | Good resume ranker story and behavioral signals | Redrob OS: people/job/company search, multilingual, graph, CRM/ATS workflow | 6/10 |

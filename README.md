@@ -23,7 +23,7 @@
 | 100K runtime (python:3.11 Docker, 2 CPUs, serial) | **80s** on a clean cloud runner (CI-verified, byte-deterministic); ~125s local Docker | 300s limit |
 | Peak memory (container, 4 workers) | ~6.1 GB | 16 GB limit |
 | Network / GPU at rank time | **none** | required: none |
-| Determinism | **byte-identical** run-to-run, serial-vs-parallel, Windows-vs-Linux | locked by golden-hash tests |
+| Determinism | **byte-identical** run-to-run, serial-vs-parallel, and **across CPU counts** (BLAS threads pinned) | golden-hash tests + [docs/reproducibility_notes.md](docs/reproducibility_notes.md) |
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
 | Top-10 quality — **dev proxy** (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
 | Format validator | **pass** (incl. candidate-pool membership) | Stage-1 gate |
@@ -70,7 +70,7 @@ The hackathon submission has been upgraded from a strong baseline prototype (`ma
 
 | Dimension | Baseline Prototype | Enterprise Architecture |
 |---|---|---|
-| **Test Coverage** | 114 passing | **163 passing** (+43% coverage) |
+| **Test Coverage** | 115 passing | **163 passing** (+42% coverage) |
 | **Fairness Bounds** | 0 tests | **12 rigorous tests** (Location, Gender, Name proxies mathematically bounded) |
 | **Backend Storage** | Volatile Python Dicts | **Persistent SQLite (WAL)** — survives server restarts |
 | **API Security** | Open | **Protected** via `X-Demo-Token` |
@@ -223,7 +223,7 @@ either declined or adopted on the evidence:
 1. **Static dense embeddings** - NDCG@10 +0.0000 at ~2.2x runtime   rejected
    (`artifacts/embedding_gate_result.txt`).
 2. **Learned logistic-regression weights** - loses to the hand weights even on
-   labels that structurally favor it, 0.8238 vs 0.8811 pre-calibration
+   labels that structurally favor it, 0.8238 vs 0.8811 hand-tuned
    ([docs/learned_weights_appendix.md](docs/learned_weights_appendix.md)).
 3. **LightGBM LambdaMART challenger** - -0.0061 against a pre-registered
    ≥ +0.005 gate, committed before training
@@ -351,7 +351,7 @@ rule; shipped config won), honeypot audit in
 comparison in [docs/learned_weights_appendix.md](docs/learned_weights_appendix.md)
 (cross-validated logistic regression on the same feature inputs **loses to the
 hand-tuned weights even on the labels it was trained on** — 0.8238 vs 0.8811
-composite, pre-calibration baseline; hand weights ship).
+composite, hand-tuned baseline; hand weights ship).
 
 ## Repository structure
 
@@ -360,8 +360,8 @@ composite, pre-calibration baseline; hand weights ship).
   validation, eval harness, dashboard payload helpers.
 - `scripts/` — validators, eval/label builders, sensitivity sweep, ablation
   study, honeypot extraction/verdicts, Docker runtime matrix.
-- `tests/` — 153 collected checks: ranking, guardrails, reasoning grounding, JD-compiler
-  acceptance, calibration semantics, and the golden-output regression gates.
+- `tests/` — 163 collected checks: ranking, guardrails, reasoning grounding, JD-compiler
+  acceptance, fairness counterfactuals, and the golden-output regression gates.
 - `apps/api/`, `apps/space/`, `hf_space/` — FastAPI dashboard and Gradio demos.
 - `docs/` — architecture, methodology evidence, audits, runtime matrix.
 - `.prompts/` — AI-assistant instruction files (see AI usage below).

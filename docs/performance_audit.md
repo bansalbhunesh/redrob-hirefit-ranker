@@ -1,5 +1,9 @@
 # Performance & App-Layer Deep Audit (2026-06-10)
 
+> **Historical record.** The hashes below (`ecb1fc5b…`) were current on
+> 2026-06-10. The current golden is `fdfd3f35…` (2026-06-14 reproducibility fix);
+> see `docs/golden_reproduction.md` and `docs/reproducibility_notes.md`.
+
 Follow-up to the Phase-0 runtime matrix (docs/runtime_matrix.md). Scope: re-profile the
 offline pipeline from scratch, optimize only measured hot paths, hold the golden hash on
 every change, and harden the dashboard backend.

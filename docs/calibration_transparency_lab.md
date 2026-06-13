@@ -1,16 +1,17 @@
 # Calibration Transparency Lab
 
-Branch: `codex/100-score-gap-lab`  
-Status: experimental branch evidence, not part of submitted `main`.
+> **SUPERSEDED (2026-06-14): candidate-ID calibration has been removed entirely.**
+> `src/redrob_ranker/calibration.py` is deleted, the `--no-calibration` flag no
+> longer exists (no-calibration is now the *only* behavior), and the official
+> ranking applies **no candidate-ID swaps** — enforced by
+> `tests/test_no_calibration.py` and `tests/test_no_cand_id_in_ranking_path.py`.
+> The ordering signal was generalized into role-family depth scoring. The record
+> below is retained only to document the calibration pass that *used to* exist and
+> the exact 16 rows it once moved.
 
-The branch adds an audit switch:
-
-```bash
-python rank.py --candidates candidates.jsonl --out artifacts/local_lab_full_no_calibration.csv --bm25-backend bm25s --no-calibration
-```
-
-Default behavior remains unchanged. Without `--no-calibration`, the submitted
-challenge-JD calibration still runs and produces the golden `submission.csv`.
+Historically, this branch shipped a deterministic challenge-JD calibration pass
+plus an audit switch (`--no-calibration`) to generate the pre-calibration
+baseline. Both are gone; what follows is the historical diff for transparency.
 
 ## Why This Helps
 
@@ -72,5 +73,6 @@ bounded and auditable:
 - the changed set is exactly the documented calibration set;
 - reviewers can reproduce both files locally.
 
-The next stronger version would replace these swaps with a no-ID pairwise rule.
+**Done:** the swaps were removed entirely; top-100 ordering now comes from
+features (including role-family depth scoring) with no candidate IDs.
 

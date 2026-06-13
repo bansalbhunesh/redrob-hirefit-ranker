@@ -1,7 +1,9 @@
 # 100 Score Gap Lab
 
 Branch: `codex/100-score-gap-lab`  
-Status: local-only experiment branch. Do not push or merge until an experiment has evidence.
+Status: **superseded (2026-06-14)** — the experiments here graduated into the shipped
+submission (candidate-ID calibration removed, role-family depth scoring, MMoE/HyRE,
+and the cross-CPU reproducibility fix) and merged into `main`. Retained as a planning record.
 
 This branch exists to explore what would move the project from prize-competitive to dominant without disturbing the frozen `main` submission.
 

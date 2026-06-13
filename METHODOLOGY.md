@@ -60,8 +60,8 @@ profile is pushed down regardless of how strong its keywords look.
 ## 5. How we validated ranking quality (without the hidden labels)
 
 1. **Non-circular heuristic eval** — an independent labeler sharing *no code* with the
-   ranker (`scripts/build_independent_labels.py`) → composite 0.886 (post-calibration;
-   0.881 pre-calibration baseline), ruling out self-grading.
+   ranker (`scripts/build_independent_labels.py`) → composite ~0.881 (dev proxy),
+   ruling out self-grading.
 2. **LLM-as-judge check** (dev-only, never in the ranking path) — a strong model scored
    a stratified sample against the JD:
    **top-10 tiers `[5,5,4,4,5,5,5,5,5,5]`, P@10 = 1.0, NDCG@10 = 0.894**
@@ -85,43 +85,31 @@ built, measured against a rule fixed in advance, and committed when it lost:
    hypothesis that the JD's own down-weight instruction contradicts; declined and
    documented before any artifact change (docs/hedge_simulation_study.md).
 
-## 6. The consensus calibration pass — the single unfreeze
+## 6. The ordering audit — and why the official path uses no candidate-ID tuning
 
 After the ranking was frozen, an exhaustive pairwise audit of the top-100
-(`scripts/top100_ordering_audit.py`) found 61 swaps that improve the challenge
+(`scripts/top100_ordering_audit.py`) found swaps that improve the challenge
 composite under **all three** label sources simultaneously (independent
-heuristic, LLM judge 1, LLM judge 2 — each at 100% coverage). Because that
-screen tested 4,950 pairs against correlated proxies, nothing was adopted
-until the gain survived **held-out validation**
-(`scripts/swap_holdout_validation.py`): swaps selected on two sources only,
-evaluated on the judge that played no part in selection, both crossover arms.
-Result: aggregate +0.0106 / +0.0086 with **zero negative per-swap held-out
-deltas**, robust to the DCG gain convention, every composite independently
-recomputed outside the harness. Scope honesty, stated verbatim from the study:
-judge 1 and judge 2 scored the *same 249 ids* (kappa 0.935), so this holds out
-the **rater, not the sample**.
+heuristic, LLM judge 1, LLM judge 2 — each at 100% coverage), validated on a
+held-out judge (`scripts/swap_holdout_validation.py`) and re-tested by a third
+judge family (deepseek, `docs/llm_judge_eval_3.md`) collected outside the
+selection loop. The audit identified real YoE-band and career-evidence
+misorderings — not label noise.
 
-After adoption, a third judge family (deepseek, docs/llm_judge_eval_3.md) —
-collected post-roll and therefore truly outside the selection loop — re-tested
-the adopted set: aggregate composite **+0.0124** (0.8943 → 0.9068), per-swap
-**6 confirm / 1 tie / 1 contradict**. The contradicted swap is the smallest
-(+0.0002, location-driven); the contradiction rate matches judge #3's 1.9%
-base rate on consensus pairs. The crossover holdout's "zero negatives" should
-be read with its measured power: judge 2 contradicts selector-agreed top-100
-pairs at a base rate of 0/279, so the post-adoption judge-3 test, not the
-crossover, is the load-bearing validation.
+Those consensus swaps were briefly trialed as a deterministic calibration pass.
+**That pass has since been removed.** Hard-coding candidate-ID preferences in the
+official ranking path is the project's single biggest credibility risk, and a
+ranker should not need candidate *identity* to order results. The ordering signal
+the audit surfaced was instead **generalized into role-family depth scoring**
+(backend/data/devops/search), which improves ordering from features alone, with
+no candidate IDs.
 
-On that evidence — which clears the same pre-registered +0.005 adoption bar
-the LTR challenger failed — the conservative greedy-eight three-source
-consensus swaps were adopted as a deterministic calibration pass
-(`src/redrob_ranker/calibration.py`): eight pairwise preferences, applied only
-on the bundled challenge JD, exchanged only when misordered, no change to
-top-100 membership (honeypots remain 0), score ladder unchanged. The two
-largest demotions are 3.0- and 4.2-year profiles outside the JD's 5–9 year
-band that all three sources agreed were over-ranked — the calibration
-corrects real YoE-band misorderings, not label noise. The submission is
-**permanently frozen** after this roll; the evidence chain is
-docs/top100_ordering_audit.md → docs/swap_holdout_validation.md → the module.
+The official ranking path therefore applies **no candidate-ID swaps**, enforced
+in CI: `tests/test_no_calibration.py` asserts `calibration.py` is gone, and
+`tests/test_no_cand_id_in_ranking_path.py` fails the build if any `CAND_` id
+appears anywhere under `src/`. The full audit evidence chain
+(docs/top100_ordering_audit.md → docs/swap_holdout_validation.md →
+docs/llm_judge_eval_3.md) is retained for transparency.
 
 ## 7. Reproduce
 
@@ -130,7 +118,10 @@ python rank.py --candidates ./candidates.jsonl --out ./submission.csv
 ```
 
 Deterministic, offline, CPU-only: 80 s on a clean 2-vCPU cloud runner (CI-verified),
-187 s conservative worst-case serial in local Docker (full matrix:
-docs/runtime_matrix.md). Full reproduction,
+~130–155 s in local Docker (full matrix: docs/runtime_matrix.md). BLAS thread
+counts are pinned (Dockerfile + `rank.py`) so the output is **byte-identical
+across CPU counts** — golden `submission.csv` SHA-256
+`fdfd3f3590720e1260822b6729b2851dc8daca9f3f859cefc3df184bbbd4c5db`, verified at
+`--cpus=2` and `--cpus=4` (docs/reproducibility_notes.md). Full reproduction,
 tests, and architecture details are in [README.md](README.md) and
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
