@@ -77,12 +77,6 @@ def parse_args() -> argparse.Namespace:
         "the historical pipeline.",
     )
     parser.add_argument(
-        "--no-calibration",
-        action="store_true",
-        help="Audit mode: disable the submitted challenge-JD calibration pass and "
-        "write the pre-calibration baseline ranking.",
-    )
-    parser.add_argument(
         "--use-embeddings",
         action="store_true",
         help="EXPERIMENTAL: blend a model2vec/potion dense-retrieval feature (needs "

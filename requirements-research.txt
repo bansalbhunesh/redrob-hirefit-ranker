@@ -6,3 +6,13 @@ xgboost>=2.0.3
 scikit-learn>=1.4.1
 model2vec>=0.2.0
 defusedxml>=0.7.1,<1
+
+# MMoE / HyRE offline training + embedding generation ONLY
+# (scripts/train_moe.py, scripts/hyre_generate.py, train_reranker.py).
+# NOT imported by the runtime ranker or the Docker reproduction image, so they
+# are deliberately kept out of requirements.txt to keep that image lean and its
+# byte-identical reproduction drift-free.
+torch>=2.2,<3
+sentence-transformers>=2.7,<6
+datasets>=2.19,<4
+accelerate>=0.30,<2

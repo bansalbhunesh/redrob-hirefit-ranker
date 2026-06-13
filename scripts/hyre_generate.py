@@ -74,7 +74,8 @@ def main():
     for i, role in enumerate(roles):
         out_dict[role] = embeddings[i].tolist()
         
-    out_path = ROOT / "hyre_embeddings.json"
+    out_path = ROOT / "artifacts" / "hyre_embeddings.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out_dict, f, indent=2)
         

@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 MODELS_DIR = ROOT / "models"
 
-# 28 core features + 1 hyre feature = 29 features
+# 30 base features + backend_depth_score + data_bi_depth_score + hyre_similarity = 33
 INPUT_DIM = 33
 HIDDEN_DIM = 64
 
@@ -85,7 +85,7 @@ class RoleAwareMoE:
                 
     def score_candidates(self, jd_text: str, features_matrix: np.ndarray) -> np.ndarray:
         """
-        features_matrix: (N, 29) numpy array
+        features_matrix: (N, 33) numpy array
         Returns: (N,) numpy array of scores
         """
         role = detect_role(jd_text)

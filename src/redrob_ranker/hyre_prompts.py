@@ -1,4 +1,10 @@
 # Hypothetical Resume Embeddings (HyRE) for ConFit v2
+#
+# NAMING NOTE: the runtime feature `hyre_similarity` (see get_hyre_similarity
+# below) is a LEXICAL Jaccard overlap between the candidate text and the role
+# template — it does NOT use neural embeddings at inference time. The committed
+# `artifacts/hyre_embeddings.json` (produced offline by scripts/hyre_generate.py)
+# is retained only for offline analysis/experiments and is read on no ranking path.
 
 HYRE_PROMPTS = {
     "AI/ML Engineer": """

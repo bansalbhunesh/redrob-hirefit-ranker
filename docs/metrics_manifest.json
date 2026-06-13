@@ -39,7 +39,7 @@
     "judge_agreement_kappa_range": [0.918, 0.935]
   },
   "tests_collected": 163,
-  "tests_passing": 162,
-  "tests_skipped": 1,
+  "tests_passing": 163,
+  "tests_skipped": 0,
   "bm25_backend": "bm25s"
 }

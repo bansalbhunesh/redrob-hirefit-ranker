@@ -6,7 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![100K Runtime](https://img.shields.io/badge/100K_Runtime-80s_cloud_·_~125s_local_Docker-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-162_passed_1_skipped-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-163_passed_0_skipped-brightgreen.svg)](#)
 
 ### Try it live — no install
 
@@ -27,7 +27,7 @@
 | Honeypots in top-100 | **0** | 53 detected; DQ at >10% |
 | Top-10 quality — **dev proxy** (independent LLM judge) | tiers `[5,5,4,4,5,5,5,5,5,5]`, **P@10 = 1.0**, NDCG@10 0.8943 | [docs/LLM_JUDGE_EVAL.md](docs/LLM_JUDGE_EVAL.md) |
 | Format validator | **pass** (incl. candidate-pool membership) | Stage-1 gate |
-| Tests | **162 passed / 1 skipped** (incl. golden-output regression + API endpoint suite) | — |
+| Tests | **163 passed / 0 skipped** (incl. golden-output regression + API endpoint suite) | — |
 
 > **Metric provenance:** every ranking-quality number above is a *development
 > proxy* — independent heuristic + LLM-judge labels scored on dev samples.
@@ -70,7 +70,7 @@ The hackathon submission has been upgraded from a strong baseline prototype (`ma
 
 | Dimension | Baseline Prototype | Enterprise Architecture |
 |---|---|---|
-| **Test Coverage** | 114 passing | **162 passing** (+42% coverage) |
+| **Test Coverage** | 114 passing | **163 passing** (+43% coverage) |
 | **Fairness Bounds** | 0 tests | **12 rigorous tests** (Location, Gender, Name proxies mathematically bounded) |
 | **Backend Storage** | Volatile Python Dicts | **Persistent SQLite (WAL)** — survives server restarts |
 | **API Security** | Open | **Protected** via `X-Demo-Token` |
@@ -233,7 +233,7 @@ either declined or adopted on the evidence:
    ([docs/hedge_simulation_study.md](docs/hedge_simulation_study.md)).
 5. **Consensus calibration pass** - rejected in favor of depth scoring.
 
-The adopted change is role-family depth scoring (backend/data/devops/search) with surface + depth extractors, improving multi-JD mean from 0.6920 to 0.7501.
+The adopted change is role-family depth scoring (backend/data/devops/search) with surface + depth extractors. On the 100K-pool five-role transfer benchmark it lifts the mean HireFit composite to **0.7702 vs 0.6602** for a keyword baseline ([docs/multi_jd_generalization_eval_100k_latest.md](docs/multi_jd_generalization_eval_100k_latest.md); 20K and base-sample variants are reported in the same `multi_jd_generalization_eval*` series).
 
 ## The JD compiles into a deterministic scoring program
 

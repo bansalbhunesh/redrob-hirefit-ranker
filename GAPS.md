@@ -13,7 +13,7 @@ Status of each original gap after the lab branch pass:
 
 | Gap | Status | Evidence |
 |---|---|---|
-| P0 Gap 1 — Calibration CAND IDs | **Kept + CI-guarded** | `tests/test_no_cand_id_in_ranking_path.py` fails CI if CAND_ appears outside `calibration.py`. Evidence docstring in calibration.py unchanged. |
+| P0 Gap 1 — Calibration CAND IDs | **CLOSED — calibration removed** | `src/redrob_ranker/calibration.py` deleted; `tests/test_no_calibration.py` asserts its absence and `tests/test_no_cand_id_in_ranking_path.py` fails CI if any `CAND_` appears in `src/`. The official ranking path now uses **no candidate-ID tuning**. |
 | P0 Gap 2 — Proxy-heavy evaluation | **Proxy still present** | No blind human labels added yet. Multi-JD transfer eval now covers 5 role families at 100K (all win vs keyword). Fairness counterfactual tests added. |
 | P0 Gap 3 — No fairness audit | **Baseline implemented** | `tests/test_fairness_counterfactual.py` (12 tests), `docs/fairness_and_validity_audit.md`, README decision-support policy. |
 | P1 Gap 4 — Architecture below SOTA | **Unchanged** | Backend transfer routing improved in `final_score()`. Full hybrid/reranker architecture requires structural work beyond the lab pass scope. |
@@ -84,7 +84,14 @@ These decisions still create gaps versus a champion submission when they reduce 
 
 ## P0 Gap 1 - Candidate-ID Calibration In The Official Path
 
-What the gap is:
+> **Status (2026-06-14): CLOSED.** `calibration.py` and `CALIBRATION_PREFERENCES`
+> have been deleted from this branch. The official ranking path no longer applies
+> any candidate-ID swaps, and two CI tests (`tests/test_no_calibration.py` and
+> `tests/test_no_cand_id_in_ranking_path.py`) now fail the build if calibration
+> logic or any `CAND_` id reappears anywhere in `src/`. The text below documents
+> the *original* pre-removal state for historical context only.
+
+What the gap was (original, pre-removal):
 
 The official ranking path applies an explicit list of candidate-ID swaps for the bundled challenge JD. The calibration module contains exact candidate IDs and pairwise preferences (`src/redrob_ranker/calibration.py:32`). The pipeline applies it by default after ranking (`src/redrob_ranker/pipeline.py:168`). The project's own agent guidance calls "Candidate-ID hard-coding" dangerous (`.prompts/AGENTS.md:20`).
 
