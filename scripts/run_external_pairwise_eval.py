@@ -16,6 +16,7 @@ import json
 import math
 import re
 import sys
+import urllib.parse
 import urllib.request
 from collections import Counter, defaultdict
 from dataclasses import dataclass
@@ -83,8 +84,11 @@ class PairScore:
 def download_if_missing(path: Path, url: str = CNAM_TEST_URL) -> None:
     if path.exists() and path.stat().st_size > 0:
         return
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme not in {"http", "https"}:
+        raise ValueError(f"unsupported URL scheme for dataset download: {parsed.scheme or '<empty>'}")
     path.parent.mkdir(parents=True, exist_ok=True)
-    with urllib.request.urlopen(url, timeout=60) as response, path.open("wb") as out:
+    with urllib.request.urlopen(url, timeout=60) as response, path.open("wb") as out:  # nosec B310
         out.write(response.read())
 
 

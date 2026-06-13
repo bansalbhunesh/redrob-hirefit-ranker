@@ -80,10 +80,11 @@ def main() -> None:
     # Sanity gate: shipped configuration must reproduce the committed top-100.
     if args.max_candidates is None:
         shipped = load_submission(ROOT / "submission.csv")
-        assert tops[0.25] == shipped, (
-            "floor=0.25 does not reproduce the committed submission ordering; "
-            "sweep aborted (pipeline drift?)"
-        )
+        if tops[0.25] != shipped:
+            raise SystemExit(
+                "floor=0.25 does not reproduce the committed submission ordering; "
+                "sweep aborted (pipeline drift?)"
+            )
         print("sanity gate: floor=0.25 == committed submission ✓", file=sys.stderr)
 
     independent = load_labels(INDEPENDENT_LABELS, name="independent-heuristic")

@@ -4,6 +4,7 @@ import subprocess
 import sys
 
 import redrob_ranker.pipeline as pipeline_mod
+import redrob_ranker.retrieval as retrieval_mod
 from redrob_ranker.constants import FEATURE_NAMES
 from redrob_ranker.features import CandidateFeatures
 from redrob_ranker.pipeline import RankerConfig, rank_candidates, run_ranking
@@ -66,6 +67,13 @@ def test_auto_workers_use_cap_when_no_cgroup_quota(monkeypatch):
     monkeypatch.setattr(pipeline_mod, "_cgroup_cpu_quota_count", lambda: None)
 
     assert pipeline_mod._resolve_workers(0, 64) == 8
+
+
+def test_tokenizer_workers_respect_cgroup_cpu_quota(monkeypatch):
+    monkeypatch.setattr(retrieval_mod.os, "cpu_count", lambda: 16)
+    monkeypatch.setattr(retrieval_mod, "_cgroup_cpu_quota_count", lambda: 2)
+
+    assert retrieval_mod._resolve_tokenize_workers() == 2
 
 
 def test_feature_pool_chunksize_uses_four_chunks_per_worker():

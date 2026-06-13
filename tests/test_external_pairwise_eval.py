@@ -53,3 +53,14 @@ brand communications. No software engineering delivery.
     assert good is not None
     assert bad is not None
     assert good.hirefit_score > bad.hirefit_score
+
+
+def test_downloader_rejects_non_http_urls(tmp_path):
+    target = tmp_path / "dataset.csv"
+
+    try:
+        mod.download_if_missing(target, url="file:///tmp/not-a-dataset.csv")
+    except ValueError as exc:
+        assert "unsupported URL scheme" in str(exc)
+    else:  # pragma: no cover - defensive clarity for failed guardrail
+        raise AssertionError("download_if_missing accepted a non-http URL")

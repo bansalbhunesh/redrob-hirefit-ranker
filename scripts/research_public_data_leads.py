@@ -16,10 +16,11 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
+
+from defusedxml import ElementTree as DET
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -162,9 +163,12 @@ class TextExtractor(HTMLParser):
 
 
 def fetch_text(url: str, *, timeout: int = 30) -> tuple[int | None, str, str | None]:
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme not in {"http", "https"}:
+        return None, "", f"unsupported URL scheme: {parsed.scheme or '<empty>'}"
     request = urllib.request.Request(url, headers=HEADERS)
     try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
+        with urllib.request.urlopen(request, timeout=timeout) as response:  # nosec B310
             return response.status, response.read().decode("utf-8", errors="replace"), None
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
@@ -347,7 +351,7 @@ def collect_arxiv() -> list[dict[str, Any]]:
         status, raw, _ = fetch_text(f"https://export.arxiv.org/api/query?{params}")
         if status != 200 or not raw:
             continue
-        root = ET.fromstring(raw)
+        root = DET.fromstring(raw)
         for entry in root.findall("atom:entry", ns):
             title = re.sub(r"\s+", " ", entry.findtext("atom:title", "", ns)).strip()
             paper_id = entry.findtext("atom:id", "", ns)

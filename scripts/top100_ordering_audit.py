@@ -85,7 +85,8 @@ def main() -> None:
     for ls, sc in zip(label_sets, scorers):
         ref = evaluate(shipped, ls, unlabeled="exclude").composite
         fast = sc.composite(shipped)
-        assert abs(ref - fast) < 1e-9, f"FastScorer mismatch on {sc.name}"
+        if abs(ref - fast) >= 1e-9:
+            raise RuntimeError(f"FastScorer mismatch on {sc.name}")
         base[sc.name] = fast
         cov = sum(1 for c in shipped if c in sc.tiers) / len(shipped)
         print(f"  {sc.name:<12} composite={fast:.4f} coverage={cov:.1%}")

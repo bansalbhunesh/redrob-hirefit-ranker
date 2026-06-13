@@ -5,6 +5,7 @@ from __future__ import annotations
 import concurrent.futures
 import math
 import os
+from pathlib import Path
 from typing import Literal
 
 import numpy as np
@@ -13,6 +14,40 @@ from redrob_ranker.constants import JD_QUERY
 from redrob_ranker.text import candidate_text, tokenize
 
 Bm25Backend = Literal["auto", "bm25s", "rank_bm25"]
+_TOKENIZE_WORKER_CAP = 8
+
+
+def _cgroup_cpu_quota_count() -> int | None:
+    cpu_max = Path("/sys/fs/cgroup/cpu.max")
+    try:
+        quota_text = cpu_max.read_text(encoding="utf-8").strip().split()
+    except OSError:
+        quota_text = []
+    if len(quota_text) >= 2 and quota_text[0] != "max":
+        try:
+            quota = int(quota_text[0])
+            period = int(quota_text[1])
+        except ValueError:
+            quota = period = 0
+        if quota > 0 and period > 0:
+            return max(1, quota // period)
+
+    quota_file = Path("/sys/fs/cgroup/cpu/cpu.cfs_quota_us")
+    period_file = Path("/sys/fs/cgroup/cpu/cpu.cfs_period_us")
+    try:
+        quota = int(quota_file.read_text(encoding="utf-8").strip())
+        period = int(period_file.read_text(encoding="utf-8").strip())
+    except (OSError, ValueError):
+        return None
+    if quota > 0 and period > 0:
+        return max(1, quota // period)
+    return None
+
+
+def _resolve_tokenize_workers() -> int:
+    host_cpus = os.cpu_count() or 1
+    available = min(host_cpus, _cgroup_cpu_quota_count() or host_cpus)
+    return max(1, min(_TOKENIZE_WORKER_CAP, available))
 
 
 def normalize_scores(scores: dict[int, float]) -> dict[int, float]:
@@ -32,7 +67,7 @@ def _tokenize_all(texts: list[str]) -> list[list[str]]:
     # Cap workers (audit-v2 hardening): an uncapped pool would spawn one process
     # per core on a many-core box for plain tokenization. Output is order-stable
     # and byte-identical regardless of worker count; this only bounds resource use.
-    workers = min(8, os.cpu_count() or 1)
+    workers = _resolve_tokenize_workers()
     with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as executor:
         return list(executor.map(tokenize, texts, chunksize=2000))
 

@@ -27,6 +27,7 @@ from datetime import date
 from pathlib import Path
 
 REFERENCE_DATE = date(2026, 6, 8)
+DATE_RE = re.compile(r"^(\d{4})-(\d{2})-\d{2}$")
 
 # --- Independent vocabularies (intentionally NOT imported from the ranker) ---
 TARGET_ROLE = re.compile(
@@ -79,17 +80,20 @@ def _is_honeypot(c: dict) -> bool:
         if j.get("is_current") and j.get("end_date"):
             return True
         sd, ed, dm = str(j.get("start_date") or "")[:10], j.get("end_date"), int(j.get("duration_months") or 0)
-        try:
-            sy, sm, _ = (int(x) for x in sd.split("-"))
-            if ed:
-                ey, em, _ = (int(x) for x in str(ed)[:10].split("-"))
-                span = (ey - sy) * 12 + (em - sm)
-            else:
-                span = (REFERENCE_DATE.year - sy) * 12 + (REFERENCE_DATE.month - sm)
-            if dm - span > 2:
-                return True
-        except Exception:
-            pass
+        start = DATE_RE.match(sd)
+        if not start:
+            continue
+        sy, sm = int(start.group(1)), int(start.group(2))
+        if ed:
+            end = DATE_RE.match(str(ed)[:10])
+            if not end:
+                continue
+            ey, em = int(end.group(1)), int(end.group(2))
+            span = (ey - sy) * 12 + (em - sm)
+        else:
+            span = (REFERENCE_DATE.year - sy) * 12 + (REFERENCE_DATE.month - sm)
+        if dm - span > 2:
+            return True
     return False
 
 

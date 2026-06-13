@@ -91,12 +91,12 @@ def stratified_ids(submission: Path | None, strat_labels: Path | None,
         for line in open(strat_labels, encoding="utf-8"):
             rec = json.loads(line)
             by_tier.setdefault(int(rec.get("tier", 0)), []).append(rec["candidate_id"])
-        rng = random.Random(13)
+        rng = random.Random(13)  # nosec B311
         for tier in (5, 4, 3, 2, 1, 0):                          # spread across tiers
             pool = by_tier.get(tier, [])
             rng.shuffle(pool)
             add(pool[:max(10, n // 8)])
-    rng = random.Random(7)
+    rng = random.Random(7)  # nosec B311
     rng.shuffle(all_ids)
     add(all_ids)                                                  # random control fills remainder
     return chosen[:n]

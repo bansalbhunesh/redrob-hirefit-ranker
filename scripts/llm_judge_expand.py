@@ -65,7 +65,7 @@ def select_ids() -> list[str]:
     judged = {json.loads(l)["candidate_id"]
               for l in (ROOT / "docs" / "llm_judge_eval_labels.jsonl").open(encoding="utf-8")}
 
-    rng = random.Random(42)
+    rng = random.Random(42)  # nosec B311
     chosen: list[str] = []
     for stratum, quota in STRATA_QUOTA:
         pool = sorted(by_stratum.get(stratum, []))

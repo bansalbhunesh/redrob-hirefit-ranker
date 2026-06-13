@@ -115,7 +115,7 @@ def main() -> None:
     ap.add_argument("--out", default="pool.jsonl")
     ap.add_argument("--seed", type=int, default=7)
     args = ap.parse_args()
-    rng = random.Random(args.seed)
+    rng = random.Random(args.seed)  # nosec B311
     total = 0
     with open(args.out, "w", encoding="utf-8") as fh:
         for i in range(args.n):

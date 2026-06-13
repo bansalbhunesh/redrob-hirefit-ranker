@@ -17,7 +17,6 @@ or a 3.11 venv). The official ranking path is unchanged and never imports model2
 from __future__ import annotations
 
 import argparse
-import subprocess
 import sys
 import time
 from pathlib import Path

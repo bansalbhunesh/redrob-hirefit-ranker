@@ -440,7 +440,12 @@ def write_markdown(path: Path, summary: dict) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run multi-JD generalization eval.")
     parser.add_argument("--candidates", required=True, type=Path)
-    parser.add_argument("--max-candidates", type=int, default=20_000)
+    parser.add_argument(
+        "--max-candidates",
+        type=int,
+        default=None,
+        help="Optional candidate cap for quick dev runs; omit to score the full pool.",
+    )
     parser.add_argument("--roles", nargs="*", default=list(REFERENCE_ROLES))
     parser.add_argument("--workers", type=int, default=0)
     parser.add_argument(

@@ -6,7 +6,7 @@ composite under judge #2. Dev-only."""
 from __future__ import annotations
 
 import json
-import subprocess
+import subprocess  # nosec B404
 import sys
 from collections import Counter
 from pathlib import Path
@@ -68,4 +68,4 @@ print("\ncomposite under judge #2 (shared harness):")
 subprocess.run([sys.executable, str(ROOT / "scripts" / "evaluate_independent.py"),
                 "--submission", str(ROOT / "submission.csv"),
                 "--labels", str(ROOT / "artifacts" / "llm_labels_judge2.jsonl"),
-                "--label-source", "llm-judge-2"], check=False)
+                "--label-source", "llm-judge-2"], check=False)  # nosec B603

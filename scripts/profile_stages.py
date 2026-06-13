@@ -66,7 +66,8 @@ def main() -> None:
 
     t = time.perf_counter()
     errors = validate_rows(rows, expected=min(100, len(rows)))
-    assert not errors, errors
+    if errors:
+        raise RuntimeError(f"invalid generated rows: {errors}")
     write_submission(Path(args.out), rows)
     stages["validate+csv_write"] = time.perf_counter() - t
 

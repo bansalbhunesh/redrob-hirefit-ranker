@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import subprocess
+import subprocess  # nosec B404
 import sys
 import time
 from pathlib import Path
@@ -66,7 +66,7 @@ def main() -> int:
     start = time.perf_counter()
     peak_rss = 0
     with stdout_path.open("w", encoding="utf-8") as stdout_f, stderr_path.open("w", encoding="utf-8") as stderr_f:
-        process = subprocess.Popen(cmd, stdout=stdout_f, stderr=stderr_f, env=env)
+        process = subprocess.Popen(cmd, stdout=stdout_f, stderr=stderr_f, env=env)  # nosec B603
         ps_process = psutil.Process(process.pid)
         while process.poll() is None:
             peak_rss = max(peak_rss, tree_rss(ps_process))

@@ -5,4 +5,4 @@ openai>=1.14.0
 xgboost>=2.0.3
 scikit-learn>=1.4.1
 model2vec>=0.2.0
-torch>=2.0.0
+defusedxml>=0.7.1,<1

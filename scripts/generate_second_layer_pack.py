@@ -592,7 +592,7 @@ def analyze_candidates(
     max_candidates: int | None,
     seed: int,
 ) -> tuple[list[dict], list[dict], dict[str, int]]:
-    rng = random.Random(seed)
+    rng = random.Random(seed)  # nosec B311
     per_role_limit = max(40, sample_size // max(1, len(ROLE_SPECS)))
     heap_limits = max(sample_size, per_role_limit * 2)
     role_heaps: dict[str, list[tuple[float, str, dict]]] = {role: [] for role in ROLE_SPECS}

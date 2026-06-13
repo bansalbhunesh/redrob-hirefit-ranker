@@ -154,7 +154,8 @@ def run_arm(name, shipped, sel_scorers, holdout_sc):
     # Independent math check on the held-out aggregate (exp + linear gains).
     ind_base = independent_composite(shipped, holdout_sc.gains, holdout_sc.tiers)
     ind_applied = independent_composite(applied, holdout_sc.gains, holdout_sc.tiers)
-    assert abs((ind_applied - ind_base) - agg_held) < 1e-9, "math check FAILED"
+    if abs((ind_applied - ind_base) - agg_held) >= 1e-9:
+        raise RuntimeError("math check FAILED")
     lin = (independent_composite(applied, holdout_sc.gains, holdout_sc.tiers, exponential=False)
            - independent_composite(shipped, holdout_sc.gains, holdout_sc.tiers, exponential=False))
     print(f"independent recomputation matches (1e-9); "
@@ -171,7 +172,8 @@ def main() -> None:
     for name, s in sc.items():
         ref = s.composite(shipped)
         ind = independent_composite(shipped, s.gains, s.tiers)
-        assert abs(ref - ind) < 1e-9, f"base math check failed on {name}"
+        if abs(ref - ind) >= 1e-9:
+            raise RuntimeError(f"base math check failed on {name}")
         print(f"base composite {name:<12} {ref:.4f}  (independent recomputation matches)")
 
     picked_a, applied_a, agg_a = run_arm(

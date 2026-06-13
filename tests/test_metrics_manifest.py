@@ -20,10 +20,11 @@ README = (ROOT / "README.md").read_text(encoding="utf-8")
 
 
 def test_readme_tests_badge_matches_manifest():
-    expected = MANIFEST["tests_passing"]
-    assert f"tests-{expected}_passing" in README, (
-        f"README tests badge does not say {expected}; update the badge and the "
-        "manifest together."
+    passed = MANIFEST["tests_passing"]
+    skipped = MANIFEST["tests_skipped"]
+    assert f"tests-{passed}_passed_{skipped}_skipped" in README, (
+        f"README tests badge does not say {passed} passed / {skipped} skipped; "
+        "update the badge and the manifest together."
     )
 
 
@@ -38,9 +39,9 @@ def test_manifest_tests_count_matches_collected_suite():
     match = re.search(r"(\d+) tests? collected", completed.stdout)
     assert match, f"could not parse collected count from:\n{completed.stdout[-2000:]}"
     collected = int(match.group(1))
-    assert collected == MANIFEST["tests_passing"], (
+    assert collected == MANIFEST["tests_collected"], (
         f"Suite collects {collected} tests but manifest/README say "
-        f"{MANIFEST['tests_passing']}. Update docs/metrics_manifest.json and the "
+        f"{MANIFEST['tests_collected']}. Update docs/metrics_manifest.json and the "
         "README badge."
     )
 
