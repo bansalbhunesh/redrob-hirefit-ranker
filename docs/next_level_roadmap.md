@@ -22,12 +22,22 @@ with a pre-registered decision rule, exactly as the existing measured negatives 
 
 ## Tier 1 — most promising, constraint-compatible (CPU / 300s / deterministic)
 
-### 1.1 Re-run the reranker, but gated on the blind set (not the proxy)
-Our reranker failed *because we validated it on the wrong target*. The same retrieve-then-rerank
-machinery, **trained on a held-out split and selected by blind-set NDCG@10 + composite**, would
-either (a) clear the bar honestly, or (b) be rejected early — both outcomes are wins. Critically,
-optimize for **NDCG@10** (50% weight), not NDCG@50 (where the proxy lured us). Risk: using the
-blind set for *selection* can leak; mitigate with nested CV and a final untouched hold-out slice.
+### 1.1 Re-run the reranker, but gated on the blind set (not the proxy) — DONE, NEGATIVE
+We ran exactly this (`scripts/exp_tier1_blind_gated.py`, 2026-06-14): a LambdaMART **trained on
+60% of the 100K blind labels**, NDCG@10 objective, evaluated on the untouched 40% holdout.
+
+| Ranker | holdout NDCG@10 | NDCG@50 |
+|---|---|---|
+| hand pipeline | **0.7123** | 0.7112 |
+| lambdarank@10 (31 leaves) | 0.6088 (−0.104) | 0.7072 |
+| lambdarank@10 (63 leaves) | 0.6729 (−0.040) | 0.7296 (+0.018) |
+
+**It still loses on the 50%-weight top-10**, even trained on the real labels with honest
+validation and the right objective. This is measured negative #7 and the decisive result of this
+roadmap: **the learned-model lever is empty.** The bottleneck is the *feature set* and
+*true-label availability*, not the model class or label quantity. Corollary: RRF (1.2) over the
+same signals will fail for the same reason — there is no orthogonal signal to fuse. Re-prioritize
+toward **1.4 (better labels / a genuinely new orthogonal feature)**.
 
 ### 1.2 Robust rank fusion (RRF) instead of a single learned reranker
 [Cormack et al., SIGIR 2009] show **Reciprocal Rank Fusion** beats Condorcet and individual
@@ -69,10 +79,14 @@ Dense embeddings (+0.0000, 2.2× runtime), learned LR weights (0.8238 vs 0.8811)
 [measured_negatives.md](measured_negatives.md) and [why_not_reranker.md](why_not_reranker.md).
 
 ## The one-line strategy
-We are at the **architecture ceiling** for this label regime. The next real gains come from
-**better labels and blind-set-gated robustness (RRF, ELO calibration, top-10 focus)** — not from
-a fancier model validated on a proxy. Every measured negative we shipped is itself a Stage-5
-asset: it proves we validate against ground truth, not vibes.
+We are at the **model ceiling** for this feature set — proven by experiment 1.1, where a
+LambdaMART *trained on the real blind labels* still could not beat the hand pipeline on held-out
+NDCG@10. The remaining levers are therefore **(a) a genuinely new orthogonal feature/signal**
+(more information, not a re-weighting of what we already have) and **(b) real human labels** (the
+only thing that closes the proxy→hidden-human gap). Reranking, fusion, and calibration over the
+*current* signals are exhausted. Every measured negative we shipped is itself a Stage-5 asset: it
+proves we validate against ground truth, not vibes — and #7 shows we stress-tested even the
+favorable case.
 
 **Sources:** [ConFit v3](https://arxiv.org/html/2605.09760v1) ·
 [ConFit v2](https://arxiv.org/pdf/2502.12361) ·
