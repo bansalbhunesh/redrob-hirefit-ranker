@@ -215,7 +215,7 @@ hard honeypots and the keyword-stuffer traps out of the top-100 — rung 3 alone
 has no such protection. (Honeypot handling was audited flag-by-flag against a
 pre-committed rubric: [docs/honeypot_audit.md](docs/honeypot_audit.md).)
 
-## Five measured negatives, one adopted change
+## Six measured negatives, one adopted change
 
 Every alternative was built, measured against a recorded decision rule, and
 either declined or adopted on the evidence:
@@ -232,6 +232,13 @@ either declined or adopted on the evidence:
    hypotheses, declined on three recorded reasons
    ([docs/hedge_simulation_study.md](docs/hedge_simulation_study.md)).
 5. **Consensus calibration pass** - rejected in favor of depth scoring.
+6. **LightGBM LambdaMART reranker v2** (pessimistic labels + RUM hard negatives,
+   NDCG@50 objective) - **−0.031 composite on the 100K blind set**: improved
+   NDCG@50 (+0.014) but destroyed NDCG@10 (−0.070, half the composite). It looked
+   positive only on a curated 249-candidate LLM-judge sample (four independent
+   judges agreed; none generalized to the full population). Rejected; hand
+   pipeline retained ([docs/why_not_reranker.md](docs/why_not_reranker.md),
+   [docs/measured_negatives.md](docs/measured_negatives.md)).
 
 The adopted change is role-family depth scoring (backend/data/devops/search) with surface + depth extractors. On the 100K-pool five-role transfer benchmark it lifts the mean HireFit composite to **0.7702 vs 0.6602** for a keyword baseline ([docs/multi_jd_generalization_eval_100k_latest.md](docs/multi_jd_generalization_eval_100k_latest.md); 20K and base-sample variants are reported in the same `multi_jd_generalization_eval*` series).
 
