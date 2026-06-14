@@ -91,7 +91,8 @@ The hackathon submission has been upgraded from a strong baseline prototype (`ma
   multipliers; the committed CSV is locked by golden-hash regression tests
   (`tests/test_submission_gate.py`, history in
   [docs/golden_reproduction.md](docs/golden_reproduction.md)).
-- **Four measured negative results, all committed.** (1) Static dense embeddings:
+- **Ten measured negative results, all committed** (four highlighted here; full
+  list under "Ten measured negatives" below). (1) Static dense embeddings:
   NDCG@10 +0.0000 at ~2.2× runtime. (2) Learned-LR weights: 0.8238 vs 0.8811
   composite ([appendix](docs/learned_weights_appendix.md)). (3) A LambdaMART
   challenger on our own features + recovered generator structure: −0.0061 against a
@@ -215,7 +216,7 @@ hard honeypots and the keyword-stuffer traps out of the top-100 — rung 3 alone
 has no such protection. (Honeypot handling was audited flag-by-flag against a
 pre-committed rubric: [docs/honeypot_audit.md](docs/honeypot_audit.md).)
 
-## Eight measured negatives, one adopted change
+## Ten measured negatives, one adopted change
 
 Every alternative was built, measured against a recorded decision rule, and
 either declined or adopted on the evidence:
@@ -248,6 +249,16 @@ either declined or adopted on the evidence:
    NDCG@10 lift on the blind set (raw corr −0.083). Even a fresh feature adds no
    blind signal; the feature set is comprehensive
    ([docs/next_level_roadmap.md](docs/next_level_roadmap.md)).
+9. **DART — test-time-training reranker** (arXiv 2606.01070, ACL 2026),
+   implemented faithfully on real Potion embeddings - **replicated the paper**
+   (+5.3% relative NDCG@10 over the dense baseline, beating its own +2.1%) yet
+   still lost to hand by **23% relative** (composite 0.6491 vs 0.8084). Test-time
+   adaptation can't fix a weaker representation; the model/trick lever is empty
+   ([docs/obscure_arsenal_study.md](docs/obscure_arsenal_study.md)).
+10. **New orthogonal feature — NCD** (gzip compression-distance similarity;
+    Li 2004 / ACL-Findings 2023) - best-on-train weight → holdout NDCG@10
+    +0.0000; a second fresh feature confirms the set is comprehensive
+    ([docs/obscure_arsenal_study.md](docs/obscure_arsenal_study.md)).
 
 The adopted change is role-family depth scoring (backend/data/devops/search) with surface + depth extractors. On the 100K-pool five-role transfer benchmark it lifts the mean HireFit composite to **0.7702 vs 0.6602** for a keyword baseline ([docs/multi_jd_generalization_eval_100k_latest.md](docs/multi_jd_generalization_eval_100k_latest.md); 20K and base-sample variants are reported in the same `multi_jd_generalization_eval*` series).
 

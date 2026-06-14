@@ -14,14 +14,21 @@ rather than shipping unverified complexity. Nothing here beat the shipped hand-t
 | 6 | LightGBM LambdaMART **v2** (pessimistic labels + RUM hard negatives, NDCG@50 objective) | **−0.031 composite on the 100K blind set** (NDCG@10 −0.070, NDCG@50 +0.014); looked good only on a curated 249-candidate LLM-judge sample | Rejected ([why_not_reranker.md](why_not_reranker.md)) |
 | 7 | LightGBM LambdaMART **v3 stress test** — *trained on the 100K blind labels* (NDCG@10 objective, leak-safe 60/40 split, evaluated on the untouched holdout) | holdout NDCG@10 **−0.040 to −0.104** vs hand (composite still negative) | Rejected ([next_level_roadmap.md](next_level_roadmap.md)) |
 | 8 | New orthogonal feature — **quantified-impact density** (count of NUMBER+unit achievements in career text; "50M queries", "99.9% uptime") as a blended signal, gated on the 100K blind set | **no train-supported lift on NDCG@10** (best train Δ = 0.0000); partial corr with blind tier inconsistent (+0.07 / −0.17 / +0.05 across top-200/1k/5k; raw −0.083) | Rejected ([next_level_roadmap.md](next_level_roadmap.md)) |
+| 9 | **DART** — test-time bilinear reranker ([arXiv 2606.01070](https://arxiv.org/abs/2606.01070), ACL 2026), implemented faithfully on real Potion (model2vec) embeddings, in-pool pseudo-labels | **replicated the paper** (+0.0318 NDCG@10 over the dense baseline = **+5.3% rel, beating its own +2.1%**) yet composite **0.6491 vs hand 0.8084** (NDCG@10 0.6340 vs 0.8288, **−23% rel**) — it adapts the *dense* representation, which is structurally inferior here | Rejected ([obscure_arsenal_study.md](obscure_arsenal_study.md)) |
+| 10 | New orthogonal feature — **NCD** (gzip normalized-compression-distance profile↔JD similarity; Li 2004 / ACL-Findings 2023) as a blended signal, same gate as #8 | **best-on-train w=0.05 → holdout NDCG@10 +0.0000** (gate not beaten); raw corr −0.024; holdout flicker (+0.0122 at w=0.20) unselectable from train | Rejected ([obscure_arsenal_study.md](obscure_arsenal_study.md)) |
 
 ## The pattern
-Three learned rerankers (#3, #6, #7) and three learned/feature alternatives (#1, #2, #8) were
+Four rerankers (#3, #6, #7, #9) and four learned/feature alternatives (#1, #2, #8, #10) were
 measured against independent labels. **All failed.** Most decisively, #7 *trained on the real
 100K blind labels themselves* (the arbiter), optimized the right metric (NDCG@10), and was
 validated on an untouched holdout — and it **still** lost to the hand pipeline on the
-50%-weight top-10. #8 then showed that even a thoughtfully-chosen *new orthogonal feature* adds
-no blind-set signal — confirming the feature set is comprehensive, not just the model class. That rules out the model class under conditions more favorable than the rules
+50%-weight top-10. #8 and #10 then showed that two independent *new orthogonal features*
+(quantified-impact density; gzip compression distance) add no bankable blind-set signal —
+confirming the feature set is comprehensive, not just the model class. And #9 is the sharpest
+of all: a brand-new (May 2026) test-time-training reranker, replicated *above* its published
+gain (+5.3% vs the paper's +2.1%), that **still** lost by 23% relative — because it adapts a
+dense representation that carries less task signal than the hand-engineered features. That
+rules out the model/trick class under conditions more favorable than the rules
 allow: the bottleneck is the feature set's information content + true-label availability, **not
 the model**. The hand-tuned linear scorer with multiplicative behavioral / honeypot /
 disqualifier guardrails is the only approach that survived independent validation — and it is
