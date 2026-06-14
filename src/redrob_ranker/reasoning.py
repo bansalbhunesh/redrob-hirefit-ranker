@@ -53,14 +53,28 @@ _EVIDENCE_TERMS = (
 _FACT_LEADS = ("Evidence", "Concrete signal", "Track record", "On the record")
 
 
-def _career_fact(candidate: dict, cid: str) -> str | None:
+def _career_fact(
+    candidate: dict,
+    cid: str,
+    used_quotes: set[str] | None = None,
+    current_company: str | None = None,
+) -> str | None:
     """One concrete, verbatim-grounded career fact for this candidate.
 
     Prefers a sentence from a career_history description that carries
     ranking/search/recsys evidence (quoted verbatim with its company); falls
     back to the longest-tenure role. Deterministic per candidate_id.
+
+    De-dup mode (``used_quotes`` provided, used by the production row builder):
+    the synthetic candidate pool reuses identical achievement strings across
+    candidates, so a top-100 sample can quote the same sentence many times and
+    read as a template. When ``used_quotes`` is given, each row claims a quote
+    not already taken by a higher-ranked row, prefers current-company evidence,
+    and registers its choice. When ``used_quotes`` is None the selection is
+    byte-identical to the legacy per-candidate behavior (tests, other callers).
     """
-    matches: list[tuple[str, str]] = []
+    dedup = used_quotes is not None
+    matches: list[tuple[str, str, bool]] = []  # (company, snippet, is_current)
     for job in candidate.get("career_history", []) or []:
         company = str(job.get("company") or "").strip()
         desc = str(job.get("description") or "")
@@ -73,21 +87,65 @@ def _career_fact(candidate: dict, cid: str) -> str | None:
                 # Skip over-long sentences instead of truncating so the quote
                 # stays verbatim (and the row under MAX_REASON_LEN).
                 if 25 <= len(snippet) <= 140:
-                    matches.append((company, snippet))
+                    is_current = bool(current_company) and company == current_company
+                    matches.append((company, snippet, is_current))
                 break  # at most one snippet per job
-    if matches:
-        idx = (sum(ord(ch) for ch in str(cid)) + 11) % len(matches)
-        company, snippet = matches[idx]
+
+    def _emit(company: str, snippet: str) -> str:
+        if dedup:
+            used_quotes.add(snippet)
         return f'at {company}: "{snippet}"'
+
+    if matches:
+        n = len(matches)
+        start = (sum(ord(ch) for ch in str(cid)) + 11) % n
+        if not dedup:
+            company, snippet, _ = matches[start]
+            return f'at {company}: "{snippet}"'
+        # Prefer current-company evidence, then the cid-rotated order; take the
+        # first quote not already used by a higher-ranked row.
+        order = sorted(range(n), key=lambda i: (not matches[i][2], (i - start) % n))
+        for i in order:
+            if matches[i][1] not in used_quotes:
+                return _emit(matches[i][0], matches[i][1])
+        # All this candidate's evidence quotes are taken -> try a tenure fact
+        # before repeating a quote that already appears above.
+
     jobs = [
         j for j in candidate.get("career_history", []) or []
         if str(j.get("company") or "").strip() and str(j.get("title") or "").strip()
         and int(j.get("duration_months") or 0) > 0
     ]
-    if not jobs:
-        return None
-    j = max(jobs, key=lambda job: int(job.get("duration_months") or 0))
-    return f"{int(j.get('duration_months') or 0)} months at {j['company']} as {j['title']}"
+
+    def _tenure(j: dict) -> str:
+        return f"{int(j.get('duration_months') or 0)} months at {j['company']} as {j['title']}"
+
+    if jobs:
+        if not dedup:
+            return _tenure(max(jobs, key=lambda job: int(job.get("duration_months") or 0)))
+        # Prefer a PAST-company role (adds information the opening line does not
+        # already state), then longest tenure; take the first not-yet-used fact.
+        order = sorted(jobs, key=lambda job: (
+            str(job.get("company") or "").strip() == (current_company or ""),
+            -int(job.get("duration_months") or 0),
+        ))
+        for j in order:
+            fact = _tenure(j)
+            if fact not in used_quotes:
+                used_quotes.add(fact)
+                return fact
+
+    # Last resort under de-dup: nothing distinct left. Repeat the best-preference
+    # evidence quote (if any) rather than returning nothing.
+    if matches:
+        n = len(matches)
+        start = (sum(ord(ch) for ch in str(cid)) + 11) % n
+        order = sorted(range(n), key=lambda i: (not matches[i][2], (i - start) % n))
+        company, snippet, _ = matches[order[0]]
+        return f'at {company}: "{snippet}"'
+    if jobs:
+        return _tenure(max(jobs, key=lambda job: int(job.get("duration_months") or 0)))
+    return None
 
 
 def _top_relevant_skills(candidate: dict, limit: int = 4) -> list[str]:
@@ -122,7 +180,12 @@ def _article_for_title(title: str) -> str:
     return "a"
 
 
-def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str:
+def build_reason(
+    candidate: dict,
+    features: CandidateFeatures,
+    rank: int,
+    used_quotes: set[str] | None = None,
+) -> str:
     profile = candidate.get("profile") or {}
     signals = candidate.get("redrob_signals", {})
     years = float(profile.get("years_of_experience") or 0)
@@ -253,7 +316,7 @@ def build_reason(candidate: dict, features: CandidateFeatures, rank: int) -> str
 
     # One concrete, verbatim-grounded career fact per row (company + the
     # specific ranking/search/recsys evidence from that candidate's history).
-    fact = _career_fact(candidate, cid)
+    fact = _career_fact(candidate, cid, used_quotes=used_quotes, current_company=current_company)
     fact_sentence = f" {_variant(_FACT_LEADS, cid, 13)} {fact}." if fact else ""
 
     behavior_variants = [

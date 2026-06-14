@@ -41,11 +41,20 @@ CANDIDATES = ROOT / "candidates.jsonl"
 #    host CPU count -- verified at --cpus=2 AND --cpus=4. The prior 6b284271 was
 #    minted on a many-thread host and did NOT reproduce at --cpus=2 (BLAS
 #    float-reduction order). 16 near-tie placements changed; honeypots still 0.)
-GOLDEN_SUBMISSION_SHA256 = "fdfd3f3590720e1260822b6729b2851dc8daca9f3f859cefc3df184bbbd4c5db"
+# -> af8f2b32... (2026-06-14 reasoning de-dup: the synthetic pool reuses a few
+#    achievement strings, so the prior top-100 quoted the same sentence up to 5x
+#    and read as a template. rows_from_ranked now threads a used-quote set so every
+#    row claims a DISTINCT verbatim quote (prefer current-company evidence; fall
+#    back to a distinct past-company tenure fact). candidate_id/rank/score are
+#    byte-IDENTICAL across all 100 rows vs fdfd3f35 -- only the reasoning column
+#    changed (87/100 rows); top-100 now has 8 distinct quotes, 0 repeats. The
+#    HAND pipeline is unchanged; no reranker. docs/golden_reproduction.md.)
+GOLDEN_SUBMISSION_SHA256 = "af8f2b327f05d30e22aba41e884077071c673082cd4a2647294f0969c0f0536a"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
-# official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0).
-GOLDEN_SLICE2K_SHA256 = "7918db85054634578a79a7df011d3d5e12734ac726e00ef2a846bbf2ceee455d"
+# official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0). Rolled
+# with the reasoning de-dup pass (reasoning text only; ranking unchanged).
+GOLDEN_SLICE2K_SHA256 = "e4623c2136fddc70651ae304e5c62b9d6fc9685971d552c3ff43210405e67056"
 
 EXPECTED_HEADER = ["candidate_id", "rank", "score", "reasoning"]
 

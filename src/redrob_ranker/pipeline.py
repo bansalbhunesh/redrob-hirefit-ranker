@@ -199,13 +199,17 @@ def rows_from_ranked(ranked: list[tuple[dict, object, float]], top_k: int) -> li
     rows: list[dict] = []
     selected = ranked[:top_k]
     max_score = selected[0][2] if selected else 0.0
+    # Shared across the written rows so each gets a distinct verbatim career quote
+    # (the synthetic pool reuses achievement strings; without this a top-100 sample
+    # repeats the same sentence and reads as a template). Rank order = claim order.
+    used_quotes: set[str] = set()
     for rank, (candidate, features, score) in enumerate(selected, start=1):
         rows.append(
             {
                 "candidate_id": candidate["candidate_id"],
                 "rank": rank,
                 "score": f"{_submission_score(score, max_score):.6f}",
-                "reasoning": build_reason(candidate, features, rank),
+                "reasoning": build_reason(candidate, features, rank, used_quotes=used_quotes),
             }
         )
     return rows
