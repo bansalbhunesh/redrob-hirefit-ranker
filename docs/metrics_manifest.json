@@ -34,8 +34,10 @@
     "ndcg10": 0.8943,
     "top10_tiers": [5, 5, 4, 4, 5, 5, 5, 5, 5, 5],
     "composite_independent": 0.8863,
-    "composite_judge1": 0.9112,
-    "composite_judge2": 0.9565,
+    "composite_judge1": 0.8959,
+    "composite_judge2": 0.9422,
+    "composite_judge3": 0.8943,
+    "_composite_note": "recomputed on the calibration-free submission (fdfd3f35) vs the same judge labels, coverage 1.00; calibration removal cost ~0.015 composite / dropped NDCG@50 ~0.05, NDCG@10 + P@10 unchanged",
     "judge_agreement_kappa_range": [0.918, 0.935]
   },
   "tests_collected": 165,
