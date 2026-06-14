@@ -30,3 +30,24 @@ what ships (`submission.csv`, golden-hash locked).
 **The 100K frozen blind set (`artifacts/h2_availblind_labels.jsonl`) is the arbiter.** It is
 full-population and was frozen before any tuning; proxy/curated samples that disagreed with it
 (notably the v2 reranker's four-LLM-judge wins on 249 candidates) did not generalize.
+
+## External audit reconciliation (2026-06-14)
+
+An independent deep audit of `main` (scoring the submission 92.7/100 and Grand-Champion odds
+~2–4%) proposed a "Tier 1" set of high-upside changes. Each was checked against the code and the
+arbiter; **all three actionable items are already done or already logged as negatives** — the
+audit was written without the blind-set results loaded.
+
+| Audit recommendation | Reconciliation |
+|---|---|
+| **"Wire HyRE into the default JD path — add `hyre_similarity` to `BASE_FEATURE_WEIGHTS`"** | **Already shipped.** `hyre_similarity` is weighted **0.05** on the default path (`constants.py:157`), the exact lever the audit proposes (it suggested 0.08). The audit read `_alternate_jd_weights()` and missed that `BASE_FEATURE_WEIGHTS` *is* the default-JD weight table. Not wasted compute. |
+| **"Retry LightGBM with an NDCG@10 objective (not NDCG@50)"** | **Already measured negative #7.** LambdaMART trained *on the real 100K blind labels*, **NDCG@10 objective**, leak-safe 60/40 split, evaluated on the untouched holdout → **−0.040 to −0.104** on NDCG@10. The audit attributes the failure to an NDCG@50 objective; that was only #6. The proposed experiment was already run under conditions more favorable than the rules allow, and it lost. |
+| **"Add a new RUM near-miss feature #34"** | **Same class as measured negative #8** (quantified-impact density): no train-supported lift on the blind gate. Nuance the audit would value: #8's *holdout* NDCG@50 flickered positive at small weights (`w=0.05 → +0.0091`, `w=0.10 → +0.0129`), but the pre-registered gate selects `w` on **train** (best train `w=0.02` → holdout +0.0000), so it was correctly rejected — the winning weight is not knowable in advance. |
+| **Tier 2/3 — dense retrieval (FAISS+MiniLM), cross-encoder rerank, ConFit encoder, build-time LLM feature extraction** | **Out of scope by construction, not by oversight.** Each imports torch (+180 MB), breaks determinism across CPU counts and the 100% offline / no-GPU guarantee, and the LLM-extraction path costs ~$100. #1 already tested the offline-feasible version (static `potion-32M` embeddings) → flat at NDCG@10. |
+
+**What the audit gets right:** the hand-tuned linear scorer has a real ceiling (no learned
+interactions); NDCG@50 is the genuine weak spot (P@10 ≈ 1.0, NDCG@10 strong); and MMoE /
+backend-depth scoring run only on alternate JDs — correct, and *by design* (the official bundled
+JD uses the linear path), not a defect. The honest conclusion stands: the model lever is empty
+and the bottleneck is feature information content + true-label availability, so the frozen
+hand-tuned submission (`af8f2b32`, golden-locked) is the expected-value-maximizing ship.
