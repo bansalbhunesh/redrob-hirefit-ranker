@@ -262,6 +262,12 @@ either declined or adopted on the evidence:
 
 The adopted change is role-family depth scoring (backend/data/devops/search) with surface + depth extractors. On the 100K-pool five-role transfer benchmark it lifts the mean HireFit composite to **0.7702 vs 0.6602** for a keyword baseline ([docs/multi_jd_generalization_eval_100k_latest.md](docs/multi_jd_generalization_eval_100k_latest.md); 20K and base-sample variants are reported in the same `multi_jd_generalization_eval*` series).
 
+**Robustness & defense.** Scored against nine independent label proxies (the blind set, a
+deterministic rubric, and four LLM judge families), the hand pipeline holds **0.77–0.94**
+composite without over-fitting any single source — and the two "obvious next features" were
+tested across all nine and rejected ([docs/robustness_study.md](docs/robustness_study.md)). For
+the full case mapped to the judging stages, see [docs/why_this_wins.md](docs/why_this_wins.md).
+
 ## The JD compiles into a deterministic scoring program
 
 The ranker is not hard-coded to one job description. `rank.py --jd <file>` runs a
