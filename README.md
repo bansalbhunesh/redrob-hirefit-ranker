@@ -215,7 +215,7 @@ hard honeypots and the keyword-stuffer traps out of the top-100 — rung 3 alone
 has no such protection. (Honeypot handling was audited flag-by-flag against a
 pre-committed rubric: [docs/honeypot_audit.md](docs/honeypot_audit.md).)
 
-## Six measured negatives, one adopted change
+## Eight measured negatives, one adopted change
 
 Every alternative was built, measured against a recorded decision rule, and
 either declined or adopted on the evidence:
@@ -239,6 +239,15 @@ either declined or adopted on the evidence:
    judges agreed; none generalized to the full population). Rejected; hand
    pipeline retained ([docs/why_not_reranker.md](docs/why_not_reranker.md),
    [docs/measured_negatives.md](docs/measured_negatives.md)).
+7. **LightGBM reranker trained on the 100K blind labels** (stress test: NDCG@10
+   objective, leak-safe holdout) - still **−0.040 to −0.104 NDCG@10** vs hand.
+   Even trained on the arbiter labels with honest validation, learned reranking
+   can't beat the hand scorer's top-10 — the model lever is empty
+   ([docs/next_level_roadmap.md](docs/next_level_roadmap.md)).
+8. **New orthogonal feature — quantified-impact density** - no train-supported
+   NDCG@10 lift on the blind set (raw corr −0.083). Even a fresh feature adds no
+   blind signal; the feature set is comprehensive
+   ([docs/next_level_roadmap.md](docs/next_level_roadmap.md)).
 
 The adopted change is role-family depth scoring (backend/data/devops/search) with surface + depth extractors. On the 100K-pool five-role transfer benchmark it lifts the mean HireFit composite to **0.7702 vs 0.6602** for a keyword baseline ([docs/multi_jd_generalization_eval_100k_latest.md](docs/multi_jd_generalization_eval_100k_latest.md); 20K and base-sample variants are reported in the same `multi_jd_generalization_eval*` series).
 
