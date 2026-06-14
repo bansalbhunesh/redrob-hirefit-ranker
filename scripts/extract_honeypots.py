@@ -169,8 +169,8 @@ def main() -> None:
     lines.append("")
     lines.append("## Near-miss false-negative check")
     lines.append("")
-    lines.append(f"20 closest near-misses (exactly one condition almost met) in "
-                 f"`artifacts/honeypot_nearmiss.jsonl`:")
+    lines.append("20 closest near-misses (exactly one condition almost met) in "
+                 "`artifacts/honeypot_nearmiss.jsonl`:")
     lines.append("")
     lines.append("| candidate_id | near class | closeness | detail |")
     lines.append("|---|---|---|---|")

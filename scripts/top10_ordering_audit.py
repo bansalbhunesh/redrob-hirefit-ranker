@@ -6,7 +6,6 @@ still go through the pre-registered challenger gate, never ad hoc."""
 
 from __future__ import annotations
 
-import json
 import sys
 from itertools import combinations
 from pathlib import Path

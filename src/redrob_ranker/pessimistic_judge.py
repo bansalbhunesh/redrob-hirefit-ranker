@@ -13,8 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
-from .features import CandidateFeatures, compute_features
-from .constants import FEATURE_NAMES
+from .features import compute_features
 
 
 @dataclass

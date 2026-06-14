@@ -3,7 +3,6 @@
 Provides a lightweight numpy-based inference engine for the 5 trained role-experts.
 """
 
-import os
 import numpy as np
 from pathlib import Path
 

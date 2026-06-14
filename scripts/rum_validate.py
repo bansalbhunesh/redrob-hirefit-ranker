@@ -5,7 +5,6 @@ Verifies that the depth scoring and heuristic stack naturally catches
 """
 
 import json
-import os
 import sys
 from pathlib import Path
 

@@ -5,7 +5,6 @@ against 5 role-family JDs.
 """
 
 import json
-import os
 import sys
 from pathlib import Path
 

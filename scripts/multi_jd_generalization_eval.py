@@ -12,7 +12,6 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import json
-import math
 import re
 import sys
 import time

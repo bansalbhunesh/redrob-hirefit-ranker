@@ -6,7 +6,6 @@ Creates 500 frozen blind labels from 3 independent synthetic judges.
 import json
 import os
 import sys
-import random
 from pathlib import Path
 import numpy as np
 

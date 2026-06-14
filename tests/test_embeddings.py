@@ -3,7 +3,6 @@
 Uses the dependency-free HashingStubEmbedder so the threading/guardrail logic is
 covered without downloading model2vec.
 """
-import numpy as np
 
 import redrob_ranker.pipeline as pipeline_mod
 from redrob_ranker.embeddings import HashingStubEmbedder, semantic_scores

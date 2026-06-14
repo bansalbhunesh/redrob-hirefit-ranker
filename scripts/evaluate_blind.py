@@ -98,7 +98,7 @@ def main():
     ndcg10 = ndcg_at_k(r, 10, ground_truth)
     pearson = np.corrcoef(pred_scores, ground_truth)[0, 1]
     
-    print(f"\n=== FROZEN BLIND TEST EVALUATION ===")
+    print("\n=== FROZEN BLIND TEST EVALUATION ===")
     print(f"NDCG@10: {ndcg10:.4f}")
     print(f"Pearson: {pearson:.4f}")
     print(f"Samples: {len(r)}")

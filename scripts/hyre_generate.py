@@ -4,7 +4,6 @@ Generates 5 perfect role-family resumes and encodes them.
 """
 
 import json
-import os
 import sys
 from pathlib import Path
 

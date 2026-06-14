@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from redrob_ranker.constants import MUST_HAVE_SKILLS, NICE_TO_HAVE_SKILLS, PREFERRED_INDIAN_LOCATIONS
+from redrob_ranker.constants import MUST_HAVE_SKILLS, NICE_TO_HAVE_SKILLS
 from redrob_ranker.features import CandidateFeatures
 from redrob_ranker.text import lower
 

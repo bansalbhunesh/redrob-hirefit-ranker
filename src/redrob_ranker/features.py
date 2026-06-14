@@ -9,6 +9,10 @@ from dataclasses import dataclass, field
 from datetime import date
 from functools import lru_cache
 import os
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from redrob_ranker.jd_compiler import CompiledJD
 
 from redrob_ranker.constants import (
     BASE_FEATURE_WEIGHTS,
@@ -17,9 +21,6 @@ from redrob_ranker.constants import (
     FEATURE_NAMES,
     IR_RANKING_SIGNALS,
     LLM_WRAPPER_TERMS,
-    MUST_HAVE_SKILLS,
-    MUST_HAVE_WEIGHTS,
-    NICE_TO_HAVE_SKILLS,
     NON_TARGET_TITLES,
     OPEN_SOURCE_SIGNALS,
     PREFERRED_INDIAN_LOCATIONS,
@@ -29,9 +30,8 @@ from redrob_ranker.constants import (
     PURE_RESEARCH_SIGNALS,
     SCALE_SIGNALS,
     SERVICES_COMPANIES,
-    TARGET_TITLE_WEIGHTS,
 )
-from redrob_ranker.text import candidate_text, lower
+from redrob_ranker.text import candidate_text
 
 # Pinned to the hackathon dataset timeframe by default to ensure reproducibility.
 # Can be overridden for live production via REDROB_REFERENCE_DATE.
@@ -476,9 +476,7 @@ def _honeypot_flags(
 ) -> list[str]:
     flags: list[str] = []
     profile = candidate.get("profile") or {}
-    signals = candidate.get("redrob_signals") or {}
     career = candidate.get("career_history", []) or []
-    skills = _skill_records(candidate)
 
     yoe = float(profile.get("years_of_experience") or 0)
     expected_months = int(yoe * 12)
@@ -1087,7 +1085,6 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
                 )
     values["open_source_signal"] = clamp(_count_tokenized(_OPEN_SOURCE_SPLIT, tokens_full, safe_full) / 3.0)
 
-    management_score = _count_tokenized(_MANAGEMENT_SPLIT, tokens_career, safe_career)
     last_active_days = _days_since(signals.get("last_active_date"))
     recency = 1.0 if last_active_days <= 14 else 0.9 if last_active_days <= 30 else 0.72 if last_active_days <= 60 else 0.5 if last_active_days <= 120 else 0.22
     values["availability_score"] = clamp(recency * (1.0 if signals.get("open_to_work_flag") else 0.68))
@@ -1123,7 +1120,6 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
     values["location_score"] = 1.0 if preferred_city else 0.68 if in_india else 0.42 if willing_relocate else 0.10
     values["relocation_willing"] = 1.0 if willing_relocate else 0.0
 
-    non_target_title = _has_boundary(_NON_TARGET_PADDED, current_title)
     skill_count = len(skills)
     stuffer_signals = 0
     if skill_count >= 12 and values["core_skill_match"] >= 0.55:
@@ -1243,7 +1239,6 @@ def compute_behavioral_multiplier(
     mult *= 0.85 + 0.25 * values["availability_score"]
     mult *= 0.8 + 0.2 * values["interview_reliability"]
     mult *= 1.03 if float(signals.get("saved_by_recruiters_30d") or 0) > 5 else 0.97 if float(signals.get("saved_by_recruiters_30d") or 0) == 0 else 1.0
-    raw_github = float(signals.get("github_activity_score") or 0)
     mult *= 1.03 if values["github_signal"] > 0.2 else 1.0
     if (candidate.get("redrob_signals") or {}).get("skill_assessment_scores"):
         mult *= 1.05 if values["assessment_score_avg"] > 0.6 else 0.9 if values["assessment_score_avg"] < 0.4 else 1.0

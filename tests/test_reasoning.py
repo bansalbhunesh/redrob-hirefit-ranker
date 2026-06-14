@@ -90,7 +90,7 @@ def test_reasoning_mentions_only_real_skills():
     candidate = _make_candidate()
     actual_skill_names = {s["name"].lower() for s in candidate["skills"]}
     features = compute_features(candidate)
-    reasoning = build_reason(candidate, features, rank=1)
+    build_reason(candidate, features, rank=1)  # smoke: must not raise
 
     # The reasoning embeds skills via _top_relevant_skills which joins them with commas
     # after "relevant skills include". Verify those skills exist.

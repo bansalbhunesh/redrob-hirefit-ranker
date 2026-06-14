@@ -5,8 +5,6 @@ Uses scikit-learn's MLPRegressor to avoid heavy PyTorch dependencies,
 and extracts the weights to a simple numpy .npz format for the core pipeline.
 """
 
-import json
-import os
 import sys
 from pathlib import Path
 import numpy as np

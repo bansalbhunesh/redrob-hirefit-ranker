@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import json
 import random
 from pathlib import Path
 import sys
@@ -9,7 +8,6 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from redrob_ranker.features import compute_features
 from redrob_ranker.io import iter_candidates
-from redrob_ranker.pipeline import rank_candidates, RankerConfig
 from redrob_ranker.hyre_prompts import get_hyre_for_role
 
 def main():
