@@ -50,3 +50,32 @@ sensitivity sweep's coverage guard exists to reject.
 committed as evaluation evidence only. If Redrob ever has real hire/outcome labels,
 this exact pipeline is the path to learned weights — over the same 28 features, with
 the same guardrails and audit trail.
+
+## Addendum (2026-06-14): v2 reranker — same conclusion on the 100K blind set
+
+A second, stronger LambdaMART reranker was built on the `codex/ndcg50-killer` branch
+(retrieve-then-rerank over the hand top-K, 33 features incl. backend_depth / data_bi_depth /
+hyre_similarity, **NDCG@50 objective**, trained on pessimistic-judge labels + RUM hard
+negatives, honeypot multiplier re-applied). On a curated 249-candidate **LLM-judge** sample it
+looked good (GPT-4.1-mini +0.027, DeepSeek +0.085, Claude-3.5-haiku +0.019,
+Gemini-3.1-flash-lite +0.049 composite; held-out-judge CV +0.091 NDCG@50).
+
+Then it was scored on the **100K frozen blind set** (`artifacts/h2_availblind_labels.jsonl`,
+generated before any tuning, full population):
+
+| Metric | Hand (fdfd3f35) | Reranker v2 (0a9c3155) | Δ |
+|---|---|---|---|
+| composite | **0.8625** | 0.8318 | **−0.0307** |
+| NDCG@10 | **0.8288** | 0.7593 | **−0.0695** |
+| NDCG@50 | 0.8270 | 0.8404 | +0.0135 |
+
+**Why the LLM proxies misled.** The four LLM judges all scored the *same* 249 candidates
+curated near the top of the pool — a narrow, correlated slice. The reranker reordered the
+top-10 in a way that slice rewarded; on the full 100K population that same reorder *lost*
+NDCG@10 (−0.070), and since NDCG@10 is half the composite the net was −0.031. Proxy agreement
+on a curated sample is not population generalization.
+
+**Conclusion: proxy validation is not sufficient. The 100K blind set is the arbiter.** This is
+the **second** LTR measured negative — v1 at −0.0061 on proxy labels, v2 at −0.031 on the 100K
+blind set. The hand-tuned scorer is retained. Full Stage-5 framing:
+[why_not_reranker.md](why_not_reranker.md); master list: [measured_negatives.md](measured_negatives.md).
