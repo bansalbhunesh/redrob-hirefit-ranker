@@ -23,6 +23,7 @@ artifacts/
 # Local research scratch that references external repo names (kept out of the tree
 # per the competitor-name scrub); the de-named analysis scripts are committed instead.
 experiments/_competitor_extract.py
+experiments/disagreement_set/anon_key.json
 
 # Local config
 .env
