@@ -4,10 +4,19 @@ Continuation of the frozen Φ pilot (`06bca55`), preserved exactly. Φ-2 targets
 sources of validity — reviewer-perspective coverage and coding reliability — using only
 ToS-clean data and never faking a second coder.
 
+> **What NOT to conclude (binding).** (1) The anachronism-decision cell (n=5) **cannot**
+> establish how humans would treat golden's 52 anomalies — far too small. (2) Stack Exchange is
+> the **HR/workplace-process stratum, NOT a recruiter stratum**: its authors are *unverified*
+> (employees, managers, candidates, HR, legal/process observers); role labels in the corpus are
+> `self_claimed`/inferred, not a verified recruiter panel. (3) Combined n=27 is suitable for
+> concept development, codebook validation, decision-pattern identification, qualitative
+> triangulation, and product-interface design — **not** for population percentages or for
+> deciding the submission.
+
 ## What was added (real data)
 - **Workplace Stack Exchange stratum** (official API, CC-BY-SA): 6 voted-answer opinion units
   on HR/background-check policy and India dual-employment/relieving-date scenarios — the
-  process/recruiter perspective HN lacks.
+  HR/workplace-process perspective HN lacks (authors unverified; not a recruiter panel).
 - **Deliberate anachronism expansion** (HN + SE): targeted queries; only ~2 new genuine hiring
   judgments surfaced — most "X years of Kubernetes/RAG" hits are *tech debates*, not hiring
   decisions. **The anachronism-decision cell is n = 5 and NOT saturated** (reported honestly,
@@ -34,9 +43,9 @@ the pilot's headline with a cleaner instrument: **"suspicious" (evidence) and "r
 - **Workplace SE (HR/process):** CLARIFY / DOWNRANK / VERIFY / BLOCK — more procedural and
   less forgiving; the India dual-employment case is the lone clear BLOCK.
 
-This supports the predicted recruiter-vs-engineer divergence: **process/HR discourse leans
+This supports the predicted HR/process-vs-engineer divergence: **process/HR discourse leans
 verification-and-procedure; engineer discourse leans capability-and-continue.** Directional
-(SE n=6); the full recruiter stratum still requires ToS-appropriate Reddit/LinkedIn access.
+(SE n=6); a VERIFIED recruiter stratum still requires ToS-appropriate access AND author-role verification (SE authors are unverified, not recruiters).
 
 ## Second-coder reliability — ready, not faked
 `second_coder_packet.jsonl` is **de-identified, carries NO coder_1 labels**, no expected

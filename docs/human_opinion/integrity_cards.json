@@ -1,0 +1,1316 @@
+[
+  {
+    "candidate_id": "CAND_0018499",
+    "role_fit": 0.953,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.12,
+    "reason": "Claimed tenure in 'RAG' is 94 months, which exceeds the technology's plausible age (~84 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their RAG work."
+  },
+  {
+    "candidate_id": "CAND_0011687",
+    "role_fit": 0.897,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.25,
+    "reason": "Claimed tenure in 'PEFT' is 75 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their PEFT work."
+  },
+  {
+    "candidate_id": "CAND_0046525",
+    "role_fit": 0.889,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.1,
+    "reason": "Claimed tenure in 'LlamaIndex' is 66 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LlamaIndex work."
+  },
+  {
+    "candidate_id": "CAND_0002025",
+    "role_fit": 0.887,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.69,
+    "reason": "Claimed tenure in 'QLoRA' is 81 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0055905",
+    "role_fit": 0.878,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.17,
+    "reason": "Claimed tenure in 'LangChain' is 70 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LangChain work."
+  },
+  {
+    "candidate_id": "CAND_0071974",
+    "role_fit": 0.86,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.01,
+    "reason": "A completed role ending 2022 references 'QLoRA', which post-dates that role (tech ~2023).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Confirm the start/end dates of the role citing QLoRA."
+  },
+  {
+    "candidate_id": "CAND_0088025",
+    "role_fit": 0.853,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.73,
+    "reason": "Claimed tenure in 'QLoRA' is 83 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0028793",
+    "role_fit": 0.844,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.28,
+    "reason": "Claimed tenure in 'LoRA' is 92 months, which exceeds the technology's plausible age (~72 months).",
+    "corroborating_evidence": [
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LoRA work."
+  },
+  {
+    "candidate_id": "CAND_0081846",
+    "role_fit": 0.838,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0039754",
+    "role_fit": 0.834,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0077337",
+    "role_fit": 0.828,
+    "evidence_status": "AMBIGUOUS",
+    "recommended_action": "CLARIFY",
+    "anachronism_severity": 0.0,
+    "reason": "Incomplete or borderline r\u00e9sum\u00e9 metadata (e.g. abbreviated history vs claimed experience, or uncorroborated expert skill) with a plausible innocent explanation.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate to fill in missing dates/durations; corroborate in interview."
+  },
+  {
+    "candidate_id": "CAND_0005260",
+    "role_fit": 0.813,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0006567",
+    "role_fit": 0.808,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.31,
+    "reason": "Claimed tenure in 'Prompt Engineering' is 94 months, which exceeds the technology's plausible age (~72 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their Prompt Engineering work."
+  },
+  {
+    "candidate_id": "CAND_0008425",
+    "role_fit": 0.789,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.28,
+    "reason": "Claimed tenure in 'Qdrant' is 92 months, which exceeds the technology's plausible age (~72 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their Qdrant work."
+  },
+  {
+    "candidate_id": "CAND_0046064",
+    "role_fit": 0.786,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.53,
+    "reason": "Claimed tenure in 'PEFT' is 92 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their PEFT work."
+  },
+  {
+    "candidate_id": "CAND_0079387",
+    "role_fit": 0.774,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.73,
+    "reason": "Claimed tenure in 'QLoRA' is 83 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0041669",
+    "role_fit": 0.774,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0016163",
+    "role_fit": 0.774,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0030468",
+    "role_fit": 0.769,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "scale signal",
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0001610",
+    "role_fit": 0.754,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0005538",
+    "role_fit": 0.749,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.21,
+    "reason": "Claimed tenure in 'QLoRA' is 58 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "scale signal",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0069905",
+    "role_fit": 0.749,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0078002",
+    "role_fit": 0.74,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.88,
+    "reason": "Claimed tenure in 'QLoRA' is 90 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0050876",
+    "role_fit": 0.736,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.21,
+    "reason": "Claimed tenure in 'QLoRA' is 58 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0061257",
+    "role_fit": 0.734,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0058688",
+    "role_fit": 0.734,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.52,
+    "reason": "Claimed tenure in 'LlamaIndex' is 91 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LlamaIndex work."
+  },
+  {
+    "candidate_id": "CAND_0042100",
+    "role_fit": 0.727,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.75,
+    "reason": "Claimed tenure in 'QLoRA' is 84 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0096142",
+    "role_fit": 0.726,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0064326",
+    "role_fit": 0.725,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.58,
+    "reason": "A completed role ending 2021 references 'GPT-4', which post-dates that role (tech ~2023).",
+    "corroborating_evidence": [
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Confirm the start/end dates of the role citing GPT-4."
+  },
+  {
+    "candidate_id": "CAND_0042506",
+    "role_fit": 0.724,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.18,
+    "reason": "Claimed tenure in 'PEFT' is 71 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their PEFT work."
+  },
+  {
+    "candidate_id": "CAND_0061265",
+    "role_fit": 0.724,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.17,
+    "reason": "Claimed tenure in 'QLoRA' is 56 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0093193",
+    "role_fit": 0.71,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0043860",
+    "role_fit": 0.709,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0011162",
+    "role_fit": 0.708,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.38,
+    "reason": "Claimed tenure in 'LangChain' is 83 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LangChain work."
+  },
+  {
+    "candidate_id": "CAND_0074735",
+    "role_fit": 0.704,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.05,
+    "reason": "Claimed tenure in 'LlamaIndex' is 63 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LlamaIndex work."
+  },
+  {
+    "candidate_id": "CAND_0030348",
+    "role_fit": 0.696,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.6,
+    "reason": "Claimed tenure in 'LlamaIndex' is 96 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LlamaIndex work."
+  },
+  {
+    "candidate_id": "CAND_0005649",
+    "role_fit": 0.695,
+    "evidence_status": "AMBIGUOUS",
+    "recommended_action": "CLARIFY",
+    "anachronism_severity": 0.0,
+    "reason": "Incomplete or borderline r\u00e9sum\u00e9 metadata (e.g. abbreviated history vs claimed experience, or uncorroborated expert skill) with a plausible innocent explanation.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate to fill in missing dates/durations; corroborate in interview."
+  },
+  {
+    "candidate_id": "CAND_0027691",
+    "role_fit": 0.694,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0018722",
+    "role_fit": 0.693,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.28,
+    "reason": "Claimed tenure in 'PEFT' is 77 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their PEFT work."
+  },
+  {
+    "candidate_id": "CAND_0099806",
+    "role_fit": 0.692,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.31,
+    "reason": "Claimed tenure in 'Prompt Engineering' is 94 months, which exceeds the technology's plausible age (~72 months).",
+    "corroborating_evidence": [
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their Prompt Engineering work."
+  },
+  {
+    "candidate_id": "CAND_0070398",
+    "role_fit": 0.69,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0074225",
+    "role_fit": 0.683,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.06,
+    "reason": "Claimed tenure in 'QLoRA' is 51 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0011432",
+    "role_fit": 0.679,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.56,
+    "reason": "Claimed tenure in 'QLoRA' is 75 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0054394",
+    "role_fit": 0.678,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0006418",
+    "role_fit": 0.671,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0039383",
+    "role_fit": 0.67,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.48,
+    "reason": "Claimed tenure in 'QLoRA' is 71 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0026532",
+    "role_fit": 0.67,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0098846",
+    "role_fit": 0.669,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.38,
+    "reason": "Claimed tenure in 'QLoRA' is 66 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0052328",
+    "role_fit": 0.669,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.12,
+    "reason": "Claimed tenure in 'QLoRA' is 54 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0004402",
+    "role_fit": 0.668,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0067866",
+    "role_fit": 0.668,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "none surfaced"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0081053",
+    "role_fit": 0.667,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0080344",
+    "role_fit": 0.665,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0065878",
+    "role_fit": 0.661,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.56,
+    "reason": "Claimed tenure in 'QLoRA' is 75 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0052744",
+    "role_fit": 0.661,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0049896",
+    "role_fit": 0.658,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0053605",
+    "role_fit": 0.656,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0053591",
+    "role_fit": 0.656,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0057563",
+    "role_fit": 0.656,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0014440",
+    "role_fit": 0.654,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0041610",
+    "role_fit": 0.651,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.01,
+    "reason": "A completed role ending 2021 references 'GPT-4', which post-dates that role (tech ~2023).",
+    "corroborating_evidence": [
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Confirm the start/end dates of the role citing GPT-4."
+  },
+  {
+    "candidate_id": "CAND_0017960",
+    "role_fit": 0.648,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.31,
+    "reason": "A completed role ending 2020 references 'GPT-4', which post-dates that role (tech ~2023).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Confirm the start/end dates of the role citing GPT-4."
+  },
+  {
+    "candidate_id": "CAND_0083852",
+    "role_fit": 0.645,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0010685",
+    "role_fit": 0.645,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.18,
+    "reason": "Claimed tenure in 'LlamaIndex' is 71 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LlamaIndex work."
+  },
+  {
+    "candidate_id": "CAND_0064888",
+    "role_fit": 0.644,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0024620",
+    "role_fit": 0.641,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.46,
+    "reason": "Claimed tenure in 'QLoRA' is 70 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0007412",
+    "role_fit": 0.641,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.01,
+    "reason": "A completed role ending 2020 references 'GPT-4', which post-dates that role (tech ~2023).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Confirm the start/end dates of the role citing GPT-4."
+  },
+  {
+    "candidate_id": "CAND_0076831",
+    "role_fit": 0.64,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.02,
+    "reason": "Claimed tenure in 'LlamaIndex' is 61 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LlamaIndex work."
+  },
+  {
+    "candidate_id": "CAND_0010770",
+    "role_fit": 0.64,
+    "evidence_status": "AMBIGUOUS",
+    "recommended_action": "CLARIFY",
+    "anachronism_severity": 0.0,
+    "reason": "Incomplete or borderline r\u00e9sum\u00e9 metadata (e.g. abbreviated history vs claimed experience, or uncorroborated expert skill) with a plausible innocent explanation.",
+    "corroborating_evidence": [
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate to fill in missing dates/durations; corroborate in interview."
+  },
+  {
+    "candidate_id": "CAND_0030784",
+    "role_fit": 0.639,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.04,
+    "reason": "Claimed tenure in 'QLoRA' is 50 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0052682",
+    "role_fit": 0.634,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.58,
+    "reason": "Claimed tenure in 'QLoRA' is 76 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0010603",
+    "role_fit": 0.634,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "none surfaced"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0077296",
+    "role_fit": 0.632,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0083879",
+    "role_fit": 0.632,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0075574",
+    "role_fit": 0.632,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.13,
+    "reason": "A completed role ending 2021 references 'GPT-4', which post-dates that role (tech ~2023).",
+    "corroborating_evidence": [
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Confirm the start/end dates of the role citing GPT-4."
+  },
+  {
+    "candidate_id": "CAND_0010257",
+    "role_fit": 0.628,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0057701",
+    "role_fit": 0.623,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.06,
+    "reason": "Claimed tenure in 'Prompt Engineering' is 76 months, which exceeds the technology's plausible age (~72 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their Prompt Engineering work."
+  },
+  {
+    "candidate_id": "CAND_0048558",
+    "role_fit": 0.616,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "none surfaced"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0016659",
+    "role_fit": 0.615,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0039838",
+    "role_fit": 0.612,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.29,
+    "reason": "Claimed tenure in 'LoRA' is 93 months, which exceeds the technology's plausible age (~72 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LoRA work."
+  },
+  {
+    "candidate_id": "CAND_0027801",
+    "role_fit": 0.608,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.08,
+    "reason": "Claimed tenure in 'QLoRA' is 52 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0053527",
+    "role_fit": 0.607,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0043676",
+    "role_fit": 0.605,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0037944",
+    "role_fit": 0.603,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.35,
+    "reason": "Claimed tenure in 'LlamaIndex' is 81 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LlamaIndex work."
+  },
+  {
+    "candidate_id": "CAND_0068811",
+    "role_fit": 0.599,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0075439",
+    "role_fit": 0.597,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0009024",
+    "role_fit": 0.595,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0094165",
+    "role_fit": 0.594,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0068932",
+    "role_fit": 0.594,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0097176",
+    "role_fit": 0.592,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0091909",
+    "role_fit": 0.591,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.85,
+    "reason": "Claimed tenure in 'QLoRA' is 89 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0024466",
+    "role_fit": 0.591,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.28,
+    "reason": "Claimed tenure in 'LoRA' is 92 months, which exceeds the technology's plausible age (~72 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LoRA work."
+  },
+  {
+    "candidate_id": "CAND_0060054",
+    "role_fit": 0.591,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.07,
+    "reason": "Claimed tenure in 'Prompt Engineering' is 77 months, which exceeds the technology's plausible age (~72 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their Prompt Engineering work."
+  },
+  {
+    "candidate_id": "CAND_0044855",
+    "role_fit": 0.59,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.48,
+    "reason": "Claimed tenure in 'QLoRA' is 71 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0072660",
+    "role_fit": 0.589,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.25,
+    "reason": "Claimed tenure in 'LoRA' is 90 months, which exceeds the technology's plausible age (~72 months).",
+    "corroborating_evidence": [
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LoRA work."
+  },
+  {
+    "candidate_id": "CAND_0075249",
+    "role_fit": 0.587,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0061655",
+    "role_fit": 0.586,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.4,
+    "reason": "Claimed tenure in 'PEFT' is 84 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "production/retrieval career evidence",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their PEFT work."
+  },
+  {
+    "candidate_id": "CAND_0065195",
+    "role_fit": 0.584,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.94,
+    "reason": "Claimed tenure in 'QLoRA' is 93 months, which exceeds the technology's plausible age (~48 months).",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their QLoRA work."
+  },
+  {
+    "candidate_id": "CAND_0070525",
+    "role_fit": 0.584,
+    "evidence_status": "CLEAR",
+    "recommended_action": "CONTINUE",
+    "anachronism_severity": 0.0,
+    "reason": "No meaningful contradictory evidence detected.",
+    "corroborating_evidence": [
+      "verified assessment"
+    ],
+    "verification_request": "None required."
+  },
+  {
+    "candidate_id": "CAND_0044222",
+    "role_fit": 0.583,
+    "evidence_status": "PROBABLE_CONTRADICTION",
+    "recommended_action": "VERIFY",
+    "anachronism_severity": 1.5,
+    "reason": "Claimed tenure in 'LangChain' is 90 months, which exceeds the technology's plausible age (~60 months).",
+    "corroborating_evidence": [
+      "verified assessment",
+      "ranking/IR experience"
+    ],
+    "verification_request": "Ask the candidate for the project timeline and version history of their LangChain work."
+  }
+]
