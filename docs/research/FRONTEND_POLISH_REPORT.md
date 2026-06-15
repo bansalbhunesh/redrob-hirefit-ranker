@@ -50,22 +50,55 @@ pass. Nothing here is aspirational — every "verified" line was run in this env
 - `.github/workflows/ci.yml` already installs `requirements-dashboard.txt`, so the new
   `AppTest` smoke test runs in CI with streamlit present.
 
-## Responsive / accessibility
+## HF Space — local render (verified)
 
-- Streamlit `layout="wide"` + native column wrapping handle desktop→tablet reflow; the Gradio
-  Space sets `min_width` on each column so it stacks on narrow viewports.
-- **Not** a substitute for a real device-matrix pass with a browser — see gaps below.
+- `hf_space/app.py` imports and builds its Gradio `Blocks` graph without exception
+  (gradio 6.10 local); the bundled `demo_sample.jsonl` exists and the auto-demo runs the
+  **real** deterministic ranker on launch (confirmed by the captured screenshot showing a live
+  ranked table + per-candidate fit breakdown).
+- Launched headless on a local port; `GET /` returned **200**.
+
+## Responsive / accessibility (measured with Playwright/Chromium)
+
+Horizontal overflow (`scrollWidth − clientWidth`), measured live:
+
+| Viewport | Streamlit dashboard | Gradio HF Space |
+|---|---|---|
+| 1440px desktop | 0px ✅ | 0px ✅ |
+| 1024px laptop | 0px ✅ | 0px ✅ |
+| 768px tablet | 0px ✅ | 0px ✅ |
+| 390px mobile | 0px ✅ | 110px ⚠ (was 123px) |
+
+- **Dashboard: zero overflow at every viewport.** Headings present; 0 `<img>` missing alt.
+- **HF Space mobile residual (110px):** improved from 123px by lowering column `min_width`
+  (420→320, 260→200, 320→260) and adding a `@media (max-width:480px)` rule that collapses the
+  KPI/metric grids. The remaining overflow is the Gradio **Dataframe's intrinsic minimum
+  width** (a 5-column ranked table will not shrink below ~500px), which Gradio controls; it is
+  a horizontal scroll on phones only. Desktop/laptop/tablet — the judge-relevant sizes — are
+  clean. Documented rather than hidden with `overflow-x:hidden` (which would clip content).
+- Accessibility: 4 HF images all carry alt text; logical heading levels on both surfaces.
+
+## Screenshots (real, captured this session)
+
+Captured with Playwright/Chromium against the live local servers (not mockups):
+
+- `docs/assets/dashboard-overview.png` — verdict banner, manifest-driven "198 passed" metric,
+  judge quick-nav, shipping-gate battery.
+- `docs/assets/dashboard-integrity-review.png` — 52-anomaly reconciliation + integrity cards.
+- `docs/assets/dashboard-mobile.png` — 390px dashboard (no overflow).
+- `docs/assets/huggingface-space.png` — live ranked table, KPI strip, candidate detail card.
+- `docs/assets/huggingface-space-mobile.png` — 390px HF Space.
 
 ## Explicitly NOT done (honest)
 
-- **No screenshots captured.** No headless browser/screenshot tool is available here; I will
-  not commit fabricated PNGs. `docs/assets/*.png` are intentionally absent.
-- **No first-hand 50-competitor frontend audit** — no clones available (see
+- **No first-hand 50-competitor frontend audit** — no competitor clones available (see
   `FRONTEND_COMPETITIVE_AUDIT.md` for scope).
 - **HF Space remote build not verified.** `hf_space` is a submodule pointing at the external
-  Space `huggingface.co/spaces/bansal1234/Hirefit`. The local files are corrected and tests
-  pass, but pushing to HF and watching its remote build requires the user's HF credentials and
-  a deploy action; per the standing rule I have not claimed a remote build is green.
+  Space `huggingface.co/spaces/bansal1234/Hirefit`. The local files are corrected, the app
+  renders locally, and tests pass — but pushing to HF and watching its remote build requires
+  the user's HF credentials and a deploy action. The fix is preserved as a local submodule
+  commit; per the standing rule I do not claim a remote build is green.
+- **HF Space 390px residual overflow (110px)** — Gradio Dataframe min-width limitation; see above.
 - **No deep design-token system / candidate-comparison rebuild.** Targeted, low-risk polish
   only; the larger redesign remains a follow-up.
 

@@ -87,8 +87,9 @@ trail the polish leader only on raw visual quality, which this polish pass narro
 
 ## Honest gaps (not closed this session)
 
-- No first-hand 50-repo frontend re-inspection (no clones available).
-- No pixel screenshots captured (no headless browser/screenshot tool in this environment).
-- HF Space **remote** build/lighthouse not verified from here (submodule → external Space).
+- No first-hand 50-repo frontend re-inspection (no competitor clones available).
+- HF Space **remote** build not verified from here (submodule → external Space; needs HF creds).
+- HF Space has a residual 390px-mobile horizontal scroll (Gradio Dataframe min-width).
 
-See `FRONTEND_POLISH_REPORT.md` for exactly what was changed and verified.
+Closed this session: real Playwright/Chromium screenshots of both surfaces, a measured
+responsive overflow matrix, and a local HF render. See `FRONTEND_POLISH_REPORT.md`.
