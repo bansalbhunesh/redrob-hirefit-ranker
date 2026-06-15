@@ -86,6 +86,15 @@ def test_hf_readme_sdk_matches_app_framework():
 
 @_hf
 def test_hf_app_makes_no_fabrication_claims():
+    # The app must not *assert* a candidate is confirmed fraud / an official planted honeypot.
+    # It MAY mention those phrases in a negating disclaimer ("a flag is NOT confirmed fraud and
+    # NOT an official planted honeypot") — that is the required scientific language, so a naive
+    # substring ban is wrong. Flag an occurrence only when it is not negated just before it.
     app = HF_APP.read_text(encoding="utf-8").lower()
-    for forbidden in ("confirmed fraud", "official planted honeypot", "official honeypot id"):
-        assert forbidden not in app, f"HF app must not claim '{forbidden}'"
+    negations = ("not ", "never", "≠", "no ", "isn't", "aren't")
+    for phrase in ("confirmed fraud", "official planted honeypot", "official honeypot id"):
+        for m in re.finditer(re.escape(phrase), app):
+            pre = app[max(0, m.start() - 14):m.start()]
+            assert any(n in pre for n in negations), (
+                f"HF app appears to *claim* '{phrase}' (not negated): ...{pre}[{phrase}]..."
+            )

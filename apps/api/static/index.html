@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redrob HireFit Ranker v3.0</title>
+  <title>Redrob HireFit Ranker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ── CSS RESET & BASE ── */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,9 +15,12 @@
       --bg-panel: #111420;
       --bg-card: #151926;
       --border-glass: rgba(255, 255, 255, 0.06);
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --text-muted: #475569;
+      --text-primary: #f4f7fb;
+      --text-secondary: #9fb0c3;
+      --text-muted: #8b97a8;
+      --font-display: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
+      --font-body: 'IBM Plex Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
       --accent-cyan: #14b8a6; /* Redefined to a professional Teal */
       --accent-purple: #64748b; /* Redefined to Slate */
       --accent-gold: #fbbf24;
@@ -32,12 +38,20 @@
 
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: var(--font-body);
       background: var(--bg-deep);
       color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
       line-height: 1.5;
+    }
+    h1, h2, h3, .header-brand h1, .section-title, .metric-card .value {
+      font-family: var(--font-display);
+      letter-spacing: -0.01em;
+    }
+    .metric-card .value, .mono, [id^="metric"], code, pre {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
     }
 
     /* ── AMBIENT BACKGROUND ── */
@@ -127,8 +141,16 @@
       grid-template-columns: 1fr 380px;
       gap: 24px;
     }
+    /* Prevent CSS-grid blowout: grid items default to min-width:auto and refuse to
+       shrink below content width, which caused horizontal overflow on phones. */
+    .main > *, .left-col { min-width: 0; }
     @media (max-width: 1100px) {
       .main { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .main { padding: 16px 12px; gap: 16px; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .header { padding: 12px 14px; }
     }
 
     /* ── GLASS PANELS ── */
@@ -180,7 +202,8 @@
     }
     .metric-card .value {
       font-size: 28px; font-weight: 700;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
       color: var(--text-primary);
       line-height: 1.2;
     }
@@ -838,8 +861,9 @@
       <div class="logo">R</div>
       <div>
         <h1>Redrob HireFit Ranker</h1>
+        <div style="font-size:11px;color:var(--text-secondary);letter-spacing:.2px;margin-top:1px;">Ranks careers, not keywords.</div>
       </div>
-      <span class="badge">v3.0</span>
+      <span class="badge">LIVE · CPU-only</span>
     </div>
     <div class="header-controls">
       <div class="mode-toggle">
@@ -894,13 +918,19 @@
         </div>
         <div class="metric-card">
           <div class="value" id="metricHoneypots">—</div>
-          <div class="label">Honeypots Blocked</div>
+          <div class="label">Integrity-flagged</div>
         </div>
         <div class="metric-card">
           <div class="value" id="metricAvg">—</div>
           <div class="label">Avg Score</div>
         </div>
       </div>
+      <p style="font-size:11px;color:var(--text-muted);margin:10px 2px 0;line-height:1.5;">
+        Integrity-flagged = candidates the shipped detector marked for review (0 reach the final
+        shortlist). A flag is a <em>detector-flagged anomaly</em> — not confirmed fraud and not an
+        official planted honeypot. Quality metrics are dev-proxy / LLM-audit; no official hidden
+        labels were available. Production ranking is frozen and byte-identical.
+      </p>
 
       <!-- PIPELINE -->
       <div class="glass-panel">
@@ -913,8 +943,8 @@
       <!-- FILTERS -->
       <div class="filter-bar">
         <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All Candidates</button>
-        <button class="filter-btn" data-filter="honeypot" onclick="setFilter('honeypot')">
-          <span class="indicator-dot red"></span>Honeypots
+        <button class="filter-btn" data-filter="honeypot" onclick="setFilter('honeypot')" title="Detector-flagged anomalies — not confirmed fraud">
+          <span class="indicator-dot red"></span>Integrity-flagged
         </button>
         <button class="filter-btn" data-filter="product" onclick="setFilter('product')">Product Companies</button>
         <button class="filter-btn" data-filter="strong-ml" onclick="setFilter('strong-ml')">Strong ML</button>
@@ -966,8 +996,8 @@
       { name: 'Load', icon: `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>` },
       { name: 'Text', icon: `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>` },
       { name: 'BM25', icon: `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>` },
-      { name: '28-D Features', icon: `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>` },
-      { name: 'Honeypot', icon: `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>` },
+      { name: '33 Features', icon: `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>` },
+      { name: 'Integrity', icon: `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>` },
       { name: 'Behavioral', icon: `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>` },
       { name: 'Rank', icon: `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>` },
       { name: 'Reasoning', icon: `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>` },
@@ -1080,7 +1110,7 @@
     }
 
     async function processLive(file) {
-      showLoading('Processing live...', 'Running 28-D feature matrix + BM25');
+      showLoading('Processing live...', 'Running 33-feature matrix + BM25');
       const formData = new FormData();
       formData.append('file', file);
 
@@ -1265,8 +1295,8 @@
 
       if (!filtered.length) {
         container.innerHTML = `
-          <div class="glass-panel" style="text-align:center;padding:40px;">
-            <div style="font-size:48px;margin-bottom:12px;">🔍</div>
+          <div class="glass-panel" style="text-align:center;padding:48px 40px;">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="var(--accent-cyan)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:14px;opacity:.85;"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <h3 style="font-size:16px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">No candidates match</h3>
             <p style="font-size:13px;color:var(--text-muted);">Try adjusting your filters or search query.</p>
           </div>
@@ -1386,7 +1416,7 @@
         </div>
         <div class="section-title">Reasoning Audit</div>
         <div class="reasoning-box">${c.reasoning || 'No reasoning available'}</div>
-        <div class="section-title">28-D Feature Breakdown</div>
+        <div class="section-title">33-Feature Breakdown</div>
         <div class="feature-grid">${featureItems || '<div style="color:var(--text-muted);font-size:13px;">No feature data</div>'}</div>
         <div class="section-title">Behavioral Signals</div>
         <div class="behavioral-grid">${behavioralItems}</div>
