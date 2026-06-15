@@ -26,6 +26,10 @@ jobs:
         run: |
           pip install -e ".[api,dev]" httpx
 
+      - name: Install dashboard test deps (presentation-only; NOT production inference)
+        run: |
+          pip install -r requirements-dashboard.txt
+
       - name: Validator gate — committed submission.csv must pass shape checks
         run: python scripts/validate_submission.py submission.csv
 

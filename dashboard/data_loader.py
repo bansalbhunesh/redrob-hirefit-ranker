@@ -8,7 +8,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pandas as pd
+# pandas is imported lazily inside load_csv_safe so this module (and integrity_cards, which
+# imports it) stays importable for test collection even when pandas is not installed.
 
 
 class Artifact:
@@ -38,6 +39,7 @@ def load_csv_safe(path) -> Artifact:
     if not p.exists():
         return Artifact(False, None, f"Artifact unavailable — expected at {p}", p)
     try:
+        import pandas as pd  # lazy: only CSV loading needs pandas
         return Artifact(True, pd.read_csv(p), "ok", p)
     except Exception as e:
         return Artifact(False, None, f"Artifact unreadable ({e.__class__.__name__}) at {p}", p)
