@@ -1,5 +1,12 @@
 # Frontend Unified Audit & Design System
 
+> **Update (2026-06-16, later):** the teal "Decision Instrument" system below was **superseded
+> by "Command Core"** — a mission-control aesthetic: **indigo `#4F46E5`** (no teal), **Inter +
+> JetBrains Mono**, sharp edges (≤2px), hairline borders, no shadows, monospace numerals. It is
+> now applied across **all three** surfaces (Omega Streamlit dashboard, Render frontend, HF
+> Space). Tokens live in `dashboard/theme.py`. The audit findings below still hold; only the
+> palette/type direction changed.
+
 Brutally honest review of the two judge-facing surfaces, 2026-06-16.
 
 - **Render frontend** = `apps/api/static/index.html` (self-contained dark SPA "Redrob HireFit
