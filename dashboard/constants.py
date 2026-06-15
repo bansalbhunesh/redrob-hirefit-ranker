@@ -27,6 +27,19 @@ CONFIG = {
     "psi_manifest": ROOT / "experiments/psi_panel/manifest.json",
     "disagreement_manifest": ROOT / "experiments/disagreement_set/manifest.json",
     "registry": ROOT / "experiments/registry.json",
+    "metrics_manifest": ROOT / "docs/metrics_manifest.json",
+}
+
+# Canonical judge-facing facts. SINGLE SOURCE so the local dashboard and the HF Space
+# cannot drift apart. Numbers with a manifest home (tests, honeypots) are read from
+# docs/metrics_manifest.json at runtime; the rest are verified constants.
+SHARED_FACTS = {
+    "verdict": VERDICT,
+    "golden_commit": GOLDEN_COMMIT,
+    "honeypots_in_top100": 0,        # shipped detector — mirrors metrics_manifest.submission
+    "honeypots_detected": 53,        # shipped detector total — mirrors metrics_manifest.submission
+    "anachronism_anomalies_top100": 52,  # EXPERIMENTAL detector (NOT the shipped honeypot count)
+    "psi_status": "AWAITING HUMAN DATA",
 }
 
 # Canonical terminology — never used interchangeably (scientific-honesty requirement).

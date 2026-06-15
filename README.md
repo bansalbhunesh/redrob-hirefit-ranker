@@ -2,7 +2,7 @@
 
 A deterministic, evidence-aware candidate-ranking system for 100,000 profiles, with a frozen production ranking and a fully audited research program for ranking quality, integrity risk and human uncertainty.
 
-[![Tests](https://img.shields.io/badge/tests-187_passed_0_skipped-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-198_passed_0_skipped-brightgreen.svg)](#)
 [![Runtime](https://img.shields.io/badge/100K-80s_cloud_·_~125s_local_Docker-brightgreen.svg)](#)
 [![Execution](https://img.shields.io/badge/CPU--only-offline-blue.svg)](#)
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](#)
@@ -34,7 +34,7 @@ production ranker. It imports no production scoring code and changes no submissi
 |---|---|
 | Production ranking | Frozen golden (`af8f2b32`) |
 | Dataset | 100,000 candidates |
-| Tests | 187 passed, 0 skipped |
+| Tests | 198 passed, 0 skipped |
 | Dev-proxy quality | NDCG@10 0.8943 · P@10 = 1.0 — *dev proxy / LLM-audit; **No official hidden labels*** |
 | Runtime | ~80s cloud 2-vCPU serial · ~125s local Docker serial (budget 300s) |
 | Execution | CPU-only, offline, deterministic (`PYTHONHASHSEED=0`) |
