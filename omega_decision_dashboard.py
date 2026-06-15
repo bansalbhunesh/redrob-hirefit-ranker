@@ -9,20 +9,64 @@ Run:  streamlit run omega_decision_dashboard.py
 """
 from __future__ import annotations
 
+import altair as alt
+import pandas as pd
 import streamlit as st
 
-from dashboard import charts, components as C
+from dashboard import charts, components as C, theme
 from dashboard.constants import (CONFIG, DISCLAIMER, EXPERIMENTAL_INTEGRITY_NOTE, GATES,
                                  GOLDEN_COMMIT, SHARED_FACTS, VERDICT, VERDICT_DISCLAIMER)
 from dashboard.data_loader import load_csv_safe, load_json_safe
 from dashboard.integrity_cards import distribution, load_cards
 
-st.set_page_config(page_title="Redrob Ranking Decision Lab", page_icon="⚖️",
-                   layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Omega Decision System", page_icon="🔬",
+                   layout="wide", initial_sidebar_state="collapsed")
+st.markdown(theme.CSS, unsafe_allow_html=True)  # Command Core design system (dark / indigo)
 
 
 def _unavailable(art):
     st.warning(f"Artifact unavailable. Expected: `{art.path}`. ({art.message})")
+
+
+_CC_RANGE = [theme.ACCENT, theme.AMBER, theme.GREEN, theme.BLUE, theme.TEXT_SECONDARY]
+
+
+def _cc(chart):  # Command Core dark chart styling
+    return (chart
+            .configure(background=theme.BG_BASE)
+            .configure_view(stroke=None)
+            .configure_axis(grid=True, gridColor=theme.BORDER, gridOpacity=0.6,
+                            domainColor=theme.BORDER, tickColor=theme.BORDER,
+                            labelColor=theme.TEXT_SECONDARY, titleColor=theme.TEXT_SECONDARY,
+                            labelFont="JetBrains Mono", titleFont="Inter", titleFontWeight=600)
+            .configure_legend(labelColor=theme.TEXT_SECONDARY, titleColor=theme.TEXT_MUTED,
+                              labelFont="Inter", symbolType="stroke"))
+
+
+def cc_line(df, xtitle, ytitle, rule_x=None, rule_label=None):
+    xcol = df.index.name or "index"
+    d = df.reset_index().melt(id_vars=xcol, var_name="ranking", value_name="value")
+    line = alt.Chart(d).mark_line(strokeWidth=2).encode(
+        x=alt.X(f"{xcol}:Q", title=xtitle),
+        y=alt.Y("value:Q", title=ytitle),
+        color=alt.Color("ranking:N", scale=alt.Scale(range=_CC_RANGE), title=None))
+    layers = [line]
+    if rule_x is not None:
+        layers.append(alt.Chart(pd.DataFrame({"x": [rule_x]})).mark_rule(
+            color=theme.RED, strokeDash=[5, 4], strokeWidth=1.5).encode(x="x:Q"))
+        if rule_label:
+            layers.append(alt.Chart(pd.DataFrame({"x": [rule_x], "t": [rule_label]})).mark_text(
+                color=theme.RED, align="left", dx=5, dy=-6, font="JetBrains Mono", fontSize=10
+            ).encode(x="x:Q", text="t:N"))
+    st.altair_chart(_cc(alt.layer(*layers).properties(height=300)), use_container_width=True)
+
+
+def cc_bar(df, value_col, xtitle):
+    d = df.reset_index().rename(columns={df.index.name or "index": "label"})
+    chart = alt.Chart(d).mark_bar(color=theme.ACCENT, size=22).encode(
+        x=alt.X(f"{value_col}:Q", title=xtitle),
+        y=alt.Y("label:N", sort="-x", title=None))
+    st.altair_chart(_cc(chart.properties(height=max(120, 40 * len(d)))), use_container_width=True)
 
 
 # ----------------------------------------------------------------- sidebar
@@ -51,29 +95,31 @@ tests_passing = mani.data.get("tests_passing") if mani else None
 tests_label = f"{tests_passing} passed" if tests_passing else "see metrics_manifest"
 
 # ----------------------------------------------------------------- 1. verdict
-st.title("⚖️ Ranking Decision: why Golden ships")
-st.caption(
-    "Judge quick-nav:  1·Gates → 2·Regret frontier → 3·52-anomaly reconciliation → "
-    "4·Candidate audit → 5·Fusion autopsy → 6·Ψ panel → 7·Study Φ → 8·Timeline → 9·Why Golden"
-)
-C.verdict_banner(VERDICT,
-                 "Golden remains the shipped submission because the only gate that can validate "
-                 "an alternative — independent candidate-specific human confirmation — has not yet "
-                 "been completed.")
+st.markdown(theme.rail("Ω OMEGA DECISION SYSTEM", "REDROB HIREFIT · DECISION INSTRUMENT"),
+            unsafe_allow_html=True)
+st.markdown(theme.verdict_console(VERDICT, GOLDEN_COMMIT, tests_label, hash_ok=True),
+            unsafe_allow_html=True)
 n_cards = len(cards)
 anomalies = sum(1 for c in cards if c.get("evidence_status") == "PROBABLE_CONTRADICTION")
-C.metric_row([("Shipped ranking", f"Golden {GOLDEN_COMMIT}"),
-              ("Test suite", tests_label),
-              ("Shipped-detector flags (top-100)", str(SHARED_FACTS["honeypots_in_top100"])),
-              ("Experimental anachronism anomalies",
-               str(anomalies if n_cards else SHARED_FACTS["anachronism_anomalies_top100"])),
-              ("Ψ status", SHARED_FACTS["psi_status"])])
+st.markdown(theme.readout([
+    (f"{GOLDEN_COMMIT}", "Shipped golden"),
+    (tests_label.split()[0], "Tests passing"),
+    (str(SHARED_FACTS["honeypots_in_top100"]), "Integrity-flagged in top-100"),
+    (str(anomalies if n_cards else SHARED_FACTS["anachronism_anomalies_top100"]),
+     "Anachronism anomalies"),
+    ("AWAITING", "Ψ human panel"),
+]), unsafe_allow_html=True)
 st.info(VERDICT_DISCLAIMER)
+st.caption(
+    "Nav:  1·Gates → 2·Regret frontier → 3·Integrity reconciliation → 4·Candidate audit → "
+    "5·Fusion autopsy → 6·Ψ panel → 7·Study Φ → 8·Timeline → 9·Why Golden"
+)
 
 # ----------------------------------------------------------------- 2. gates
 st.header("1 · Shipping-gate battery")
-for name, status, expl in GATES:
-    C.gate_card(name, status, expl)
+gate_cols = st.columns(len(GATES))
+for col, (name, status, expl) in zip(gate_cols, GATES):
+    col.markdown(theme.gate_html(name, status, expl), unsafe_allow_html=True)
 C.note("Four computational gates can be tested automatically. The fifth requires external human "
        "evidence and cannot be simulated honestly. PENDING is not a model-performance failure.")
 
@@ -81,7 +127,8 @@ C.note("Four computational gates can be tested automatically. The fifth requires
 st.header("2 · Minimax-regret frontier (simulated worlds)")
 if fr:
     df = charts.frontier_frame(fr.data)
-    st.line_chart(df)
+    cc_line(df, "λ — simulated integrity-aversion", "human-aligned utility",
+            rule_x=0.10, rule_label="λ=0.10")
     st.caption("x-axis = simulated integrity-aversion parameter λ · y-axis = human-aligned utility. "
                "Decision boundary (golden vs constrained) is at λ≈0.10 — a MODEL-SPECIFIC simulated "
                "boundary, not an empirical human threshold.")
@@ -98,7 +145,7 @@ if fr:
             col.metric(k, f"{v:.2f}")
     C.note("Explanatory only — the slider does not produce or overwrite any submission.")
     if dec:
-        st.bar_chart(charts.regret_frame(dec.data))
+        cc_bar(charts.regret_frame(dec.data), "max_regret", "max regret across simulated worlds")
         st.caption("Max regret across simulated worlds (lower = more robust).")
 else:
     _unavailable(fr)
@@ -150,7 +197,7 @@ else:
 st.header("5 · Fusion autopsy — why the proxy gain was not shipped")
 C.metric_row([("Golden proxy", "0.8625"), ("Fusion proxy", "0.8753"), ("Gain", "+0.0128"),
               ("Effective judges", "1.85 of 7"), ("Gain from top-5 candidates", "56%")])
-st.bar_chart(charts.fusion_waterfall_frame(0.0072, 0.0128))
+cc_bar(charts.fusion_waterfall_frame(0.0072, 0.0128), "contribution", "share of fusion gain")
 st.caption("Fusion found real ranking signal, but the improvement was concentrated in the exact "
            "class whose integrity meaning remains unresolved. Without the anachronism class the "
            "gain inverts to −0.011.")
