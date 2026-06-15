@@ -1,0 +1,13 @@
+query_family,query,status,result,search_date
+integrity_focused,resume lied about years of experience,OK,12 hits / 11 kept,2026-06-15
+integrity_focused,fake employment history interview,OK,12 hits / 12 kept,2026-06-15
+integrity_focused,resume inconsistency rejection,OK,7 hits / 7 kept,2026-06-15
+quality_first,great engineer bad resume,OK,12 hits / 12 kept,2026-06-15
+quality_first,projects matter more than resume,OK,12 hits / 12 kept,2026-06-15
+quality_first,hire candidate despite resume mistake,OK,5 hits / 5 kept,2026-06-15
+verification_first,ask candidate explain resume discrepancy,OK,0 hits / 0 kept,2026-06-15
+verification_first,resume inconsistency typo or lie,OK,5 hits / 5 kept,2026-06-15
+verification_first,verify experience before rejecting,OK,12 hits / 12 kept,2026-06-15
+technology_anachronism,years experience longer than technology existed,OK,12 hits / 12 kept,2026-06-15
+technology_anachronism,claims ten years kubernetes,OK,5 hits / 5 kept,2026-06-15
+technology_anachronism,inflated AI experience candidate,OK,2 hits / 2 kept,2026-06-15
