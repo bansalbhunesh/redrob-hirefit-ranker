@@ -1,0 +1,3 @@
+_pool.pkl
+*.pkl
+__pycache__/
