@@ -13,7 +13,7 @@ import streamlit as st
 
 from dashboard import charts, components as C
 from dashboard.constants import (CONFIG, DISCLAIMER, EXPERIMENTAL_INTEGRITY_NOTE, GATES,
-                                 GOLDEN_COMMIT, VERDICT, VERDICT_DISCLAIMER)
+                                 GOLDEN_COMMIT, SHARED_FACTS, VERDICT, VERDICT_DISCLAIMER)
 from dashboard.data_loader import load_csv_safe, load_json_safe
 from dashboard.integrity_cards import distribution, load_cards
 
@@ -45,9 +45,17 @@ reg = load_json_safe(CONFIG["registry"])
 dec = load_json_safe(CONFIG["omega_decision"])
 fr = load_json_safe(CONFIG["omega_frontier"])
 cards = load_cards(CONFIG["integrity_cards"])
+mani = load_json_safe(CONFIG["metrics_manifest"])
+# Test count is read from the manifest (single source of truth) so it can never drift.
+tests_passing = mani.data.get("tests_passing") if mani else None
+tests_label = f"{tests_passing} passed" if tests_passing else "see metrics_manifest"
 
 # ----------------------------------------------------------------- 1. verdict
 st.title("⚖️ Ranking Decision: why Golden ships")
+st.caption(
+    "Judge quick-nav:  1·Gates → 2·Regret frontier → 3·52-anomaly reconciliation → "
+    "4·Candidate audit → 5·Fusion autopsy → 6·Ψ panel → 7·Study Φ → 8·Timeline → 9·Why Golden"
+)
 C.verdict_banner(VERDICT,
                  "Golden remains the shipped submission because the only gate that can validate "
                  "an alternative — independent candidate-specific human confirmation — has not yet "
@@ -55,10 +63,11 @@ C.verdict_banner(VERDICT,
 n_cards = len(cards)
 anomalies = sum(1 for c in cards if c.get("evidence_status") == "PROBABLE_CONTRADICTION")
 C.metric_row([("Shipped ranking", f"Golden {GOLDEN_COMMIT}"),
-              ("Production tests", "171 passed"),
-              ("Shipped-detector flags (top-100)", "0"),
-              ("Experimental anachronism anomalies", str(anomalies if n_cards else 52)),
-              ("Ψ status", "AWAITING HUMAN DATA")])
+              ("Test suite", tests_label),
+              ("Shipped-detector flags (top-100)", str(SHARED_FACTS["honeypots_in_top100"])),
+              ("Experimental anachronism anomalies",
+               str(anomalies if n_cards else SHARED_FACTS["anachronism_anomalies_top100"])),
+              ("Ψ status", SHARED_FACTS["psi_status"])])
 st.info(VERDICT_DISCLAIMER)
 
 # ----------------------------------------------------------------- 2. gates
@@ -102,7 +111,7 @@ st.dataframe({
     "Golden top-100": ["0", "52", "0 confirmed", "unknown"],
     "Interpretation": ["Production ranking guarantee", "Technology-tenure anomalies requiring review",
                        "No independent confirmation", "Official IDs unavailable"]},
-    use_container_width=True, hide_index=True)
+    width="stretch", hide_index=True)
 st.markdown("> **Detector-flagged anomaly ≠ confirmed contradiction ≠ official planted honeypot.**")
 if cards:
     st.write("Downstream integrity-card distribution over golden's top-100:")
@@ -117,7 +126,7 @@ if cards:
     if f2:
         view = view[view["recommended_action"].isin(f2)]
     st.dataframe(view[["candidate_id", "role_fit", "evidence_status", "recommended_action",
-                       "anachronism_severity", "reason"]], use_container_width=True, hide_index=True)
+                       "anachronism_severity", "reason"]], width="stretch", hide_index=True)
     st.caption(EXPERIMENTAL_INTEGRITY_NOTE)
 
     # ------------------------------------------------------------- 5. audit card
@@ -204,7 +213,7 @@ st.dataframe({
     "Golden": ["Yes", "Yes", "Baseline", "Baseline", "Not needed to reproduce baseline", "Yes"],
     "Fusion": ["Research", "Yes", "Yes (fragile)", "Failed (5-candidate)", "Missing", "No"],
     "Ω candidate": ["Research", "Yes", "Simulation-dependent", "Simulated", "Missing", "No"]},
-    use_container_width=True, hide_index=True)
+    width="stretch", hide_index=True)
 st.success("Golden is not shipped because every alternative was inferior. It is shipped because it "
            "is the only ranking whose current benefits and risks are verified without depending on "
            "unresolved human assumptions.")
