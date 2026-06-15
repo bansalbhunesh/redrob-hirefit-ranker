@@ -20,6 +20,10 @@ artifacts/
 *.jsonl
 *.jsonl.gz
 
+# Local research scratch that references external repo names (kept out of the tree
+# per the competitor-name scrub); the de-named analysis scripts are committed instead.
+experiments/_competitor_extract.py
+
 # Local config
 .env
 .DS_Store
