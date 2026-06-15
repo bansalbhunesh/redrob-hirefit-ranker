@@ -2,6 +2,17 @@
 
 Three submissions are on disk; **golden ships**; the others are validated contingencies.
 
+> **Terminology correction (precise denominators).** Where this and related docs say golden's
+> top-100 contains "52 honeypots," the exact meaning is: **52 candidates flagged by our
+> separate *anachronism* detector** (a claimed tech tenure longer than the technology has
+> existed), located **inside golden's top-100**. By the **shipped** honeypot detector
+> (`features.py`), golden's top-100 has **0** flagged candidates — both statements are true of
+> *different* detectors. The 52 are **detector-flagged anomalies**, NOT **confirmed hard
+> contradictions** (no ground truth has confirmed them) and NOT **confirmed official planted
+> honeypots** (the ~80 planted IDs are not in our possession; overlap is unmeasured). These
+> three categories are not interchangeable; resolving which the 52 truly are is the object of
+> Experiment Ψ (`experiment_psi_human_calibration.md`).
+
 | submission | blind composite | robust vs golden? | hard honeypots in top-100 | when it is the right ship |
 |---|---|---|---|---|
 | **golden** (`af8f2b32`, shipped) | 0.8625 | — | 52 | default; EV-max absent evidence either way |

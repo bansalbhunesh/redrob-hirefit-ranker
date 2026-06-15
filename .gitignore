@@ -34,3 +34,6 @@ demo.html
 
 # Demo fixture used by API endpoint tests and CI
 !demo_sample.jsonl
+
+# Psi human-calibration scoring key (anon->cid; gitignored)
+experiments/psi_panel/anon_key.json
