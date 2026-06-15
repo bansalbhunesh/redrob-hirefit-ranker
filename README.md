@@ -8,6 +8,8 @@ A deterministic, evidence-aware candidate-ranking system for 100,000 profiles, w
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](#)
 [![Production](https://img.shields.io/badge/production_ranking-unchanged-success.svg)](#)
 [![Verdict](https://img.shields.io/badge/verdict-NO__RANKING__DOMINATES-orange.svg)](#)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Live demo](https://img.shields.io/badge/live_demo-HuggingFace_Space-FBBF24.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
 
 `Golden frozen` · `Dashboard available` · `Human lockbox: AWAITING DATA`
 
@@ -69,10 +71,38 @@ model downloads at inference.
 - These actions are explanatory and **do not modify the golden ranking**. `VERIFY` requests
   human review; it never asserts fraud and never reorders candidates.
 
+## What we tried and rejected — measured negatives
+
+The strongest signal in this submission is everything we **did not** ship. Each alternative
+below was built, measured against the **frozen 100K blind arbiter**
+(`artifacts/h2_availblind_labels.jsonl`, frozen before any tuning), and rejected on the
+evidence — not on taste. A measured negative is a strength: it proves the lever is empty.
+
+| Alternative | Measured result on the blind arbiter | Verdict |
+|---|---|---|
+| Static dense embeddings (potion-32M) | NDCG@10 **+0.0000** at ~2.2× runtime | Rejected |
+| Learned logistic-regression weights | composite **0.8238 vs 0.8811** | Rejected |
+| LightGBM LambdaMART v2 (NDCG@50 obj.) | composite **−0.031**, NDCG@10 **−0.070** | Rejected |
+| LambdaMART v3 *trained on the blind labels themselves* (NDCG@10 obj., leak-safe holdout) | holdout NDCG@10 **−0.040 to −0.104** | Rejected |
+| **DART** test-time reranker (ACL 2026) | **replicated the paper (+5.3% rel, beating its own +2.1%)** yet composite **0.649 vs 0.808** (−23% rel) | Rejected |
+| Top-K cross-encoder (ms-marco-MiniLM) | in-sample +0.014 → **−0.016 on the untouched holdout** | Rejected |
+| Learned interaction features (title×evidence) | single split +0.008 → **noise under 20× repeated holdout** | Rejected |
+| New orthogonal features (impact-density, gzip-NCD) | **no train-supported lift** (best train Δ = 0.0000) | Rejected |
+| Rank-space Fusion — **clean** (no anachronism promotion) | **−0.0322** holdout (1/20) | Rejected |
+| Rank-space Fusion — **raw** | +0.0128 blind, 7/7 judge sets — but **entirely from promoting anachronism-flagged candidates** | Held as the (B) bet, not shipped |
+
+**The pattern (`docs/measured_negatives.md`):** five rerankers, five learned/feature
+alternatives, and one rank-space fusion family — **all failed against independent labels.** The
+sharpest case (DART) was replicated *above* its published gain and still lost by 23% relative,
+because it adapts a dense representation that carries less task signal than the 33 hand-tuned
+features. **Conclusion: the model/trick lever is empty; the bottleneck is feature information
+content + hidden-label availability, not the model.** That is *why* a deterministic hand-tuned
+scorer is the expected-value-maximising ship — a conclusion earned by measurement, not assumed.
+
 ## Why golden ships
 
 1. It is **frozen and byte-reproducible** (`af8f2b32`).
-2. It passes the **complete production and firewall suite** (187 tests, 0 skipped).
+2. It passes the **complete production and firewall suite** (198 tests, 0 skipped).
 3. **Raw Fusion's** proxy gain was **fragile and concentrated** — the 7 label sets are only
    ~1.85 effective independent judges, and 56% of the gain came from 5 anachronism-flagged
    candidates (it inverts to −0.011 without that class).
@@ -120,3 +150,16 @@ values.
 > do not alter the frozen production ranking. The remaining unresolved evidence requires real
 > humans: the Ψ candidate panel, an independent Φ coder, and verified recruiter/India
 > practitioner perspectives. No missing human evidence was simulated or fabricated.
+
+## Reproduce
+
+```bash
+PYTHONHASHSEED=0 python -m pytest tests/test_submission_gate.py -q   # golden gate
+sha256sum submission.csv                                            # -> af8f2b327f05d30e…
+```
+CPU-only, offline, deterministic. Full path: `docs/REPRODUCTION.md`.
+
+## License
+
+Released under the **MIT License** — see [`LICENSE`](LICENSE). © 2026 Bhunesh Bansal.
+The bundled competition dataset is **not** redistributed and remains the property of Redrob.
