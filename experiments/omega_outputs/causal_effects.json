@@ -1,0 +1,17 @@
+{
+  "prior_0.2": {
+    "winrate_original": 0.27,
+    "winrate_date_normalized": 0.0,
+    "causal_date_penalty": -0.27
+  },
+  "prior_0.8": {
+    "winrate_original": 0.288,
+    "winrate_date_normalized": 0.0,
+    "causal_date_penalty": -0.288
+  },
+  "prior_1.6": {
+    "winrate_original": 0.152,
+    "winrate_date_normalized": 0.0,
+    "causal_date_penalty": -0.152
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "decision": "NO_RANKING_DOMINATES",
+  "minimax_winner_among_shippable": "omega",
+  "max_regret": {
+    "golden": 34.46323897272956,
+    "constrained_fusion": 3.8345996598565826,
+    "fusion_raw": 37.62654004539239,
+    "omega": 0.0
+  },
+  "omega_gates": {
+    "beats_golden_on_REAL_human_lockbox": false,
+    "lower_worst_case_regret_than_golden": true,
+    "not_driven_by_few_candidates": true,
+    "stable_under_reviewer_family_deletion": true,
+    "zero_highconf_hard_top10_and_bounded_top100": true
+  },
+  "omega_hard_top10": 0,
+  "omega_hard_top100": 0,
+  "lockbox_soft_pairwise_accuracy": 0.789,
+  "spa_after_reviewer_family_deletion": 0.762,
+  "omega_worstcase_advantage_vs_golden": 34.4632,
+  "omega_top5_candidate_influence": 1.69,
+  "panel_partitions": {
+    "discovery": 84,
+    "calibration": 28,
+    "lockbox": 66
+  },
+  "NOTE": "Reviewers SIMULATED; SHIP_OMEGA gate 1 (real human lockbox) unmet by construction."
+}

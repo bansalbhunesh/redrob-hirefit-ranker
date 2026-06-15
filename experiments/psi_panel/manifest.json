@@ -1,0 +1,78 @@
+{
+  "sampling_rule": {
+    "version": "psi-2026-06-15",
+    "source": "frozen disagreement population (pool-ranked), pre-Omega signals only",
+    "composition": {
+      "fusion_gain_drivers (anachronism, top-5 marginal influence)": 5,
+      "matched_clean (nearest hand-score clean candidate to each driver)": 5,
+      "hard_integrity_controls (highest anachronism severity)": 4,
+      "ambiguous_date_quality (mid anachronism severity ~1.0)": 4,
+      "strong_clean (top hand, no flag)": 3,
+      "weak_clean (low hand, no flag)": 3
+    },
+    "blinding": "Stage A = date_hidden variant (no dates/durations, no flags shown); Stage B = full original profile. Reviewer never told selector (golden/fusion/omega).",
+    "note": "Selection uses hand score + anachronism detector + fusion influence ONLY; NOT the simulated Omega posterior."
+  },
+  "frozen_hash": "34f43b14a3b40a16751973c514f197adb9a977149565d18469a8ce1a998787b0",
+  "total": 24,
+  "buckets": {
+    "fusion_gain_drivers": [
+      "CAND_0094759",
+      "CAND_0092278",
+      "CAND_0042029",
+      "CAND_0033861",
+      "CAND_0007411"
+    ],
+    "matched_clean": [
+      "CAND_0086893",
+      "CAND_0066075",
+      "CAND_0094292",
+      "CAND_0011643",
+      "CAND_0011140"
+    ],
+    "hard_integrity_controls": [
+      "CAND_0065195",
+      "CAND_0087630",
+      "CAND_0078002",
+      "CAND_0091909"
+    ],
+    "ambiguous_date_quality": [
+      "CAND_0071974",
+      "CAND_0041610",
+      "CAND_0007412",
+      "CAND_0086151"
+    ],
+    "strong_clean": [
+      "CAND_0081846",
+      "CAND_0039754",
+      "CAND_0077337"
+    ],
+    "weak_clean": [
+      "CAND_0026652",
+      "CAND_0012485",
+      "CAND_0009953"
+    ]
+  },
+  "driver_influence": [
+    {
+      "cid": "CAND_0094759",
+      "marginal_composite": 0.00191
+    },
+    {
+      "cid": "CAND_0092278",
+      "marginal_composite": 0.00184
+    },
+    {
+      "cid": "CAND_0042029",
+      "marginal_composite": 0.00171
+    },
+    {
+      "cid": "CAND_0033861",
+      "marginal_composite": 0.00088
+    },
+    {
+      "cid": "CAND_0007411",
+      "marginal_composite": 0.00087
+    }
+  ]
+}

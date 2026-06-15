@@ -1,0 +1,10 @@
+{
+  "study": "Phi pilot",
+  "stratum": "hackernews_only",
+  "coder": "single (no IRR)",
+  "retrieved_total": 95,
+  "coded_included": 19,
+  "reviewed_excluded": 17,
+  "remaining_uncoded": 59,
+  "frozen_hash": "9716806e6a739bf1"
+}

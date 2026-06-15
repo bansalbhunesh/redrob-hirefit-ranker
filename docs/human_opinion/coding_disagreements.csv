@@ -1,0 +1,2 @@
+item_id,coder_1,coder_2,disagreement,adjudicated_code,note
+NONE,single-coder pilot,AWAITING_SECOND_CODER,n/a,n/a,"intercoder reliability not established; second human coder required before full-corpus claims"
