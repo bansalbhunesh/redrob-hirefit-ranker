@@ -1,7 +1,7 @@
-"""Experiment 3 — integrity/honeypot penalties from the field.
+"""Experiment 3 — integrity/honeypot penalties internally.
 
-De-Coder05: technology anachronism (claiming a tech longer than it has existed).
-goatraj23: world-consistency (impossible tenure). Applied as multiplicative demotions,
+anachronism check: technology anachronism (claiming a tech longer than it has existed).
+world-consistency (impossible tenure). Applied as multiplicative demotions,
 holdout-gated. Even if blind-flat, these are JD-faithful precision (the JD warns on traps).
 """
 import datetime as dt

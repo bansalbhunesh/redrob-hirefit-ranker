@@ -1,4 +1,4 @@
-"""Shared harness for competitor-idea experiments. Every signal is holdout-gated:
+"""Shared harness for internal ablation experiments. Every signal is holdout-gated:
 blend/apply it, choose the strength on a TRAIN label half, report the gain on an
 untouched TEST half. In-sample gains that fail the holdout are rejected.
 """

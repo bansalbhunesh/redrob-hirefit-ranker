@@ -1,8 +1,8 @@
 """Offline, blind-gated cross-encoder rerank experiment.
 
 Hypothesis (from field evidence): a top-K cross-encoder rerank lifts NDCG@10 — the
-50%-weighted metric — where WorthyHire (0.857) / Redrob-PMP (0.852) beat our hand
-pipeline (0.829). We replicate WorthyHire's recipe (ms-marco-MiniLM-L-6-v2, blend
+50%-weighted metric — where external cross-encoder baselines beat our hand
+pipeline (0.829). We replicate a standard recipe (ms-marco-MiniLM-L-6-v2, blend
 CE with hand score) on OUR pool and gate every variant on the 100K frozen blind set.
 
 Does NOT touch src/redrob_ranker/ or the golden submission. Reruns the hand pipeline

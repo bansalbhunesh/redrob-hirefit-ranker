@@ -1,8 +1,8 @@
 """Experiment 1 — interaction features (beat-the-linear-model ideas).
 
 A weighted-sum scorer cannot represent feature interactions. Competitors encode them:
-rehannayeem ×1.12 synergy bonus (on-target title AND real retrieval evidence);
-multiplicative funnels (Thermo, MatchWise ATD^1.5×HEA). We test products of our own
+a ×1.12 synergy bonus (on-target title AND real retrieval evidence);
+multiplicative funnels. We test products of our own
 features as added signal, holdout-gated.
 """
 import sys
@@ -35,7 +35,7 @@ def main():
     results.append(gate(recs, base_ids, role * depth * prod, "role x depth x production (triple)"))
     results.append(gate(recs, base_ids, traj * prod, "trajectory x production"))
 
-    # rehannayeem-style synergy bonus as a multiplicative factor
+    # an external baseline-style synergy bonus as a multiplicative factor
     bonus = 1.0 + 0.12 * ((role > 0.6) & (prod > 0.5)).astype(float)
     results.append(gate(recs, base_ids, bonus, "synergy_bonus 1.12 (title&evidence)", mode="mult", weights=[0.0, 1.0, 2.0, 3.0]))
 
