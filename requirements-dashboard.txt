@@ -1,0 +1,3 @@
+# Presentation-only deps for omega_decision_dashboard.py (NOT production inference).
+streamlit>=1.30
+pandas>=2.0
