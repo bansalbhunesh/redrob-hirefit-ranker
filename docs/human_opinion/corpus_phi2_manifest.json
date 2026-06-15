@@ -1,0 +1,14 @@
+{
+  "study": "Phi-2",
+  "combined_units": 27,
+  "strata": {
+    "hackernews": 21,
+    "workplace_se": 6
+  },
+  "new_included": 8,
+  "new_excluded": 22,
+  "anachronism_decision_items": 5,
+  "anachronism_saturation_reached": false,
+  "second_coder": "AWAITING (packet de-identified, no coder_1 labels)",
+  "frozen_hash": "fcf324e0ff0932f1"
+}
