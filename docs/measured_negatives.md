@@ -16,9 +16,11 @@ rather than shipping unverified complexity. Nothing here beat the shipped hand-t
 | 8 | New orthogonal feature — **quantified-impact density** (count of NUMBER+unit achievements in career text; "50M queries", "99.9% uptime") as a blended signal, gated on the 100K blind set | **no train-supported lift on NDCG@10** (best train Δ = 0.0000); partial corr with blind tier inconsistent (+0.07 / −0.17 / +0.05 across top-200/1k/5k; raw −0.083) | Rejected ([next_level_roadmap.md](next_level_roadmap.md)) |
 | 9 | **DART** — test-time bilinear reranker ([arXiv 2606.01070](https://arxiv.org/abs/2606.01070), ACL 2026), implemented faithfully on real Potion (model2vec) embeddings, in-pool pseudo-labels | **replicated the paper** (+0.0318 NDCG@10 over the dense baseline = **+5.3% rel, beating its own +2.1%**) yet composite **0.6491 vs hand 0.8084** (NDCG@10 0.6340 vs 0.8288, **−23% rel**) — it adapts the *dense* representation, which is structurally inferior here | Rejected ([obscure_arsenal_study.md](obscure_arsenal_study.md)) |
 | 10 | New orthogonal feature — **NCD** (gzip normalized-compression-distance profile↔JD similarity; Li 2004 / ACL-Findings 2023) as a blended signal, same gate as #8 | **best-on-train w=0.05 → holdout NDCG@10 +0.0000** (gate not beaten); raw corr −0.024; holdout flicker (+0.0122 at w=0.20) unselectable from train | Rejected ([obscure_arsenal_study.md](obscure_arsenal_study.md)) |
+| 11 | **Top-K cross-encoder rerank** (ms-marco-MiniLM-L-6-v2; WorthyHire/VIVPM/Redrob-PMP's recipe — the field's best weapon, the only thing that beats us on *in-sample* NDCG@10) | in-sample sweep looked like **+0.014** composite, but w_ce chosen on a train half → **−0.016 on the untouched holdout**; overfitting to the arbiter | Rejected (branch `experiment/cross-encoder-rerank`) |
+| 12 | **Learned interaction features** (title×evidence, depth×shipped, triple — the one class a *linear* scorer structurally can't represent; rehannayeem synergy) | single 50/50 holdout looked +0.008, but **20× repeated holdout collapses to noise** (best role×production +0.005, 14/20 positive; others ≈0) | Rejected (branch `experiment/competitor-ideas`, `experiments/RESULTS.md`) |
 
 ## The pattern
-Four rerankers (#3, #6, #7, #9) and four learned/feature alternatives (#1, #2, #8, #10) were
+Five rerankers (#3, #6, #7, #9, #11) and five learned/feature alternatives (#1, #2, #8, #10, #12) were
 measured against independent labels. **All failed.** Most decisively, #7 *trained on the real
 100K blind labels themselves* (the arbiter), optimized the right metric (NDCG@10), and was
 validated on an untouched holdout — and it **still** lost to the hand pipeline on the
@@ -30,7 +32,10 @@ gain (+5.3% vs the paper's +2.1%), that **still** lost by 23% relative — becau
 dense representation that carries less task signal than the hand-engineered features. That
 rules out the model/trick class under conditions more favorable than the rules
 allow: the bottleneck is the feature set's information content + true-label availability, **not
-the model**. The hand-tuned linear scorer with multiplicative behavioral / honeypot /
+the model**. #11 (cross-encoder) and #12 (learned interactions) extend this with the strictest
+discipline yet — both looked positive *in-sample* and were killed by proper holdout / repeated-split
+gating, confirming that single-split or in-sample "wins" mislead and the lever is empty even for the
+field's most-hyped weapon. The hand-tuned linear scorer with multiplicative behavioral / honeypot /
 disqualifier guardrails is the only approach that survived independent validation — and it is
 what ships (`submission.csv`, golden-hash locked).
 
