@@ -6,7 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![100K Runtime](https://img.shields.io/badge/100K_Runtime-80s_cloud_·_~125s_local_Docker-brightgreen.svg)](#)
 [![Deterministic](https://img.shields.io/badge/output-byte--deterministic-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/tests-171_passed_0_skipped-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-187_passed_0_skipped-brightgreen.svg)](#)
 
 ### Try it live — no install
 
