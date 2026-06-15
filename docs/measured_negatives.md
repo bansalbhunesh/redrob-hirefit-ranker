@@ -18,10 +18,11 @@ rather than shipping unverified complexity. Nothing here beat the shipped hand-t
 | 10 | New orthogonal feature — **NCD** (gzip normalized-compression-distance profile↔JD similarity; Li 2004 / ACL-Findings 2023) as a blended signal, same gate as #8 | **best-on-train w=0.05 → holdout NDCG@10 +0.0000** (gate not beaten); raw corr −0.024; holdout flicker (+0.0122 at w=0.20) unselectable from train | Rejected ([obscure_arsenal_study.md](obscure_arsenal_study.md)) |
 | 11 | **Top-K cross-encoder rerank** (ms-marco-MiniLM-L-6-v2; a standard top-K cross-encoder recipe — the strongest reranker variant, the only thing that beats us on *in-sample* NDCG@10) | in-sample sweep looked like **+0.014** composite, but w_ce chosen on a train half → **−0.016 on the untouched holdout**; overfitting to the arbiter | Rejected (holdout-gated ablation) |
 | 12 | **Learned interaction features** (title×evidence, depth×shipped, triple — the one class a *linear* scorer structurally can't represent; a synergy bonus) | single 50/50 holdout looked +0.008, but **20× repeated holdout collapses to noise** (best role×production +0.005, 14/20 positive; others ≈0) | Rejected (holdout-gated ablation) |
+| 13 | **Rank-space fusion** (Reciprocal Rank Fusion / Borda over 6 orthogonal ranker families, with a top-lock that protects NDCG@10 and re-fuses only the NDCG@50 tail — a lever no score-blend can reach) | nested R=20 holdout looked **+0.0108** (17/20), gain **entirely NDCG@50** (+0.0428) — the first alternative to clear the holdout. But the gain is **100% impossible-tenure honeypot re-promotion** (25/39 promotions are anachronism traps the raw families out-vote the guardrails to recover); forbid promoting them and it **inverts to −0.0322** (1/20). No clean rank-space gain | Rejected ([rank_fusion_study.md](rank_fusion_study.md)) |
 
 ## The pattern
-Five rerankers (#3, #6, #7, #9, #11) and five learned/feature alternatives (#1, #2, #8, #10, #12) were
-measured against independent labels. **All failed.** Most decisively, #7 *trained on the real
+Five rerankers (#3, #6, #7, #9, #11), five learned/feature alternatives (#1, #2, #8, #10, #12),
+and one rank-space fusion family (#13) were measured against independent labels. **All failed.** Most decisively, #7 *trained on the real
 100K blind labels themselves* (the arbiter), optimized the right metric (NDCG@10), and was
 validated on an untouched holdout — and it **still** lost to the hand pipeline on the
 50%-weight top-10. #8 and #10 then showed that two independent *new orthogonal features*
@@ -35,9 +36,14 @@ allow: the bottleneck is the feature set's information content + true-label avai
 the model**. #11 (cross-encoder) and #12 (learned interactions) extend this with the strictest
 discipline yet — both looked positive *in-sample* and were killed by proper holdout / repeated-split
 gating, confirming that single-split or in-sample "wins" mislead and the lever is empty even for the
-field's most-hyped weapon. The hand-tuned linear scorer with multiplicative behavioral / honeypot /
-disqualifier guardrails is the only approach that survived independent validation — and it is
-what ships (`submission.csv`, golden-hash locked).
+field's most-hyped weapon. #13 then closes the last untested lever — *rank* space, not score space:
+Reciprocal-Rank-Fusion tail re-ranking is the only alternative ever to clear the holdout (+0.0108
+nested), but a candidate-level diagnosis proved the gain is **100% impossible-tenure honeypot
+re-promotion** — an independent, principled method automatically discovering and exploiting the exact
+proxy-inflation trap, and going **negative (−0.0322)** the moment those honeypots are withheld. The
+model/aggregation lever is now empty in both score *and* rank space. The hand-tuned linear scorer with
+multiplicative behavioral / honeypot / disqualifier guardrails is the only approach that survived
+independent validation — and it is what ships (`submission.csv`, golden-hash locked).
 
 **The 100K frozen blind set (`artifacts/h2_availblind_labels.jsonl`) is the arbiter.** It is
 full-population and was frozen before any tuning; proxy/curated samples that disagreed with it
