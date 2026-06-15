@@ -20,6 +20,11 @@ artifacts/
 *.jsonl
 *.jsonl.gz
 
+# Local research scratch that references external repo names (kept out of the tree
+# per the competitor-name scrub); the de-named analysis scripts are committed instead.
+experiments/_competitor_extract.py
+experiments/disagreement_set/anon_key.json
+
 # Local config
 .env
 .DS_Store
@@ -29,3 +34,6 @@ demo.html
 
 # Demo fixture used by API endpoint tests and CI
 !demo_sample.jsonl
+
+# Psi human-calibration scoring key (anon->cid; gitignored)
+experiments/psi_panel/anon_key.json
