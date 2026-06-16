@@ -237,6 +237,35 @@ fallback. What none of this proves is the official hidden score — so the claim
 dominates golden,"** not "guaranteed to win." If the Ψ human panel later shows the promoted tail is
 integrity-compromised, golden reverts in one command (`fallback/golden-af8f2b32`).
 
+<details>
+<summary><b>📊 Full per-source data</b> (golden vs hedge composite on every label set + runtime matrix)</summary>
+
+**Composite, golden → hedge, all 7 label sets** (the gain is entirely NDCG@50/MAP — NDCG@10 is identical):
+
+| label source | golden | hedge | Δ |
+|---|---:|---:|---:|
+| h2_availblind (blind arbiter) | 0.8625 | 0.8748 | +0.0123 |
+| merged_j1 | 0.8639 | 0.8915 | +0.0276 |
+| merged_j2 | 0.9422 | 0.9591 | +0.0169 |
+| merged_j3 | 0.8875 | 0.9190 | +0.0315 |
+| relabel_j4 | 0.9417 | 0.9481 | +0.0064 |
+| relabel_g25 | 0.7680 | 0.7871 | +0.0190 |
+| blind_test_frozen | 0.9188 | 0.9324 | +0.0136 |
+| **fresh gpt-4.1** (independent) | 0.8541 | 0.8737 | **+0.0197** |
+| **fresh gemini-2.5-pro** (cross-family, strict) | 0.2530 | 0.2690 | **+0.0160** |
+
+**Runtime matrix** (full 100K, byte-identical to golden every run; budget 300s):
+
+| config | runtime | memory |
+|---|---:|---:|
+| cloud 2-vCPU serial | ~80 s | — |
+| docker `--cpus=2 --memory=16g` | 165 s | ≤ 6.1 GB |
+| docker best serial | 124.7 s | — |
+| docker worst recorded | 193.4 s | — |
+
+Reproduce: `experiments/exp_two_studies.py` (studies) · `docs/runtime_matrix.md` (timings).
+</details>
+
 ## 6. The integrity distinction (read this)
 
 > **Detector-flagged anomaly ≠ confirmed hard contradiction ≠ official planted honeypot.**
