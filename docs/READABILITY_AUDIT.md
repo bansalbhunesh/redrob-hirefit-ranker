@@ -32,3 +32,13 @@ versions. Render mirrors the token + disclaimer fixes in `apps/api/static/index.
 
 **Verification:** the live HF Space and Render app rebuild on push; the embedded README screenshots
 in `docs/assets/` are the pre-fix captures and should be refreshed once the rebuilds land.
+
+## Second batch — `200454.png`, `200502.png`, `200508.png` (functional + contrast)
+
+| Screenshot | Problem | Fix (`hf_space/app.py`) |
+|---|---|---|
+| 200454 | "Search" / "Filter" labels + radio options ("Open to work", "India", "Clean") faint | `elem_id` `searchbox`/`filterradio` + CSS forcing labels `--text-secondary` and option text `--text-primary` |
+| 200502 | status line numbers ("60", "130 ms", …) invisible — markdown `**n**` → `<strong>` rendered dark | `status` `elem_id="rankstatus"`; CSS `#rankstatus strong → --accent` (numbers now pop) |
+| 200508 | **empty download box** where the CSV download should be — `gr.File` output rendered as an empty dropzone | swapped to **`gr.DownloadButton`** (always a visible filled accent button); verified `postprocess(path) → FileData` so the download works |
+
+Build-validated (Blocks construct, `DownloadButton.postprocess` returns valid `FileData` on the demo path). Pushed to HF; the live Space rebuilds.
