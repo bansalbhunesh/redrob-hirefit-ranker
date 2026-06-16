@@ -77,7 +77,7 @@ streamlit run omega_decision_dashboard.py   # read-only explanation UI; imports 
 | Surface | What it shows | Link |
 |---|---|---|
 | 🤗 **HuggingFace Space** | Upload candidates → live ranking, explainable top-100, integrity checklist | [bansal1234/Hirefit](https://huggingface.co/spaces/bansal1234/Hirefit) |
-| 🖥️ **Render web app** | Pipeline visualization + filterable shortlist + per-candidate audit | _live link — add Render URL here_ |
+| 🖥️ **Render web app** | Pipeline visualization + filterable shortlist + per-candidate audit | [redrob-hirefit-ranker.onrender.com](https://redrob-hirefit-ranker.onrender.com) |
 | 📊 **Decision dashboard** | `NO_RANKING_DOMINATES` verdict, shipping gates, golden-vs-hedge studies | `streamlit run omega_decision_dashboard.py` |
 
 **🎬 Demo video:** _2-minute walkthrough — link to be added here._

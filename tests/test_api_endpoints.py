@@ -110,6 +110,11 @@ def test_health_reports_artifacts_and_sha(client):
     assert resp.headers["x-frame-options"] == "DENY"
     assert resp.headers["x-request-id"]
     assert "app;dur=" in resp.headers["server-timing"]
+    # /api/healthz is the k8s/Render liveness alias — same payload, must also be live (folded
+    # here to keep the suite count stable; closes the one uncovered route in Phase 3).
+    alias = client.get("/api/healthz")
+    assert alias.status_code == 200
+    assert alias.json()["status"] == "ok"
 
 
 def test_readyz_reports_ready(client):
