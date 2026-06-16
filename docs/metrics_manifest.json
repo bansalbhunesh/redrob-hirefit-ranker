@@ -55,5 +55,7 @@
   "tests_collected": 198,
   "tests_passing": 198,
   "tests_skipped": 0,
+  "feature_count": 33,
+  "_feature_count_note": "len(FEATURE_NAMES) in src/redrob_ranker/features.py; guarded by tests/test_metrics_manifest.py. Pipeline-description surfaces must quote 33; measurement docs (ablation, learned-weights) keep their historical 28-feature base.",
   "bm25_backend": "bm25s"
 }

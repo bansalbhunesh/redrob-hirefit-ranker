@@ -56,6 +56,25 @@ def test_readme_dev_proxy_metrics_match_manifest():
     assert "dev proxy" in README.lower()
     assert "No official hidden labels" in README
 
+    # Anti-drift guard for the 28->33 feature-count history (folded here to keep the suite
+    # count stable). Manifest, code FEATURE_NAMES, and README must agree; current-pipeline docs
+    # must not quote a 28-feature pipeline (measurement docs keep their historical 28 base).
+    sys.path.insert(0, str(ROOT / "src"))
+    from redrob_ranker.features import FEATURE_NAMES
+
+    nfeat = MANIFEST["feature_count"]
+    assert len(FEATURE_NAMES) == nfeat, (
+        f"FEATURE_NAMES has {len(FEATURE_NAMES)} entries but manifest.feature_count={nfeat}."
+    )
+    assert f"{nfeat}-feature" in README or f"{nfeat} feature" in README, (
+        f"README must quote the {nfeat}-feature scorer."
+    )
+    stale_feat = re.compile(r"28[ -](deterministic |named |explainable )?feature")
+    for rel in ("README.md", "ARCHITECTURE.md", "METHODOLOGY.md", "IMPLEMENTATION.md"):
+        assert not stale_feat.search((ROOT / rel).read_text(encoding="utf-8")), (
+            f"{rel} still describes a 28-feature pipeline; the shipped scorer has {nfeat} features."
+        )
+
 
 def test_readme_runtime_claims_are_manifest_values():
     rt = MANIFEST["runtime"]
