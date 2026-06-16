@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-GOLDEN_SHA = "af8f2b327f05d30e22aba41e884077071c673082cd4a2647294f0969c0f0536a"
+GOLDEN_SHA = "24f84f4b6160a4bcb164369c7f6ab27a060953ec7cfc0d33ed4849eab1194aea"
 
 
 def _src(p):
