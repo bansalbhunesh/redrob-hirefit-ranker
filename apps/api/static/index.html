@@ -17,7 +17,7 @@
       --border-glass: #475569;   /* Flight Deck — visible hairline borders */
       --text-primary: #F1F5F9;
       --text-secondary: #CBD5E1;
-      --text-muted: #94A3B8;
+      --text-muted: #B8C4D9;   /* raised from #94A3B8 (6.96:1) to 10.15:1 on #0F172A for legible small text */
       --font-display: 'Inter', -apple-system, 'Segoe UI', sans-serif;
       --font-body: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, ui-monospace, monospace;
@@ -925,9 +925,9 @@
           <div class="label">Avg Score</div>
         </div>
       </div>
-      <p style="font-size:11px;color:var(--text-muted);margin:10px 2px 0;line-height:1.5;">
+      <p style="font-size:12.5px;color:var(--text-secondary);margin:10px 2px 0;line-height:1.6;">
         Integrity-flagged = candidates the shipped detector marked for review (0 reach the final
-        shortlist). A flag is a <em>detector-flagged anomaly</em> — not confirmed fraud and not an
+        shortlist). A flag is a <em style="color:var(--text-primary);font-style:normal;border-bottom:1px dotted var(--border-glass);">detector-flagged anomaly</em> — not confirmed fraud and not an
         official planted honeypot. Quality metrics are dev-proxy / LLM-audit; no official hidden
         labels were available. Production ranking is frozen and byte-identical.
       </p>
