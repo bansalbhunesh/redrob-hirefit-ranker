@@ -39,6 +39,15 @@ concentration — not the method. **Copeland remains the champion and the shippe
 the competition outcome is governed by how the hidden labels correlate with this arbiter (and
 whether they penalise impossible tenure) — unmeasurable, and unmoved by further model work.
 
+## Learned stacker — letting the labels pick the mix (`experiments/exp_stack.py`)
+
+A linear stacker fit on the train-label half (target = blind tier; features = the 5 base-method
+scores) — the textbook "make your own best of best." The learned weights:
+`copeland +1.20, hand +0.16, rrf +0.13, mc4 −0.06, borda −0.61`. **The data itself weights Copeland
+dominantly and discards the rest.** Yet the fitted stacker underperforms pure Copeland (best full
+0.8667 vs 0.8779; nested +0.0111/16-of-20 vs +0.0142/19-of-20; the nested selector picks Copeland
+17/20). Seventh method class, same verdict: Copeland is the data-optimal mix and nothing exceeds it.
+
 ## Minimax-robust check across all 7 evaluators (`experiments/exp_robust_minimax.py`)
 
 Instead of optimizing one arbiter, score every candidate ranking across all 7 known label sets
