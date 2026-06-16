@@ -1,0 +1,40 @@
+# Best-of-Best Meta-Ensemble Study
+
+Branch: `research/best-of-best-meta` (from the Copeland-shipped branch). Goal: mix the strongest
+rankers, take each one's best part, and try to exceed the Copeland champion (0.8779). Arbiter:
+frozen 100K blind set; golden production pipeline untouched. Code: `experiments/exp_meta_ensemble.py`.
+
+## Constructions tested (all holdout + nested-gated)
+
+Over the five base rankings — hand, RRF, Borda, MC4, Copeland:
+1. **Meta-aggregation** — aggregate the 5 method rankings as voters (meta-RRF / meta-Borda /
+   meta-Copeland / meta-MC4): a consensus of consensuses.
+2. **Banded hybrid** — each method's empirically-best band: hand for the locked top (P@10, NDCG@10),
+   Copeland for 11–50 (best NDCG@50), MC4 for 51–100. Literally "take each method's best part."
+3. **Rank-average** — mean rank position across the 5 methods.
+
+## Result — no headroom above Copeland
+
+| construction | best full composite | nested R=20 |
+|---|--:|--:|
+| **Copeland lock30 (champion)** | **0.8779** | **+0.0142 (19/20)** |
+| banded hand/cope/mc4 lock30 | 0.8779 (ties) | — |
+| meta-MC4 / meta-Copeland | 0.8759–0.8765 | — |
+| meta-RRF / meta-Borda / rank-avg | 0.8690–0.8741 | — |
+| **best meta config (nested-selected)** | 0.8779 | **+0.0129 (18/20)** — slightly worse |
+
+The best the mix achieves is a **tie** with the single best method; nested generalization is
+marginally lower. Mixing rankings that are each built from the same 6 families, all promoting the
+same anachronism class, cannot exceed the best of them — there is no orthogonal information left to
+combine.
+
+## Conclusion — five method classes, one wall
+
+The 0.8779 ceiling now holds across: rank-aggregation (RRF/Borda/MC4/Copeland/Kemeny/PL),
+ensemble width (6→12 families, worse), diversity (DPP, much worse), the clean variant (negative),
+and **meta-mixing (this study, ties at best)**. The wall is the labels — they reward long-tenure
+concentration — not the method. **Copeland remains the champion and the shipped artifact.**
+
+"Top-10 guaranteed" is not achievable by any method: the metric ceiling is reached and proven, but
+the competition outcome is governed by how the hidden labels correlate with this arbiter (and
+whether they penalise impossible tenure) — unmeasurable, and unmoved by further model work.
