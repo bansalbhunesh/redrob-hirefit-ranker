@@ -2,8 +2,8 @@
   "_purpose": "Single source of truth for every KPI surfaced in README, deck, API demo, and HF Space. tests/test_metrics_manifest.py fails CI if a surface drifts from these values. Update this file FIRST, then the surfaces.",
   "_provenance": "All ranking-quality metrics are DEVELOPMENT PROXIES (independent heuristic + LLM-judge labels on dev samples). No official hidden labels were available before submission. Runtime/memory numbers are measured; sources cited per key.",
   "submission": {
-    "golden_sha256": "af8f2b327f05d30e22aba41e884077071c673082cd4a2647294f0969c0f0536a",
-    "_golden_note": "2026-06-14 reasoning de-dup of the HAND pipeline: candidate_id/rank/score byte-identical to the prior fdfd3f35; only the reasoning column changed (distinct verbatim quote per row, 0 repeats in top-100). No reranker; no ranking change.",
+    "golden_sha256": "d0372aedc473b78c59d0fdddcef6bd1023f47fbc77ba5bacab07f288fce8c97b",
+    "_golden_note": "2026-06-16 (branch research/obscure-rank-aggregation ONLY): shipped submission is now the COPELAND ranking (Condorcet pairwise-win aggregation, top-lock 30; production rank.py unchanged, deterministic post-hoc rerank via experiments/build_copeland_submission.py). Composite 0.8779 vs golden 0.8625 blind, 7/7 label sets, nested +0.0142; the (B) anachronism-promotion bet. main keeps golden af8f2b32 (af8f2b327f05d30e...).",
     "rows": 100,
     "total_candidates": 100000,
     "honeypots_detected": 53,

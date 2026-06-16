@@ -11,8 +11,8 @@ from pathlib import Path
 # repo root = two levels up from this file (dashboard/constants.py -> repo root)
 ROOT = Path(__file__).resolve().parent.parent
 
-GOLDEN_COMMIT = "af8f2b32"
-GOLDEN_SHA256_PREFIX = "af8f2b327f05d30e"   # submission.csv golden hash (verify, do not invent)
+GOLDEN_COMMIT = "d0372aed"   # branch research/obscure-rank-aggregation: shipped = Copeland (main = af8f2b32)
+GOLDEN_SHA256_PREFIX = "d0372aedc473b78c"   # submission.csv hash on this branch (Copeland); main keeps af8f2b327f05d30e
 VERDICT = "NO_RANKING_DOMINATES"
 
 # Verified local artifact paths (committed). Loaders degrade gracefully if any is absent.
@@ -65,7 +65,8 @@ STATUS_COLORS = {"PASS": "#1b8a5a", "PENDING": "#c98a00", "FAIL": "#b22222", "IN
 
 DISCLAIMER = (
     "This dashboard is a downstream research and explanation layer. It does not modify, "
-    "rerun, or influence the production ranking. Golden submission af8f2b32 and all production "
+    "rerun, or influence the production ranking. Shipped submission d0372aed (Copeland, this branch) "
+    "and all production "
     "files remain byte-identical."
 )
 VERDICT_DISCLAIMER = (
