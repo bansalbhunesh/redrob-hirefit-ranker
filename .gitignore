@@ -37,3 +37,7 @@ demo.html
 
 # Psi human-calibration scoring key (anon->cid; gitignored)
 experiments/psi_panel/anon_key.json
+
+# Study 3b fresh-judge labels (dev artifact; reproducible via study3b_fresh_judge.py)
+experiments/fresh_judge_study3b.jsonl
+experiments/fresh_judge_*.jsonl
