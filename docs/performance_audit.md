@@ -227,3 +227,17 @@ the golden byte-reproduction guarantee for a marginal gain on a runtime already 
 guarantee. One untested hypothesis recorded for completeness: on a 2-CPU box the process-pool
 spawn/pickle overhead may approach the parallel gain — output is byte-identical either way
 (`--workers 1` reproduces the same CSV), so this is a tuning question, not a correctness one.
+
+## 2026-06-16 speedup experiment (measured, not just analyzed)
+
+Ran an actual A/B, not only a profile (`experiments/bench_speedup.py`, 20K rank, byte-hash gated):
+
+- **Tried:** precompute the `tokenize()` phrase-replacements (`_PHRASE_TOKENS`) so `.replace()` isn't
+  re-run on every match.
+- **Result:** output **byte-identical** (hash `ddf0d21a…`, slice gate green) but **no speedup** —
+  13.78 s → 14.82 s best-of-2 (within run-to-run noise).
+- **Conclusion & action:** the 18-phrase loop is not the bottleneck; the cost is `bm25s` indexing
+  (third-party numpy) + `TOKEN_RE.findall` over 100K texts. The micro-opt earns nothing, so it was
+  **reverted** — a *measured negative for performance*, consistent with the project's
+  ship-only-what-measures ethos. No safe change makes the pipeline meaningfully faster while keeping
+  the golden byte-identical; runtime stays comfortably under budget.
