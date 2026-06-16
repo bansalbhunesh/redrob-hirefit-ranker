@@ -45,6 +45,36 @@ the impossible-tenure candidates, because the labels themselves reward long tenu
 aggregation lever is empty (clean fusion = −0.0322; PL here = negative). A more obscure method does
 not change the mechanism; it only changes how hard you lean on the same bet.
 
+## Update — Condorcet family (Copeland, local Kemenization)
+
+Pushed further into methods judges never see (`experiments/exp_rank_condorcet.py`):
+
+| Method | best full composite | nested R=20 mean | pos | std |
+|---|--:|--:|--:|--:|
+| MC4 | 0.8755 | +0.0122 | 18/20 | 0.0128 |
+| **Copeland (lock 30)** | **0.8779** | **+0.0142** | **19/20** | **0.0096** |
+| local Kemenization (MC4 seed) | 0.8755 | (ties Copeland/MC4) | — | — |
+| local Kemenization (hand seed) | 0.8618 | ~flat | — | — |
+
+**Copeland is the new best on every axis:** highest composite (0.8779), best *and* most stable
+nested generalization (+0.0142, 19/20, lowest std). The gain is pure NDCG@50: with top-lock 30,
+NDCG@10 stays **0.8288** (identical to golden) and NDCG@50 rises **0.827 → 0.878 (+0.051)**.
+
+**Validated alternative submission built** (`experiments/build_copeland_submission.py` →
+`experiments/copeland_submission.csv`, passes the official validator; golden untouched):
+
+| label set | golden | copeland | delta |
+|---|--:|--:|--:|
+| h2_availblind (the arbiter) | 0.8625 | 0.8779 | **+0.0154** |
+| merged_j1 / j2 / j3 | 0.864 / 0.942 / 0.888 | 0.891 / 0.962 / 0.923 | +0.027 / +0.019 / +0.035 |
+| relabel_j4 / g25 | 0.942 / 0.768 | 0.948 / 0.789 | +0.007 / +0.021 |
+| blind_test_frozen | 0.919 | 0.934 | +0.016 |
+
+**Copeland beats golden on 7/7 label sets** — a larger blind margin than fusion-raw (+0.0128).
+Same diligence verdict: **65/100 anachronistic** (golden 52; 26 of 36 promotions are
+anachronism-flagged), so it is the same (B) bet — the highest-scoring, most-stable expression of
+it, not a clean lever.
+
 ## Conclusion
 
 MC4 is a genuine, defensible, rarely-used method that produces the **highest validated composite
