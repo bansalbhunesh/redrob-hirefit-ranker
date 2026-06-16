@@ -200,3 +200,30 @@ Branch `codex/100-score-gap-lab` adds the operational surface that was still mis
 - **Multi-worker job store**: still intentionally not done. The batch job store is
   process-local; production multi-worker mode needs Redis/Postgres/object storage and
   a deployed migration, not a last-minute in-memory disguise.
+
+## 2026-06-16 re-profile (per-stage, why it's slow)
+
+Tool: `experiments/profile_pipeline.py` (per-stage wall clock, read-only). On a 30K slice:
+
+| stage | 30K time | note |
+|---|---|---|
+| load jsonl | 1.3 s | I/O bound |
+| build `candidate_text` | 7.5 s | string assembly per candidate; **cached** (`_cached_text`) and reused by features |
+| BM25 tokenize + index + score | 13.9 s | **dominant**; tokenize is process-parallel (≥4000 texts) |
+| features + score + sort + write | ~3.3 s | feature scoring reuses cached text, process-parallel pool |
+
+**Why it's slow, honestly:** the cost is inherent BM25 text processing of all 100K candidates —
+assembling each candidate's text and tokenizing/indexing it. Both heavy stages are already
+(a) **cached** so text is built once (`retrieve_pool` sets `_cached_text`, reused by
+`compute_features`), and (b) **process-parallel** (`_tokenize_all`, `_score_one`). `tokenize`
+already uses a precompiled `TOKEN_RE`, an `islower()` guard to skip redundant `.lower()`, and
+set-based stopword lookup; `candidate_text` uses normalized joins. This matches the recorded
+optimization history (269 s → 163 s).
+
+**Speedup verdict: no safe byte-identical win available.** Every remaining lever (faster phrase
+matching, alternative tokenizers, text-assembly shortcuts) would change the token stream and break
+the golden byte-reproduction guarantee for a marginal gain on a runtime already well under budget
+(~80 s cloud 2-vCPU, 165 s docker 2-CPU, vs the 300 s limit). The honest call is to keep the
+guarantee. One untested hypothesis recorded for completeness: on a 2-CPU box the process-pool
+spawn/pickle overhead may approach the parallel gain — output is byte-identical either way
+(`--workers 1` reproduces the same CSV), so this is a tuning question, not a correctness one.
