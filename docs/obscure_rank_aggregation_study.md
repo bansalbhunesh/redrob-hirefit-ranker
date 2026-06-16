@@ -75,6 +75,21 @@ Same diligence verdict: **65/100 anachronistic** (golden 52; 26 of 36 promotions
 anachronism-flagged), so it is the same (B) bet — the highest-scoring, most-stable expression of
 it, not a clean lever.
 
+## Update — expanded 12-family ensemble (measured negative)
+
+To test whether the *ranker set* (not the aggregator) was the bottleneck, the ensemble was
+doubled to 12 families (`experiments/exp_rank_ensemble.py`): added education, trust, jd-coverage,
+scale, seniority, behaviour as orthogonal base rankers, then re-ran Copeland and MC4 over the
+richer preference graph.
+
+Result: **worse.** Best composite **0.8751** (vs 6-family Copeland 0.8779); nested R=20 **+0.0069
+at 15/20** (vs +0.0142 at 19/20). Adding base rankers diluted the consensus and pulled lower-tier
+candidates into the tail. The six carefully-orthogonal families were already optimal; more
+information did not help. This rules out "the aggregator was starved of signal" — the ceiling is
+the label reward structure, not the ensemble width.
+
+**Champion remains 6-family Copeland (lock 30): composite 0.8779, nested +0.0142 (19/20).**
+
 ## Conclusion
 
 MC4 is a genuine, defensible, rarely-used method that produces the **highest validated composite
