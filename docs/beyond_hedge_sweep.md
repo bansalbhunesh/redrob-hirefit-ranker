@@ -35,3 +35,24 @@ documented here as the **higher-upside / higher-risk** alternative if the integr
 judged negligible. The genuine path to a *safe* higher ceiling is not rank aggregation (capped at
 ~0.878 here, label-bound by the oracle proof) but **more feature information in the base scorer** —
 the post-experiment model-improvement track.
+
+## Model-improvement track (post-experiment): consensus as a soft base-score feature
+
+Tested whether blending the consensus signal into the base score (instead of a hard tail-reorder)
+yields a *safe* lift — holdout-gated, weight chosen on TRAIN, scored on the untouched TEST half,
+then R=20 repeated 50/50 splits for robustness (`_lib.gate` / `gate_repeat`).
+
+| signal blended | single-split holdout | R=20 repeated | verdict |
+|---|---|---|---|
+| RRF consensus | +0.0068 (looks good) | **mean −0.0043, 5/20 positive** | **measured negative** |
+| Borda consensus | −0.0007 | mean −0.0026, 9/20 | measured negative |
+
+The single split flatters RRF, but repeated splits show it does **not** robustly beat golden — the
+"generalization" was split-luck. So consensus-as-a-feature adds no robust signal to the base scorer.
+
+**Combined verdict of the experiment branch:** a higher composite is reachable only by taking more
+anachronism risk (hard tail-reorder, `rrf` lock30, 63 flagged); the *safe* levers — capped reorders
+and consensus-as-feature — are measured negatives on repeated holdout. This re-confirms, with a wider
+sweep and a fresh angle, that the ceiling is label-bound (oracle proof) and the shipped hedge is the
+best safe ship. A genuinely safe lift needs new label information or new feature *content* the 33
+features miss — not a new aggregator or blend of the existing signals.
