@@ -42,3 +42,20 @@ in `docs/assets/` are the pre-fix captures and should be refreshed once the rebu
 | 200508 | **empty download box** where the CSV download should be — `gr.File` output rendered as an empty dropzone | swapped to **`gr.DownloadButton`** (always a visible filled accent button); verified `postprocess(path) → FileData` so the download works |
 
 Build-validated (Blocks construct, `DownloadButton.postprocess` returns valid `FileData` on the demo path). Pushed to HF; the live Space rebuilds.
+
+## Third batch — `202334.png` (root-caused: gradio theme variables)
+
+My earlier element-selector fixes for labels kept missing because the faint colors come from
+**Gradio's own theme CSS variables**, not the elements I was targeting. Switched to overriding the
+variables at the source on `.gradio-container` — reliable across versions:
+
+| Problem | Root-cause variable | Override |
+|---|---|---|
+| "Search" / "Filter" labels faint mint | `--block-label-text-color`, `--block-title-text-color`, `--block-info-text-color` | → `#CBD5E1` |
+| radio options ("Open to work", "India", "Clean") faint | `--checkbox-label-text-color` | → `#F1F5F9` |
+| placeholder/subdued text | `--body-text-color-subdued`, `--input-placeholder-color` | → `#B8C4D9` |
+
+**Upload box went empty — my regression.** The heavy `#upfile, #upfile *` override (bg + dashed
+border) blanked Gradio's own "Drop File Here / Click to Upload" dropzone. Reverted it; Gradio renders
+the dropzone normally and the label is now readable via the variable override. Lesson: don't restyle
+a native gradio widget's internals — set its theme variables instead.
