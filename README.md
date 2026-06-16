@@ -184,6 +184,16 @@ availability, not the model.**
 
 ## 4. The decision — golden, then the hedge
 
+```mermaid
+flowchart TD
+    G["Golden<br/>(pre-registered default)<br/>composite 0.8625"] --> C{"Copeland beats golden<br/>7/7, +0.0154 blind?"}
+    C -->|"yes, but gain is all<br/>anachronism promotion (65 flagged)"| R["Raw Copeland<br/>= too exposed"]
+    R --> H["Severity-gated HEDGE<br/>golden top-30 + Copeland tail (sev≤1.2)<br/>44 flagged < golden's 52"]
+    H --> V{"Validated?"}
+    V -->|"7/7 sets · holdout 16/20 ·<br/>2 cross-family judges (+0.020/+0.016)"| S["SHIP hedge 24f84f4b"]
+    G -.->|"retained, one command away"| FB["fallback/golden-af8f2b32"]
+```
+
 One rank-space family did beat golden on the proxies: **Copeland** (Condorcet pairwise-win
 aggregation over 6 base rankers, +0.0154 blind). But raw Copeland's gain came from promoting
 **anachronism-flagged** candidates — a bet that wins only if the hidden judges don't date-check
