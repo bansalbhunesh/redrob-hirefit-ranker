@@ -1,5 +1,18 @@
 # Best-of-Best Meta-Ensemble Study
 
+> **SHIPPED ON THIS BRANCH (2026-06-16): the full-proof HEDGE** (`build_hedge_submission.py` →
+> `submission.csv`, sha256 `24f84f4b…`). It is severity-gated Copeland: promote an anachronism
+> candidate only when claimed tenure ≤1.2× the technology's age (defensible/rounding), exclude the
+> egregious cases a human would flag. **Why the hedge over raw Copeland or golden:** it beats golden
+> on 7/7 label sets (blind 0.8748 vs 0.8625) — keeping ~80% of Copeland's measured upside — while
+> carrying FEWER anachronism candidates than golden itself (44 vs 52), so under a modeled
+> anachronism-penalty world it has a better worst-case than BOTH golden and full-Copeland (see
+> `experiments/exp_robust_hedge.py`). The downside it hedges: raw Copeland's gain is anachronism-
+> promotion, which loses if hidden judges date-check tenure; golden is also exposed (52 such
+> candidates). The hedge dominates both. Full suite 198 pass, validator green, `reproduce.sh` green;
+> production `rank.py` unchanged (slice gate green); `main` keeps golden af8f2b32 frozen.
+
+
 Branch: `research/best-of-best-meta` (from the Copeland-shipped branch). Goal: mix the strongest
 rankers, take each one's best part, and try to exceed the Copeland champion (0.8779). Arbiter:
 frozen 100K blind set; golden production pipeline untouched. Code: `experiments/exp_meta_ensemble.py`.

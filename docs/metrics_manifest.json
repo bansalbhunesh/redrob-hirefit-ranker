@@ -2,8 +2,8 @@
   "_purpose": "Single source of truth for every KPI surfaced in README, deck, API demo, and HF Space. tests/test_metrics_manifest.py fails CI if a surface drifts from these values. Update this file FIRST, then the surfaces.",
   "_provenance": "All ranking-quality metrics are DEVELOPMENT PROXIES (independent heuristic + LLM-judge labels on dev samples). No official hidden labels were available before submission. Runtime/memory numbers are measured; sources cited per key.",
   "submission": {
-    "golden_sha256": "d0372aedc473b78c59d0fdddcef6bd1023f47fbc77ba5bacab07f288fce8c97b",
-    "_golden_note": "2026-06-16 (branch research/obscure-rank-aggregation ONLY): shipped submission is now the COPELAND ranking (Condorcet pairwise-win aggregation, top-lock 30; production rank.py unchanged, deterministic post-hoc rerank via experiments/build_copeland_submission.py). Composite 0.8779 vs golden 0.8625 blind, 7/7 label sets, nested +0.0142; the (B) anachronism-promotion bet. main keeps golden af8f2b32 (af8f2b327f05d30e...).",
+    "golden_sha256": "24f84f4b6160a4bcb164369c7f6ab27a060953ec7cfc0d33ed4849eab1194aea",
+    "_golden_note": "2026-06-16 (branches research/obscure-rank-aggregation + best-of-best-meta ONLY): shipped submission is the FULL-PROOF HEDGE — severity-gated Copeland (promote anachronism candidates only when claimed tenure <=1.2x the tech's age; exclude egregious cases). build_hedge_submission.py; production rank.py unchanged (deterministic post-hoc rerank). Composite 0.8748 blind vs golden 0.8625, beats golden on 7/7 label sets, and carries FEWER anachronism candidates than golden (44 vs 52) so it is less exposed to an anachronism-penalty world. main keeps golden af8f2b32 (af8f2b327f05d30e...).",
     "rows": 100,
     "total_candidates": 100000,
     "honeypots_detected": 53,

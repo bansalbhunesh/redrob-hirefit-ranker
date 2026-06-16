@@ -59,7 +59,7 @@ CANDIDATES = ROOT / "candidates.jsonl"
 #    top-100. This is the anachronism-promotion (B) bet (65/100 anachronistic vs golden 52) —
 #    see docs/obscure_rank_aggregation_study.md. main keeps golden af8f2b32 frozen; the slice
 #    gate below is UNCHANGED because the production pipeline is unchanged.)
-GOLDEN_SUBMISSION_SHA256 = "d0372aedc473b78c59d0fdddcef6bd1023f47fbc77ba5bacab07f288fce8c97b"
+GOLDEN_SUBMISSION_SHA256 = "24f84f4b6160a4bcb164369c7f6ab27a060953ec7cfc0d33ed4849eab1194aea"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0). Rolled
