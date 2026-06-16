@@ -236,7 +236,7 @@ if show_limits:
 
 # ----------------------------------------------------------------- 9. timeline
 st.header("8 · Research timeline (progress = reducing uncertainty)")
-TL = [("Golden baseline", "frozen reproducible submission", "SHIPPED"),
+TL = [("Golden baseline", "frozen reproducible production baseline", "FALLBACK"),
       ("Competitive audit", "leaders' lead is proxy-overfit noise", "RESEARCH ONLY"),
       ("Cross-encoder / learned ranking", "lose on blind arbiter", "MEASURED NEGATIVE"),
       ("Rank-space fusion", "+0.0128 but anachronism-driven", "RESEARCH ONLY"),
@@ -248,22 +248,26 @@ TL = [("Golden baseline", "frozen reproducible submission", "SHIPPED"),
       ("Experiment Ψ", "frozen human instrument", "AWAITING HUMAN DATA"),
       ("Study Φ", "severity-conditioned discourse", "AWAITING HUMAN DATA"),
       ("Integrity audit cards", "downstream explanation", "EXPLANATION LAYER"),
-      ("Ship Golden", "EV-max verified default", "SHIPPED")]
+      ("Rank-space Condorcet (Copeland)", "beats golden 7/7 on blind arbiter (0.8779)", "RESEARCH ONLY"),
+      ("Ship Hedge (severity-gated Copeland)", "beats golden 7/7 (0.8748); 44<52 anachronism; golden = fallback", "SHIPPED")]
 for stage, result, label in TL:
     st.markdown(f"- **{stage}** — {result}  ·  `{label}`")
 
-# ----------------------------------------------------------------- 10. why golden
-st.header("9 · Why Golden ships")
+# ----------------------------------------------------------------- 10. why the hedge
+st.header("9 · Why the hedge ships (golden retained as fallback)")
 st.dataframe({
-    "Property": ["Frozen output", "Deterministic", "Proxy improvement", "Candidate-influence robust",
-                 "Independent human lockbox", "Shipped"],
-    "Golden": ["Yes", "Yes", "Baseline", "Baseline", "Not needed to reproduce baseline", "Yes"],
-    "Fusion": ["Research", "Yes", "Yes (fragile)", "Failed (5-candidate)", "Missing", "No"],
-    "Ω candidate": ["Research", "Yes", "Simulation-dependent", "Simulated", "Missing", "No"]},
+    "Property": ["Deterministic", "Beats golden on blind arbiter", "Anachronism exposure",
+                 "Modeled worst-case", "Independent human lockbox", "Shipped"],
+    "Hedge (severity-gated Copeland)": ["Yes", "7/7 label sets (0.8748 vs 0.8625)", "44/100 (fewer than golden)",
+                 "Better than golden AND raw Copeland", "Still missing", "Yes — 24f84f4b"],
+    "Golden (fallback)": ["Yes", "Baseline (0.8625)", "52/100", "Exposed (52 anachronism)",
+                 "Not needed to reproduce baseline", "Fallback tag — af8f2b32"],
+    "Raw Copeland": ["Yes", "7/7 (0.8779)", "65/100", "Most exposed", "Missing", "No"]},
     width="stretch", hide_index=True)
-st.success("Golden is not shipped because every alternative was inferior. It is shipped because it "
-           "is the only ranking whose current benefits and risks are verified without depending on "
-           "unresolved human assumptions.")
+st.success("The hedge ships because it dominates golden on every measured label set while reducing "
+           "anachronism exposure (44 vs 52). Its residual risk — tenure date-checking by hidden judges "
+           "— is hedged by retaining golden byte-reproducible as the one-command fallback. Production "
+           "rank.py is unchanged and still reproduces golden af8f2b32 byte-for-byte.")
 st.markdown("**Docs:** `docs/SHIPPING_DECISION.md` · `docs/OMEGA_DECISION_SUMMARY.md` · "
             "`docs/PSI_INTEGRITY_PANEL.md` · `docs/human_opinion/HUMAN_OPINION_LANDSCAPE.md` · "
             "`docs/REPRODUCTION.md`")

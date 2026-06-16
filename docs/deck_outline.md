@@ -46,6 +46,19 @@ trained on the independent labels, loses to the hand weights even on those
 labels (composite 0.8238 vs 0.8811; top-100 overlap and coefficients in
 docs/learned_weights_appendix.md). Explainable hand weights ship.
 
+## 5e. The shipped decision, validated (golden head + Copeland tail, hedged)
+
+We ship a **hedge** (`24f84f4b`), not raw golden: golden's exact top-30, then ranks 31-100 re-drawn
+by Copeland (Condorcet) rank-fusion, excluding anachronism candidates with severity > 1.2. The head
+is golden, so NDCG@10 is unchanged — every gain is a better-ordered tail. We validated the upgrade,
+not just asserted it (docs/golden_vs_hedge_two_studies.md): beats golden on 7/7 label sets,
+generalizes out-of-sample on held-out halves (16/20), and is confirmed by two independent judges from
+different labs the hedge was never tuned against — gpt-4.1 (+0.0197) and the integrity-strict
+gemini-2.5-pro (+0.0160), both rating the promoted candidates above the dropped ones, with no added
+integrity exposure (32 = 32 flags vs golden). Bounded downside: identical to golden where it matters
+most, fewer anachronism candidates than golden (44 vs 52), and golden retained as a one-command
+fallback.
+
 ## 6. Reproducibility
 
 One command, CPU-only, no network:

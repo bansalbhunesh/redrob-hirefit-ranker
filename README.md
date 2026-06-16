@@ -11,17 +11,18 @@ A deterministic, evidence-aware candidate-ranking system for 100,000 profiles, w
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Live demo](https://img.shields.io/badge/live_demo-HuggingFace_Space-FBBF24.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
 
-`Golden frozen` · `Dashboard available` · `Human lockbox: AWAITING DATA`
+`Hedge shipped · golden fallback` · `Dashboard available` · `Human lockbox: AWAITING DATA`
 
 ---
 
 ## Judge quick start
 
 ```bash
-./reproduce.sh        # runs the verified golden production path ONLY
+./reproduce.sh        # runs the verified production path ONLY
 ```
-This (1) runs the frozen golden production ranking, (2) validates the output, (3) checks
-deterministic byte-reproduction of `submission.csv`, and (4) runs **no** research ranking.
+This (1) runs the frozen production ranking (`rank.py`, which reproduces the golden baseline
+`af8f2b32` byte-for-byte), (2) validates the output, (3) checks deterministic byte-reproduction
+of the shipped `submission.csv` (the hedge, `24f84f4b`), and (4) runs **no** research ranking.
 
 ```bash
 pip install -r requirements-dashboard.txt      # presentation deps only — NOT production
@@ -34,17 +35,19 @@ production ranker. It imports no production scoring code and changes no submissi
 
 | Property | Verified value |
 |---|---|
-| Production ranking | Frozen golden (`af8f2b32`) |
+| Shipped submission | **Severity-gated Copeland hedge** (`24f84f4b`) — golden `af8f2b32` retained as the `fallback/golden-af8f2b32` tag |
+| Production pipeline | Deterministic `rank.py` — reproduces golden `af8f2b32` byte-for-byte (slice gate + full 100K) |
 | Dataset | 100,000 candidates |
 | Tests | 198 passed, 0 skipped |
-| Dev-proxy quality | NDCG@10 0.8943 · P@10 = 1.0 — *dev proxy / LLM-audit; **No official hidden labels*** |
-| Runtime | ~80s cloud 2-vCPU serial · ~125s local Docker serial (budget 300s) |
+| Hedge vs golden (blind arbiter) | composite **0.8748 vs 0.8625**, **beats golden on 7/7** label sets — *dev proxy / LLM-audit; **No official hidden labels*** |
+| Dev-proxy quality | NDCG@10 0.8943 · P@10 = 1.0 — *dev proxy / LLM-audit* |
+| Runtime | ~80s cloud 2-vCPU serial · 165s Docker `--cpus=2 --memory=16g` (matrix 124.7–193.4s; budget 300s) |
 | Execution | CPU-only, offline, deterministic (`PYTHONHASHSEED=0`) |
-| Determinism | golden `submission.csv` sha256 `af8f2b327f05d30e…` verified |
+| Determinism | shipped `submission.csv` sha256 `24f84f4b6160a4bc…` verified; production reproduces golden `af8f2b327f05d30e…` |
 | Shipped-detector flags in top-100 | 0 |
-| Experimental anachronism anomalies | 52 |
+| Experimental anachronism anomalies | **44** (golden carries 52) |
 | Final automated verdict | `NO_RANKING_DOMINATES` |
-| Submission decision | **Ship golden** |
+| Submission decision | **Ship the hedge** (golden = one-command fallback) |
 
 > The quality row is a **dev proxy** (LLM-audit), explicitly **not** the official hidden
 > competition score. We never claim to know the hidden labels.
@@ -61,14 +64,18 @@ model downloads at inference.
 
 > **Detector-flagged anomaly ≠ confirmed hard contradiction ≠ official planted honeypot.**
 
-- The **shipped honeypot detector** flags **0** candidates in golden's top-100.
-- A **separate experimental anachronism detector** flags **52** technology-tenure timeline
-  anomalies (e.g. a claimed skill tenure longer than the technology has existed).
-- Those 52 are **not** confirmed fraud, **not** confirmed hard contradictions, and **not**
+- The **shipped honeypot detector** flags **0** candidates in the shipped hedge's top-100
+  (verified on `submission.csv`).
+- A **separate experimental anachronism detector** flags **44** technology-tenure timeline
+  anomalies (e.g. a claimed skill tenure longer than the technology has existed) — **fewer than
+  golden's 52**, because the hedge promotes only defensible cases (tenure ≤1.2× the tech's age)
+  and excludes the egregious ones.
+- Those 44 are **not** confirmed fraud, **not** confirmed hard contradictions, and **not**
   known official planted honeypots (the official planted IDs are unavailable to us).
-- A **downstream, non-ranking** integrity layer assigns proportionate states:
-  - 45 `CLEAR → CONTINUE` · 3 `AMBIGUOUS → CLARIFY` · 52 `PROBABLE_CONTRADICTION → VERIFY` · 0 `CONFIRMED_CONTRADICTION → BLOCK`
-- These actions are explanatory and **do not modify the golden ranking**. `VERIFY` requests
+- A **downstream, non-ranking** integrity layer assigns proportionate states: the 44 anachronism
+  anomalies map to `PROBABLE_CONTRADICTION → VERIFY`; the remaining 56 are
+  `CLEAR/AMBIGUOUS → CONTINUE/CLARIFY`; **0** are `CONFIRMED_CONTRADICTION → BLOCK`.
+- These actions are explanatory and **do not modify the shipped ranking**. `VERIFY` requests
   human review; it never asserts fraud and never reorders candidates.
 
 ## What we tried and rejected — measured negatives
@@ -99,20 +106,40 @@ features. **Conclusion: the model/trick lever is empty; the bottleneck is featur
 content + hidden-label availability, not the model.** That is *why* a deterministic hand-tuned
 scorer is the expected-value-maximising ship — a conclusion earned by measurement, not assumed.
 
-## Why golden ships
+## Why the hedge ships (golden retained as fallback)
 
-1. It is **frozen and byte-reproducible** (`af8f2b32`).
-2. It passes the **complete production and firewall suite** (198 tests, 0 skipped).
-3. **Raw Fusion's** proxy gain was **fragile and concentrated** — the 7 label sets are only
-   ~1.85 effective independent judges, and 56% of the gain came from 5 anachronism-flagged
-   candidates (it inverts to −0.011 without that class).
-4. **Ω** formalised the quality-vs-integrity trade-off as a minimax-regret problem but used
-   **simulated** reviewer worlds, so it cannot independently validate its own assumptions.
-5. **Ψ** still requires real **candidate-specific human** judgments (`AWAITING HUMAN DATA`).
+The shipped submission (`24f84f4b`) is precisely **golden's exact top-30, then ranks 31–100
+re-drawn from the pool by Copeland (Condorcet) score, excluding anachronism candidates with
+severity > 1.2** (claimed tenure ≤1.2× the tech's age = defensible/rounding; egregious cases
+excluded). It is verified byte-identical to golden in order through rank 30 — so **NDCG@10 and
+P@10 are unchanged from golden by construction**; every measured gain is a better-ordered *tail*.
+Validated head-to-head under one frozen protocol in
+[`docs/golden_vs_hedge_two_studies.md`](docs/golden_vs_hedge_two_studies.md).
 
-> Golden is not shipped because every alternative was worse. It is shipped because it is the
-> only ranking whose current benefits and risks are verified without relying on unresolved
-> human assumptions.
+1. It **beats golden on 7/7 label sets** on the frozen blind arbiter (composite **0.8748 vs
+   0.8625**) — all of it NDCG@50/MAP — the advantage **generalizes out-of-sample** on held-out
+   label halves (mean +0.012, 16/20 splits positive), and it is **confirmed by two independent
+   fresh judges from different labs** the hedge was never selected against (gpt-4.1 +0.0197;
+   integrity-strict gemini-2.5-pro +0.0160) — see
+   [`docs/golden_vs_hedge_two_studies.md`](docs/golden_vs_hedge_two_studies.md).
+2. It carries **fewer anachronism-flagged candidates than golden itself** (44 vs 52), so under a
+   modeled anachronism-penalty world its worst case is **better than both golden and full
+   Copeland** (`experiments/exp_robust_hedge.py`). It is the rare alternative that lifts proxy
+   quality *without* increasing anachronism exposure.
+3. It passes the **complete production and firewall suite** (198 tests, 0 skipped); production
+   `rank.py` is **unchanged** and reproduces golden `af8f2b32` byte-for-byte (slice gate + full
+   100K) — the hedge is a deterministic, audited post-hoc rerank.
+4. **The honest residual risk:** the 7 label sets are only ~1.85 effective independent judges,
+   and the hedge's gain still comes partly from promoting (defensible) anachronism candidates —
+   a bet that loses if the hidden judges date-check tenure. **Golden is also exposed there** (52
+   such candidates), and is retained byte-reproducible as the **one-command fallback**
+   (`fallback/golden-af8f2b32`) if that risk is judged to dominate.
+5. **Ω** used **simulated** reviewer worlds (cannot self-validate); **Ψ** still requires real
+   **candidate-specific human** judgments (`AWAITING HUMAN DATA`).
+
+> The hedge ships because it dominates golden on every measured label set while reducing
+> anachronism exposure — and because the safer option (golden) is preserved, one command away,
+> for the world where tenure date-checking is the deciding signal.
 
 ## Research arc (uncertainty reduction, not metric chasing)
 
@@ -120,7 +147,8 @@ scorer is the expected-value-maximising ship — a conclusion earned by measurem
 Golden → Competitor audit → Learned-model & Cross-Encoder experiments → Rank-space Fusion
   → Judge-dependence & influence audits → Evidence-channel experiments
   → Integrity-constrained Fusion → Ω decision framework
-  → Ψ candidate-specific human instrument → Φ public hiring-norms study → Ship Golden
+  → Ψ candidate-specific human instrument → Φ public hiring-norms study
+  → Rank-space Condorcet (Copeland) → severity-gated hedge → Ship Hedge (golden retained as fallback)
 ```
 Every stage **reduced uncertainty** about what is real; not every stage improved a metric.
 Most alternatives are *measured negatives* — built, measured against independent labels, and
@@ -132,12 +160,13 @@ rejected on the evidence (`docs/measured_negatives.md`).
 decision banner · shipping-gate battery · minimax-regret frontier (with a **simulated,
 model-specific** λ slider) · the 52-anomaly reconciliation + filterable table · candidate
 integrity audit cards · fusion autopsy · Ψ frozen-panel status (`AWAITING HUMAN DATA`) · Φ
-real-discourse findings · the complete experiment timeline · and why golden ships. It reads
+real-discourse findings · the complete experiment timeline · and why the hedge ships. It reads
 only committed local artifacts; missing artifacts render "Artifact unavailable", never invented
 values.
 
 ## Documentation map
 
+- [docs/golden_vs_hedge_two_studies.md](docs/golden_vs_hedge_two_studies.md) — golden vs shipped hedge, one frozen protocol, with holdout
 - [docs/SHIPPING_DECISION.md](docs/SHIPPING_DECISION.md) · [docs/REPRODUCTION.md](docs/REPRODUCTION.md)
 - [docs/PSI_INTEGRITY_PANEL.md](docs/PSI_INTEGRITY_PANEL.md) · [docs/OMEGA_DECISION_SUMMARY.md](docs/OMEGA_DECISION_SUMMARY.md)
 - [docs/human_opinion/HUMAN_OPINION_LANDSCAPE.md](docs/human_opinion/HUMAN_OPINION_LANDSCAPE.md) · [docs/COMPETITIVE_LANDSCAPE.md](docs/COMPETITIVE_LANDSCAPE.md)
@@ -154,8 +183,9 @@ values.
 ## Reproduce
 
 ```bash
-PYTHONHASHSEED=0 python -m pytest tests/test_submission_gate.py -q   # golden gate
-sha256sum submission.csv                                            # -> af8f2b327f05d30e…
+PYTHONHASHSEED=0 python -m pytest tests/test_submission_gate.py -q   # production + shipped-hash gate
+sha256sum submission.csv                                            # -> 24f84f4b6160a4bc… (shipped hedge)
+# production rank.py still reproduces the golden baseline af8f2b327f05d30e… (verified by the slice gate)
 ```
 CPU-only, offline, deterministic. Full path: `docs/REPRODUCTION.md`.
 

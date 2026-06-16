@@ -57,8 +57,16 @@ CANDIDATES = ROOT / "candidates.jsonl"
 #    on the frozen blind arbiter, beats golden on 7/7 label sets, nested R=20 +0.0142 (19/20);
 #    all gain on NDCG@50 (0.827->0.878), NDCG@10 held at 0.8288, 0 shipped-honeypot flags in
 #    top-100. This is the anachronism-promotion (B) bet (65/100 anachronistic vs golden 52) —
-#    see docs/obscure_rank_aggregation_study.md. main keeps golden af8f2b32 frozen; the slice
-#    gate below is UNCHANGED because the production pipeline is unchanged.)
+#    see docs/obscure_rank_aggregation_study.md. the slice gate below is UNCHANGED because the
+#    production pipeline is unchanged.)
+# -> 24f84f4b... (2026-06-16, SHIPPED ON main, HEAD 072707c: the full-proof HEDGE supersedes raw
+#    Copeland. severity-gated Copeland (build_hedge_submission.py): promote an anachronism candidate
+#    only when claimed tenure <=1.2x the tech's age, exclude egregious cases. Composite 0.8748 vs
+#    golden 0.8625 on the blind arbiter, beats golden on 7/7 label sets, keeps ~80% of Copeland's
+#    upside, and carries FEWER anachronism candidates than golden -- 44/100 (verified on submission.csv)
+#    vs golden's 52 -- so it has a better modeled worst-case than BOTH golden and raw Copeland. Golden
+#    af8f2b32 is retained byte-reproducible as the fallback tag fallback/golden-af8f2b32. Production
+#    rank.py UNCHANGED; slice gate below UNCHANGED.)
 GOLDEN_SUBMISSION_SHA256 = "24f84f4b6160a4bcb164369c7f6ab27a060953ec7cfc0d33ed4849eab1194aea"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the

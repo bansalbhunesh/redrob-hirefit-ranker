@@ -11,8 +11,8 @@ from pathlib import Path
 # repo root = two levels up from this file (dashboard/constants.py -> repo root)
 ROOT = Path(__file__).resolve().parent.parent
 
-GOLDEN_COMMIT = "24f84f4b"   # branch research/obscure-rank-aggregation: shipped = full-proof hedge sev<=1.2 (main = af8f2b32)
-GOLDEN_SHA256_PREFIX = "24f84f4b6160a4bc"   # submission.csv hash on this branch (hedge); main keeps af8f2b327f05d30e
+GOLDEN_COMMIT = "24f84f4b"   # main (HEAD 072707c): shipped = full-proof hedge sev<=1.2; golden af8f2b32 retained as fallback tag
+GOLDEN_SHA256_PREFIX = "24f84f4b6160a4bc"   # shipped submission.csv hash (hedge); production pipeline reproduces golden af8f2b327f05d30e
 VERDICT = "NO_RANKING_DOMINATES"
 
 # Verified local artifact paths (committed). Loaders degrade gracefully if any is absent.
@@ -65,8 +65,8 @@ STATUS_COLORS = {"PASS": "#1b8a5a", "PENDING": "#c98a00", "FAIL": "#b22222", "IN
 
 DISCLAIMER = (
     "This dashboard is a downstream research and explanation layer. It does not modify, "
-    "rerun, or influence the production ranking. Shipped submission 24f84f4b (Copeland, this branch) "
-    "and all production "
+    "rerun, or influence the production ranking. Shipped submission 24f84f4b (severity-gated "
+    "Copeland hedge) and all production "
     "files remain byte-identical."
 )
 VERDICT_DISCLAIMER = (

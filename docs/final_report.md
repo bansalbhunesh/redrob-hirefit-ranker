@@ -1,4 +1,13 @@
-# Final Report: ConFit v2 Grand Champion Architecture
+> ⚠️ **SUPERSEDED — NOT THE SHIPPED SYSTEM. DO NOT CITE AS THE SUBMISSION.**
+> This document describes an *exploratory* learned architecture (trained MMoE, HyRE embeddings,
+> `all-MiniLM-L6-v2`) that was **NOT shipped**. The actual submission is a **deterministic
+> hand-tuned scorer** plus the severity-gated Copeland **hedge** (`24f84f4b`), with golden
+> (`af8f2b32`) as the fallback. Learned/embedding approaches like the one below were **measured and
+> rejected** on the frozen blind arbiter — see `docs/measured_negatives.md`. The "0.935 NDCG@10" and
+> "162 tests" figures here are stale and do not describe the shipped pipeline. Authoritative current
+> docs: `README.md`, `docs/SHIPPING_DECISION.md`, `docs/golden_vs_hedge_two_studies.md`.
+
+# Final Report: ConFit v2 Grand Champion Architecture (EXPLORATORY — NOT SHIPPED)
 
 ## Executive Summary
 We successfully implemented the ConFit v2 architecture to resolve the 100-score-gap, hitting all target constraints while maintaining strict determinism.

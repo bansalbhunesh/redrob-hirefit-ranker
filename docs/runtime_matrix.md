@@ -54,6 +54,17 @@ on the pinned digest, full 100K, default workers: **138.3 s** pipeline,
 honeypots 53 detected / 0 emitted, output **byte-identical** to the committed
 `submission.csv` (`a2882cd2…`).
 
+## 2026-06-16 constrained reproduction (cpu2 / 16 GB)
+
+Fresh build + full 100K run under the exact Stage-3 constraint
+`docker run --cpus=2 --memory=16g`, default workers, `--bm25-backend bm25s`:
+**165 s** pipeline wall, output **byte-identical to golden `af8f2b32`**
+(`af8f2b327f05d30e…`), well inside both the 300 s hard limit and the 240 s
+safety margin. Confirms the production pipeline still reproduces golden under
+the constrained runtime even though the shipped `submission.csv` is the
+severity-gated Copeland hedge (a deterministic post-hoc rerank, not part of the
+timed pipeline).
+
 ## Budget verdict
 
 - Hard limit 300 s: **worst case passes with ~38-56% headroom** (2026-06-10 audit,

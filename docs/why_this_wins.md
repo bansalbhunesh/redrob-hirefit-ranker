@@ -11,10 +11,11 @@ labels. Here is the case, mapped to how submissions are actually filtered.
 ## Stage 1–3 — Format, reproduce, integrity (where ~80% of teams die)
 
 - **Byte-deterministic.** `PYTHONHASHSEED=0` + pinned BLAS threads → identical output across CPU
-  counts. The submission is **golden-hash-locked** (`af8f2b32`) by a regression test that
-  re-runs the ranker on a 2k slice and matches a recorded hash.
-- **171 tests, 0 skipped, 91% coverage** (95–100% on the ship path); lint-clean production code;
-  runs in **80–125s on CPU only**, no GPU, no network, no LLM, in Docker.
+  counts. The shipped submission is the **severity-gated Copeland hedge** (`24f84f4b`); the
+  production ranker is **golden-hash-locked** (`af8f2b32`) by a regression test that re-runs it on a
+  2k slice and matches a recorded hash. Golden is retained as the one-command fallback.
+- **198 tests, 0 skipped**; lint-clean production code; runs in **80–125s on CPU only** (165s under
+  `docker --cpus=2 --memory=16g`), no GPU, no network, no LLM, in Docker.
 - **0 honeypots in the top-100** out of 53 planted traps detected — multiplicative
   honeypot × behavioral × disqualifier guardrails, not a soft penalty.
 
@@ -22,6 +23,13 @@ labels. Here is the case, mapped to how submissions are actually filtered.
 
 - **A 100K frozen blind set is our internal arbiter**, frozen before any tuning — not a curated
   sample we could overfit.
+- **The shipped upgrade is validated, not asserted** (`docs/golden_vs_hedge_two_studies.md`). The
+  hedge keeps golden's top-30 and re-orders only the tail; under one frozen protocol it beats golden
+  on 7/7 label sets, **generalizes out-of-sample** (held-out halves, 16/20), and is **confirmed by
+  two independent judges from different labs** the hedge was never tuned against — gpt-4.1 (+0.0197)
+  and the integrity-strict gemini-2.5-pro (+0.0160) — both rating the promoted candidates above the
+  dropped ones, with **no added integrity exposure** (32=32 flags vs golden). This is "an uninvolved
+  judge agrees the new candidates are better hires," not "we changed the weights and the score rose."
 - **Ten measured negatives, every one rejected on evidence** (`docs/measured_negatives.md`):
   three+ learned rerankers, learned weights, dense embeddings, two fresh features, and — the
   sharpest — **DART (ACL 2026 test-time training), which we implemented faithfully, replicated

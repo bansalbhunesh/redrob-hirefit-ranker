@@ -10,7 +10,8 @@
 > `experiments/exp_robust_hedge.py`). The downside it hedges: raw Copeland's gain is anachronism-
 > promotion, which loses if hidden judges date-check tenure; golden is also exposed (52 such
 > candidates). The hedge dominates both. Full suite 198 pass, validator green, `reproduce.sh` green;
-> production `rank.py` unchanged (slice gate green); `main` keeps golden af8f2b32 frozen.
+> production `rank.py` unchanged (slice gate green); `main` (HEAD 072707c) now ships this hedge,
+> with golden af8f2b32 retained byte-reproducible as the fallback tag `fallback/golden-af8f2b32`.
 
 
 Branch: `research/best-of-best-meta` (from the Copeland-shipped branch). Goal: mix the strongest
