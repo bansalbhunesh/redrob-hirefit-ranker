@@ -5,12 +5,12 @@ shadows, monospace numerals. Indigo accent (no teal).
 """
 from __future__ import annotations
 
-# ── tokens ──────────────────────────────────────────────────────────────────
-BG_VOID = "#060913"; BG_BASE = "#0B0F1A"; BG_SURFACE = "#111827"
-BG_ELEVATED = "#161F32"; BG_INPUT = "#0E1420"
-BORDER = "#1E293B"; BORDER_ACTIVE = "#334155"
-TEXT_PRIMARY = "#E2E8F0"; TEXT_SECONDARY = "#94A3B8"; TEXT_MUTED = "#64748B"; TEXT_MONO = "#CBD5E1"
-ACCENT = "#4F46E5"; AMBER = "#D97706"; RED = "#DC2626"; GREEN = "#059669"; BLUE = "#2563EB"
+# ── tokens (Flight Deck: bright 400-level accents + visible borders on slate, for contrast) ──
+BG_VOID = "#020617"; BG_BASE = "#0F172A"; BG_SURFACE = "#1E293B"
+BG_ELEVATED = "#334155"; BG_INPUT = "#0B1221"
+BORDER = "#475569"; BORDER_ACTIVE = "#64748B"          # borders are VISIBLE, not near-black
+TEXT_PRIMARY = "#F1F5F9"; TEXT_SECONDARY = "#CBD5E1"; TEXT_MUTED = "#94A3B8"; TEXT_MONO = "#E2E8F0"
+ACCENT = "#38BDF8"; AMBER = "#FBBF24"; RED = "#FB7185"; GREEN = "#4ADE80"; BLUE = "#38BDF8"
 FONT_UI = "'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
 FONT_MONO = "'JetBrains Mono','SF Mono',Consolas,ui-monospace,monospace"
 
