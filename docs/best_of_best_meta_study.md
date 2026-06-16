@@ -38,3 +38,26 @@ concentration — not the method. **Copeland remains the champion and the shippe
 "Top-10 guaranteed" is not achievable by any method: the metric ceiling is reached and proven, but
 the competition outcome is governed by how the hidden labels correlate with this arbiter (and
 whether they penalise impossible tenure) — unmeasurable, and unmoved by further model work.
+
+## Minimax-robust check across all 7 evaluators (`experiments/exp_robust_minimax.py`)
+
+Instead of optimizing one arbiter, score every candidate ranking across all 7 known label sets
+(blind arbiter + 6 LLM-judge sets) and find the best WORST-CASE — the principled hedge against an
+unknown 8th (hidden) evaluator.
+
+| ranking | min across 7 | mean across 7 |
+|---|--:|--:|
+| golden | 0.7680 | 0.8835 |
+| fusion-raw | 0.7877 | 0.9027 |
+| **Copeland lock30** | **0.7892 (best)** | 0.9036 |
+| RRF lock30 | 0.7883 | 0.9038 (best) |
+
+Two findings that strengthen the shipped bet:
+1. **Copeland lock30 is minimax-optimal** — best worst-case of any ranking, and within 0.0002 of
+   the best mean. The artifact already shipped is also the most robust to an unknown evaluator.
+2. **Golden is dominated on all 7 evaluators** — lowest mean (0.8835) and worst worst-case
+   (0.7680). Every (B)-bet ranking beats golden on *every* known judge. The "golden is safer"
+   case rests entirely on a hypothetical 8th evaluator that manually date-checks tenure — a world
+   **none of the 7 measurable evaluators exhibit**. Golden's safety is conjectural; Copeland's
+   dominance is measured. Residual risk of the bet (a human tenure-checker) is unmeasured, not
+   disproven — but it is the only world in which the shipped choice loses.
