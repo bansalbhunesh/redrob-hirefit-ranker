@@ -17,6 +17,23 @@ this ranking is the one to ship.
 
 ---
 
+## Contents
+
+1. [The story in one minute](#the-story-in-one-minute)
+2. [Judge quick start](#judge-quick-start)
+3. [Live demos & demo video](#live-demos--demo-video)
+4. [Submission snapshot](#submission-snapshot-verified-from-this-repo)
+5. [The problem](#1-the-problem)
+6. [The system that ships](#2-the-system-that-ships) · architecture diagram
+7. [The experiment program — measured negatives](#3-the-experiment-program--what-we-tried-and-rejected)
+8. [The decision — golden, then the hedge](#4-the-decision--golden-then-the-hedge)
+9. [Validation — is the hedge genuinely better?](#5-validation--is-the-hedge-genuinely-better)
+10. [The integrity distinction](#6-the-integrity-distinction-read-this)
+11. [Reproduce & runtime](#7-reproduce--runtime)
+12. [Research arc](#research-arc-uncertainty-reduction-not-metric-chasing) · [Documentation map](#documentation-map)
+
+---
+
 ## The story in one minute
 
 Most teams ship a model and report a score. We shipped a **measured decision**, and documented the
@@ -54,6 +71,27 @@ still reproduces golden (`af8f2b32`) byte-for-byte.
 pip install -r requirements-dashboard.txt
 streamlit run omega_decision_dashboard.py   # read-only explanation UI; imports no production code
 ```
+
+## Live demos & demo video
+
+| Surface | What it shows | Link |
+|---|---|---|
+| 🤗 **HuggingFace Space** | Upload candidates → live ranking, explainable top-100, integrity checklist | [bansal1234/Hirefit](https://huggingface.co/spaces/bansal1234/Hirefit) |
+| 🖥️ **Render web app** | Pipeline visualization + filterable shortlist + per-candidate audit | _live link — add Render URL here_ |
+| 📊 **Decision dashboard** | `NO_RANKING_DOMINATES` verdict, shipping gates, golden-vs-hedge studies | `streamlit run omega_decision_dashboard.py` |
+
+**🎬 Demo video:** _2-minute walkthrough — link to be added here._
+
+<!-- Screenshots are interim (captured before the 2026-06-16 contrast pass); refresh after the
+     next Render/HF redeploy. Stored in docs/assets/. -->
+
+**Render — pipeline & shortlist**
+
+![Render pipeline and shortlist](docs/assets/render_pipeline.png)
+
+**HuggingFace Space — upload & live ranking**
+
+![HuggingFace Space upload](docs/assets/hf_space_upload.png)
 
 ## Submission snapshot (verified from this repo)
 
@@ -100,9 +138,22 @@ education, behavioural signals) and:
   profile with no activity or an impossible claim is multiplied down, not softly penalised;
 - emits an explainable, **byte-reproducible** top-100 with grounded per-candidate reasoning.
 
+```mermaid
+flowchart LR
+    A["100K candidates<br/>(JSONL)"] --> B["Parse +<br/>candidate_text<br/>(cached)"]
+    B --> C["BM25<br/>lexical base"]
+    B --> D["33-feature<br/>recruiter matrix"]
+    C --> E["weighted<br/>base score"]
+    D --> E
+    E --> F["× behavioural<br/>× honeypot<br/>× disqualifier<br/>(multiplicative guardrails)"]
+    F --> G["deterministic sort<br/>(score, candidate_id)"]
+    G --> H["golden top-100<br/>af8f2b32"]
+    H -. "post-hoc, audited<br/>(golden top-30 + Copeland tail, sev≤1.2)" .-> I["shipped hedge<br/>24f84f4b"]
+```
+
 CPU-only, fully offline, no network, no model downloads at inference. Determinism is enforced
 (`PYTHONHASHSEED=0`, pinned BLAS threads) and locked by a regression test that re-runs the ranker on
-a 2k slice and matches a recorded hash.
+a 2k slice and matches a recorded hash. Per-stage timing: `docs/performance_audit.md`.
 
 ## 3. The experiment program — what we tried and rejected
 
