@@ -247,6 +247,11 @@ integrity-compromised, golden reverts in one command (`fallback/golden-af8f2b32`
 Reproduce: `experiments/exp_two_studies.py` (studies) · `docs/runtime_matrix.md` (timings).
 </details>
 
+**Stress-tested, not just chosen.** We also built the *higher-composite* alternative (`rrf` lock-30,
+0.8781) and ran a blinded integrity-aware eval on the candidates that differ: its picks were **not
+clearly better** (paired +0.286, 95% CI includes 0, 0 top-rank regressions). The hedge held — see
+`docs/SHIPPING_DECISION.md` and `docs/decisive_integrity_eval.md` (`experiment/beyond-hedge`).
+
 ## 6. The integrity distinction (read this)
 
 > **Detector-flagged anomaly ≠ confirmed hard contradiction ≠ official planted honeypot.**

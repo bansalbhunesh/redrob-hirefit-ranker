@@ -42,3 +42,24 @@ integrity-compromised reverts to golden via the fallback tag.
 
 See: `docs/golden_vs_hedge_two_studies.md`, `docs/best_of_best_meta_study.md`,
 `docs/OMEGA_DECISION_SUMMARY.md`, `docs/PSI_INTEGRITY_PANEL.md`.
+
+## Post-decision stress test (2026-06-16) — the hedge survived a challenge
+
+We did not stop at "the hedge beats golden." We built the **higher-composite alternative** —
+`rrf` lock-30 (golden top-30 + RRF-fused tail, no severity cap), which scores **0.8781** on the blind
+arbiter (above the hedge's 0.8748 and full-Copeland's 0.8779) and beats golden 7/7. Then we ran one
+frozen, **blinded, integrity-aware** evaluation on only the candidates that differ between the two
+(56 distinct candidates), with a fresh judge scoring fit quality without seeing our scores and
+classifying each tenure-date inconsistency separately. Result (`experiment/beyond-hedge`,
+`docs/decisive_integrity_eval.md`):
+
+- rrf-lock30's promoted candidates were **not clearly superior**: paired quality +0.286 mean but
+  **95% CI [−0.071, +0.643] includes 0**, mostly ties (4 wins / 1 loss / 9 ties), **0 top-rank
+  regressions** — and integrity adjustment didn't move it.
+- The higher composite was the proxy metric rewarding anachronism promotions a blind judge rates as
+  **harmless but not better hires**.
+
+**Conclusion: the hedge holds.** The higher-composite option was built, stress-tested the right way,
+and did not earn the swap — so the shipped submission stays the severity-gated hedge. This is the
+strongest possible support for the decision: not "we didn't try," but "we tried, measured, and the
+safer ranking was not beaten on candidate quality."
