@@ -90,7 +90,27 @@ the label reward structure, not the ensemble width.
 
 **Champion remains 6-family Copeland (lock 30): composite 0.8779, nested +0.0142 (19/20).**
 
-## Conclusion
+## Update — DPP diversity reranking (decisive measured negative)
+
+A different mechanism entirely (`experiments/exp_rank_dpp.py`): Determinantal Point Process
+reranking — select the tail by quality × diversity (kernel determinant, fast greedy MAP, Chen et
+al. NeurIPS 2018) instead of consensus. Kernel L = diag(q^θ)·S·diag(q^θ), S = cosine of the
+33-feature vectors. If the labels rewarded covering distinct candidate types, this escapes the
+consensus ceiling.
+
+Result: **strong negative across the board.** Nested R=20 mean **−0.0587, 0/20 positive**; best
+full composite 0.8618 (below golden). As θ→8 (relevance-dominated) it approaches baseline but
+never beats it; any added diversity craters it. **The labels actively penalise tail diversity** —
+they reward more of the same high-tier (long-tenure) profile. This is *why* consensus methods all
+gain by concentrating on the anachronism class: it is the single direction the labels reward.
+
+## Conclusion (three method classes, one ceiling)
+
+Tested this cycle: rank-aggregation (RRF, Borda, **MC4, Plackett–Luce, Copeland, local
+Kemenization**), ensemble width (6→12 families), and DPP diversity. The ceiling is **0.8779
+(6-family Copeland)** and it does not move: a better aggregator nudges it +0.003 and stops; more
+rankers make it worse; a diversity mechanism makes it much worse. Three independent directions,
+one wall — set by the labels (which reward long-tenure concentration), not the method.
 
 MC4 is a genuine, defensible, rarely-used method that produces the **highest validated composite
 on disk (0.8755)** — but it is the **same (B) bet** as fusion-raw, with marginally more exposure to
