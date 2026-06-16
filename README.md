@@ -296,6 +296,7 @@ Golden → Competitor audit → Learned-model & Cross-Encoder experiments → Ra
 - **The decision & its validation:** [docs/SHIPPING_DECISION.md](docs/SHIPPING_DECISION.md) ·
   [docs/golden_vs_hedge_two_studies.md](docs/golden_vs_hedge_two_studies.md) ·
   [docs/best_of_best_meta_study.md](docs/best_of_best_meta_study.md)
+- **Submission checklist:** [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSION_CHECKLIST.md)
 - **Reproduce & runtime:** [docs/REPRODUCTION.md](docs/REPRODUCTION.md) ·
   [docs/runtime_matrix.md](docs/runtime_matrix.md)
 - **What we rejected:** [docs/measured_negatives.md](docs/measured_negatives.md) ·
