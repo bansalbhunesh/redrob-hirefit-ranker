@@ -104,7 +104,15 @@ never beats it; any added diversity craters it. **The labels actively penalise t
 they reward more of the same high-tier (long-tenure) profile. This is *why* consensus methods all
 gain by concentrating on the anachronism class: it is the single direction the labels reward.
 
-## Conclusion (three method classes, one ceiling)
+## Update — clean Copeland (the decisive close)
+
+Final, most decision-relevant test: can the champion aggregator gain *cleanly*? Copeland with
+anachronism-flagged candidates forbidden from tail promotion. Result: **negative — nested mean
+−0.0093, 3/20 positive**, does not generalize. The clean lever is now empty across BOTH
+aggregators (RRF-clean −0.0322; Copeland-clean −0.0093). Confirmed from every angle: no positive
+rank-space gain exists without promoting the impossible-tenure class.
+
+## Conclusion (four method classes, one ceiling)
 
 Tested this cycle: rank-aggregation (RRF, Borda, **MC4, Plackett–Luce, Copeland, local
 Kemenization**), ensemble width (6→12 families), and DPP diversity. The ceiling is **0.8779
