@@ -41,3 +41,7 @@ experiments/psi_panel/anon_key.json
 # Study 3b fresh-judge labels (dev artifact; reproducible via study3b_fresh_judge.py)
 experiments/fresh_judge_study3b.jsonl
 experiments/fresh_judge_*.jsonl
+
+experiments/rrf_lock30_submission.csv
+experiments/diff_rrf_vs_hedge.json
+experiments/fresh_judge_decisive.jsonl
