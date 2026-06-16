@@ -46,4 +46,5 @@ report states prevalence cannot be estimated from the corpus.
 Public hiring discourse supports a severity- and evidence-conditioned, verification-first
 workflow — not a universal integrity penalty — justifying a multi-state integrity interface,
 but it does **not** determine the Redrob ranking. The frozen Ψ panel remains the sole
-candidate-specific instrument; golden (`af8f2b32`) remains the submission.
+candidate-specific instrument; golden (`af8f2b32`) remains the production baseline and one-command
+fallback, while the validated severity-gated Copeland hedge (`24f84f4b`) is the shipped submission.

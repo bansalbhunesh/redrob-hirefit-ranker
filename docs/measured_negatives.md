@@ -73,4 +73,9 @@ interactions); NDCG@50 is the genuine weak spot (P@10 ≈ 1.0, NDCG@10 strong); 
 backend-depth scoring run only on alternate JDs — correct, and *by design* (the official bundled
 JD uses the linear path), not a defect. The honest conclusion stands: the model lever is empty
 and the bottleneck is feature information content + true-label availability, so the frozen
-hand-tuned submission (`af8f2b32`, golden-locked) is the expected-value-maximizing ship.
+hand-tuned ranking (`af8f2b32`, golden-locked) is the expected-value-maximizing core. The shipped
+submission is the validated severity-gated Copeland **hedge** (`24f84f4b`) built on it — golden's
+exact top-30 plus a reordered tail — which beats golden on 7/7 proxy label sets and is confirmed by
+two independent cross-family judges (`docs/golden_vs_hedge_two_studies.md`), with golden retained as
+the one-command fallback. The hedge is a deterministic post-hoc rerank, not a model; the model lever
+remains empty.

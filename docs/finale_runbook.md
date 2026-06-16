@@ -37,7 +37,7 @@ does the ≤100-candidate version of the same flow in the browser.
 | Question a judge asks | Measured answer |
 |---|---|
 | "How fast is the dashboard?" | Showpiece payload (top-100 + full audit data) served from memory in **~3 ms** per request (5-request sample: 2.7-3.8 ms). |
-| "What does live ranking cost?" | **300 real candidates end-to-end in ~0.37 s** through the HTTP API — upload, full 28-feature pipeline, guardrails, reasoning, JSON audit payload (two-run sample: 0.36/0.39 s). That is ~1.2 ms per candidate on commodity CPU, no GPU, no external calls. |
+| "What does live ranking cost?" | **300 real candidates end-to-end in ~0.37 s** through the HTTP API — upload, full 33-feature pipeline, guardrails, reasoning, JSON audit payload (two-run sample: 0.36/0.39 s). That is ~1.2 ms per candidate on commodity CPU, no GPU, no external calls. |
 | "At Redrob scale?" | 100K candidates in 80-82 s on a 2-vCPU cloud container (CI-measured, byte-deterministic) — linear in pool size, embarrassingly parallel across JDs, zero marginal API cost. Score updates are a re-rank, not a retrain. |
 | "Per-candidate audit?" | Every ranked candidate carries its full feature/multiplier/flag breakdown in the payload — the audit is precomputed with the rank, not reconstructed on demand. |
 
