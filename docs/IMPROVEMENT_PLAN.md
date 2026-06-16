@@ -91,3 +91,23 @@ Readability first (Phase 1) — it's the visible pain and feeds the README's scr
 next (Phase 2) — its new numbers must land before docs quote them. Tests/research (Phase 3) harden
 the base. Then the README overhaul (Phase 4) consumes the refreshed screenshots and measured
 numbers. Links/consistency (Phase 5) and final validation (Phase 6) lock it.
+
+---
+
+## Status (2026-06-16) — execution log
+
+- **Phase 1 — readability:** ✅ shipped. Render + HF muted contrast `#94A3B8→#B8C4D9`, legible
+  disclaimer/term, HF file-widget hardening. Pushed to both remotes.
+- **Phase 2 — performance:** ✅ profiled (`experiments/profile_pipeline.py`); BM25 text processing
+  dominates, already cached+parallel+precompiled; honest verdict = no safe byte-identical speedup;
+  documented in `performance_audit.md`.
+- **Phase 3 — route tests:** ✅ all 13 FastAPI routes covered; closed the `/api/healthz` gap.
+- **Phase 4 — README:** ✅ TOC, 2 mermaid diagrams (architecture + decision/validation), Live-demos
+  section (HF + Render links, demo-video slot), embedded screenshots, full per-source results data +
+  runtime matrix. Screenshots are interim (refresh after redeploy).
+- **Phase 5 — links:** ✅ all internal links/images resolve; HF + Render live (200); study linked.
+- **Phase 6 — validation:** ✅ 198 tests, reproduce.sh green, submission byte-stable each pass.
+
+**Open (user actions / future):** make the GitHub repo public (currently 404 to anonymous);
+record + link the demo video; rotate the API key; refresh the embedded screenshots once the
+contrast redeploys land; optional deeper `experiments/` research-ledger sweep.
