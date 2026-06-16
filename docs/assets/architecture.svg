@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 400" font-family="Inter, Segoe UI, sans-serif" role="img" aria-label="Redrob HireFit Ranker pipeline architecture">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#38BDF8"/>
+    </marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#FBBF24"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1320" height="400" rx="8" fill="#0F172A"/>
+  <text x="24" y="40" fill="#F1F5F9" font-size="20" font-weight="700">Redrob HireFit Ranker — pipeline architecture</text>
+  <text x="24" y="62" fill="#B8C4D9" font-size="12.5">Deterministic · CPU-only · offline · byte-reproducible. Production <tspan font-family="monospace">rank.py</tspan> reproduces golden af8f2b32.</text>
+
+  <!-- arrows (drawn first, under boxes) -->
+  <g stroke="#38BDF8" stroke-width="2" marker-end="url(#arr)">
+    <line x1="180" y1="173" x2="206" y2="173"/>
+    <line x1="366" y1="173" x2="392" y2="173"/>
+    <line x1="552" y1="173" x2="578" y2="173"/>
+    <line x1="738" y1="173" x2="764" y2="173"/>
+    <line x1="924" y1="173" x2="950" y2="173"/>
+    <line x1="1110" y1="173" x2="1136" y2="173"/>
+  </g>
+  <line x1="1217" y1="214" x2="1217" y2="266" stroke="#FBBF24" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrG)"/>
+
+  <!-- box template: card + cyan top accent + title + sub -->
+  <!-- 1 -->
+  <g><rect x="22" y="132" width="158" height="82" rx="4" fill="#1E293B" stroke="#475569"/><rect x="22" y="132" width="158" height="3" rx="2" fill="#38BDF8"/>
+     <text x="101" y="170" text-anchor="middle" fill="#F1F5F9" font-size="15" font-weight="700">100,000</text>
+     <text x="101" y="190" text-anchor="middle" fill="#B8C4D9" font-size="11">candidates · JSONL</text></g>
+  <!-- 2 -->
+  <g><rect x="208" y="132" width="158" height="82" rx="4" fill="#1E293B" stroke="#475569"/><rect x="208" y="132" width="158" height="3" rx="2" fill="#38BDF8"/>
+     <text x="287" y="170" text-anchor="middle" fill="#F1F5F9" font-size="15" font-weight="700">Parse</text>
+     <text x="287" y="190" text-anchor="middle" fill="#B8C4D9" font-size="11">candidate_text (cached)</text></g>
+  <!-- 3 signals -->
+  <g><rect x="394" y="132" width="158" height="82" rx="4" fill="#1E293B" stroke="#475569"/><rect x="394" y="132" width="158" height="3" rx="2" fill="#38BDF8"/>
+     <text x="473" y="163" text-anchor="middle" fill="#F1F5F9" font-size="13.5" font-weight="700">Signals</text>
+     <text x="473" y="182" text-anchor="middle" fill="#B8C4D9" font-size="11">BM25 lexical</text>
+     <text x="473" y="198" text-anchor="middle" fill="#B8C4D9" font-size="11">+ 33-feature matrix</text></g>
+  <!-- 4 -->
+  <g><rect x="580" y="132" width="158" height="82" rx="4" fill="#1E293B" stroke="#475569"/><rect x="580" y="132" width="158" height="3" rx="2" fill="#38BDF8"/>
+     <text x="659" y="170" text-anchor="middle" fill="#F1F5F9" font-size="15" font-weight="700">Weighted</text>
+     <text x="659" y="190" text-anchor="middle" fill="#B8C4D9" font-size="11">base score</text></g>
+  <!-- 5 -->
+  <g><rect x="766" y="132" width="158" height="82" rx="4" fill="#1E293B" stroke="#475569"/><rect x="766" y="132" width="158" height="3" rx="2" fill="#38BDF8"/>
+     <text x="845" y="163" text-anchor="middle" fill="#F1F5F9" font-size="14" font-weight="700">Guardrails</text>
+     <text x="845" y="182" text-anchor="middle" fill="#B8C4D9" font-size="10.5">× behaviour × honeypot</text>
+     <text x="845" y="197" text-anchor="middle" fill="#B8C4D9" font-size="10.5">× disqualifier (multiplicative)</text></g>
+  <!-- 6 -->
+  <g><rect x="952" y="132" width="158" height="82" rx="4" fill="#1E293B" stroke="#475569"/><rect x="952" y="132" width="158" height="3" rx="2" fill="#38BDF8"/>
+     <text x="1031" y="170" text-anchor="middle" fill="#F1F5F9" font-size="15" font-weight="700">Sort</text>
+     <text x="1031" y="190" text-anchor="middle" fill="#B8C4D9" font-size="11">deterministic (score, id)</text></g>
+  <!-- 7 golden -->
+  <g><rect x="1138" y="132" width="158" height="82" rx="4" fill="#1E293B" stroke="#FBBF24"/><rect x="1138" y="132" width="158" height="3" rx="2" fill="#FBBF24"/>
+     <text x="1217" y="170" text-anchor="middle" fill="#F1F5F9" font-size="14" font-weight="700">Golden top-100</text>
+     <text x="1217" y="190" text-anchor="middle" fill="#FBBF24" font-size="11.5" font-family="monospace">af8f2b32</text></g>
+
+  <!-- hedge (shipped) -->
+  <g><rect x="1138" y="268" width="158" height="74" rx="4" fill="#1E293B" stroke="#4ADE80" stroke-dasharray="5 4"/>
+     <text x="1217" y="296" text-anchor="middle" fill="#4ADE80" font-size="13.5" font-weight="700">Shipped hedge</text>
+     <text x="1217" y="316" text-anchor="middle" fill="#4ADE80" font-size="11.5" font-family="monospace">24f84f4b</text>
+     <text x="1217" y="333" text-anchor="middle" fill="#B8C4D9" font-size="9.5">golden top-30 + Copeland tail</text></g>
+  <text x="1126" y="246" text-anchor="end" fill="#FBBF24" font-size="10.5">post-hoc, audited</text>
+
+  <text x="24" y="378" fill="#B8C4D9" font-size="12">CPU-only · offline · deterministic (PYTHONHASHSEED=0) · byte-reproducible · 53 honeypots detected, 0 in the top-100 · ~80s cloud / 165s docker-2cpu (budget 300s)</text>
+</svg>

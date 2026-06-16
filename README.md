@@ -138,18 +138,7 @@ education, behavioural signals) and:
   profile with no activity or an impossible claim is multiplied down, not softly penalised;
 - emits an explainable, **byte-reproducible** top-100 with grounded per-candidate reasoning.
 
-```mermaid
-flowchart LR
-    A["100K candidates<br/>(JSONL)"] --> B["Parse +<br/>candidate_text<br/>(cached)"]
-    B --> C["BM25<br/>lexical base"]
-    B --> D["33-feature<br/>recruiter matrix"]
-    C --> E["weighted<br/>base score"]
-    D --> E
-    E --> F["× behavioural<br/>× honeypot<br/>× disqualifier<br/>(multiplicative guardrails)"]
-    F --> G["deterministic sort<br/>(score, candidate_id)"]
-    G --> H["golden top-100<br/>af8f2b32"]
-    H -. "post-hoc, audited<br/>(golden top-30 + Copeland tail, sev≤1.2)" .-> I["shipped hedge<br/>24f84f4b"]
-```
+![Pipeline architecture — 100K candidates → parse/cache → BM25 + 33-feature signals → weighted base → multiplicative guardrails → deterministic sort → golden top-100, with the shipped hedge as an audited post-hoc rerank](docs/assets/architecture.svg)
 
 CPU-only, fully offline, no network, no model downloads at inference. Determinism is enforced
 (`PYTHONHASHSEED=0`, pinned BLAS threads) and locked by a regression test that re-runs the ranker on
@@ -184,15 +173,7 @@ availability, not the model.**
 
 ## 4. The decision — golden, then the hedge
 
-```mermaid
-flowchart TD
-    G["Golden<br/>(pre-registered default)<br/>composite 0.8625"] --> C{"Copeland beats golden<br/>7/7, +0.0154 blind?"}
-    C -->|"yes, but gain is all<br/>anachronism promotion (65 flagged)"| R["Raw Copeland<br/>= too exposed"]
-    R --> H["Severity-gated HEDGE<br/>golden top-30 + Copeland tail (sev≤1.2)<br/>44 flagged < golden's 52"]
-    H --> V{"Validated?"}
-    V -->|"7/7 sets · holdout 16/20 ·<br/>2 cross-family judges (+0.020/+0.016)"| S["SHIP hedge 24f84f4b"]
-    G -.->|"retained, one command away"| FB["fallback/golden-af8f2b32"]
-```
+![Decision and validation flow — golden baseline → Copeland beats it 7/7 but is anachronism-exposed → severity-gated hedge (golden top-30 + Copeland tail) → validated 4 ways (7/7 sets, holdout 16/20, gpt-4.1 +0.0197, gemini-2.5-pro +0.0160) → ship 24f84f4b, with golden retained as a one-command fallback](docs/assets/decision_flow.svg)
 
 One rank-space family did beat golden on the proxies: **Copeland** (Condorcet pairwise-win
 aggregation over 6 base rankers, +0.0154 blind). But raw Copeland's gain came from promoting
