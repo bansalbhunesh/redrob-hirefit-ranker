@@ -1,39 +1,76 @@
-> ⚠️ **SUPERSEDED — NOT THE SHIPPED SYSTEM. DO NOT CITE AS THE SUBMISSION.**
-> This document describes an *exploratory* learned architecture (trained MMoE, HyRE embeddings,
-> `all-MiniLM-L6-v2`) that was **NOT shipped**. The actual submission is a **deterministic
-> hand-tuned scorer** plus the severity-gated Copeland **hedge** (`24f84f4b`), with golden
-> (`af8f2b32`) as the fallback. Learned/embedding approaches like the one below were **measured and
-> rejected** on the frozen blind arbiter — see `docs/measured_negatives.md`. The "0.935 NDCG@10" and
-> "162 tests" figures here are stale and do not describe the shipped pipeline. Authoritative current
-> docs: `README.md`, `docs/SHIPPING_DECISION.md`, `docs/golden_vs_hedge_two_studies.md`.
+# Final Report — Redrob HireFit Ranker
 
-# Final Report: ConFit v2 Grand Champion Architecture (EXPLORATORY — NOT SHIPPED)
+> Supersedes an earlier draft that described an exploratory trained MMoE/HyRE architecture. That
+> architecture was **not shipped** — learned/embedding approaches were measured and rejected (§3).
+> This report describes the system that is actually submitted.
 
-## Executive Summary
-We successfully implemented the ConFit v2 architecture to resolve the 100-score-gap, hitting all target constraints while maintaining strict determinism.
+## 1. Executive summary
 
-**The One Sentence That Wins:**
-"We replaced post-hoc manual calibration with role-family depth scoring, implemented ConFit v2 RUM hard-negative mining and HyRE hypothetical resume embeddings, trained a Role-Aware Mixture of Experts with 5 role-specific networks, and validated against 500 blind labels from 3 independent judges — achieving 0.935 NDCG@10 and beating the keyword baseline across all 5 role families by 15% margin."
+We submit the **top 100 of 100,000** candidates for a Senior AI Engineer role, produced by a
+deterministic, CPU-only, byte-reproducible ranker. The shipped file is a **severity-gated Copeland
+hedge** (`submission.csv`, sha256 `24f84f4b…`); the production ranker `rank.py` is unchanged and
+reproduces the **golden** baseline (`af8f2b32…`), which is retained as a one-command fallback
+(`fallback/golden-af8f2b32`). The distinguishing contribution is not a model — it is a documented
+**experiment program** that measures every plausible alternative against a frozen blind arbiter and
+ships only what survives, with the golden→hedge upgrade independently validated.
 
-## Ablation Study Results
-The step-by-step performance gains against the frozen 500 blind labels (with 1000 resamples for 95% CIs) confirm the effectiveness of each architectural layer:
+## 2. The shipped system
 
-| Model | NDCG@10 | Pearson | Delta |
-|-------|---------|---------|-------|
-| BM25 only | 0.7500 | 0.55 | — |
-| +Hand-tuned | 0.8800 | 0.78 | +0.1300 |
-| +Depth scoring | 0.8943 | 0.82 | +0.0143 |
-| +HyRE | 0.9100 | 0.85 | +0.0157 |
-| **+MMoE** | **0.9350** | **0.88** | **+0.0250** |
+- **Input → output:** structured candidate JSONL → BM25 lexical base → **33-feature** deterministic
+  recruiter matrix (skills, career evidence, seniority band, Python/eval and role-family depth,
+  location, availability) → multiplicative behavioural / honeypot / disqualifier guardrails →
+  explainable top-100 with grounded reasoning.
+- **Determinism:** `PYTHONHASHSEED=0` + pinned BLAS threads → identical output across CPU counts,
+  locked by a 2k-slice regression hash. **198 tests, 0 skipped.**
+- **Budget:** full 100K in ~80s (cloud 2-vCPU), 165s under `docker --cpus=2 --memory=16g`, worst
+  recorded 193.4s — all inside the 300s limit; peak ~6.1 GB of 16 GB. CPU-only, offline, no LLM at
+  inference.
+- **Integrity:** 0 of 53 detected honeypots reach the top-100.
 
-## Implementation Details
+## 3. The experiment program — measured negatives
 
-1. **RUM Hard Negative Mining**: Mined runner-ups (top 3-4% similarity zone) to identify "traps" like honeypots and keyword stuffers. Validated that depth scoring successfully catches the vast majority of these edge cases.
-2. **HyRE Embeddings**: Generated and embedded hypothetical perfect resumes across 5 major role families (AI, Backend, DevOps, Data/BI, Search) using `all-MiniLM-L6-v2`. This semantic feature dynamically pulls matching candidates.
-3. **Role-Aware MMoE**: Replaced the global linear fallback with a Mixture of Experts. A gating network routes candidates based on JD text to one of 5 PyTorch/NumPy-based MLPs trained on role-specific synthetic label distributions.
-4. **Blind Evaluator Pack**: Eliminated evaluator drift by locking down 500 strictly-sampled candidates using 3 synthetic proxy judges.
+Every plausible upgrade was built and scored against the **frozen 100K blind arbiter**
+(`h2_availblind_labels.jsonl`, frozen before tuning) and rejected on evidence: static dense
+embeddings (+0.0000 at 2.2× runtime), learned logistic weights (0.8238 vs 0.8811), three LambdaMART
+rerankers (incl. one trained on the blind labels themselves), a top-K cross-encoder, and the
+ACL-2026 **DART** test-time reranker — replicated *above* its published gain yet 23% relative worse.
+**Conclusion: the model/trick lever is empty; the bottleneck is hidden-label information, not the
+model.** Full ledger: `docs/measured_negatives.md`.
 
-## Performance Constraints
-The complete architecture (when evaluated natively without multiprocessing overhead on Windows with 2 CPU cores) completes the 100K test suite inside of **90 seconds**, safely beneath the 200-second bound.
+## 4. The decision — golden, then the hedge
 
-All `162` unit tests remain completely green. The model is prepared for production release.
+One rank-space family beat golden on the proxies: **Copeland** (Condorcet aggregation over 6 base
+rankers). Raw Copeland's gain, however, came from promoting tenure-**anachronism** candidates — a bet
+that loses if hidden judges date-check tenure. The shipped **hedge** is the disciplined version:
+golden's **exact top-30**, then ranks 31–100 re-drawn by Copeland, excluding anachronism candidates
+with severity > 1.2. Consequence (verified): hedge ≡ golden through rank 30, so **NDCG@10 is
+unchanged**; the gain is a cleaner tail; and the hedge carries **fewer anachronism candidates than
+golden** (44 vs 52). See `docs/SHIPPING_DECISION.md`.
+
+## 5. Validation — golden vs hedge under one frozen protocol
+
+(`docs/golden_vs_hedge_two_studies.md`)
+
+| Study | Result |
+|---|---|
+| Golden vs hedge, 7 label sets (retrospective) | hedge **7/7**, all gain in NDCG@50/MAP |
+| Out-of-sample holdout (R=20) | generalizes: mean **+0.012**, 16/20 splits positive |
+| Independent judge gpt-4.1 (never selected against) | composite **+0.0197** |
+| Independent judge gemini-2.5-pro (different lab, integrity-strict) | composite **+0.0160** |
+| Promoted vs dropped candidates | promoted rated above dropped by **both** judges |
+| Anachronism vs clean | **23 of 36 promotions are clean** upgrades, not the bet |
+| Added integrity exposure | none — strict judge flags **32 = 32** in golden and hedge |
+
+Two independent judges from different labs confirm the hedge and agree its swaps are genuine
+upgrades, with no added integrity exposure. The honest limit: all judges are **proxies**, not the
+official hidden labels, and the gain is tail-only — so the claim is **"the hedge weakly dominates
+golden,"** not "guaranteed to win." Golden reverts in one command if the Ψ human panel later shows
+the promoted tail is integrity-compromised.
+
+## 6. Why this submission is trustworthy
+
+It is fully **reproducible** (one command, byte-identical), fully **explainable** (every score
+traces to named features and gates), and every claim here is **measured and recorded** — including
+the negatives. The shipped upgrade is validated by independent judges, not asserted. That is the
+case: not "we got a high score," but "here is the evidence, the alternatives we rejected, and why
+this is the expected-value-maximising ship."

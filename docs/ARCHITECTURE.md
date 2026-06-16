@@ -20,7 +20,7 @@ flowchart LR
     B --> C["structured text renderer"]
     C --> D["phrase and concept expansion"]
     D --> E["BM25 score: bm25s preferred"]
-    B --> F["28-feature extractor"]
+    B --> F["33-feature extractor"]
     E --> G["weighted base score"]
     F --> G
     F --> H["behavioral multiplier"]

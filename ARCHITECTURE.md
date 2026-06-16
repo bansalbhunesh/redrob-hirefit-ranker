@@ -28,7 +28,7 @@ flowchart LR
 ## 3. Core Design
 
 - BM25 is a compact lexical signal, not the final judge.
-- The 28-feature matrix encodes JD intent: production retrieval/ranking, product-company history, Python/evaluation, seniority, location, availability, and trap avoidance.
+- The 33-feature matrix encodes JD intent: production retrieval/ranking, product-company history, Python/evaluation, seniority, role-family depth, location, availability, and trap avoidance.
 - Multipliers enforce recruiter reality: a technically strong but unreachable or impossible profile should fall sharply.
 - Reasoning is generated from actual profile fields and feature triggers only.
 

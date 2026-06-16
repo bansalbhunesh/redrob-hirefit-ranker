@@ -126,6 +126,6 @@ worlds; real path reports AWAITING DATA until `responses.jsonl` is filled).
 
 ## 10. Status
 
-Instrument **frozen and ready**; golden (`af8f2b32`) untouched and reproducible (171 tests).
+Instrument **frozen and ready**; golden (`af8f2b32`) untouched and reproducible (198 tests).
 Awaiting 9 real reviewers. This is the one piece of information that changes the decision — and
 the correct next move is to purchase it, not to build another algorithm.

@@ -10,7 +10,7 @@ Plan D v2 pipeline:
 2. Render structured candidate text from profile, career, skills, education, logistics, and Redrob signals.
 3. Render deterministic semantic concept markers and phrase tokens for plain-language retrieval, RAG, vector, recommender, and evaluation evidence.
 4. Compute BM25 lexical scores using `bm25s.get_scores()` when installed, otherwise `rank-bm25`.
-5. Extract a deterministic 28-feature matrix for every loaded candidate.
+5. Extract a deterministic 33-feature matrix for every loaded candidate.
 6. Compute `base_score` from technical/career/logistics/BM25 features.
 7. Apply `base_score * behavioral_multiplier * honeypot_multiplier * disqualifier_multiplier`.
 8. Sort deterministically and output exactly 100 grounded rows.

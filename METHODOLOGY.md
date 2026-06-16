@@ -25,7 +25,7 @@ So the ranker is designed to read **careers and behavior**, not skill lists.
 candidates.jsonl
    → Parse + structured text
    → BM25 lexical relevance        (one signal)
-   → 28-feature recruiter matrix    (skills, career evidence, seniority, behavior, logistics)
+   → 33-feature recruiter matrix    (skills, career evidence, seniority, role-family depth, behavior, logistics)
    → Weighted base score
    → × Behavioral multiplier        (availability / responsiveness)
    → × Honeypot multiplier          (hard 0 for impossible profiles)
@@ -78,7 +78,7 @@ built, measured against a rule fixed in advance, and committed when it lost:
    runtime → rejected by the pre-committed gate.
 2. **Learned logistic-regression weights**: composite 0.8238 vs 0.8811 hand-tuned,
    even on labels that structurally favor the learner (docs/learned_weights_appendix.md).
-3. **LambdaMART challenger** on the shipped 28 features + recovered generator
+3. **LambdaMART challenger** on the shipped 33 features + recovered generator
    structure, trained on ~1.5K LLM judgments: −0.0061 against a pre-registered
    +0.005 adoption gate (docs/ltr_challenger_study.md).
 4. **Declined availability hedge**: +0.0135 only under an availability-blind label

@@ -92,7 +92,7 @@ is committed as the lockbox record.
 | Composite improvement | ≥ pre-registered threshold | **FAIL** (−0.13 on every label set) |
 | Leave-one-label-family-out | positive/neutral on every family | **FAIL** (negative on all 7) |
 | Prospective human integrity set | positive | **PENDING** (lockbox frozen; needs the panel) |
-| Golden baseline | untouched & reproducible | **pass** (`af8f2b32`, 171 tests) |
+| Golden baseline | untouched & reproducible | **pass** (`af8f2b32`, 198 tests) |
 
 ## 7. Decision
 

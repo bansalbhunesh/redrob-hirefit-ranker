@@ -10,7 +10,7 @@ The ideal candidate has production retrieval/ranking/search experience, product-
 
 ## 3. Architecture
 
-Candidate JSONL -> BM25 lexical score -> 28 deterministic features -> behavioral/honeypot/disqualifier multipliers -> top-100 CSV with grounded reasoning.
+Candidate JSONL -> BM25 lexical score -> 33 deterministic features -> behavioral/honeypot/disqualifier multipliers -> top-100 CSV with grounded reasoning.
 
 Dashboard payloads expose the same feature values, flags, and multipliers used by the ranker, not guesses derived from explanation text.
 
