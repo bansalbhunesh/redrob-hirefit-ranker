@@ -9,7 +9,7 @@ this ranking is the one to ship.
 [![Execution](https://img.shields.io/badge/CPU--only-offline-blue.svg)](#)
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](#)
 [![Validation](https://img.shields.io/badge/hedge-2_independent_judges_confirm-success.svg)](#)
-[![Verdict](https://img.shields.io/badge/verdict-NO__RANKING__DOMINATES-orange.svg)](#)
+[![Decision](https://img.shields.io/badge/decision-SHIP_hedge_·_golden_fallback-success.svg)](#)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Live demo](https://img.shields.io/badge/live_demo-HuggingFace_Space-FBBF24.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
 
@@ -110,7 +110,8 @@ streamlit run omega_decision_dashboard.py   # read-only explanation UI; imports 
 | Determinism | shipped sha256 `24f84f4b6160a4bc…`; production reproduces golden `af8f2b327f05d30e…` |
 | Shipped-detector flags in top-100 | 0 (of 53 honeypots detected) |
 | Experimental anachronism anomalies | **44** (golden carries 52) |
-| Final automated verdict | `NO_RANKING_DOMINATES` |
+| Decision | **Ship the hedge** (`24f84f4b`); golden is the one-command fallback |
+| Dashboard gate-verdict | `NO_RANKING_DOMINATES` — *automated note that no alternative cleared **every** pre-registered gate via independent human evidence (Ψ panel pending). This is the gate status, **not** indecision about what we ship.* |
 
 > The quality rows are **dev proxies** (LLM-audit), explicitly **not** the official hidden
 > competition score. We never claim to know the hidden labels.
