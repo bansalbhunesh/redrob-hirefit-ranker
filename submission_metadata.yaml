@@ -55,15 +55,19 @@ ai_usage_summary: |
   to hosted LLM APIs during ranking.
 
 methodology_summary: |
-  Offline Plan D v2 ranker for the Senior AI Engineer JD. BM25 provides lexical
-  fit (bm25s preferred, rank-bm25 fallback), while a deterministic 28-feature
-  matrix scores skills, career, experience, behavior, and logistics. The final
-  score applies multiplicative behavioral, honeypot, and JD-disqualifier
-  multipliers. Salary inversion and endorsement inflation are treated as soft
-  disqualifier signals rather than hard honeypots. No hosted LLM/API scoring is
-  used during ranking; reasoning is generated from actual candidate facts and
-  feature triggers. A heuristic silver-label harness is included for development
-  and defense, not as a claim about the hidden challenge labels.
+  Offline ranker for the Senior AI Engineer JD. Production rank.py: BM25 lexical
+  fit (bm25s preferred, rank-bm25 fallback) + a deterministic 33-feature matrix
+  (skills, career evidence, seniority, role-family depth, behavior, logistics)
+  with multiplicative behavioral, honeypot, and JD-disqualifier multipliers; no
+  hosted LLM/API scoring during ranking; reasoning generated from actual candidate
+  facts. The SHIPPED submission is the severity-gated "hedge": a deterministic
+  post-hoc Copeland reranking of rank.py's pool (build_hedge_submission.py) that
+  promotes an anachronism candidate only when claimed tenure <=1.2x the
+  technology's age and EXCLUDES egregious impossible-tenure cases — the
+  integrity-safe choice. It carries fewer anachronism candidates than the golden
+  baseline (44 vs 52) and 0 honeypots in the top-100. All ranking-quality numbers
+  are development proxies (heuristic + LLM-judge labels); no official hidden labels
+  were available before submission.
 
 declarations:
   read_submission_spec: true
