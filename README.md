@@ -24,7 +24,7 @@ AI Engineer role — with receipts for *why* this ranking is the one to ship.
 - **The receipts:** **10+ alternatives measured and rejected** (cross-encoder, DART, LightGBM, learned weights, embeddings…), **198 tests / 0 skipped**, **0 honeypots** in the top-100, **#1 on the proxy vs a 20-repo competitor sample**, live demos on **HuggingFace + Render**.
 - **Honest limit:** ranking quality is label-bound (proven, ~0.878 ceiling for every method incl. cross-encoders) — our edge is **rigor, reproducibility, integrity, and explainability**, not a bigger model. The external recruiter cross-check above *supports* this; our own frozen Ψ human lockbox is still awaiting reviewers.
 
-**Contents:** [Quick start](#quick-start) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--golden-then-the-hedge) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
+**Contents:** [Quick start](#quick-start) · [Product](PRODUCT.md) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--golden-then-the-hedge) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
 
 ## Quick start
 
@@ -132,7 +132,8 @@ best local Docker / 165s under `--cpus=2 --memory=16g`, all inside the 300s budg
 
 ## Documentation map
 
-- **Decision & validation:** [SHIPPING_DECISION](docs/SHIPPING_DECISION.md) · [golden_vs_hedge_two_studies](docs/golden_vs_hedge_two_studies.md) · [decisive_integrity_eval](docs/decisive_integrity_eval.md) · [best_of_best_meta_study](docs/best_of_best_meta_study.md)
+- **Product (recruiter view):** [PRODUCT](PRODUCT.md) — the recruiter journey + the integrity decision-support differentiator (CONTINUE/CLARIFY/VERIFY/BLOCK)
+- **Decision & validation:** [SHIPPING_DECISION](docs/SHIPPING_DECISION.md) · [external_recruiter_validation](docs/external_recruiter_validation.md) · [golden_vs_hedge_two_studies](docs/golden_vs_hedge_two_studies.md) · [decisive_integrity_eval](docs/decisive_integrity_eval.md) · [best_of_best_meta_study](docs/best_of_best_meta_study.md)
 - **What we rejected:** [measured_negatives](docs/measured_negatives.md) · [why_not_reranker](docs/why_not_reranker.md) · [beyond_hedge_sweep](docs/beyond_hedge_sweep.md)
 - **Reproduce / runtime:** [REPRODUCTION](docs/REPRODUCTION.md) · [runtime_matrix](docs/runtime_matrix.md) · [SUBMISSION_CHECKLIST](docs/SUBMISSION_CHECKLIST.md)
 - **Decision frameworks (research):** Ω [OMEGA_DECISION_SUMMARY](docs/OMEGA_DECISION_SUMMARY.md) · Ψ [PSI_INTEGRITY_PANEL](docs/PSI_INTEGRITY_PANEL.md) · Φ [human_opinion/HUMAN_OPINION_LANDSCAPE](docs/human_opinion/HUMAN_OPINION_LANDSCAPE.md)
