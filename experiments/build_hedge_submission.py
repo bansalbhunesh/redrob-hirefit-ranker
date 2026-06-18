@@ -5,6 +5,7 @@ plausibly rounding); exclude the egregious cases a human would flag. Keeps near-
 upside while cutting the anachronism-penalty downside below even golden. Non-golden path;
 production rank.py untouched. Mirrors build_copeland_submission.py.
 """
+import os
 import sys
 import tempfile
 from pathlib import Path
@@ -24,7 +25,10 @@ from redrob_ranker.reasoning import build_reason  # noqa: E402
 from redrob_ranker.validation import validate_rows  # noqa: E402
 
 OUT = Path("experiments/hedge_submission.csv")
-LAB = Path("C:/Users/bhune/india-runs-compare-lab/artifacts")
+# Optional extra label sets for the post-build comparison print only (does NOT affect the
+# produced submission). Defaults to the repo's artifacts/; override with REDROB_LAB_ARTIFACTS.
+# Missing files are skipped gracefully, so reproduction never depends on this path.
+LAB = Path(os.environ.get("REDROB_LAB_ARTIFACTS", "artifacts"))
 SEV_CAP = 1.2
 
 

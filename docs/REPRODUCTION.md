@@ -14,6 +14,19 @@ sha256sum submission.csv                    # -> 24f84f4b6160a4bcb164369c7f6ab27
 #    (retained as the fallback tag fallback/golden-af8f2b32)
 ```
 
+## Regenerate the shipped submission from scratch (deterministic, no manual edits)
+
+```bash
+# requires candidates.jsonl in the repo root; CPU-only, offline
+PYTHONHASHSEED=0 python experiments/_build_pool.py            # candidates.jsonl -> experiments/_pool.pkl (top-3000 pool)
+PYTHONHASHSEED=0 python experiments/build_hedge_submission.py # _pool.pkl       -> experiments/hedge_submission.csv
+cp experiments/hedge_submission.csv submission.csv            # the shipped file
+sha256sum submission.csv                                      # -> 24f84f4b6160a4bc…  (byte-identical)
+```
+Every step is a committed deterministic script — no hidden steps, no manual edits. `_build_pool.py`
+just caches `rank.py`'s top-3000 pool; `build_hedge_submission.py` applies the severity-gated Copeland
+rerank to it.
+
 The shipped submission is the hedge (`24f84f4b`); the production ranker `rank.py` is unchanged and
 deterministically reproduces golden (`af8f2b32`). The hedge is a deterministic, audited post-hoc
 rerank built by `experiments/build_hedge_submission.py` (golden top-30 + Copeland tail, sev≤1.2).
