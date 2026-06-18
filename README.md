@@ -24,7 +24,28 @@ AI Engineer role — with receipts for *why* this ranking is the one to ship.
 - **The receipts:** **10+ alternatives measured and rejected** (cross-encoder, DART, LightGBM, learned weights, embeddings…), **198 tests / 0 skipped**, **0 honeypots** in the top-100, **#1 on the proxy vs a 20-repo competitor sample**, live demos on **HuggingFace + Render**.
 - **Honest limit:** ranking quality is label-bound (proven, ~0.878 ceiling for every method incl. cross-encoders) — our edge is **rigor, reproducibility, integrity, and explainability**, not a bigger model. The external recruiter cross-check above *supports* this; our own frozen Ψ human lockbox is still awaiting reviewers.
 
-**Contents:** [Quick start](#quick-start) · [Product](PRODUCT.md) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--golden-then-the-hedge) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
+**Contents:** [Live links](#live-links) · [Screenshots](#screenshots) · [Quick start](#quick-start) · [Product](PRODUCT.md) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--golden-then-the-hedge) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
+
+## Live links
+
+| Surface | Link | What it is |
+|---|---|---|
+| **Live demo (sandbox)** | **[HuggingFace Space ↗](https://huggingface.co/spaces/bansal1234/Hirefit)** | runs the *real* ranker in-browser — upload → tiered shortlist → **decision verdict** → CSV export |
+| **Product app** | [Render ↗](https://redrob-hirefit-ranker.onrender.com) | hosted recruiter-facing showcase |
+| **Decision dashboard** | `streamlit run omega_decision_dashboard.py` | read-only explainability + integrity cards |
+| **Source** | [GitHub ↗](https://github.com/bansalbhunesh/redrob-hirefit-ranker) | full code · one-command reproduction |
+| **Demo video** | _link to be added_ | 90-second walkthrough |
+
+## Screenshots
+
+| Live HuggingFace Space (sandbox) | Render app |
+|:---:|:---:|
+| [![HuggingFace Space](docs/assets/hf-live-desktop.png)](https://huggingface.co/spaces/bansal1234/Hirefit) | [![Render app](docs/assets/render-desktop.png)](https://redrob-hirefit-ranker.onrender.com) |
+| Upload → tiered shortlist → per-candidate evidence → CSV export | Hosted recruiter-facing product showcase |
+
+**Decision dashboard — integrity review (CONTINUE · VERIFY · BLOCK)**
+
+![Decision dashboard](docs/assets/dashboard-overview.png)
 
 ## Quick start
 
