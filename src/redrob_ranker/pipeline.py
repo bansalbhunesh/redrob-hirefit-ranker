@@ -67,8 +67,6 @@ class RankerConfig:
     # Optional compiled JD (rank.py --jd). None = bundled challenge JD; the
     # None path is byte-identical to the historical pipeline.
     jd: object | None = None
-    # None path is byte-identical to the historical pipeline.
-    jd: object | None = None
 
 
 @dataclass(slots=True)
