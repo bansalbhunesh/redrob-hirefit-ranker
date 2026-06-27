@@ -67,9 +67,9 @@ def _train_booster(X: np.ndarray, y: np.ndarray, seed: int = 0):
         "objective": "lambdarank",
         "metric": "ndcg",
         "ndcg_eval_at": [10, 50],
-        "learning_rate": 0.05,
-        "num_leaves": 31,
-        "min_data_in_leaf": 5,
+        "learning_rate": 0.03,
+        "num_leaves": 8,
+        "min_data_in_leaf": 8,
         "feature_fraction": 0.9,
         "bagging_fraction": 0.9,
         "bagging_freq": 1,
@@ -79,7 +79,7 @@ def _train_booster(X: np.ndarray, y: np.ndarray, seed: int = 0):
         "force_row_wise": True,
         "verbose": -1,
     }
-    return lgb.train(params, dtrain, num_boost_round=300)
+    return lgb.train(params, dtrain, num_boost_round=150)
 
 
 def _composite_on(ids: list[str], preds: np.ndarray, gates: np.ndarray, labels: LabelSet) -> float:

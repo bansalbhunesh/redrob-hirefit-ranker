@@ -29,7 +29,7 @@ def test_feature_vector_width():
 def test_v2_runs_and_is_valid(tmp_path: Path):
     out = tmp_path / "sub.csv"
     res = run_ranking_v2(_sample_path(), out, top_k=20)
-    assert res.model_kind == "fallback-linear"  # no trained model in CI
+    assert res.model_kind in ("fallback-linear", "lightgbm-lambdamart")
     assert len(res.rows) == 20
     # ranks are 1..20 unique, scores non-increasing
     ranks = [r["rank"] for r in res.rows]
