@@ -14,7 +14,7 @@ team_members:
 
 github_repo: "https://github.com/bansalbhunesh/redrob-hirefit-ranker"
 sandbox_link: "https://huggingface.co/spaces/bansal1234/Hirefit"
-reproduce_command: "PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --workers 2 --scoring-profile universal-v2"
+reproduce_command: "PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --workers 2 --scoring-profile loss-aggregate-v3"
 
 compute:
   platform: "Local CPU machine"
@@ -26,10 +26,10 @@ compute:
   has_network_during_ranking: false
   pre_computation_required: false
   pre_computation_time_minutes: 0
-  # universal-v2 exact full-100K reproduction on 2026-06-29: 130.1s host and
-  # 164.1s in the pinned image with --cpus=2 --memory=16g. The two outputs were
+  # loss-aggregate-v3 exact full-100K reproduction on 2026-06-29: 77.4-79.8s
+  # host and 152.8-226.9s in the pinned image with --cpus=2 --memory=16g.
   # byte-identical to the committed artifact and emitted 0 guarded profiles.
-  measured_runtime_seconds: 164.1
+  measured_runtime_seconds: 226.9
   measured_peak_rss_gb: 6.1
   measured_bm25_backend: "bm25s"
   feature_scoring_workers: "auto (up to 8); output identical for any worker count"
@@ -56,12 +56,13 @@ methodology_summary: |
   (skills, career evidence, seniority, role-family depth, behavior, logistics)
   with multiplicative behavioral, honeypot, and JD-disqualifier multipliers; no
   hosted LLM/API scoring during ranking; reasoning generated from actual candidate
-  facts. The branch artifact uses the opt-in universal-v2 evidence blend: stronger
-  production and experience-fit evidence, lower broad-keyword influence, and a
-  compressed availability nudge. Existing honeypot and disqualifier gates remain
-  exact. The model is clean-room: no competitor code, candidate IDs, public ranks,
-  or paragraph fingerprints are in the production path. All ranking-quality
-  numbers are development proxies; no official hidden labels were available.
+  facts. The branch artifact uses opt-in loss-aggregate-v3: seven shallow
+  label-family heads distilled to a 130 KB NumPy artifact, blended with ungated
+  universal-v2 relevance, then passed through the existing integrity multipliers.
+  A conservative RRF lock keeps universal-v2's exact 100-candidate membership.
+  No competitor code, candidate IDs, public ranks, or paragraph fingerprints are
+  in production. All quality numbers are development proxies; no official hidden
+  labels were available.
 
 declarations:
   read_submission_spec: true

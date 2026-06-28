@@ -76,7 +76,11 @@ CANDIDATES = ROOT / "candidates.jsonl"
 #    beats main and top23-clean on all 15 measured full-table evaluators. Full
 #    100K host and 2-CPU/16-GB Docker runs were byte-identical with zero guarded
 #    profiles emitted. The default main profile and slice gate remain unchanged.)
-GOLDEN_SUBMISSION_SHA256 = "c00f708ab63265b73eb280d058ad72376df94c66dc49c50e2027e62ef894e7f3"
+# -> c28857fd... (2026-06-29, codex/universal-v2: loss-aggregate-v3 uses
+#    seven leakage-safe label-family heads and an RRF membership lock. It keeps
+#    v2's exact 100 candidates, improves all 15 measured evaluators, and applies
+#    integrity gates after the model. Host and 2-CPU/16-GB Docker runs matched.)
+GOLDEN_SUBMISSION_SHA256 = "c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0). Rolled

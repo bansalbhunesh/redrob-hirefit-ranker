@@ -1,5 +1,13 @@
 # Docker Runtime Matrix (Phase 0.1)
 
+## 2026-06-29 loss-aggregate-v3 constrained reproduction
+
+The exact branch artifact (`c28857fd…`) was regenerated from all 100,000
+candidates. Host runs were **77.4-79.8 s**. Two pinned Linux container passes
+completed in **152.8 s** and **226.9 s** under `--cpus=2 --memory=16g`, detected 53 honeypots, emitted 0,
+and produced the byte-identical SHA-256
+`c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c`.
+
 > **Note.** Dated entries below reference earlier goldens (`a2882cd2…`). The
 > current golden is `fdfd3f35…` (2026-06-14 reproducibility fix), byte-identical
 > across CPU counts — see `docs/reproducibility_notes.md`.

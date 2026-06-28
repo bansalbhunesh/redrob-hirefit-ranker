@@ -22,6 +22,7 @@ WORKDIR /app
 
 COPY pyproject.toml requirements.txt README.md ./
 COPY src ./src
+COPY models ./models
 COPY rank.py ./rank.py
 
 # Deps come exact-pinned from requirements.txt; the package itself installs

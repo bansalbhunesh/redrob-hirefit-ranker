@@ -2,26 +2,26 @@
   "_purpose": "Single source of truth for every KPI surfaced in README, deck, API demo, and HF Space. tests/test_metrics_manifest.py fails CI if a surface drifts from these values. Update this file FIRST, then the surfaces.",
   "_provenance": "All ranking-quality metrics are DEVELOPMENT PROXIES (independent heuristic + LLM-judge labels on dev samples). No official hidden labels were available before submission. Runtime/memory numbers are measured; sources cited per key.",
   "submission": {
-    "golden_sha256": "c00f708ab63265b73eb280d058ad72376df94c66dc49c50e2027e62ef894e7f3",
-    "_golden_note": "2026-06-29: universal-v2 is the opt-in clean-room branch champion. It beats main and top23-clean on all 15 measured full-table evaluator axes. Full 100K runtime was 130.1 s host and 164.1 s in Docker with --cpus=2 --memory=16g; outputs were byte-identical with 0 guarded profiles emitted. The default main profile and fixed-slice hash remain unchanged.",
+    "golden_sha256": "c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c",
+    "_golden_note": "2026-06-29: loss-aggregate-v3 is the opt-in branch champion. It keeps universal-v2's exact top-100 membership and improves all 15 measured evaluators using seven out-of-fold-gated label-family heads plus a conservative RRF reorder. Full 100K runtime was 77.4-79.8 s host and 152.8-226.9 s in Docker with --cpus=2 --memory=16g; outputs were byte-identical with 0 guarded profiles emitted. The default main profile and fixed-slice hash remain unchanged.",
     "rows": 100,
     "total_candidates": 100000,
     "honeypots_detected": 53,
     "honeypots_in_top100": 0,
-    "avg_top100_score": 0.7759,
+    "avg_top100_score": 0.5866,
     "membership_validated": "scripts/validate_submission.py --candidates candidates.jsonl (2026-06-29: all 100 IDs present in pool)"
   },
   "runtime": {
     "_source": "docs/runtime_matrix.md",
     "budget_s": 300,
-    "cloud_2vcpu_serial_s": 130.1,
-    "local_docker_serial_best_s": 164.1,
+    "cloud_2vcpu_serial_s": 77.4,
+    "local_docker_serial_best_s": 152.8,
     "local_docker_pinned_image_s": 138.3,
-    "local_docker_serial_worst_recorded_s": 193.4,
-    "worst_ever_under_host_load_s": 215.1,
-    "conservative_reported_s": 187,
-    "showpiece_recorded_run_ms": 164100,
-    "_showpiece_note": "apps/api/data/precomputed.json replays the exact universal-v2 top-100 and the constrained 2-CPU/16-GB Docker runtime."
+    "local_docker_serial_worst_recorded_s": 226.9,
+    "worst_ever_under_host_load_s": 226.9,
+    "conservative_reported_s": 226.9,
+    "showpiece_recorded_run_ms": 226900,
+    "_showpiece_note": "apps/api/data/precomputed.json replays the exact loss-aggregate-v3 top-100 and the conservative constrained 2-CPU/16-GB Docker runtime."
   },
   "memory": {
     "_source": "docs/runtime_matrix.md",
@@ -34,11 +34,11 @@
     "p10": 1.0,
     "ndcg10": 0.9104,
     "top10_tiers": [5, 5, 4, 5, 5, 5, 5, 5, 5, 4],
-    "composite_independent": 0.8842,
-    "composite_judge1": 0.9318,
-    "composite_judge2": 0.9665,
-    "composite_judge3": 0.9394,
-    "_composite_note": "universal-v2 exact full-100K artifact; quality numbers are development proxies, not official hidden labels",
+    "composite_independent": 0.8859,
+    "composite_judge1": 0.9321,
+    "composite_judge2": 0.9666,
+    "composite_judge3": 0.9421,
+    "_composite_note": "loss-aggregate-v3 exact full-100K artifact; quality numbers are development proxies, not official hidden labels",
     "judge_agreement_kappa_range": [0.918, 0.935]
   },
   "reranker_measured_negative": {
@@ -52,22 +52,22 @@
     "reranker_v2_blind_ndcg50": 0.8404,
     "_delta": "composite -0.0307, NDCG@10 -0.0695, NDCG@50 +0.0135 -- improved @50 but destroyed @10 (50% of the composite). Looked positive only on a curated 249-candidate LLM-judge sample (gpt-4.1-mini +0.027, deepseek +0.085, claude-3.5-haiku +0.019, gemini-3.1-flash-lite +0.049 composite); none generalized to the 100K blind set."
   },
-  "tests_collected": 211,
-  "tests_passing": 205,
+  "tests_collected": 215,
+  "tests_passing": 209,
   "tests_skipped": 6,
   "feature_count": 33,
   "_feature_count_note": "len(FEATURE_NAMES) in src/redrob_ranker/features.py; guarded by tests/test_metrics_manifest.py. Pipeline-description surfaces must quote 33; measurement docs (ablation, learned-weights) keep their historical 28-feature base.",
   "bm25_backend": "bm25s",
   "external_recruiter_validation": {
     "_label": "External cross-check vs a real recruiter-labeled set published by participant 'Sifter' (shikhar1809): 180 reviewer + 50 BLIND technical-recruiter labels. Separate from our own Ψ lockbox (still awaiting). Source: docs/external_recruiter_validation.md.",
-    "universal_v2_reviewer_composite": 0.8065,
-    "universal_v2_blind_composite": 0.8964,
-    "universal_v2_reviewer_coverage": 0.62,
-    "universal_v2_blind_coverage": 0.24,
-    "_universal_v2_note": "Beats main and top23-clean on both full public recruiter slices; small blind coverage makes split estimates noisy.",
+    "loss_aggregate_v3_reviewer_composite": 0.8096,
+    "loss_aggregate_v3_blind_composite": 0.8969,
+    "loss_aggregate_v3_reviewer_coverage": 0.62,
+    "loss_aggregate_v3_blind_coverage": 0.24,
+    "_loss_aggregate_v3_note": "Beats main, top23-clean, and universal-v2 on both full public recruiter slices; small blind coverage makes split estimates noisy.",
     "competitor_crossencoder_blind_ndcg10": 0.7096,
     "_crossencoder_note": "We reproduced the competitor's ms-marco-MiniLM cross-encoder + semantic stack and validated fresh on the blind recruiter: 0.71 vs our 0.90. Their lead on their own labels is training-on-those-labels + selection bias, not transferable.",
     "blind_holdout_coverage": "24% (24 ranked candidates) -- small sample, directional",
-    "public_field_position": "#1 seven-world mean; #17 H2, #119 reviewer, #24 blind among 665 valid public outputs; no public output dominates universal-v2 across all four axes"
+    "public_field_position": "#1 seven-world mean; #16 H2, #113 reviewer, #23 blind among 665 valid public outputs; no public output dominates loss-aggregate-v3 across all four axes"
   }
 }

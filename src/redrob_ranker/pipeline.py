@@ -50,19 +50,22 @@ def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
     """
     candidate, retrieval_score, semantic_score = args
     features = compute_features(candidate, config=_WORKER_JD)
-    if _WORKER_SCORING_PROFILE in {"top23-clean", "universal-v2"}:
+    if _WORKER_SCORING_PROFILE in {"top23-clean", "universal-v2", "loss-aggregate-v3"}:
         if _WORKER_JD is not None:
             raise ValueError(
                 f"{_WORKER_SCORING_PROFILE} currently supports only the bundled challenge JD"
             )
         from redrob_ranker.challenger import top23_clean_score, universal_v2_score
 
-        profile_score = (
-            top23_clean_score
-            if _WORKER_SCORING_PROFILE == "top23-clean"
-            else universal_v2_score
-        )
+        profile_score = top23_clean_score if _WORKER_SCORING_PROFILE == "top23-clean" else universal_v2_score
         score = profile_score(features, retrieval_score, semantic_score)
+        if _WORKER_SCORING_PROFILE == "loss-aggregate-v3":
+            features.values["_main_score"] = final_score(
+                features,
+                retrieval_score,
+                semantic_score,
+                config=_WORKER_JD,
+            )
     else:
         score = final_score(features, retrieval_score, semantic_score, config=_WORKER_JD)
     features.total = score
@@ -215,6 +218,10 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
             print(f"MMoE scoring failed, falling back to heuristic stack: {e}")
 
     ranked.sort(key=lambda item: (-item[2], item[0]["candidate_id"]))
+    if config.scoring_profile == "loss-aggregate-v3":
+        from redrob_ranker.loss_aggregate import rerank_loss_aggregate
+
+        ranked = rerank_loss_aggregate(ranked)
     return ranked, used_backend
 
 
