@@ -96,6 +96,13 @@ def parse_args() -> argparse.Namespace:
         help="Static embedding model for --use-embeddings.",
     )
     parser.add_argument(
+        "--scoring-profile",
+        choices=["main", "top23-clean"],
+        default="main",
+        help="Scoring profile. main preserves the shipped scorer; top23-clean "
+        "enables the clean-room public-pattern challenger for the bundled JD.",
+    )
+    parser.add_argument(
         "--profile-memory",
         action="store_true",
         help="Print Python tracemalloc peak memory for local profiling.",
@@ -189,6 +196,7 @@ def main() -> None:
         workers=args.workers,
         use_embeddings=args.use_embeddings,
         embed_model=args.embed_model,
+        scoring_profile=args.scoring_profile,
         jd=compiled_jd,
     )
     if args.profile_memory:

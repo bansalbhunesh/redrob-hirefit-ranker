@@ -3,25 +3,27 @@
 A deterministic, evidence-aware system that ranks the **top 100 of 100,000** candidates for a Senior
 AI Engineer role — with receipts for *why* this ranking is the one to ship.
 
-[![Tests](https://img.shields.io/badge/tests-198_passed_0_skipped-brightgreen.svg)](#)
-[![Runtime](https://img.shields.io/badge/100K-80s_cloud_·_165s_Docker_2cpu-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-198_passed_6_skipped-brightgreen.svg)](#)
+[![Runtime](https://img.shields.io/badge/100K-80s_host_·_221s_Docker_2cpu-brightgreen.svg)](#)
 [![Execution](https://img.shields.io/badge/CPU--only-offline-blue.svg)](#)
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](#)
 [![Validation](https://img.shields.io/badge/hedge-2_independent_judges_confirm-success.svg)](#)
-[![Decision](https://img.shields.io/badge/decision-SHIP_hedge_·_golden_fallback-success.svg)](#)
+[![Decision](https://img.shields.io/badge/decision-top23--clean_branch_champion-success.svg)](#)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Live demo](https://img.shields.io/badge/live_demo-HuggingFace_Space-FBBF24.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
 
-`Hedge shipped · golden fallback` · `Dashboard available` · `Human lockbox: AWAITING DATA`
+`Experimental branch champion: top23-clean` · `main remains untouched` · `Human lockbox: AWAITING DATA`
 
 ---
 
 ## ⚡ For judges — the 30-second version
 
-- **What we ship:** a deterministic, CPU-only, byte-reproducible top-100 — the **severity-gated hedge** (`24f84f4b`). Golden (`af8f2b32`) is the **one-command fallback**.
+- **What this branch tests:** a deterministic, CPU-only, clean-room `top23-clean` scorer (`7d9dd8ef`) built from recurring public-repository ideas, without competitor code, IDs, paragraph fingerprints, or ranking files in the production path.
+- **Measured result:** beats `main` on **7/7 internal label worlds and both external recruiter checks**; seven-world mean **0.8971 vs 0.8727**, blind proxy **0.8777 vs 0.8748**, reviewer **0.7828 vs 0.7106**, blind recruiter **0.8746 vs 0.8718**.
+- **Runtime and integrity:** full 100K in **80.0s host / 221.4s Docker (`--cpus=2 --memory=16g`)**, exact same hash across three runs, and **0 honeypots** in the top 100.
 - **Why it's the ship:** beats golden on **7/7** label sets and is confirmed by **two independent cross-family LLM judges it was never tuned against** (gpt-4.1 **+0.0197**, gemini-2.5-pro **+0.0160**); generalizes out-of-sample (16/20 splits). We even built the *higher-composite* alternative and **rejected it** when a blinded integrity judge found its picks not clearly better.
 - **A real recruiter confirms it:** an independent recruiter's published labels rank the shipped hedge **best of all our candidate artifacts** on the blind second-recruiter holdout (NDCG@10 **0.904** vs alternatives 0.862) with **0 "not_fit"** in the top-100 — the integrity-safe choice validated by a real human judge. A rival's fine-tuned **cross-encoder scores 0.71** when we validate it the same way; its lead is training-on-its-own-labels, not transferable. ([details](docs/external_recruiter_validation.md))
-- **The receipts:** **10+ alternatives measured and rejected** (cross-encoder, DART, LightGBM, learned weights, embeddings…), **198 tests / 0 skipped**, **0 honeypots** in the top-100, **#1 on the proxy vs a 20-repo competitor sample**, live demos on **HuggingFace + Render**.
+- **The receipts:** **198 tests passed / 6 environment skips**, 656 public submission artifacts compared, five strongest available repositories inspected, and a direct rank-fusion ceiling kept research-only.
 - **Honest limit:** ranking quality is label-bound (proven, ~0.878 ceiling for every method incl. cross-encoders) — our edge is **rigor, reproducibility, integrity, and explainability**, not a bigger model. The external recruiter cross-check above *supports* this; our own frozen Ψ human lockbox is still awaiting reviewers.
 
 **Contents:** [Live links](#live-links) · [Screenshots](#screenshots) · [Quick start](#quick-start) · [Product](PRODUCT.md) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--golden-then-the-hedge) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
@@ -50,10 +52,11 @@ AI Engineer role — with receipts for *why* this ranking is the one to ship.
 ## Quick start
 
 ```bash
-./reproduce.sh        # production gate + shipped-hash check; runs NO research code
+PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl \
+  --out submission.csv --workers 2 --scoring-profile top23-clean
 ```
-Runs `rank.py` (which reproduces golden `af8f2b32` byte-for-byte), validates, and checks the shipped
-`submission.csv` (the hedge, `24f84f4b`). **Live:** [HuggingFace Space](https://huggingface.co/spaces/bansal1234/Hirefit)
+Runs the opt-in clean-room challenger. Omitting `--scoring-profile` preserves `main`'s historical
+ranking behavior byte-for-byte. **Live:** [HuggingFace Space](https://huggingface.co/spaces/bansal1234/Hirefit)
 · [Render app](https://redrob-hirefit-ranker.onrender.com) · `streamlit run omega_decision_dashboard.py`
 (read-only explanation UI). **Demo video:** _link to be added._
 
@@ -61,18 +64,18 @@ Runs `rank.py` (which reproduces golden `af8f2b32` byte-for-byte), validates, an
 
 | Property | Verified value |
 |---|---|
-| Shipped submission | **Severity-gated Copeland hedge** (`24f84f4b`); golden `af8f2b32` = `fallback/golden-af8f2b32` tag |
-| Production pipeline | Deterministic `rank.py`, **33-feature** scorer — reproduces golden byte-for-byte |
+| Branch submission | **Clean-room public-pattern challenger** (`7d9dd8ef`); `main` is unchanged |
+| Production pipeline | Deterministic `rank.py`, **33-feature** scorer; challenger is opt-in with `--scoring-profile top23-clean` |
 | Dataset | 100,000 candidates → top-100 |
-| Tests | 198 passed, 0 skipped |
-| Hedge vs golden (blind arbiter) | composite **0.8748 vs 0.8625**, **beats golden 7/7** — *dev proxy / LLM-audit; **No official hidden labels*** |
+| Tests | 198 passed, 6 environment skips |
+| Challenger vs main | seven-world mean **0.8971 vs 0.8727**, **wins 7/7** — *dev proxy / LLM-audit; **No official hidden labels*** |
 | Independent confirmation | gpt-4.1 **+0.0197** · gemini-2.5-pro **+0.0160** (never selected against) |
 | Dev-proxy quality | NDCG@10 0.8943 · P@10 = 1.0 — *dev proxy* |
-| Runtime | ~80s cloud 2-vCPU · best local Docker ~125s · 165s docker `--cpus=2 --memory=16g` (budget 300s) |
+| Runtime | **80.0s host · ~221s Docker `--cpus=2 --memory=16g`** (measured 221.4s; budget 300s) |
 | Memory | peak ~6.1 GB / 16 GB |
 | Execution | CPU-only, offline, deterministic (`PYTHONHASHSEED=0`) |
 | Integrity | shipped-detector flags in top-100: **0**; anachronism anomalies: **44** (golden 52) |
-| Decision | **Ship the hedge** (golden = one-command fallback) |
+| Decision | **Branch champion; keep isolated until independent review** |
 
 > The quality rows are **dev proxies** (LLM-audit), explicitly **not** the official hidden score.
 
@@ -143,12 +146,12 @@ layer maps those to `VERIFY` (human review) — it never asserts fraud and never
 ## Reproduce
 
 ```bash
-./reproduce.sh                       # production gate + shipped-hash check
-sha256sum submission.csv             # -> 24f84f4b6160a4bc… (shipped hedge)
-# production rank.py reproduces golden af8f2b327f05d30e… (verified by the slice gate)
+PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl \
+  --out submission.csv --workers 2 --scoring-profile top23-clean
+sha256sum submission.csv             # -> 7d9dd8efc7483852…
 ```
-CPU-only, offline, deterministic. Full 100K byte-identical to golden every run: ~80s cloud / ~125s
-best local Docker / 165s under `--cpus=2 --memory=16g`, all inside the 300s budget. Details:
+CPU-only, offline, deterministic. Full 100K reproduced byte-identically twice on the host and once
+in Docker; 80.0s host / 221.4s under `--cpus=2 --memory=16g`, inside the 300s budget. Details:
 `docs/REPRODUCTION.md` · `docs/runtime_matrix.md`.
 
 ## Documentation map

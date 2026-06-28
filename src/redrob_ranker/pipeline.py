@@ -33,11 +33,13 @@ def _submission_score(raw_score: float, max_score: float) -> float:
 # Per-worker compiled JD (None = bundled challenge JD). Set once per worker
 # process via the pool initializer so it is pickled once, not per candidate.
 _WORKER_JD = None
+_WORKER_SCORING_PROFILE = "main"
 
 
-def _init_worker(jd) -> None:
-    global _WORKER_JD
+def _init_worker(jd, scoring_profile: str = "main") -> None:
+    global _WORKER_JD, _WORKER_SCORING_PROFILE
     _WORKER_JD = jd
+    _WORKER_SCORING_PROFILE = scoring_profile
 
 
 def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
@@ -48,7 +50,14 @@ def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
     """
     candidate, retrieval_score, semantic_score = args
     features = compute_features(candidate, config=_WORKER_JD)
-    score = final_score(features, retrieval_score, semantic_score, config=_WORKER_JD)
+    if _WORKER_SCORING_PROFILE == "top23-clean":
+        if _WORKER_JD is not None:
+            raise ValueError("top23-clean currently supports only the bundled challenge JD")
+        from redrob_ranker.challenger import top23_clean_score
+
+        score = top23_clean_score(features, retrieval_score, semantic_score)
+    else:
+        score = final_score(features, retrieval_score, semantic_score, config=_WORKER_JD)
     features.total = score
     return features, score
 
@@ -64,6 +73,8 @@ class RankerConfig:
     # EXPERIMENTAL (default OFF): blend a model2vec/potion dense-retrieval feature.
     use_embeddings: bool = False
     embed_model: str = "minishlab/potion-retrieval-32M"
+    # Opt-in experimental scorer. "main" preserves the shipped byte output.
+    scoring_profile: str = "main"
     # Optional compiled JD (rank.py --jd). None = bundled challenge JD; the
     # None path is byte-identical to the historical pipeline.
     jd: object | None = None
@@ -139,19 +150,24 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
     workers = _resolve_workers(config.workers, len(work))
     ranked: list[tuple[dict, object, float]] = []
     if workers == 1:
-        global _WORKER_JD
+        global _WORKER_JD, _WORKER_SCORING_PROFILE
         prev_jd = _WORKER_JD
+        prev_profile = _WORKER_SCORING_PROFILE
         _WORKER_JD = config.jd
+        _WORKER_SCORING_PROFILE = config.scoring_profile
         try:
             for item in work:
                 features, score = _score_one(item)
                 ranked.append((item[0], features, score))
         finally:
             _WORKER_JD = prev_jd
+            _WORKER_SCORING_PROFILE = prev_profile
     else:
         chunksize = _resolve_chunksize(len(work), workers)
         with ProcessPoolExecutor(
-            max_workers=workers, initializer=_init_worker, initargs=(config.jd,)
+            max_workers=workers,
+            initializer=_init_worker,
+            initargs=(config.jd, config.scoring_profile),
         ) as executor:
             results = executor.map(_score_one, work, chunksize=chunksize)
             for item, (features, score) in zip(work, results):

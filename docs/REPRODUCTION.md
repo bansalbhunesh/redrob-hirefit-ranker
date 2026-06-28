@@ -1,37 +1,25 @@
 # Reproduction
 
 ```bash
-# 0. one-shot: production gate + shipped-hash check
-./reproduce.sh
-
 # 1. full suite (deterministic env)
 PYTHONHASHSEED=0 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
-  python -m pytest -q                       # expect: 198 production + dashboard/firewall tests pass, 0 skipped
-# 2. shipped submission hash (the severity-gated Copeland hedge, must be byte-identical)
-sha256sum submission.csv                    # -> 24f84f4b6160a4bcb164369c7f6ab27a060953ec7cfc0d33ed4849eab1194aea
-# 3. production pipeline still reproduces the golden baseline byte-for-byte (verified by the slice gate)
-#    golden -> af8f2b327f05d30e22aba41e884077071c673082cd4a2647294f0969c0f0536a
-#    (retained as the fallback tag fallback/golden-af8f2b32)
+  python -m pytest -q                       # expect: 198 passed, 6 environment skips in this worktree
+# 2. committed branch-champion hash (must be byte-identical)
+sha256sum submission.csv                    # -> 7d9dd8efc7483852c0fd9ae1eb4b3894c8f17c945c7faf31b3764384d40c0a3b
+# 3. omitting --scoring-profile still preserves main's default scorer and fixed-slice hash
 ```
 
 ## Regenerate the shipped submission from scratch (deterministic, no manual edits)
 
 ```bash
 # requires candidates.jsonl in the repo root; CPU-only, offline
-PYTHONHASHSEED=0 python experiments/_build_pool.py            # candidates.jsonl -> experiments/_pool.pkl (top-3000 pool)
-PYTHONHASHSEED=0 python experiments/build_hedge_submission.py # _pool.pkl       -> experiments/hedge_submission.csv
-cp experiments/hedge_submission.csv submission.csv            # the shipped file
-sha256sum submission.csv                                      # -> 24f84f4b6160a4bc…  (byte-identical)
+PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl --out submission.csv \
+  --workers 2 --scoring-profile top23-clean
+sha256sum submission.csv                                      # -> 7d9dd8efc7483852…  (byte-identical)
 ```
-Every step is a committed deterministic script — no hidden steps, no manual edits. `_build_pool.py`
-just caches `rank.py`'s top-3000 pool; `build_hedge_submission.py` applies the severity-gated Copeland
-rerank to it.
-
-The shipped submission is the hedge (`24f84f4b`); the production ranker `rank.py` is unchanged and
-deterministically reproduces golden (`af8f2b32`). The hedge is a deterministic, audited post-hoc
-rerank built by `experiments/build_hedge_submission.py` (golden top-30 + Copeland tail, sev≤1.2).
-Constrained-runtime check: `docker run --cpus=2 --memory=16g` reproduces golden in 165 s
-(`docs/runtime_matrix.md`).
+There are no hidden steps or manual edits. The opt-in profile completed the full 100K pool in
+80.0 seconds on the host and 221.4 seconds in Docker with `--cpus=2 --memory=16g`; both runs matched
+the committed hash. Omitting `--scoring-profile top23-clean` retains `main`'s historical behavior.
 
 **Production firewall:** `rank.py` and `src/redrob_ranker/` never import `dashboard/`,
 `omega_decision_dashboard.py`, or `experiments/`. Removing `dashboard/`, `experiments/`, and

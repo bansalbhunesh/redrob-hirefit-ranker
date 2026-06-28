@@ -67,7 +67,11 @@ CANDIDATES = ROOT / "candidates.jsonl"
 #    vs golden's 52 -- so it has a better modeled worst-case than BOTH golden and raw Copeland. Golden
 #    af8f2b32 is retained byte-reproducible as the fallback tag fallback/golden-af8f2b32. Production
 #    rank.py UNCHANGED; slice gate below UNCHANGED.)
-GOLDEN_SUBMISSION_SHA256 = "24f84f4b6160a4bcb164369c7f6ab27a060953ec7cfc0d33ed4849eab1194aea"
+# -> 7d9dd8ef... (2026-06-28, codex/top23-fusion-lab: the opt-in
+#    clean-room challenger beat main on seven internal worlds plus two external
+#    recruiter checks. Full 100K host and Docker runs were byte-identical; the
+#    default main profile and fixed-slice hash remain unchanged.)
+GOLDEN_SUBMISSION_SHA256 = "7d9dd8efc7483852c0fd9ae1eb4b3894c8f17c945c7faf31b3764384d40c0a3b"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0). Rolled
