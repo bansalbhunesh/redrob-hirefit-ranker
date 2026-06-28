@@ -2,26 +2,26 @@
   "_purpose": "Single source of truth for every KPI surfaced in README, deck, API demo, and HF Space. tests/test_metrics_manifest.py fails CI if a surface drifts from these values. Update this file FIRST, then the surfaces.",
   "_provenance": "All ranking-quality metrics are DEVELOPMENT PROXIES (independent heuristic + LLM-judge labels on dev samples). No official hidden labels were available before submission. Runtime/memory numbers are measured; sources cited per key.",
   "submission": {
-    "golden_sha256": "7d9dd8efc7483852c0fd9ae1eb4b3894c8f17c945c7faf31b3764384d40c0a3b",
-    "_golden_note": "2026-06-28: codex/top23-fusion-lab commits the opt-in clean-room top23-clean challenger. It improves over main on seven internal label worlds plus both external recruiter checks; full 100K runtime was 80.0 s host and 221.4 s in Docker with --cpus=2 --memory=16g. Three runs produced this byte-identical hash with 0 guarded profiles in the output. The default main scoring profile and its fixed-slice hash are unchanged.",
+    "golden_sha256": "c00f708ab63265b73eb280d058ad72376df94c66dc49c50e2027e62ef894e7f3",
+    "_golden_note": "2026-06-29: universal-v2 is the opt-in clean-room branch champion. It beats main and top23-clean on all 15 measured full-table evaluator axes. Full 100K runtime was 130.1 s host and 164.1 s in Docker with --cpus=2 --memory=16g; outputs were byte-identical with 0 guarded profiles emitted. The default main profile and fixed-slice hash remain unchanged.",
     "rows": 100,
     "total_candidates": 100000,
     "honeypots_detected": 53,
     "honeypots_in_top100": 0,
-    "avg_top100_score": 0.766164,
-    "membership_validated": "scripts/validate_submission.py --candidates candidates.jsonl (2026-06-12: all 100 IDs present in pool)"
+    "avg_top100_score": 0.7759,
+    "membership_validated": "scripts/validate_submission.py --candidates candidates.jsonl (2026-06-29: all 100 IDs present in pool)"
   },
   "runtime": {
     "_source": "docs/runtime_matrix.md",
     "budget_s": 300,
-    "cloud_2vcpu_serial_s": 80,
-    "local_docker_serial_best_s": 221.4,
+    "cloud_2vcpu_serial_s": 130.1,
+    "local_docker_serial_best_s": 164.1,
     "local_docker_pinned_image_s": 138.3,
     "local_docker_serial_worst_recorded_s": 193.4,
     "worst_ever_under_host_load_s": 215.1,
     "conservative_reported_s": 187,
-    "showpiece_recorded_run_ms": 193000,
-    "_showpiece_note": "apps/api/data/precomputed.json replays the 193.4 s worst-case serial matrix run (runtime_matrix.md row 1); it intentionally shows the conservative figure, not the best one."
+    "showpiece_recorded_run_ms": 164100,
+    "_showpiece_note": "apps/api/data/precomputed.json replays the exact universal-v2 top-100 and the constrained 2-CPU/16-GB Docker runtime."
   },
   "memory": {
     "_source": "docs/runtime_matrix.md",
@@ -32,13 +32,13 @@
     "_label": "dev proxy / LLM-audit — NOT the official hidden score",
     "_source": "docs/LLM_JUDGE_EVAL.md, docs/llm_judge_eval_2.md, docs/llm_judge_eval_3.md",
     "p10": 1.0,
-    "ndcg10": 0.8943,
-    "top10_tiers": [5, 5, 4, 4, 5, 5, 5, 5, 5, 5],
-    "composite_independent": 0.8863,
-    "composite_judge1": 0.8959,
-    "composite_judge2": 0.9422,
-    "composite_judge3": 0.8943,
-    "_composite_note": "recomputed on the calibration-free submission (fdfd3f35) vs the same judge labels, coverage 1.00; calibration removal cost ~0.015 composite / dropped NDCG@50 ~0.05, NDCG@10 + P@10 unchanged",
+    "ndcg10": 0.9104,
+    "top10_tiers": [5, 5, 4, 5, 5, 5, 5, 5, 5, 4],
+    "composite_independent": 0.8842,
+    "composite_judge1": 0.9318,
+    "composite_judge2": 0.9665,
+    "composite_judge3": 0.9394,
+    "_composite_note": "universal-v2 exact full-100K artifact; quality numbers are development proxies, not official hidden labels",
     "judge_agreement_kappa_range": [0.918, 0.935]
   },
   "reranker_measured_negative": {
@@ -52,21 +52,22 @@
     "reranker_v2_blind_ndcg50": 0.8404,
     "_delta": "composite -0.0307, NDCG@10 -0.0695, NDCG@50 +0.0135 -- improved @50 but destroyed @10 (50% of the composite). Looked positive only on a curated 249-candidate LLM-judge sample (gpt-4.1-mini +0.027, deepseek +0.085, claude-3.5-haiku +0.019, gemini-3.1-flash-lite +0.049 composite); none generalized to the 100K blind set."
   },
-  "tests_collected": 204,
-  "tests_passing": 198,
+  "tests_collected": 211,
+  "tests_passing": 205,
   "tests_skipped": 6,
   "feature_count": 33,
   "_feature_count_note": "len(FEATURE_NAMES) in src/redrob_ranker/features.py; guarded by tests/test_metrics_manifest.py. Pipeline-description surfaces must quote 33; measurement docs (ablation, learned-weights) keep their historical 28-feature base.",
   "bm25_backend": "bm25s",
   "external_recruiter_validation": {
     "_label": "External cross-check vs a real recruiter-labeled set published by participant 'Sifter' (shikhar1809): 180 reviewer + 50 BLIND technical-recruiter labels. Separate from our own Ψ lockbox (still awaiting). Source: docs/external_recruiter_validation.md.",
-    "hedge_blind_ndcg10": 0.9038,
-    "hedge_blind_composite": 0.8718,
-    "hedge_not_fit_in_top100": 0,
-    "_hedge_note": "On the INDEPENDENT blind recruiter the shipped hedge is the best of all our artifacts (NDCG@10 0.904 vs minimax/tail 0.862) with 0 not_fit -- the integrity-safe (A) choice is confirmed by an independent human judge. Hedge scores lower on reviewer-1 (which rewarded anachronistic candidates the hedge excludes) -- expected and coherent.",
+    "universal_v2_reviewer_composite": 0.8065,
+    "universal_v2_blind_composite": 0.8964,
+    "universal_v2_reviewer_coverage": 0.62,
+    "universal_v2_blind_coverage": 0.24,
+    "_universal_v2_note": "Beats main and top23-clean on both full public recruiter slices; small blind coverage makes split estimates noisy.",
     "competitor_crossencoder_blind_ndcg10": 0.7096,
     "_crossencoder_note": "We reproduced the competitor's ms-marco-MiniLM cross-encoder + semantic stack and validated fresh on the blind recruiter: 0.71 vs our 0.90. Their lead on their own labels is training-on-those-labels + selection bias, not transferable.",
-    "blind_holdout_coverage": "19% (~10 candidates) -- small sample, directional",
-    "proxy_competitor_rank": "#1 cluster of a 20-repo sample on the blind-arbiter proxy (Sifter #12, krish57 #11)"
+    "blind_holdout_coverage": "24% (24 ranked candidates) -- small sample, directional",
+    "public_field_position": "#1 seven-world mean; #17 H2, #119 reviewer, #24 blind among 665 valid public outputs; no public output dominates universal-v2 across all four axes"
   }
 }

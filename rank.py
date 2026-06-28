@@ -97,10 +97,10 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--scoring-profile",
-        choices=["main", "top23-clean"],
+        choices=["main", "top23-clean", "universal-v2"],
         default="main",
         help="Scoring profile. main preserves the shipped scorer; top23-clean "
-        "enables the clean-room public-pattern challenger for the bundled JD.",
+        "and universal-v2 enable clean-room challengers for the bundled JD.",
     )
     parser.add_argument(
         "--profile-memory",

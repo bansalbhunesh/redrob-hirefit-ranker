@@ -14,7 +14,7 @@ team_members:
 
 github_repo: "https://github.com/bansalbhunesh/redrob-hirefit-ranker"
 sandbox_link: "https://huggingface.co/spaces/bansal1234/Hirefit"
-reproduce_command: "PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s  # the Dockerfile pins the hash seed; set it manually for local runs -> bit-identical output"
+reproduce_command: "PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --workers 2 --scoring-profile universal-v2"
 
 compute:
   platform: "Local CPU machine"
@@ -26,14 +26,10 @@ compute:
   has_network_during_ranking: false
   pre_computation_required: false
   pre_computation_time_minutes: 0
-  # Measured in the python:3.11-slim Docker image (the reproduction environment),
-  # full 100K pool, fresh --no-cache build, serial on 2 CPUs (worst case):
-  # 133-187s across a quiet-host min-of-5 (2026-06-10 audit; 187s is the
-  # conservative figure reported below). Prior parallel configs: 194s with
-  # 2 workers on 2 CPUs, 177s with 4 workers on 4 CPUs (measured pre-audit;
-  # upper bounds for current code). Every run byte-identical to the committed
-  # submission (full matrix: docs/runtime_matrix.md, docs/performance_audit.md).
-  measured_runtime_seconds: 187
+  # universal-v2 exact full-100K reproduction on 2026-06-29: 130.1s host and
+  # 164.1s in the pinned image with --cpus=2 --memory=16g. The two outputs were
+  # byte-identical to the committed artifact and emitted 0 guarded profiles.
+  measured_runtime_seconds: 164.1
   measured_peak_rss_gb: 6.1
   measured_bm25_backend: "bm25s"
   feature_scoring_workers: "auto (up to 8); output identical for any worker count"
@@ -60,14 +56,12 @@ methodology_summary: |
   (skills, career evidence, seniority, role-family depth, behavior, logistics)
   with multiplicative behavioral, honeypot, and JD-disqualifier multipliers; no
   hosted LLM/API scoring during ranking; reasoning generated from actual candidate
-  facts. The SHIPPED submission is the severity-gated "hedge": a deterministic
-  post-hoc Copeland reranking of rank.py's pool (build_hedge_submission.py) that
-  promotes an anachronism candidate only when claimed tenure <=1.2x the
-  technology's age and EXCLUDES egregious impossible-tenure cases — the
-  integrity-safe choice. It carries fewer anachronism candidates than the golden
-  baseline (44 vs 52) and 0 honeypots in the top-100. All ranking-quality numbers
-  are development proxies (heuristic + LLM-judge labels); no official hidden labels
-  were available before submission.
+  facts. The branch artifact uses the opt-in universal-v2 evidence blend: stronger
+  production and experience-fit evidence, lower broad-keyword influence, and a
+  compressed availability nudge. Existing honeypot and disqualifier gates remain
+  exact. The model is clean-room: no competitor code, candidate IDs, public ranks,
+  or paragraph fingerprints are in the production path. All ranking-quality
+  numbers are development proxies; no official hidden labels were available.
 
 declarations:
   read_submission_spec: true

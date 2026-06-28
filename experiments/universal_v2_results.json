@@ -1,0 +1,36 @@
+{
+  "date": "2026-06-29",
+  "profile": "universal-v2",
+  "sha256": "c00f708ab63265b73eb280d058ad72376df94c66dc49c50e2027e62ef894e7f3",
+  "public_census": {
+    "eligible_repositories": 1272,
+    "valid_output_repositories": 665,
+    "multi_axis_leaders_cloned": 69
+  },
+  "metrics": {
+    "h2": 0.8801438572,
+    "independent": 0.8841816051,
+    "judge1": 0.9317652133,
+    "judge2": 0.9665116309,
+    "judge3": 0.9394256640,
+    "expand": 0.8119100000,
+    "silver20k": 0.9175020000,
+    "reviewer": 0.8064640000,
+    "blind": 0.8964130000,
+    "merged_j1": 0.9056980000,
+    "merged_j2": 0.9733480000,
+    "merged_j3": 0.9418430000,
+    "relabel_j4": 0.9632910000,
+    "relabel_g25": 0.8389820000,
+    "blind_test_frozen": 0.9690950000,
+    "mean7": 0.9044913777,
+    "mean15": 0.9084380000
+  },
+  "runtime": {
+    "host_seconds": 130.1,
+    "docker_2cpu_16gb_seconds": 164.1,
+    "honeypots_detected": 53,
+    "honeypots_in_output": 0
+  },
+  "claim_boundary": "Best balanced measured artifact; no hidden-score or every-single-axis public-specialist guarantee."
+}

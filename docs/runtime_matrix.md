@@ -4,6 +4,20 @@
 > current golden is `fdfd3f35…` (2026-06-14 reproducibility fix), byte-identical
 > across CPU counts — see `docs/reproducibility_notes.md`.
 
+## 2026-06-29 universal-v2 constrained reproduction
+
+The exact branch artifact (`c00f708a…`) was regenerated from all 100,000
+candidates with `PYTHONHASHSEED=0` and two scoring workers:
+
+| environment | constraint | pipeline runtime | result |
+|---|---|---:|---|
+| Windows host | 2 workers | **130.1 s** | 53 honeypots detected, 0 emitted |
+| pinned Linux Docker | `--cpus=2 --memory=16g` | **164.1 s** | byte-identical to host |
+
+Both outputs have SHA-256
+`c00f708ab63265b73eb280d058ad72376df94c66dc49c50e2027e62ef894e7f3`.
+The Docker run is 135.9 seconds inside the 300-second limit.
+
 Environment: `python:3.11-slim` image (the Stage-3 reproduction environment),
 Docker Desktop on Windows 11 / WSL2 (12 host CPUs, **8.15 GB VM memory** — the
 host VM cannot model the full 16 GB budget; the container cap used was 6 GB and

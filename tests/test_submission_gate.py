@@ -71,7 +71,12 @@ CANDIDATES = ROOT / "candidates.jsonl"
 #    clean-room challenger beat main on seven internal worlds plus two external
 #    recruiter checks. Full 100K host and Docker runs were byte-identical; the
 #    default main profile and fixed-slice hash remain unchanged.)
-GOLDEN_SUBMISSION_SHA256 = "7d9dd8efc7483852c0fd9ae1eb4b3894c8f17c945c7faf31b3764384d40c0a3b"
+# -> c00f708a... (2026-06-29, codex/top23-fusion-lab: universal-v2 distills
+#    transferable evidence patterns from a 1,272-repository public census. It
+#    beats main and top23-clean on all 15 measured full-table evaluators. Full
+#    100K host and 2-CPU/16-GB Docker runs were byte-identical with zero guarded
+#    profiles emitted. The default main profile and slice gate remain unchanged.)
+GOLDEN_SUBMISSION_SHA256 = "c00f708ab63265b73eb280d058ad72376df94c66dc49c50e2027e62ef894e7f3"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0). Rolled

@@ -93,7 +93,7 @@ def generate_precomputed(
             {"name": "Load", "status": "complete", "count": metadata["total_candidates"]},
             {"name": "Text", "status": "complete", "count": metadata["total_candidates"]},
             {"name": "BM25", "status": "complete", "count": metadata["total_candidates"]},
-            {"name": "28-D Features", "status": "complete", "count": metadata["total_candidates"]},
+            {"name": "33-D Features", "status": "complete", "count": metadata["total_candidates"]},
             {"name": "Honeypot", "status": "complete", "count": metadata["honeypots_blocked"]},
             {"name": "Behavioral", "status": "complete", "count": metadata["total_candidates"]},
             {"name": "Rank", "status": "complete", "count": len(payload_rows)},

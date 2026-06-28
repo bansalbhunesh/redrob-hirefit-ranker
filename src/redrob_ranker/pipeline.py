@@ -50,12 +50,19 @@ def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
     """
     candidate, retrieval_score, semantic_score = args
     features = compute_features(candidate, config=_WORKER_JD)
-    if _WORKER_SCORING_PROFILE == "top23-clean":
+    if _WORKER_SCORING_PROFILE in {"top23-clean", "universal-v2"}:
         if _WORKER_JD is not None:
-            raise ValueError("top23-clean currently supports only the bundled challenge JD")
-        from redrob_ranker.challenger import top23_clean_score
+            raise ValueError(
+                f"{_WORKER_SCORING_PROFILE} currently supports only the bundled challenge JD"
+            )
+        from redrob_ranker.challenger import top23_clean_score, universal_v2_score
 
-        score = top23_clean_score(features, retrieval_score, semantic_score)
+        profile_score = (
+            top23_clean_score
+            if _WORKER_SCORING_PROFILE == "top23-clean"
+            else universal_v2_score
+        )
+        score = profile_score(features, retrieval_score, semantic_score)
     else:
         score = final_score(features, retrieval_score, semantic_score, config=_WORKER_JD)
     features.total = score
