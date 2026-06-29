@@ -84,7 +84,11 @@ CANDIDATES = ROOT / "candidates.jsonl"
 #    top-band correction plus two conservative clean backfills. The exact
 #    Docker artifact improves/ties all 60 V3 metric cells and reduces temporal
 #    anomalies 59->57. Default main behavior and the slice gate are unchanged.)
-GOLDEN_SUBMISSION_SHA256 = "79aebff697cbccf0b03137998d0b6faf2da61caebaa0ae34f0e5fc876650127e"
+# -> 8f7f30c6... (2026-06-29, codex/public-frontier-v5: V4 plus two
+#    feature-only shortlist tie-breaks. The exact host and constrained-Docker
+#    artifacts match; V5 improves 6 and ties 54 of V4's component cells, with
+#    no losses. Default main behavior and the slice gate remain unchanged.)
+GOLDEN_SUBMISSION_SHA256 = "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0). Rolled

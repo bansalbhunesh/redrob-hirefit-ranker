@@ -1,5 +1,24 @@
 # Docker Runtime Matrix (Phase 0.1)
 
+## 2026-06-29 frontier-v5 constrained verification
+
+The exact `frontier-v5` artifact was regenerated twice from all 100,000
+candidates using a Docker-native input volume, `--cpus=2 --memory=16g`, and
+two workers:
+
+| Pass | Pipeline time | Wall time | Output SHA-256 |
+|---|---:|---:|---|
+| V5 cold/stress | 209.4 s | 233.8 s | `8f7f30c68ec30cb6...` |
+| V5 repeat | **199.0 s** | 241.9 s | `8f7f30c68ec30cb6...` |
+| V4 same-image control | 108.6 s | 124.7 s | `79aebff697cbccf0...` |
+
+Both V5 artifacts match the host artifact byte-for-byte, reported no OOM, and
+stayed below the 300-second budget. Full-run Docker Desktop timing was noisy:
+an isolated 5,000-candidate same-image check measured V5 at 9.1 s and V4 at
+10.9 s, confirming that the two final 100-row sorts do not add material
+algorithmic cost. The measured full-run spread is retained rather than
+presented as a speedup.
+
 ## 2026-06-29 dominant-v4 constrained verification
 
 The exact `dominant-v4` artifact was generated from all 100,000 candidates

@@ -59,6 +59,7 @@ def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
         "universal-v2",
         "loss-aggregate-v3",
         "dominant-v4",
+        "frontier-v5",
     }:
         if _WORKER_JD is not None:
             raise ValueError(
@@ -68,7 +69,11 @@ def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
 
         profile_score = top23_clean_score if _WORKER_SCORING_PROFILE == "top23-clean" else universal_v2_score
         score = profile_score(features, retrieval_score, semantic_score)
-        if _WORKER_SCORING_PROFILE in {"loss-aggregate-v3", "dominant-v4"}:
+        if _WORKER_SCORING_PROFILE in {
+            "loss-aggregate-v3",
+            "dominant-v4",
+            "frontier-v5",
+        }:
             features.values["_main_score"] = final_score(
                 features,
                 retrieval_score,
@@ -282,6 +287,10 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
         from redrob_ranker.loss_aggregate import rerank_dominant_v4
 
         ranked = rerank_dominant_v4(ranked)
+    elif config.scoring_profile == "frontier-v5":
+        from redrob_ranker.loss_aggregate import rerank_frontier_v5
+
+        ranked = rerank_frontier_v5(ranked)
     return ranked, used_backend
 
 

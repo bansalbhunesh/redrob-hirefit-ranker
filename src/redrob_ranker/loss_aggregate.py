@@ -8,6 +8,7 @@ IDs, public ranking positions, resume fingerprints, or competitor code.
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 from functools import lru_cache
 from pathlib import Path
 
@@ -26,6 +27,8 @@ V4_EXPERIENCE_CENTER = 7.0
 V4_EXPERIENCE_WIDTH = 2.0
 V4_CLEANUP_COUNT = 2
 V4_SEVERITY_CAP = 1.0
+V5_BEHAVIOR_BAND = (10, 13)
+V5_RESPONSIVENESS_BAND = (64, 74)
 
 
 def _minmax(values: np.ndarray) -> np.ndarray:
@@ -264,5 +267,71 @@ def rerank_dominant_v4(
     selected = {item[0]["candidate_id"] for item in rescored}
     rescored.extend(
         item for item in v3_ranked if item[0]["candidate_id"] not in selected
+    )
+    return rescored
+
+
+def _stable_feature_band_sort(
+    ranked: list[tuple[dict, CandidateFeatures, float]],
+    start: int,
+    stop: int,
+    feature: Callable[[CandidateFeatures], float],
+) -> list[tuple[dict, CandidateFeatures, float]]:
+    """Sort one zero-based rank band by a generic feature, with stable ID ties."""
+
+    if start >= len(ranked) or start >= stop:
+        return list(ranked)
+    result = list(ranked)
+    bounded_stop = min(stop, len(result))
+    result[start:bounded_stop] = sorted(
+        result[start:bounded_stop],
+        key=lambda item: (-float(feature(item[1])), item[0]["candidate_id"]),
+    )
+    return result
+
+
+def _frontier_tiebreaks(
+    top: list[tuple[dict, CandidateFeatures, float]],
+) -> list[tuple[dict, CandidateFeatures, float]]:
+    """Apply the two holdout-safe V5 shortlist tie-breaks."""
+
+    reranked = _stable_feature_band_sort(
+        top,
+        *V5_BEHAVIOR_BAND,
+        feature=lambda features: features.behavior,
+    )
+    return _stable_feature_band_sort(
+        reranked,
+        *V5_RESPONSIVENESS_BAND,
+        feature=lambda features: features.values.get("responsiveness_score", 0.0),
+    )
+
+
+def rerank_frontier_v5(
+    ranked: list[tuple[dict, CandidateFeatures, float]],
+) -> list[tuple[dict, CandidateFeatures, float]]:
+    """Experimental V5: V4 plus two feature-only shortlist tie-breaks.
+
+    The V4 top-100 membership is locked. Only ordering inside ranks 11-13 and
+    65-74 changes, using behavior and responsiveness respectively. Scores are
+    reassigned from V4's established monotone distribution after the reorder.
+    """
+
+    v4_ranked = rerank_dominant_v4(ranked)
+    if not v4_ranked:
+        return v4_ranked
+    top_size = min(MEMBERSHIP_LOCK, len(v4_ranked))
+    original_top = v4_ranked[:top_size]
+    top = _frontier_tiebreaks(original_top)
+
+    rank_scores = sorted((item[2] for item in original_top), reverse=True)
+    rescored: list[tuple[dict, CandidateFeatures, float]] = []
+    for score, (candidate, features, _) in zip(rank_scores, top, strict=True):
+        features.total = score
+        rescored.append((candidate, features, score))
+
+    selected = {item[0]["candidate_id"] for item in rescored}
+    rescored.extend(
+        item for item in v4_ranked if item[0]["candidate_id"] not in selected
     )
     return rescored

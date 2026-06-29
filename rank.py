@@ -103,10 +103,11 @@ def parse_args() -> argparse.Namespace:
             "universal-v2",
             "loss-aggregate-v3",
             "dominant-v4",
+            "frontier-v5",
         ],
         default="main",
         help="Scoring profile. main preserves the shipped scorer; top23-clean "
-        "universal-v2, loss-aggregate-v3, and dominant-v4 enable clean-room "
+        "universal-v2, loss-aggregate-v3, dominant-v4, and frontier-v5 enable clean-room "
         "challengers for the bundled JD.",
     )
     parser.add_argument(
