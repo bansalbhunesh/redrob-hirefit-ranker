@@ -1,5 +1,29 @@
 # Docker Runtime Matrix (Phase 0.1)
 
+## 2026-06-30 V6 quality-safe inference hardening
+
+V6 keeps the exact `frontier-v5` rank artifact and removes repeated work in two
+post-retrieval hotspots. The dual V2/main scoring pass is bit-exact and measured
+36.8% faster in an isolated 5,000-candidate loop (median 0.0546 s to 0.0345 s).
+The 3,000-row model feature matrix is also bit-exact and measured 77.0% faster
+(median 0.1848 s to 0.0425 s). These stages are small relative to BM25, so the
+claim is reduced CPU work and no regression, not a universal wall-time speedup.
+
+The full 100,000-candidate verification used a Docker-native volume,
+`--cpus=2 --memory=16g`, and two workers:
+
+| Image | Pipeline time | Sampled peak | Output SHA-256 | Integrity |
+|---|---:|---:|---|---|
+| unchanged V5 stress control | 299.2 s | not retained | `8f7f30c68ec30cb6...` | 53 detected / 0 emitted |
+| V6 hardened | **197.2 s** | **4,204.5 MiB** | `8f7f30c68ec30cb6...` | 53 detected / 0 emitted |
+
+The 102-second paired gap is dominated by Docker Desktop host variance: earlier
+unchanged V5 runs were 199.0-209.4 s. The defensible result is that V6 matches
+the prior normal V5 window, remains under 300 seconds, uses less than the
+effective Docker VM memory, and reproduces the artifact byte-for-byte. Although
+the container requested 16 GB, this Docker Desktop VM exposed about 7.6 GiB;
+the run remained well below even that smaller effective cap.
+
 ## 2026-06-29 frontier-v5 constrained verification
 
 The exact `frontier-v5` artifact was regenerated twice from all 100,000

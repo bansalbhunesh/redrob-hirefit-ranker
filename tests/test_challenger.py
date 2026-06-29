@@ -2,7 +2,12 @@ from __future__ import annotations
 
 import pytest
 
-from redrob_ranker.challenger import top23_clean_score, universal_v2_score
+from redrob_ranker.challenger import (
+    top23_clean_score,
+    universal_v2_and_main_score,
+    universal_v2_score,
+)
+from redrob_ranker.features import final_score
 from redrob_ranker.constants import FEATURE_NAMES
 from redrob_ranker.features import CandidateFeatures
 from redrob_ranker.pipeline import RankerConfig, _init_worker, _score_one
@@ -57,6 +62,20 @@ def test_universal_v2_keeps_integrity_gates_multiplicative() -> None:
 
     assert universal_v2_score(clean, 0.5) > 0.0
     assert universal_v2_score(disqualified, 0.5) == 0.0
+
+
+def test_joint_v2_main_score_is_bit_exact() -> None:
+    features = _features(
+        ir_ranking_experience=0.83,
+        production_evidence=0.71,
+        yoe_fit_score=0.94,
+        skill_depth_score=0.62,
+    )
+
+    universal, main = universal_v2_and_main_score(features, 0.4321, 0.8765)
+
+    assert universal == universal_v2_score(features, 0.4321, 0.8765)
+    assert main == final_score(features, 0.4321, 0.8765)
 
 
 def test_pipeline_selects_challenger_profile(monkeypatch: pytest.MonkeyPatch) -> None:

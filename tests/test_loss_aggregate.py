@@ -9,6 +9,7 @@ from redrob_ranker.features import CandidateFeatures
 from redrob_ranker.loss_aggregate import (
     MODEL_PATH,
     _artifact,
+    _feature_matrix,
     _predict_heads,
     rerank_loss_aggregate,
 )
@@ -40,6 +41,25 @@ def test_numpy_forest_predictions_are_finite() -> None:
 
     assert predictions.shape == (3, 7)
     assert np.isfinite(predictions).all()
+
+
+def test_feature_matrix_preserves_artifact_order_and_derived_values() -> None:
+    features = _features(3)
+    pool = [({"candidate_id": "TEST_0003"}, features, 0.5)]
+    names = np.asarray(
+        ["hand", "behavior", "logistics", "role_fit", "ai_depth", "production_evidence"]
+    )
+
+    matrix = _feature_matrix(pool, names)
+
+    assert matrix.tolist() == [[
+        features.values["_main_score"],
+        features.behavior,
+        features.logistics,
+        features.role_fit,
+        features.ai_depth,
+        features.production_evidence,
+    ]]
 
 
 def test_rank_hedge_preserves_v2_membership() -> None:

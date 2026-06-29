@@ -59,26 +59,44 @@ UNIVERSAL_V2_FEATURE_MULTIPLIERS: dict[str, float] = {
 UNIVERSAL_V2_BEHAVIOR_EXPONENT = 0.31065
 
 
+def _scaled_weights(multipliers: dict[str, float]) -> dict[str, float]:
+    return {
+        name: weight * multipliers.get(name, 1.0)
+        for name, weight in BASE_FEATURE_WEIGHTS.items()
+    }
+
+
+def _total_weight(weights: dict[str, float]) -> float:
+    # Preserve the scorer's historical addition order for bit-exact output.
+    total = weights["bm25_score"]
+    for name, weight in weights.items():
+        if name != "bm25_score":
+            total += weight
+    return total
+
+
+TOP23_WEIGHTS = _scaled_weights(TOP23_FEATURE_MULTIPLIERS)
+TOP23_TOTAL_WEIGHT = _total_weight(TOP23_WEIGHTS)
+UNIVERSAL_V2_WEIGHTS = _scaled_weights(UNIVERSAL_V2_FEATURE_MULTIPLIERS)
+UNIVERSAL_V2_TOTAL_WEIGHT = _total_weight(UNIVERSAL_V2_WEIGHTS)
+MAIN_TOTAL_WEIGHT = _total_weight(BASE_FEATURE_WEIGHTS)
+
+
 def _weighted_profile_score(
     features: CandidateFeatures,
     retrieval_score: float,
     semantic_score: float | None,
-    multipliers: dict[str, float],
+    weights: dict[str, float],
+    total_weight: float,
     behavior_exponent: float,
 ) -> float:
     """Apply an auditable evidence blend while preserving hard guardrails."""
 
-    weights = {
-        name: weight * multipliers.get(name, 1.0)
-        for name, weight in BASE_FEATURE_WEIGHTS.items()
-    }
-    total_weight = weights["bm25_score"]
     weighted_sum = weights["bm25_score"] * clamp(retrieval_score)
     for name, weight in weights.items():
         if name == "bm25_score":
             continue
         weighted_sum += weight * features.values.get(name, 0.0)
-        total_weight += weight
 
     if semantic_score is not None:
         weighted_sum += SEMANTIC_WEIGHT * clamp(semantic_score)
@@ -111,7 +129,8 @@ def top23_clean_score(
         features,
         retrieval_score,
         semantic_score,
-        TOP23_FEATURE_MULTIPLIERS,
+        TOP23_WEIGHTS,
+        TOP23_TOTAL_WEIGHT,
         TOP23_BEHAVIOR_EXPONENT,
     )
 
@@ -132,6 +151,52 @@ def universal_v2_score(
         features,
         retrieval_score,
         semantic_score,
-        UNIVERSAL_V2_FEATURE_MULTIPLIERS,
+        UNIVERSAL_V2_WEIGHTS,
+        UNIVERSAL_V2_TOTAL_WEIGHT,
         UNIVERSAL_V2_BEHAVIOR_EXPONENT,
     )
+
+
+def universal_v2_and_main_score(
+    features: CandidateFeatures,
+    retrieval_score: float = 0.0,
+    semantic_score: float | None = None,
+) -> tuple[float, float]:
+    """Compute V2 and its V3/V4/V5 main-score feature in one exact pass."""
+
+    retrieval = clamp(retrieval_score)
+    universal_sum = UNIVERSAL_V2_WEIGHTS["bm25_score"] * retrieval
+    main_sum = BASE_FEATURE_WEIGHTS["bm25_score"] * retrieval
+    for name, main_weight in BASE_FEATURE_WEIGHTS.items():
+        if name == "bm25_score":
+            continue
+        value = features.values.get(name, 0.0)
+        universal_sum += UNIVERSAL_V2_WEIGHTS[name] * value
+        main_sum += main_weight * value
+
+    universal_total = UNIVERSAL_V2_TOTAL_WEIGHT
+    main_total = MAIN_TOTAL_WEIGHT
+    if semantic_score is not None:
+        semantic = SEMANTIC_WEIGHT * clamp(semantic_score)
+        universal_sum += semantic
+        main_sum += semantic
+        universal_total += SEMANTIC_WEIGHT
+        main_total += SEMANTIC_WEIGHT
+
+    universal_relevance = universal_sum / universal_total
+    main_relevance = main_sum / main_total
+    universal = max(
+        0.0,
+        universal_relevance
+        * features.behavioral_multiplier**UNIVERSAL_V2_BEHAVIOR_EXPONENT
+        * features.honeypot_multiplier
+        * features.disqualifier_multiplier,
+    )
+    main = max(
+        0.0,
+        main_relevance
+        * features.behavioral_multiplier
+        * features.honeypot_multiplier
+        * features.disqualifier_multiplier,
+    )
+    return universal, main

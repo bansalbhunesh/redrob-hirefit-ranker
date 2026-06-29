@@ -65,21 +65,23 @@ def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
             raise ValueError(
                 f"{_WORKER_SCORING_PROFILE} currently supports only the bundled challenge JD"
             )
-        from redrob_ranker.challenger import top23_clean_score, universal_v2_score
+        from redrob_ranker.challenger import (
+            top23_clean_score,
+            universal_v2_and_main_score,
+            universal_v2_score,
+        )
 
         profile_score = top23_clean_score if _WORKER_SCORING_PROFILE == "top23-clean" else universal_v2_score
-        score = profile_score(features, retrieval_score, semantic_score)
         if _WORKER_SCORING_PROFILE in {
             "loss-aggregate-v3",
             "dominant-v4",
             "frontier-v5",
         }:
-            features.values["_main_score"] = final_score(
-                features,
-                retrieval_score,
-                semantic_score,
-                config=_WORKER_JD,
+            score, features.values["_main_score"] = universal_v2_and_main_score(
+                features, retrieval_score, semantic_score
             )
+        else:
+            score = profile_score(features, retrieval_score, semantic_score)
     else:
         score = final_score(features, retrieval_score, semantic_score, config=_WORKER_JD)
     features.total = score

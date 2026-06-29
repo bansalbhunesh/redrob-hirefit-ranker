@@ -49,29 +49,23 @@ def _feature_matrix(
     pool: list[tuple[dict, CandidateFeatures, float]],
     feature_names: np.ndarray,
 ) -> np.ndarray:
-    matrix = np.empty((len(pool), len(feature_names)), dtype=np.float64)
+    names = feature_names.tolist()
+    matrix = np.empty((len(pool), len(names)), dtype=np.float64)
     for row, (_, features, _) in enumerate(pool):
-        for col, raw_name in enumerate(feature_names):
-            name = str(raw_name)
-            if name == "hand":
-                value = features.values.get("_main_score", 0.0)
-            elif name == "behavior":
-                value = features.behavior
-            elif name == "logistics":
-                value = features.logistics
-            elif name == "role_fit":
-                value = features.role_fit
-            elif name == "ai_depth":
-                value = features.ai_depth
-            elif name == "production_evidence":
-                value = features.production_evidence
-            elif name == "honeypot_mult":
-                value = features.honeypot_multiplier
-            elif name == "disq_mult":
-                value = features.disqualifier_multiplier
-            else:
-                value = features.values.get(name, 0.0)
-            matrix[row, col] = float(value)
+        values = features.values
+        special = {
+            "hand": values.get("_main_score", 0.0),
+            "behavior": features.behavior,
+            "logistics": features.logistics,
+            "role_fit": features.role_fit,
+            "ai_depth": features.ai_depth,
+            "honeypot_mult": features.honeypot_multiplier,
+            "disq_mult": features.disqualifier_multiplier,
+        }
+        matrix[row] = [
+            float(special[name] if name in special else values.get(name, 0.0))
+            for name in names
+        ]
     return matrix
 
 
