@@ -27,7 +27,7 @@ if SRC.exists() and str(SRC) not in sys.path:
 for _thread_var in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
     os.environ.setdefault(_thread_var, "1")
 
-from redrob_ranker.pipeline import RankerConfig, run_ranking
+from redrob_ranker.pipeline import RankerConfig, run_ranking  # noqa: E402
 
 
 def _ensure_deterministic_hash_seed() -> None:
@@ -97,10 +97,17 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--scoring-profile",
-        choices=["main", "top23-clean", "universal-v2", "loss-aggregate-v3"],
+        choices=[
+            "main",
+            "top23-clean",
+            "universal-v2",
+            "loss-aggregate-v3",
+            "dominant-v4",
+        ],
         default="main",
         help="Scoring profile. main preserves the shipped scorer; top23-clean "
-        "universal-v2, and loss-aggregate-v3 enable clean-room challengers for the bundled JD.",
+        "universal-v2, loss-aggregate-v3, and dominant-v4 enable clean-room "
+        "challengers for the bundled JD.",
     )
     parser.add_argument(
         "--profile-memory",

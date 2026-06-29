@@ -6,7 +6,7 @@
     "honeypots_blocked": 53,
     "honeypots_in_output": 0,
     "avg_score": 0.5866,
-    "processing_time_ms": 254000,
+    "processing_time_ms": 75400,
     "bm25_backend": "bm25s"
   },
   "pipeline": [
@@ -1296,7 +1296,7 @@
       ]
     },
     {
-      "candidate_id": "CAND_0039754",
+      "candidate_id": "CAND_0046064",
       "rank": 6,
       "score": 0.9309,
       "raw_score": 0.930898,
@@ -1305,253 +1305,234 @@
       "honeypot_reasons": [],
       "flags": [],
       "multipliers": {
-        "behavioral": 1.0031,
+        "behavioral": 0.9416,
         "honeypot": 1.0,
         "disqualifier": 1.0
       },
-      "reasoning": "16.2 years of experience, currently a Senior Applied Scientist at Meta; aligns with the JD requirement for shipped retrieval/ranking systems; core stack covers Python, OpenSearch, Elasticsearch; based in Indore, Madhya Pradesh, India. Track record 40 months at Apple as Senior ML Engineer \u2014 Search & Ranking. Redrob engagement: notice 30 days, response rate 0.81; responsive and visibly in the market.",
+      "reasoning": "Senior NLP Engineer (8.9 yrs), now at Salesforce; career history shows the production search/ranking work behind the JD's keyword list; core stack covers PEFT, Pinecone, Elasticsearch; located in Coimbatore, Tamil Nadu (India). Track record 36 months at Amazon as Senior ML Engineer \u2014 Search & Ranking. Hiring signals: answers 78% of recruiter outreach, 30-day notice; moderate availability; responsiveness is the watch item.",
       "features": {
-        "core_skill_match": 0.832,
+        "core_skill_match": 0.907,
         "jd_keyword_coverage_score": 1.0,
         "nice_skill_match": 0.48,
-        "skill_depth_score": 1.0,
-        "endorsement_trust": 0.7104,
-        "assessment_score_avg": 0.7556,
+        "skill_depth_score": 0.9355,
+        "endorsement_trust": 0.8376,
+        "assessment_score_avg": 0.641,
         "disqualifier_skill_flag": 0.0,
         "keyword_stuffer_flag": 0.3333,
-        "github_signal": 0.775,
+        "github_signal": 0.673,
         "product_company_ratio": 1.0,
         "consulting_only_flag": 0.0,
         "ir_ranking_experience": 1.0,
-        "production_evidence": 0.955,
-        "title_match_score": 0.95,
+        "production_evidence": 1.0,
+        "title_match_score": 1.0,
         "senior_title_held": 1.0,
-        "career_trajectory_score": 0.9625,
+        "career_trajectory_score": 1.0,
         "scale_signal": 0.0,
         "code_writing_recent": 0.25,
         "yoe_fit_score": 1.0,
         "education_score": 1.0,
         "ml_ai_tenure_score": 1.0,
         "open_source_signal": 0.3333,
-        "availability_score": 0.9,
+        "availability_score": 0.72,
         "engagement_score": 1.0,
-        "responsiveness_score": 0.77,
-        "interview_reliability": 0.98,
-        "profile_quality": 0.7697,
+        "responsiveness_score": 0.7475,
+        "interview_reliability": 0.8,
+        "profile_quality": 0.8271,
         "notice_period_score": 1.0,
         "location_score": 0.68,
-        "relocation_willing": 1.0,
+        "relocation_willing": 0.0,
         "backend_depth_score": 0.0,
         "data_bi_depth_score": 0.0,
-        "hyre_similarity": 0.0705,
-        "behavioral_multiplier": 1.0031,
+        "hyre_similarity": 0.0661,
+        "behavioral_multiplier": 0.9416,
         "honeypot_multiplier": 1.0,
         "disqualifier_multiplier": 1.0,
         "total": 0.9309
       },
       "behavioral": {
-        "profile_completeness": 67.1,
+        "profile_completeness": 75.3,
         "open_to_work": true,
-        "response_rate": 0.81,
-        "avg_response_time": 38.5,
-        "interview_completion": 0.98,
-        "offer_acceptance": 0.55,
-        "github_activity": 77.5,
-        "saved_by_recruiters": 51,
-        "profile_views": 279,
+        "response_rate": 0.78,
+        "avg_response_time": 40.8,
+        "interview_completion": 0.8,
+        "offer_acceptance": -1,
+        "github_activity": 67.3,
+        "saved_by_recruiters": 25,
+        "profile_views": 323,
         "notice_period": 30,
         "verified_email": true,
         "verified_phone": true,
         "skill_assessments": {
-          "Fine-tuning LLMs": 96.5,
-          "LlamaIndex": 65.2,
-          "Qdrant": 61.5,
-          "NLP": 80.5,
-          "Kubeflow": 74.1
+          "Python": 64.1
         },
-        "connection_count": 1009,
-        "endorsements": 46,
+        "connection_count": 1838,
+        "endorsements": 132,
         "expected_salary": {
-          "min": 30.1,
-          "max": 62.1
+          "min": 36.6,
+          "max": 53.4
         },
-        "preferred_work_mode": "hybrid",
-        "willing_to_relocate": true
+        "preferred_work_mode": "flexible",
+        "willing_to_relocate": false
       },
       "profile": {
-        "name": "Mira Banerjee",
-        "headline": "Senior Applied Scientist | Building AI-native search & ranking systems",
-        "summary": "Senior AI engineer with 8.3 years of hands-on experience building production ML systems, with a focus on search, retrieval, and ranking. Most recently, I rebuilt the candidate-JD matching pipeline from scratch, taking it from 0.72 to 0.91 NDCG@10, serving 50M+ queries per month. My day-to-day work spans embedding model selection and fine-tuning, hybrid retrieval architecture, learning-to-rank, behavioral-signal integration, and the offline/online evaluation that ties it all together. I've shipped systems in both early-stage product companies and at larger scale, and I've spent enough time on both that I know which tradeoffs apply where. I believe most ranking problems are solved by careful feature engineering and rigorous eval, not by bigger models. Currently exploring my next move \u2014 looking for senior IC or tech-lead roles where I can own the intelligence layer end-to-end.",
-        "title": "Senior Applied Scientist",
-        "company": "Meta",
+        "name": "Saanvi Naidu",
+        "headline": "Senior NLP Engineer | LLMs, RAG, Vector Search | ex-Top Tech",
+        "summary": "Senior AI engineer with 8.9 years of hands-on experience building production ML systems, with a focus on search, retrieval, and ranking. Most recently, I rebuilt the candidate-JD matching pipeline from scratch, taking it from 0.72 to 0.91 NDCG@10, operating at single-digit-millisecond p95 retrieval latency. My day-to-day work spans embedding model selection and fine-tuning, hybrid retrieval architecture, learning-to-rank, behavioral-signal integration, and the offline/online evaluation that ties it all together. I've shipped systems in both early-stage product companies and at larger scale, and I've spent enough time on both that I know which tradeoffs apply where. I believe most ranking problems are solved by careful feature engineering and rigorous eval, not by bigger models. Currently exploring my next move \u2014 looking for senior IC or tech-lead roles where I can own the intelligence layer end-to-end.",
+        "title": "Senior NLP Engineer",
+        "company": "Salesforce",
         "company_size": "10001+",
-        "industry": "Internet",
-        "location": "Indore, Madhya Pradesh",
+        "industry": "Software",
+        "location": "Coimbatore, Tamil Nadu",
         "country": "India",
-        "yoe": 16.2
+        "yoe": 8.9
       },
       "timeline": [
         {
-          "company": "Meta",
-          "title": "Senior Applied Scientist",
-          "start": "2023-05-13",
+          "company": "Salesforce",
+          "title": "Senior NLP Engineer",
+          "start": "2023-06-12",
           "end": null,
-          "duration_months": 37,
+          "duration_months": 36,
           "is_current": true,
+          "industry": "Software",
+          "company_size": "10001+"
+        },
+        {
+          "company": "Verloop.io",
+          "title": "Lead AI Engineer",
+          "start": "2020-06-27",
+          "end": "2023-04-13",
+          "duration_months": 34,
+          "is_current": false,
+          "industry": "Conversational AI",
+          "company_size": "51-200"
+        },
+        {
+          "company": "Amazon",
+          "title": "Senior ML Engineer \u2014 Search & Ranking",
+          "start": "2017-07-13",
+          "end": "2020-06-27",
+          "duration_months": 36,
+          "is_current": false,
           "industry": "Internet",
           "company_size": "10001+"
-        },
-        {
-          "company": "Apple",
-          "title": "Senior ML Engineer \u2014 Search & Ranking",
-          "start": "2020-01-29",
-          "end": "2023-05-13",
-          "duration_months": 40,
-          "is_current": false,
-          "industry": "Consumer Electronics",
-          "company_size": "10001+"
-        },
-        {
-          "company": "Observe.AI",
-          "title": "Senior Applied Scientist",
-          "start": "2018-05-09",
-          "end": "2020-01-29",
-          "duration_months": 21,
-          "is_current": false,
-          "industry": "AI/ML",
-          "company_size": "201-500"
         }
       ],
       "skills": [
         {
-          "name": "Fine-tuning LLMs",
+          "name": "Python",
           "proficiency": "expert",
-          "endorsements": 7,
-          "duration_months": 57
+          "endorsements": 41,
+          "duration_months": 40
         },
         {
-          "name": "LlamaIndex",
+          "name": "Image Classification",
           "proficiency": "advanced",
-          "endorsements": 11,
-          "duration_months": 19
+          "endorsements": 48,
+          "duration_months": 21
         },
         {
-          "name": "Qdrant",
-          "proficiency": "expert",
-          "endorsements": 28,
-          "duration_months": 67
-        },
-        {
-          "name": "Reinforcement Learning",
-          "proficiency": "intermediate",
-          "endorsements": 4,
+          "name": "OpenCV",
+          "proficiency": "advanced",
+          "endorsements": 27,
           "duration_months": 34
         },
         {
-          "name": "NLP",
+          "name": "Pinecone",
           "proficiency": "expert",
           "endorsements": 58,
-          "duration_months": 46
+          "duration_months": 85
         },
         {
-          "name": "Statistical Modeling",
+          "name": "Haystack",
+          "proficiency": "expert",
+          "endorsements": 18,
+          "duration_months": 75
+        },
+        {
+          "name": "Six Sigma",
           "proficiency": "intermediate",
-          "endorsements": 5,
-          "duration_months": 22
+          "endorsements": 1,
+          "duration_months": 12
         },
         {
-          "name": "Kubeflow",
+          "name": "TTS",
           "proficiency": "advanced",
-          "endorsements": 34,
-          "duration_months": 53
+          "endorsements": 39,
+          "duration_months": 18
         },
         {
-          "name": "ASR",
+          "name": "Diffusion Models",
           "proficiency": "intermediate",
-          "endorsements": 8,
-          "duration_months": 29
-        },
-        {
-          "name": "OpenSearch",
-          "proficiency": "expert",
-          "endorsements": 41,
-          "duration_months": 71
-        },
-        {
-          "name": "Deep Learning",
-          "proficiency": "expert",
-          "endorsements": 46,
-          "duration_months": 68
-        },
-        {
-          "name": "Machine Learning",
-          "proficiency": "expert",
-          "endorsements": 2,
-          "duration_months": 50
-        },
-        {
-          "name": "LLMs",
-          "proficiency": "advanced",
-          "endorsements": 22,
-          "duration_months": 33
+          "endorsements": 7,
+          "duration_months": 30
         },
         {
           "name": "BM25",
-          "proficiency": "advanced",
-          "endorsements": 43,
-          "duration_months": 50
-        },
-        {
-          "name": "Weaviate",
           "proficiency": "expert",
-          "endorsements": 33,
+          "endorsements": 58,
           "duration_months": 64
         },
         {
-          "name": "Python",
+          "name": "YOLO",
+          "proficiency": "advanced",
+          "endorsements": 36,
+          "duration_months": 36
+        },
+        {
+          "name": "OpenSearch",
+          "proficiency": "advanced",
+          "endorsements": 18,
+          "duration_months": 21
+        },
+        {
+          "name": "PEFT",
           "proficiency": "expert",
-          "endorsements": 44,
-          "duration_months": 95
+          "endorsements": 57,
+          "duration_months": 92
         },
         {
-          "name": "TensorFlow",
-          "proficiency": "expert",
-          "endorsements": 7,
-          "duration_months": 60
-        },
-        {
-          "name": "CI/CD",
-          "proficiency": "beginner",
-          "endorsements": 9,
-          "duration_months": 3
-        },
-        {
-          "name": "pgvector",
-          "proficiency": "expert",
-          "endorsements": 30,
-          "duration_months": 70
-        },
-        {
-          "name": "Speech Recognition",
-          "proficiency": "intermediate",
-          "endorsements": 14,
-          "duration_months": 24
+          "name": "Deep Learning",
+          "proficiency": "advanced",
+          "endorsements": 60,
+          "duration_months": 42
         },
         {
           "name": "Elasticsearch",
           "proficiency": "expert",
-          "endorsements": 43,
-          "duration_months": 46
+          "endorsements": 49,
+          "duration_months": 78
+        },
+        {
+          "name": "QLoRA",
+          "proficiency": "advanced",
+          "endorsements": 58,
+          "duration_months": 45
+        },
+        {
+          "name": "Semantic Search",
+          "proficiency": "advanced",
+          "endorsements": 46,
+          "duration_months": 43
         }
       ],
       "education": [
         {
           "institution": "IIT Hyderabad",
-          "degree": "M.Sc",
-          "field": "Data Science",
-          "start": 2017,
-          "end": 2020,
-          "grade": "8.54 CGPA",
+          "degree": "M.Tech",
+          "field": "Artificial Intelligence",
+          "start": 2003,
+          "end": 2006,
+          "grade": "7.18 CGPA",
+          "tier": "tier_1"
+        },
+        {
+          "institution": "BITS Pilani",
+          "degree": "B.Tech",
+          "field": "Artificial Intelligence",
+          "start": 2012,
+          "end": 2017,
+          "grade": "8.90 CGPA",
           "tier": "tier_1"
         }
       ],
@@ -1563,7 +1544,7 @@
         },
         {
           "language": "Hindi",
-          "proficiency": "conversational"
+          "proficiency": "native"
         }
       ]
     },
@@ -1836,7 +1817,7 @@
       ]
     },
     {
-      "candidate_id": "CAND_0046064",
+      "candidate_id": "CAND_0039754",
       "rank": 8,
       "score": 0.8971,
       "raw_score": 0.897059,
@@ -1845,234 +1826,253 @@
       "honeypot_reasons": [],
       "flags": [],
       "multipliers": {
-        "behavioral": 0.9416,
+        "behavioral": 1.0031,
         "honeypot": 1.0,
         "disqualifier": 1.0
       },
-      "reasoning": "Senior NLP Engineer (8.9 yrs), now at Salesforce; career history shows the production search/ranking work behind the JD's keyword list; core stack covers PEFT, Pinecone, Elasticsearch; located in Coimbatore, Tamil Nadu (India). Track record 36 months at Amazon as Senior ML Engineer \u2014 Search & Ranking. Hiring signals: answers 78% of recruiter outreach, 30-day notice; moderate availability; responsiveness is the watch item.",
+      "reasoning": "16.2 years of experience, currently a Senior Applied Scientist at Meta; aligns with the JD requirement for shipped retrieval/ranking systems; core stack covers Python, OpenSearch, Elasticsearch; based in Indore, Madhya Pradesh, India. Track record 40 months at Apple as Senior ML Engineer \u2014 Search & Ranking. Redrob engagement: notice 30 days, response rate 0.81; responsive and visibly in the market.",
       "features": {
-        "core_skill_match": 0.907,
+        "core_skill_match": 0.832,
         "jd_keyword_coverage_score": 1.0,
         "nice_skill_match": 0.48,
-        "skill_depth_score": 0.9355,
-        "endorsement_trust": 0.8376,
-        "assessment_score_avg": 0.641,
+        "skill_depth_score": 1.0,
+        "endorsement_trust": 0.7104,
+        "assessment_score_avg": 0.7556,
         "disqualifier_skill_flag": 0.0,
         "keyword_stuffer_flag": 0.3333,
-        "github_signal": 0.673,
+        "github_signal": 0.775,
         "product_company_ratio": 1.0,
         "consulting_only_flag": 0.0,
         "ir_ranking_experience": 1.0,
-        "production_evidence": 1.0,
-        "title_match_score": 1.0,
+        "production_evidence": 0.955,
+        "title_match_score": 0.95,
         "senior_title_held": 1.0,
-        "career_trajectory_score": 1.0,
+        "career_trajectory_score": 0.9625,
         "scale_signal": 0.0,
         "code_writing_recent": 0.25,
         "yoe_fit_score": 1.0,
         "education_score": 1.0,
         "ml_ai_tenure_score": 1.0,
         "open_source_signal": 0.3333,
-        "availability_score": 0.72,
+        "availability_score": 0.9,
         "engagement_score": 1.0,
-        "responsiveness_score": 0.7475,
-        "interview_reliability": 0.8,
-        "profile_quality": 0.8271,
+        "responsiveness_score": 0.77,
+        "interview_reliability": 0.98,
+        "profile_quality": 0.7697,
         "notice_period_score": 1.0,
         "location_score": 0.68,
-        "relocation_willing": 0.0,
+        "relocation_willing": 1.0,
         "backend_depth_score": 0.0,
         "data_bi_depth_score": 0.0,
-        "hyre_similarity": 0.0661,
-        "behavioral_multiplier": 0.9416,
+        "hyre_similarity": 0.0705,
+        "behavioral_multiplier": 1.0031,
         "honeypot_multiplier": 1.0,
         "disqualifier_multiplier": 1.0,
         "total": 0.8971
       },
       "behavioral": {
-        "profile_completeness": 75.3,
+        "profile_completeness": 67.1,
         "open_to_work": true,
-        "response_rate": 0.78,
-        "avg_response_time": 40.8,
-        "interview_completion": 0.8,
-        "offer_acceptance": -1,
-        "github_activity": 67.3,
-        "saved_by_recruiters": 25,
-        "profile_views": 323,
+        "response_rate": 0.81,
+        "avg_response_time": 38.5,
+        "interview_completion": 0.98,
+        "offer_acceptance": 0.55,
+        "github_activity": 77.5,
+        "saved_by_recruiters": 51,
+        "profile_views": 279,
         "notice_period": 30,
         "verified_email": true,
         "verified_phone": true,
         "skill_assessments": {
-          "Python": 64.1
+          "Fine-tuning LLMs": 96.5,
+          "LlamaIndex": 65.2,
+          "Qdrant": 61.5,
+          "NLP": 80.5,
+          "Kubeflow": 74.1
         },
-        "connection_count": 1838,
-        "endorsements": 132,
+        "connection_count": 1009,
+        "endorsements": 46,
         "expected_salary": {
-          "min": 36.6,
-          "max": 53.4
+          "min": 30.1,
+          "max": 62.1
         },
-        "preferred_work_mode": "flexible",
-        "willing_to_relocate": false
+        "preferred_work_mode": "hybrid",
+        "willing_to_relocate": true
       },
       "profile": {
-        "name": "Saanvi Naidu",
-        "headline": "Senior NLP Engineer | LLMs, RAG, Vector Search | ex-Top Tech",
-        "summary": "Senior AI engineer with 8.9 years of hands-on experience building production ML systems, with a focus on search, retrieval, and ranking. Most recently, I rebuilt the candidate-JD matching pipeline from scratch, taking it from 0.72 to 0.91 NDCG@10, operating at single-digit-millisecond p95 retrieval latency. My day-to-day work spans embedding model selection and fine-tuning, hybrid retrieval architecture, learning-to-rank, behavioral-signal integration, and the offline/online evaluation that ties it all together. I've shipped systems in both early-stage product companies and at larger scale, and I've spent enough time on both that I know which tradeoffs apply where. I believe most ranking problems are solved by careful feature engineering and rigorous eval, not by bigger models. Currently exploring my next move \u2014 looking for senior IC or tech-lead roles where I can own the intelligence layer end-to-end.",
-        "title": "Senior NLP Engineer",
-        "company": "Salesforce",
+        "name": "Mira Banerjee",
+        "headline": "Senior Applied Scientist | Building AI-native search & ranking systems",
+        "summary": "Senior AI engineer with 8.3 years of hands-on experience building production ML systems, with a focus on search, retrieval, and ranking. Most recently, I rebuilt the candidate-JD matching pipeline from scratch, taking it from 0.72 to 0.91 NDCG@10, serving 50M+ queries per month. My day-to-day work spans embedding model selection and fine-tuning, hybrid retrieval architecture, learning-to-rank, behavioral-signal integration, and the offline/online evaluation that ties it all together. I've shipped systems in both early-stage product companies and at larger scale, and I've spent enough time on both that I know which tradeoffs apply where. I believe most ranking problems are solved by careful feature engineering and rigorous eval, not by bigger models. Currently exploring my next move \u2014 looking for senior IC or tech-lead roles where I can own the intelligence layer end-to-end.",
+        "title": "Senior Applied Scientist",
+        "company": "Meta",
         "company_size": "10001+",
-        "industry": "Software",
-        "location": "Coimbatore, Tamil Nadu",
+        "industry": "Internet",
+        "location": "Indore, Madhya Pradesh",
         "country": "India",
-        "yoe": 8.9
+        "yoe": 16.2
       },
       "timeline": [
         {
-          "company": "Salesforce",
-          "title": "Senior NLP Engineer",
-          "start": "2023-06-12",
+          "company": "Meta",
+          "title": "Senior Applied Scientist",
+          "start": "2023-05-13",
           "end": null,
-          "duration_months": 36,
+          "duration_months": 37,
           "is_current": true,
-          "industry": "Software",
-          "company_size": "10001+"
-        },
-        {
-          "company": "Verloop.io",
-          "title": "Lead AI Engineer",
-          "start": "2020-06-27",
-          "end": "2023-04-13",
-          "duration_months": 34,
-          "is_current": false,
-          "industry": "Conversational AI",
-          "company_size": "51-200"
-        },
-        {
-          "company": "Amazon",
-          "title": "Senior ML Engineer \u2014 Search & Ranking",
-          "start": "2017-07-13",
-          "end": "2020-06-27",
-          "duration_months": 36,
-          "is_current": false,
           "industry": "Internet",
           "company_size": "10001+"
+        },
+        {
+          "company": "Apple",
+          "title": "Senior ML Engineer \u2014 Search & Ranking",
+          "start": "2020-01-29",
+          "end": "2023-05-13",
+          "duration_months": 40,
+          "is_current": false,
+          "industry": "Consumer Electronics",
+          "company_size": "10001+"
+        },
+        {
+          "company": "Observe.AI",
+          "title": "Senior Applied Scientist",
+          "start": "2018-05-09",
+          "end": "2020-01-29",
+          "duration_months": 21,
+          "is_current": false,
+          "industry": "AI/ML",
+          "company_size": "201-500"
         }
       ],
       "skills": [
         {
-          "name": "Python",
+          "name": "Fine-tuning LLMs",
           "proficiency": "expert",
-          "endorsements": 41,
-          "duration_months": 40
+          "endorsements": 7,
+          "duration_months": 57
         },
         {
-          "name": "Image Classification",
+          "name": "LlamaIndex",
           "proficiency": "advanced",
-          "endorsements": 48,
-          "duration_months": 21
+          "endorsements": 11,
+          "duration_months": 19
         },
         {
-          "name": "OpenCV",
-          "proficiency": "advanced",
-          "endorsements": 27,
+          "name": "Qdrant",
+          "proficiency": "expert",
+          "endorsements": 28,
+          "duration_months": 67
+        },
+        {
+          "name": "Reinforcement Learning",
+          "proficiency": "intermediate",
+          "endorsements": 4,
           "duration_months": 34
         },
         {
-          "name": "Pinecone",
+          "name": "NLP",
           "proficiency": "expert",
           "endorsements": 58,
-          "duration_months": 85
+          "duration_months": 46
         },
         {
-          "name": "Haystack",
-          "proficiency": "expert",
-          "endorsements": 18,
-          "duration_months": 75
-        },
-        {
-          "name": "Six Sigma",
+          "name": "Statistical Modeling",
           "proficiency": "intermediate",
-          "endorsements": 1,
-          "duration_months": 12
+          "endorsements": 5,
+          "duration_months": 22
         },
         {
-          "name": "TTS",
+          "name": "Kubeflow",
           "proficiency": "advanced",
-          "endorsements": 39,
-          "duration_months": 18
+          "endorsements": 34,
+          "duration_months": 53
         },
         {
-          "name": "Diffusion Models",
+          "name": "ASR",
           "proficiency": "intermediate",
-          "endorsements": 7,
-          "duration_months": 30
-        },
-        {
-          "name": "BM25",
-          "proficiency": "expert",
-          "endorsements": 58,
-          "duration_months": 64
-        },
-        {
-          "name": "YOLO",
-          "proficiency": "advanced",
-          "endorsements": 36,
-          "duration_months": 36
+          "endorsements": 8,
+          "duration_months": 29
         },
         {
           "name": "OpenSearch",
-          "proficiency": "advanced",
-          "endorsements": 18,
-          "duration_months": 21
-        },
-        {
-          "name": "PEFT",
           "proficiency": "expert",
-          "endorsements": 57,
-          "duration_months": 92
+          "endorsements": 41,
+          "duration_months": 71
         },
         {
           "name": "Deep Learning",
+          "proficiency": "expert",
+          "endorsements": 46,
+          "duration_months": 68
+        },
+        {
+          "name": "Machine Learning",
+          "proficiency": "expert",
+          "endorsements": 2,
+          "duration_months": 50
+        },
+        {
+          "name": "LLMs",
           "proficiency": "advanced",
-          "endorsements": 60,
-          "duration_months": 42
+          "endorsements": 22,
+          "duration_months": 33
+        },
+        {
+          "name": "BM25",
+          "proficiency": "advanced",
+          "endorsements": 43,
+          "duration_months": 50
+        },
+        {
+          "name": "Weaviate",
+          "proficiency": "expert",
+          "endorsements": 33,
+          "duration_months": 64
+        },
+        {
+          "name": "Python",
+          "proficiency": "expert",
+          "endorsements": 44,
+          "duration_months": 95
+        },
+        {
+          "name": "TensorFlow",
+          "proficiency": "expert",
+          "endorsements": 7,
+          "duration_months": 60
+        },
+        {
+          "name": "CI/CD",
+          "proficiency": "beginner",
+          "endorsements": 9,
+          "duration_months": 3
+        },
+        {
+          "name": "pgvector",
+          "proficiency": "expert",
+          "endorsements": 30,
+          "duration_months": 70
+        },
+        {
+          "name": "Speech Recognition",
+          "proficiency": "intermediate",
+          "endorsements": 14,
+          "duration_months": 24
         },
         {
           "name": "Elasticsearch",
           "proficiency": "expert",
-          "endorsements": 49,
-          "duration_months": 78
-        },
-        {
-          "name": "QLoRA",
-          "proficiency": "advanced",
-          "endorsements": 58,
-          "duration_months": 45
-        },
-        {
-          "name": "Semantic Search",
-          "proficiency": "advanced",
-          "endorsements": 46,
-          "duration_months": 43
+          "endorsements": 43,
+          "duration_months": 46
         }
       ],
       "education": [
         {
           "institution": "IIT Hyderabad",
-          "degree": "M.Tech",
-          "field": "Artificial Intelligence",
-          "start": 2003,
-          "end": 2006,
-          "grade": "7.18 CGPA",
-          "tier": "tier_1"
-        },
-        {
-          "institution": "BITS Pilani",
-          "degree": "B.Tech",
-          "field": "Artificial Intelligence",
-          "start": 2012,
-          "end": 2017,
-          "grade": "8.90 CGPA",
+          "degree": "M.Sc",
+          "field": "Data Science",
+          "start": 2017,
+          "end": 2020,
+          "grade": "8.54 CGPA",
           "tier": "tier_1"
         }
       ],
@@ -2084,7 +2084,7 @@
         },
         {
           "language": "Hindi",
-          "proficiency": "native"
+          "proficiency": "conversational"
         }
       ]
     },
@@ -24148,7 +24148,7 @@
       ]
     },
     {
-      "candidate_id": "CAND_0042506",
+      "candidate_id": "CAND_0048558",
       "rank": 97,
       "score": 0.291,
       "raw_score": 0.291046,
@@ -24157,253 +24157,185 @@
       "honeypot_reasons": [],
       "flags": [],
       "multipliers": {
-        "behavioral": 1.0613,
+        "behavioral": 1.0706,
         "honeypot": 1.0,
         "disqualifier": 1.0
       },
-      "reasoning": "Search Engineer with 4.2 years at Verloop.io; concern: 4 years is outside the JD's 5-9 year target band; matches the JD's emphasis on production retrieval and ranking work. On the record 32 months at Meesho as Machine Learning Engineer. Platform activity: response rate 0.48, notice 15 days; high availability with reliable recruiter responses.",
+      "reasoning": "6.7-year Data Scientist currently at Rephrase.ai; career path tracks toward the JD's Senior AI Engineer profile. Evidence 27 months at Paytm as ML Engineer. Recruiter interaction profile: answers 80% of recruiter outreach, 30-day notice; strong availability and recruiter-response signals.",
       "features": {
-        "core_skill_match": 0.982,
+        "core_skill_match": 0.534,
         "jd_keyword_coverage_score": 1.0,
-        "nice_skill_match": 0.34,
-        "skill_depth_score": 1.0,
-        "endorsement_trust": 0.6725,
-        "assessment_score_avg": 0.7376,
+        "nice_skill_match": 0.48,
+        "skill_depth_score": 0.7,
+        "endorsement_trust": 0.683,
+        "assessment_score_avg": 0.0,
         "disqualifier_skill_flag": 0.0,
-        "keyword_stuffer_flag": 0.3333,
-        "github_signal": 0.64,
+        "keyword_stuffer_flag": 0.0,
+        "github_signal": 0.0,
         "product_company_ratio": 1.0,
         "consulting_only_flag": 0.0,
-        "ir_ranking_experience": 0.5714,
-        "production_evidence": 0.58,
+        "ir_ranking_experience": 0.4286,
+        "production_evidence": 0.455,
         "title_match_score": 0.95,
         "senior_title_held": 0.0,
         "career_trajectory_score": 0.9625,
         "scale_signal": 0.0,
-        "code_writing_recent": 0.5,
-        "yoe_fit_score": 0.56,
+        "code_writing_recent": 0.75,
+        "yoe_fit_score": 0.9934,
         "education_score": 0.97,
-        "ml_ai_tenure_score": 0.8333,
-        "open_source_signal": 0.3333,
-        "availability_score": 0.9,
+        "ml_ai_tenure_score": 1.0,
+        "open_source_signal": 0.6667,
+        "availability_score": 1.0,
         "engagement_score": 1.0,
-        "responsiveness_score": 0.4475,
-        "interview_reliability": 0.82,
-        "profile_quality": 0.7481,
+        "responsiveness_score": 0.85,
+        "interview_reliability": 0.52,
+        "profile_quality": 0.93,
         "notice_period_score": 1.0,
         "location_score": 1.0,
-        "relocation_willing": 0.0,
+        "relocation_willing": 1.0,
         "backend_depth_score": 0.0,
         "data_bi_depth_score": 0.0,
-        "hyre_similarity": 0.0943,
-        "behavioral_multiplier": 1.0613,
+        "hyre_similarity": 0.0695,
+        "behavioral_multiplier": 1.0706,
         "honeypot_multiplier": 1.0,
         "disqualifier_multiplier": 1.0,
         "total": 0.291
       },
       "behavioral": {
-        "profile_completeness": 83.3,
+        "profile_completeness": 90.0,
         "open_to_work": true,
-        "response_rate": 0.48,
-        "avg_response_time": 75.7,
-        "interview_completion": 0.82,
-        "offer_acceptance": 0.77,
-        "github_activity": 64.0,
-        "saved_by_recruiters": 49,
-        "profile_views": 262,
-        "notice_period": 15,
-        "verified_email": false,
+        "response_rate": 0.8,
+        "avg_response_time": 11.2,
+        "interview_completion": 0.52,
+        "offer_acceptance": 0.46,
+        "github_activity": -1,
+        "saved_by_recruiters": 30,
+        "profile_views": 122,
+        "notice_period": 30,
+        "verified_email": true,
         "verified_phone": true,
-        "skill_assessments": {
-          "PEFT": 68.9,
-          "TTS": 76.0,
-          "scikit-learn": 73.6,
-          "OpenCV": 83.7,
-          "Semantic Search": 66.6
-        },
-        "connection_count": 797,
-        "endorsements": 167,
+        "skill_assessments": {},
+        "connection_count": 427,
+        "endorsements": 24,
         "expected_salary": {
-          "min": 42.7,
-          "max": 56.3
+          "min": 27.9,
+          "max": 41.3
         },
-        "preferred_work_mode": "remote",
-        "willing_to_relocate": false
+        "preferred_work_mode": "flexible",
+        "willing_to_relocate": true
       },
       "profile": {
-        "name": "Zara Pandey",
-        "headline": "Search Engineer | Search, Ranking & Retrieval",
-        "summary": "Machine learning engineer with 4.2 years of experience building ML-powered features in production. Strong background in NLP, recommendation systems, and applied AI; comfortable across the ML stack from feature engineering through deployment. Recently, I built our semantic search infrastructure from scratch \u2014 sentence-transformers, FAISS, the works. I've spent enough time debugging production ranking issues to know which signals matter and which are noise. My academic background is in CS/ML but my main learning has come from shipping real systems and seeing what holds up under production load. Open to senior IC roles in applied ML or AI engineering, ideally at product companies where I'd own a meaningful piece of the ML stack.",
-        "title": "Search Engineer",
-        "company": "Verloop.io",
-        "company_size": "51-200",
-        "industry": "Conversational AI",
-        "location": "Mumbai, Maharashtra",
+        "name": "Aisha Joshi",
+        "headline": "Data Scientist | 6.7 yrs in analytics & ML",
+        "summary": "Data scientist / ML engineer with 6.7 years of experience in applied machine learning. Worked across predictive modeling, NLP, analytics, and lightweight deployment workflows. Most of my recent work has been on predictive modeling for customer-facing problems \u2014 churn, conversion, lifetime value. I'm strongest at the modeling and analysis side; comfortable with Python, scikit-learn, pandas, and standard MLOps tooling, but I'm still building depth on the engineering and infra side of production ML. I want to grow into senior AI engineering \u2014 get serious about LLMs and retrieval beyond the surface level.",
+        "title": "Data Scientist",
+        "company": "Rephrase.ai",
+        "company_size": "11-50",
+        "industry": "AI/ML",
+        "location": "Noida, Uttar Pradesh",
         "country": "India",
-        "yoe": 4.2
+        "yoe": 6.7
       },
       "timeline": [
         {
-          "company": "Verloop.io",
-          "title": "Search Engineer",
-          "start": "2024-12-03",
+          "company": "Rephrase.ai",
+          "title": "Data Scientist",
+          "start": "2023-06-12",
           "end": null,
-          "duration_months": 18,
+          "duration_months": 36,
           "is_current": true,
-          "industry": "Conversational AI",
+          "industry": "AI/ML",
+          "company_size": "11-50"
+        },
+        {
+          "company": "Aganitha",
+          "title": "Computer Vision Engineer",
+          "start": "2022-01-18",
+          "end": "2023-05-13",
+          "duration_months": 16,
+          "is_current": false,
+          "industry": "AI/ML",
           "company_size": "51-200"
         },
         {
-          "company": "Meesho",
-          "title": "Machine Learning Engineer",
-          "start": "2022-04-04",
-          "end": "2024-11-19",
-          "duration_months": 32,
+          "company": "Paytm",
+          "title": "ML Engineer",
+          "start": "2019-10-31",
+          "end": "2022-01-18",
+          "duration_months": 27,
           "is_current": false,
-          "industry": "E-commerce",
-          "company_size": "1001-5000"
+          "industry": "Fintech",
+          "company_size": "10001+"
         }
       ],
       "skills": [
         {
-          "name": "PEFT",
-          "proficiency": "expert",
-          "endorsements": 39,
-          "duration_months": 71
-        },
-        {
-          "name": "TTS",
-          "proficiency": "advanced",
-          "endorsements": 7,
-          "duration_months": 20
-        },
-        {
-          "name": "scikit-learn",
-          "proficiency": "advanced",
-          "endorsements": 11,
-          "duration_months": 37
-        },
-        {
-          "name": "OpenCV",
-          "proficiency": "advanced",
-          "endorsements": 40,
-          "duration_months": 38
-        },
-        {
-          "name": "Semantic Search",
-          "proficiency": "advanced",
-          "endorsements": 19,
-          "duration_months": 27
-        },
-        {
-          "name": "BentoML",
-          "proficiency": "intermediate",
-          "endorsements": 9,
-          "duration_months": 27
-        },
-        {
-          "name": "Fine-tuning LLMs",
-          "proficiency": "expert",
-          "endorsements": 11,
-          "duration_months": 53
-        },
-        {
-          "name": "TensorFlow",
-          "proficiency": "expert",
-          "endorsements": 7,
-          "duration_months": 83
-        },
-        {
           "name": "Information Retrieval",
-          "proficiency": "expert",
-          "endorsements": 26,
-          "duration_months": 88
-        },
-        {
-          "name": "Diffusion Models",
           "proficiency": "intermediate",
-          "endorsements": 3,
-          "duration_months": 35
+          "endorsements": 5,
+          "duration_months": 19
         },
         {
-          "name": "Milvus",
-          "proficiency": "expert",
-          "endorsements": 30,
+          "name": "OpenSearch",
+          "proficiency": "advanced",
+          "endorsements": 59,
           "duration_months": 41
         },
         {
-          "name": "Deep Learning",
-          "proficiency": "expert",
-          "endorsements": 1,
-          "duration_months": 87
-        },
-        {
           "name": "Qdrant",
-          "proficiency": "expert",
-          "endorsements": 25,
-          "duration_months": 47
+          "proficiency": "advanced",
+          "endorsements": 22,
+          "duration_months": 42
         },
         {
-          "name": "FAISS",
-          "proficiency": "expert",
-          "endorsements": 43,
-          "duration_months": 81
-        },
-        {
-          "name": "Airflow",
+          "name": "GANs",
           "proficiency": "intermediate",
+          "endorsements": 10,
+          "duration_months": 33
+        },
+        {
+          "name": "TTS",
+          "proficiency": "intermediate",
+          "endorsements": 14,
+          "duration_months": 16
+        },
+        {
+          "name": "Spark",
+          "proficiency": "intermediate",
+          "endorsements": 10,
+          "duration_months": 18
+        },
+        {
+          "name": "Elasticsearch",
+          "proficiency": "intermediate",
+          "endorsements": 15,
+          "duration_months": 18
+        },
+        {
+          "name": "Feature Engineering",
+          "proficiency": "advanced",
+          "endorsements": 55,
+          "duration_months": 19
+        },
+        {
+          "name": "Speech Recognition",
+          "proficiency": "advanced",
           "endorsements": 6,
-          "duration_months": 9
-        },
-        {
-          "name": "Object Detection",
-          "proficiency": "advanced",
-          "endorsements": 41,
-          "duration_months": 21
-        },
-        {
-          "name": "NLP",
-          "proficiency": "expert",
-          "endorsements": 60,
-          "duration_months": 86
-        },
-        {
-          "name": "Forecasting",
-          "proficiency": "advanced",
-          "endorsements": 51,
-          "duration_months": 27
-        },
-        {
-          "name": "pgvector",
-          "proficiency": "expert",
-          "endorsements": 2,
-          "duration_months": 49
+          "duration_months": 32
         }
       ],
       "education": [
         {
-          "institution": "Amity University",
-          "degree": "B.Tech",
-          "field": "Machine Learning",
-          "start": 2008,
-          "end": 2011,
-          "grade": "9.26 CGPA",
-          "tier": "tier_3"
-        },
-        {
-          "institution": "PES University",
-          "degree": "M.E.",
+          "institution": "VIT Vellore",
+          "degree": "M.Sc",
           "field": "Computer Science",
-          "start": 2003,
-          "end": 2008,
-          "grade": "65%",
+          "start": 2002,
+          "end": 2006,
+          "grade": "6.70 CGPA",
           "tier": "tier_2"
         }
       ],
-      "certifications": [
-        "Deep Learning Specialization",
-        "LangChain for LLM Application Development"
-      ],
+      "certifications": [],
       "languages": [
         {
           "language": "English",
@@ -24645,7 +24577,7 @@
       ]
     },
     {
-      "candidate_id": "CAND_0081852",
+      "candidate_id": "CAND_0043228",
       "rank": 99,
       "score": 0.2836,
       "raw_score": 0.283631,
@@ -24654,217 +24586,245 @@
       "honeypot_reasons": [],
       "flags": [],
       "multipliers": {
-        "behavioral": 0.9266,
+        "behavioral": 0.7568,
         "honeypot": 1.0,
         "disqualifier": 1.0
       },
-      "reasoning": "5.9-year Senior Data Scientist currently at Mad Street Den; skill profile maps strongly to the JD's core AI/ML requirements. Track record 19 months at Nykaa as AI Engineer. On the platform: usable availability signals with some recruiter-response risk; response rate 0.44, notice 45 days.",
+      "reasoning": "Currently an Applied ML Engineer at Zoho with 6.8 years; concern: not marked open-to-work; brings the shipped retrieval/ranking record the JD is actually after. Concrete signal 44 months at Vedantu as Applied ML Engineer. Availability and responsiveness: reachable, though recruiter-response history is mixed; response rate 0.41, notice 30 days.",
       "features": {
-        "core_skill_match": 0.745,
+        "core_skill_match": 0.82,
         "jd_keyword_coverage_score": 1.0,
         "nice_skill_match": 0.34,
-        "skill_depth_score": 0.953,
-        "endorsement_trust": 0.6916,
-        "assessment_score_avg": 0.0,
+        "skill_depth_score": 0.9898,
+        "endorsement_trust": 0.6583,
+        "assessment_score_avg": 0.745,
         "disqualifier_skill_flag": 0.0,
         "keyword_stuffer_flag": 0.3333,
-        "github_signal": 0.879,
+        "github_signal": 0.476,
         "product_company_ratio": 1.0,
         "consulting_only_flag": 0.0,
-        "ir_ranking_experience": 0.4286,
+        "ir_ranking_experience": 1.0,
         "production_evidence": 0.455,
-        "title_match_score": 0.78,
-        "senior_title_held": 1.0,
-        "career_trajectory_score": 0.835,
+        "title_match_score": 0.95,
+        "senior_title_held": 0.0,
+        "career_trajectory_score": 0.9625,
         "scale_signal": 0.0,
         "code_writing_recent": 0.5,
-        "yoe_fit_score": 0.9144,
-        "education_score": 0.97,
-        "ml_ai_tenure_score": 0.3167,
+        "yoe_fit_score": 0.997,
+        "education_score": 1.0,
+        "ml_ai_tenure_score": 1.0,
         "open_source_signal": 0.3333,
-        "availability_score": 0.9,
+        "availability_score": 0.612,
         "engagement_score": 1.0,
-        "responsiveness_score": 0.4925,
-        "interview_reliability": 0.77,
-        "profile_quality": 0.8684,
-        "notice_period_score": 0.93,
-        "location_score": 1.0,
-        "relocation_willing": 1.0,
+        "responsiveness_score": 0.47,
+        "interview_reliability": 0.94,
+        "profile_quality": 0.9181,
+        "notice_period_score": 1.0,
+        "location_score": 0.68,
+        "relocation_willing": 0.0,
         "backend_depth_score": 0.0,
         "data_bi_depth_score": 0.0,
-        "hyre_similarity": 0.0822,
-        "behavioral_multiplier": 0.9266,
+        "hyre_similarity": 0.0701,
+        "behavioral_multiplier": 0.7568,
         "honeypot_multiplier": 1.0,
         "disqualifier_multiplier": 1.0,
         "total": 0.2836
       },
       "behavioral": {
-        "profile_completeness": 96.2,
-        "open_to_work": true,
-        "response_rate": 0.44,
-        "avg_response_time": 51.6,
-        "interview_completion": 0.77,
-        "offer_acceptance": 0.41,
-        "github_activity": 87.9,
-        "saved_by_recruiters": 25,
-        "profile_views": 126,
-        "notice_period": 45,
+        "profile_completeness": 88.3,
+        "open_to_work": false,
+        "response_rate": 0.41,
+        "avg_response_time": 42.0,
+        "interview_completion": 0.94,
+        "offer_acceptance": 0.52,
+        "github_activity": 47.6,
+        "saved_by_recruiters": 65,
+        "profile_views": 72,
+        "notice_period": 30,
         "verified_email": true,
-        "verified_phone": false,
-        "skill_assessments": {},
-        "connection_count": 1160,
-        "endorsements": 92,
+        "verified_phone": true,
+        "skill_assessments": {
+          "NLP": 83.0,
+          "ASR": 76.5,
+          "Hugging Face Transformers": 64.4,
+          "Haystack": 65.0,
+          "Image Classification": 83.6
+        },
+        "connection_count": 279,
+        "endorsements": 22,
         "expected_salary": {
-          "min": 27.4,
-          "max": 57.3
+          "min": 32.8,
+          "max": 43.2
         },
         "preferred_work_mode": "hybrid",
-        "willing_to_relocate": true
+        "willing_to_relocate": false
       },
       "profile": {
-        "name": "Krishna Subramanian",
-        "headline": "Senior Data Scientist | ML, NLP, Recommendation Systems",
-        "summary": "Machine learning engineer with 5.9 years of experience building ML-powered features in production. Strong background in NLP, recommendation systems, and applied AI; comfortable across the ML stack from feature engineering through deployment. Recently, I led the team that migrated our keyword-search-based product to embedding-based retrieval. I care a lot about evaluation rigor \u2014 too many teams ship models without offline benchmarks they trust. My academic background is in CS/ML but my main learning has come from shipping real systems and seeing what holds up under production load. Open to senior IC roles in applied ML or AI engineering, ideally at product companies where I'd own a meaningful piece of the ML stack.",
-        "title": "Senior Data Scientist",
-        "company": "Mad Street Den",
-        "company_size": "201-500",
-        "industry": "AI/ML",
-        "location": "Delhi, Delhi",
+        "name": "Kiara Sen",
+        "headline": "Applied ML Engineer | Applied ML | Building intelligent products",
+        "summary": "Machine learning engineer with 6.8 years of experience building ML-powered features in production. Strong background in NLP, recommendation systems, and applied AI; comfortable across the ML stack from feature engineering through deployment. Recently, I built our semantic search infrastructure from scratch \u2014 sentence-transformers, FAISS, the works. I've learned that most retrieval problems are actually evaluation problems in disguise. My academic background is in CS/ML but my main learning has come from shipping real systems and seeing what holds up under production load. Open to senior IC roles in applied ML or AI engineering, ideally at product companies where I'd own a meaningful piece of the ML stack.",
+        "title": "Applied ML Engineer",
+        "company": "Zoho",
+        "company_size": "10001+",
+        "industry": "SaaS",
+        "location": "Chennai, Tamil Nadu",
         "country": "India",
-        "yoe": 5.9
+        "yoe": 6.8
       },
       "timeline": [
         {
-          "company": "Mad Street Den",
-          "title": "Senior Data Scientist",
-          "start": "2022-03-19",
+          "company": "Zoho",
+          "title": "Applied ML Engineer",
+          "start": "2024-05-07",
           "end": null,
-          "duration_months": 51,
+          "duration_months": 25,
           "is_current": true,
-          "industry": "AI/ML",
-          "company_size": "201-500"
+          "industry": "SaaS",
+          "company_size": "10001+"
         },
         {
-          "company": "Nykaa",
-          "title": "AI Engineer",
-          "start": "2020-08-19",
-          "end": "2022-03-12",
-          "duration_months": 19,
+          "company": "Vedantu",
+          "title": "Applied ML Engineer",
+          "start": "2020-09-18",
+          "end": "2024-04-30",
+          "duration_months": 44,
           "is_current": false,
-          "industry": "E-commerce",
+          "industry": "EdTech",
           "company_size": "1001-5000"
+        },
+        {
+          "company": "Yellow.ai",
+          "title": "Search Engineer",
+          "start": "2019-10-10",
+          "end": "2020-09-04",
+          "duration_months": 11,
+          "is_current": false,
+          "industry": "AI/ML",
+          "company_size": "201-500"
         }
       ],
       "skills": [
         {
-          "name": "Salesforce CRM",
+          "name": "BigQuery",
           "proficiency": "beginner",
-          "endorsements": 3,
-          "duration_months": 10
+          "endorsements": 4,
+          "duration_months": 4
         },
         {
-          "name": "Semantic Search",
+          "name": "NLP",
           "proficiency": "expert",
-          "endorsements": 8,
-          "duration_months": 42
+          "endorsements": 20,
+          "duration_months": 66
+        },
+        {
+          "name": "ASR",
+          "proficiency": "advanced",
+          "endorsements": 45,
+          "duration_months": 24
+        },
+        {
+          "name": "Hugging Face Transformers",
+          "proficiency": "expert",
+          "endorsements": 31,
+          "duration_months": 86
+        },
+        {
+          "name": "FastAPI",
+          "proficiency": "intermediate",
+          "endorsements": 11,
+          "duration_months": 13
+        },
+        {
+          "name": "Haystack",
+          "proficiency": "advanced",
+          "endorsements": 47,
+          "duration_months": 45
+        },
+        {
+          "name": "Image Classification",
+          "proficiency": "advanced",
+          "endorsements": 14,
+          "duration_months": 51
+        },
+        {
+          "name": "Machine Learning",
+          "proficiency": "advanced",
+          "endorsements": 17,
+          "duration_months": 27
+        },
+        {
+          "name": "Vector Search",
+          "proficiency": "advanced",
+          "endorsements": 44,
+          "duration_months": 32
+        },
+        {
+          "name": "Sentence Transformers",
+          "proficiency": "expert",
+          "endorsements": 53,
+          "duration_months": 82
+        },
+        {
+          "name": "YOLO",
+          "proficiency": "intermediate",
+          "endorsements": 11,
+          "duration_months": 27
         },
         {
           "name": "TTS",
+          "proficiency": "intermediate",
+          "endorsements": 6,
+          "duration_months": 16
+        },
+        {
+          "name": "Weaviate",
+          "proficiency": "expert",
+          "endorsements": 0,
+          "duration_months": 43
+        },
+        {
+          "name": "Kubeflow",
           "proficiency": "advanced",
           "endorsements": 8,
-          "duration_months": 20
+          "duration_months": 26
         },
         {
-          "name": "Milvus",
-          "proficiency": "expert",
-          "endorsements": 23,
-          "duration_months": 57
+          "name": "React",
+          "proficiency": "beginner",
+          "endorsements": 0,
+          "duration_months": 7
         },
         {
-          "name": "BentoML",
+          "name": "Learning to Rank",
           "proficiency": "advanced",
-          "endorsements": 6,
-          "duration_months": 39
+          "endorsements": 41,
+          "duration_months": 29
+        },
+        {
+          "name": "OpenSearch",
+          "proficiency": "expert",
+          "endorsements": 31,
+          "duration_months": 51
         },
         {
           "name": "pgvector",
           "proficiency": "expert",
-          "endorsements": 37,
-          "duration_months": 45
-        },
-        {
-          "name": "Weaviate",
-          "proficiency": "advanced",
-          "endorsements": 48,
-          "duration_months": 43
-        },
-        {
-          "name": "Haystack",
-          "proficiency": "expert",
-          "endorsements": 48,
-          "duration_months": 38
-        },
-        {
-          "name": "Vector Search",
-          "proficiency": "expert",
-          "endorsements": 29,
-          "duration_months": 61
-        },
-        {
-          "name": "LoRA",
-          "proficiency": "expert",
-          "endorsements": 51,
+          "endorsements": 23,
           "duration_months": 76
-        },
-        {
-          "name": "Speech Recognition",
-          "proficiency": "intermediate",
-          "endorsements": 1,
-          "duration_months": 20
-        },
-        {
-          "name": "Computer Vision",
-          "proficiency": "intermediate",
-          "endorsements": 7,
-          "duration_months": 35
-        },
-        {
-          "name": "MLOps",
-          "proficiency": "advanced",
-          "endorsements": 38,
-          "duration_months": 24
-        },
-        {
-          "name": "CNN",
-          "proficiency": "advanced",
-          "endorsements": 39,
-          "duration_months": 23
         }
       ],
       "education": [
         {
-          "institution": "SRM Chennai",
-          "degree": "M.S.",
-          "field": "Information Technology",
-          "start": 2014,
-          "end": 2017,
-          "grade": "81%",
-          "tier": "tier_3"
-        },
-        {
-          "institution": "Manipal Institute of Technology",
-          "degree": "M.Sc",
-          "field": "Data Science",
-          "start": 2013,
-          "end": 2018,
-          "grade": "7.12 CGPA",
-          "tier": "tier_2"
+          "institution": "IIT Madras",
+          "degree": "B.E.",
+          "field": "Artificial Intelligence",
+          "start": 2016,
+          "end": 2020,
+          "grade": "6.58 CGPA",
+          "tier": "tier_1"
         }
       ],
-      "certifications": [
-        "LangChain for LLM Application Development",
-        "Deep Learning Specialization"
-      ],
+      "certifications": [],
       "languages": [
         {
           "language": "English",
@@ -24872,7 +24832,7 @@
         },
         {
           "language": "Hindi",
-          "proficiency": "conversational"
+          "proficiency": "professional"
         }
       ]
     },

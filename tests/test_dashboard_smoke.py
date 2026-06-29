@@ -19,7 +19,7 @@ from streamlit.testing.v1 import AppTest  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 APP = ROOT / "omega_decision_dashboard.py"
-GOLDEN_SHA = "c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c"
+GOLDEN_SHA = "79aebff697cbccf0b03137998d0b6faf2da61caebaa0ae34f0e5fc876650127e"
 
 
 def _run():

@@ -7,16 +7,25 @@ IDs, public ranking positions, resume fingerprints, or competitor code.
 
 from __future__ import annotations
 
+import math
 from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
 
+from redrob_ranker.anachronism import worst_severity
 from redrob_ranker.features import CandidateFeatures
 
 MODEL_PATH = Path(__file__).resolve().parents[2] / "models" / "loss_aggregate_v3.npz"
 MODEL_POOL_SIZE = 3000
 MEMBERSHIP_LOCK = 100
+V4_TOP_BAND_SIZE = 8
+V4_IR_WEIGHT = 8.0
+V4_EXPERIENCE_WEIGHT = 4.0
+V4_EXPERIENCE_CENTER = 7.0
+V4_EXPERIENCE_WIDTH = 2.0
+V4_CLEANUP_COUNT = 2
+V4_SEVERITY_CAP = 1.0
 
 
 def _minmax(values: np.ndarray) -> np.ndarray:
@@ -169,3 +178,91 @@ def rerank_loss_aggregate(
         result.append((item[0], item[1], score))
     result.extend(item for item in v2_order if item[0]["candidate_id"] not in locked_ids)
     return result
+
+
+def _experience_band(years: float) -> float:
+    return math.exp(
+        -((years - V4_EXPERIENCE_CENTER) ** 2)
+        / (2.0 * V4_EXPERIENCE_WIDTH**2)
+    )
+
+
+def _top_band_rerank(
+    top: list[tuple[dict, CandidateFeatures, float]],
+) -> list[tuple[dict, CandidateFeatures, float]]:
+    """Apply a small, feature-only evidence correction to the leading band."""
+
+    band_size = min(V4_TOP_BAND_SIZE, len(top))
+    original_rank = {
+        item[0]["candidate_id"]: rank for rank, item in enumerate(top[:band_size], 1)
+    }
+
+    def cost(item: tuple[dict, CandidateFeatures, float]) -> tuple[float, str]:
+        candidate, features, _ = item
+        profile = candidate.get("profile") or {}
+        try:
+            years = float(profile.get("years_of_experience") or 0.0)
+        except (TypeError, ValueError):
+            years = 0.0
+        candidate_id = candidate["candidate_id"]
+        value = (
+            original_rank[candidate_id]
+            - V4_IR_WEIGHT * features.values.get("ir_ranking_experience", 0.0)
+            - V4_EXPERIENCE_WEIGHT * _experience_band(years)
+        )
+        return value, candidate_id
+
+    return sorted(top[:band_size], key=cost) + top[band_size:]
+
+
+def _integrity_cleanup(
+    top: list[tuple[dict, CandidateFeatures, float]],
+    v2_tail: list[tuple[dict, CandidateFeatures, float]],
+) -> list[tuple[dict, CandidateFeatures, float]]:
+    """Replace at most two lowest-ranked temporal contradictions with clean V2 backfills."""
+
+    cleaned = list(top)
+    contradictions = sorted(
+        (
+            (position, item)
+            for position, item in enumerate(cleaned)
+            if worst_severity(item[0]) > V4_SEVERITY_CAP
+        ),
+        key=lambda pair: pair[0],
+        reverse=True,
+    )[:V4_CLEANUP_COUNT]
+    replacements = (
+        item for item in v2_tail if worst_severity(item[0]) <= V4_SEVERITY_CAP
+    )
+    for (position, _), replacement in zip(contradictions, replacements, strict=False):
+        cleaned[position] = replacement
+    return cleaned
+
+
+def rerank_dominant_v4(
+    ranked: list[tuple[dict, CandidateFeatures, float]],
+) -> list[tuple[dict, CandidateFeatures, float]]:
+    """Pareto-safe V4: V3 plus a top-band evidence correction and tiny integrity cleanup."""
+
+    v3_ranked = rerank_loss_aggregate(ranked)
+    if not v3_ranked:
+        return v3_ranked
+    top_size = min(MEMBERSHIP_LOCK, len(v3_ranked))
+    original_top = v3_ranked[:top_size]
+    top = _top_band_rerank(original_top)
+    top = _integrity_cleanup(top, v3_ranked[top_size:])
+
+    # Keep the established V3 score distribution monotone after the local
+    # reorder. Ordering is authoritative; scores remain deterministic and
+    # calibrated to the same top-100 range as V3.
+    rank_scores = sorted((item[2] for item in original_top), reverse=True)
+    rescored: list[tuple[dict, CandidateFeatures, float]] = []
+    for score, (candidate, features, _) in zip(rank_scores, top, strict=True):
+        features.total = score
+        rescored.append((candidate, features, score))
+
+    selected = {item[0]["candidate_id"] for item in rescored}
+    rescored.extend(
+        item for item in v3_ranked if item[0]["candidate_id"] not in selected
+    )
+    return rescored

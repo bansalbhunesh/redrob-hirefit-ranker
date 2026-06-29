@@ -1,5 +1,20 @@
 # Docker Runtime Matrix (Phase 0.1)
 
+## 2026-06-29 dominant-v4 constrained verification
+
+The exact `dominant-v4` artifact was generated from all 100,000 candidates
+using a Docker-native input volume and `--cpus=2 --memory=16g`:
+
+| Profile | Pipeline time | Wall time | Output SHA-256 |
+|---|---:|---:|---|
+| dominant-v4 | **75.4 s** | **79.5 s** | `79aebff697cbccf0b…` |
+| loss-aggregate-v3 control | 91.3 s | 95.7 s | `c28857fdba63723e…` |
+
+Both profiles used the same image and input volume. V3 reproduced its prior
+artifact byte-for-byte; V4 passed the validator and emitted zero honeypots.
+Docker Desktop timings vary with host load, so this establishes no regression
+and strong margin under the 300-second limit rather than a universal speedup.
+
 ## 2026-06-29 loss-aggregate-v3 query-only BM25 optimization
 
 A controlled before/after run used the same Docker-native volume, pinned image

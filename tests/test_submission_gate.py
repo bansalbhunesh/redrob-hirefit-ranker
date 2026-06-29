@@ -80,7 +80,11 @@ CANDIDATES = ROOT / "candidates.jsonl"
 #    seven leakage-safe label-family heads and an RRF membership lock. It keeps
 #    v2's exact 100 candidates, improves all 15 measured evaluators, and applies
 #    integrity gates after the model. Host and 2-CPU/16-GB Docker runs matched.)
-GOLDEN_SUBMISSION_SHA256 = "c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c"
+# -> 79aebff6... (2026-06-29, codex/dominant-v4: a candidate-ID-free
+#    top-band correction plus two conservative clean backfills. The exact
+#    Docker artifact improves/ties all 60 V3 metric cells and reduces temporal
+#    anomalies 59->57. Default main behavior and the slice gate are unchanged.)
+GOLDEN_SUBMISSION_SHA256 = "79aebff697cbccf0b03137998d0b6faf2da61caebaa0ae34f0e5fc876650127e"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0). Rolled

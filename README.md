@@ -3,29 +3,29 @@
 A deterministic, evidence-aware system that ranks the **top 100 of 100,000** candidates for a Senior
 AI Engineer role — with receipts for *why* this ranking is the one to ship.
 
-[![Tests](https://img.shields.io/badge/tests-213_passed_6_skipped-brightgreen.svg)](#)
-[![Runtime](https://img.shields.io/badge/100K-69.1s_Docker_native_·_254s_loaded_bind-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-216_passed_6_skipped-brightgreen.svg)](#)
+[![Runtime](https://img.shields.io/badge/100K-75.4s_Docker_2CPU-brightgreen.svg)](#)
 [![Execution](https://img.shields.io/badge/CPU--only-offline-blue.svg)](#)
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](#)
 [![Validation](https://img.shields.io/badge/validation-15_of_15_measured_axes-success.svg)](#)
-[![Decision](https://img.shields.io/badge/decision-loss--aggregate--v3_champion-success.svg)](#)
+[![Decision](https://img.shields.io/badge/decision-dominant--v4_champion-success.svg)](#)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Live demo](https://img.shields.io/badge/live_demo-HuggingFace_Space-FBBF24.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
 
-`Branch champion: loss-aggregate-v3` · `default main profile remains untouched` · `No hidden-score claim`
+`Branch champion: dominant-v4` · `default main profile remains untouched` · `No hidden-score claim`
 
 ---
 
 ## ⚡ For judges — the 30-second version
 
-- **What this branch tests:** deterministic, CPU-only `loss-aggregate-v3` (`c28857fd`): seven shallow label-family heads exported to pure NumPy, plus a conservative rank hedge that keeps v2's exact top-100 membership. No competitor code, IDs, fingerprints, or ranking files enter production.
-- **Measured result:** beats `main`, `top23-clean`, and `universal-v2` on **all 15 full-table evaluator axes**; seven-world mean **0.9059 vs 0.8727 main**, mean15 **0.9095 vs 0.8752**, reviewer **0.8096 vs 0.7106**, blind recruiter **0.8969 vs 0.8718**, and H2 **0.8820 vs 0.8748**.
-- **Runtime and integrity:** the optimized full-100K Docker path fell from **109.3s to 69.1s** in a controlled 2-CPU A/B (36.8% faster). A loaded Windows bind-mount pass took 254.0s, still under 300s. Outputs remained byte-identical; all **53 honeypots** were detected and **0** emitted. Earlier pinned-image runs were 152.8–226.9s.
+- **What this branch tests:** deterministic, CPU-only `dominant-v4` (`79aebff6`): V3's seven clean-room NumPy heads plus a candidate-ID-free top-eight evidence correction and two conservative clean backfills. No competitor code, IDs, fingerprints, or ranking files enter production.
+- **Measured result:** improves or ties **all 60 component cells** versus V3 and beats `main` on **all 15 composite evaluator axes**; seven-world mean **0.9065 vs 0.8727 main**, mean15 **0.9098 vs 0.8752**, reviewer **0.8096 vs 0.7106**, blind recruiter **0.8969 vs 0.8718**, and H2 **0.8842 vs 0.8748**.
+- **Runtime and integrity:** the exact full-100K artifact completed in **75.4s** inside Docker at 2 CPU / 16 GB (79.5s wall clock); a same-image V3 control took 91.3s. All **53 honeypots** were detected and **0** emitted, while temporal anomalies fell from 59 to 57.
 - **Public field:** 665 valid public outputs compared and all 69 multi-axis leaders cloned. V3 is **#1 on seven-world mean** and no public output dominates it across H2 + mean7 + reviewer + blind together.
-- **The receipts:** **213 tests passed / 6 environment skips**, 665 public submission repositories compared, 69 multi-axis leaders inspected, and a direct rank-fusion ceiling kept research-only.
+- **The receipts:** **216 tests passed / 6 environment skips**, 15 evaluators × 4 component metrics checked, 11,340 nearby parameter settings stress-tested, and unsupported single-family gains rejected as overfit.
 - **Honest limit:** this is the strongest **balanced** measured artifact, not best on every isolated public metric. Specialists still lead H2 and small recruiter slices, and candidate half-splits are noisy on some evaluators. There is no official hidden-score proof.
 
-**Contents:** [Live links](#live-links) · [Screenshots](#screenshots) · [Quick start](#quick-start) · [Product](PRODUCT.md) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--loss-aggregate-v3-on-the-experiment-branch) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
+**Contents:** [Live links](#live-links) · [Screenshots](#screenshots) · [Quick start](#quick-start) · [Product](PRODUCT.md) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--dominant-v4-on-the-experiment-branch) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
 
 ## Live links
 
@@ -52,7 +52,7 @@ AI Engineer role — with receipts for *why* this ranking is the one to ship.
 
 ```bash
 PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl \
-  --out submission.csv --workers 2 --scoring-profile loss-aggregate-v3
+  --out submission.csv --workers 2 --scoring-profile dominant-v4
 ```
 Runs the opt-in clean-room branch champion. Omitting `--scoring-profile` preserves `main`'s historical
 ranking behavior byte-for-byte. **Live:** [HuggingFace Space](https://huggingface.co/spaces/bansal1234/Hirefit)
@@ -63,17 +63,17 @@ ranking behavior byte-for-byte. **Live:** [HuggingFace Space](https://huggingfac
 
 | Property | Verified value |
 |---|---|
-| Branch submission | **Loss-aggregation v3 challenger** (`c28857fd`); default `main` is unchanged |
-| Production pipeline | Deterministic `rank.py`, **33-feature** scorer + seven shallow NumPy heads; champion is opt-in with `--scoring-profile loss-aggregate-v3` |
+| Branch submission | **Dominant-v4 challenger** (`79aebff6`); default `main` is unchanged |
+| Production pipeline | Deterministic `rank.py`, **33-feature** scorer + seven shallow NumPy heads + feature-only evidence/integrity correction; opt in with `--scoring-profile dominant-v4` |
 | Dataset | 100,000 candidates → top-100 |
-| Tests | 213 passed, 6 environment skips |
-| Challenger vs main | mean7 **0.9059 vs 0.8727**, mean15 **0.9095 vs 0.8752**, wins **15/15** full-table axes — *dev proxy; **No official hidden labels*** |
+| Tests | 216 passed, 6 environment skips |
+| Challenger vs main | mean7 **0.9065 vs 0.8727**, mean15 **0.9098 vs 0.8752**, wins **15/15** composites — *dev proxy; **No official hidden labels*** |
 | Public comparison | #1 mean7; #16 H2, #113 reviewer, #23 blind among 665 valid outputs; no four-axis dominator |
 | Dev-proxy quality | NDCG@10 0.9104 · P@10 = 1.0 — *dev proxy* |
-| Runtime | **69.1s optimized Docker-native volume · 254.0s loaded Windows bind mount, `--cpus=2 --memory=16g`** (budget 300s; earlier pinned-image best ~153s) |
+| Runtime | **75.4s pipeline / 79.5s wall clock, Docker-native volume, `--cpus=2 --memory=16g`** (budget 300s; historical pinned-image best ~153s) |
 | Memory | peak ~6.1 GB / 16 GB |
 | Execution | CPU-only, offline, deterministic (`PYTHONHASHSEED=0`) |
-| Integrity | shipped-detector flags in top-100: **0**; anachronism anomalies: **44** (golden 52) |
+| Integrity | honeypots in top-100: **0**; standard flags/disqualifications: **6**; temporal anomalies: **57** (V3 59) |
 | Decision | **Strongest balanced branch artifact; keep isolated until hidden or fresh human review** |
 
 > The quality rows are **dev proxies** (LLM-audit), explicitly **not** the official hidden score.
@@ -105,34 +105,36 @@ The strongest signal here is everything we **did not** ship — each built, meas
 small, auditable rebalancing toward production evidence and experience fit, validated across many
 evaluator families while retaining the existing integrity gates.
 
-## The decision — loss-aggregate-v3 on the experiment branch
+## The decision — dominant-v4 on the experiment branch
 
-The branch submission is generated directly by `rank.py --scoring-profile loss-aggregate-v3`.
+The branch submission is generated directly by `rank.py --scoring-profile dominant-v4`.
 Seven shallow heads learn complementary label families, then a conservative RRF hedge reorders
-v2's exact membership. Integrity gates are applied after the model. The default `main` profile
-remains byte-stable and is still available as the fallback.
+V2's membership. V4 applies a small feature-only correction to the top eight and replaces at most
+two lowest-ranked severe temporal contradictions with clean V2 backfills. The default `main`
+profile remains byte-stable and is still available as the fallback.
 
 ![Decision and validation flow](docs/assets/decision_flow.svg)
 
-**Stress-tested, not just chosen.** The exact artifact beats main, `top23-clean`, and v2 on all 15
-full-table evaluators, survives the full test suite, and reproduces byte-for-byte across Windows
-and constrained Linux Docker. See `docs/loss_aggregate_v3_experiment.md`.
+**Stress-tested, not just chosen.** The exact artifact improves or ties every V3 component metric,
+beats main on all 15 composite evaluators, survives the full test suite, and reproduces byte-for-byte
+in constrained Linux Docker. The chosen order occurs under 296 nearby parameter combinations; 2,539
+of 11,340 settings avoid any component loss. See `docs/dominant_v4_experiment.md`.
 
 ## Validation
 
 | Study | Result |
 |---|---|
-| full evaluator matrix | beats main, `top23-clean`, and v2 on **15/15** axes |
-| seven-world robustness mean | **0.9059** vs v2 **0.9045** vs main **0.8727** |
+| full evaluator matrix | beats main on **15/15** composites; vs V3: **9 wins / 51 ties / 0 losses** across 60 component cells |
+| seven-world robustness mean | **0.9065** vs V3 **0.9059** vs main **0.8727** |
 | public reviewer / blind recruiter | **0.8096 / 0.8969** vs main **0.7106 / 0.8718** |
-| out-of-fold seven-head blend | improves H2, mean7, reviewer, and blind versus v2 |
+| V4 evidence correction | improves H2, independent, and frozen-blind metrics without lowering any V3 component |
 | repeated candidate half-splits vs main | positive on most axes; independent set is noisy (**45/100**) |
 | 1,272-repo public census | 665 valid outputs; v3 #1 mean7; no four-axis dominator |
-| full 100K constrained Docker | **69.1s native volume / 254.0s loaded bind mount**, 53 detected / 0 emitted, host-identical hash |
+| full 100K constrained Docker | **75.4s pipeline / 79.5s wall**, 53 detected / 0 emitted, exact hash `79aebff6…` |
 
 These are development measurements, not a hidden-score guarantee. Specialist public submissions
-still lead individual axes, so the defensible claim is strongest balanced artifact, not universal
-best. Full record: `docs/loss_aggregate_v3_experiment.md`.
+still lead individual axes, so the defensible claim is strongest balanced artifact, not guaranteed
+hidden-score supremacy. Full record: `docs/dominant_v4_experiment.md`.
 
 ## The integrity distinction
 
@@ -146,18 +148,18 @@ fraud and never reorders candidates.
 
 ```bash
 PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl \
-  --out submission.csv --workers 2 --scoring-profile loss-aggregate-v3
-sha256sum submission.csv             # -> c28857fdba63723e…
+  --out submission.csv --workers 2 --scoring-profile dominant-v4
+sha256sum submission.csv             # -> 79aebff697cbccf0b…
 ```
 CPU-only, offline, deterministic. Full 100K reproduced byte-identically on the host and in Docker;
-Host best 77.4s (latest 79.8s); optimized constrained Docker measured 69.1s on a native volume
-and 254.0s on a loaded Windows bind mount, inside the 300s budget. Details:
+the constrained V4 Docker run measured 75.4s in-pipeline / 79.5s wall clock. Historical host best
+was 77.4s and historical pinned-image Docker best was ~153s; all are inside the 300s budget. Details:
 `docs/REPRODUCTION.md` · `docs/runtime_matrix.md`.
 
 ## Documentation map
 
 - **Product (recruiter view):** [PRODUCT](PRODUCT.md) — the recruiter journey + the integrity decision-support differentiator (CONTINUE/CLARIFY/VERIFY/BLOCK)
-- **Decision & validation:** [loss_aggregate_v3_experiment](docs/loss_aggregate_v3_experiment.md) · [universal_v2_experiment](docs/universal_v2_experiment.md) · [SHIPPING_DECISION](docs/SHIPPING_DECISION.md) · [external_recruiter_validation](docs/external_recruiter_validation.md)
+- **Decision & validation:** [dominant_v4_experiment](docs/dominant_v4_experiment.md) · [loss_aggregate_v3_experiment](docs/loss_aggregate_v3_experiment.md) · [universal_v2_experiment](docs/universal_v2_experiment.md) · [external_recruiter_validation](docs/external_recruiter_validation.md)
 - **What we rejected:** [measured_negatives](docs/measured_negatives.md) · [why_not_reranker](docs/why_not_reranker.md) · [beyond_hedge_sweep](docs/beyond_hedge_sweep.md)
 - **Reproduce / runtime:** [REPRODUCTION](docs/REPRODUCTION.md) · [runtime_matrix](docs/runtime_matrix.md) · [SUBMISSION_CHECKLIST](docs/SUBMISSION_CHECKLIST.md)
 - **Decision frameworks (research):** Ω [OMEGA_DECISION_SUMMARY](docs/OMEGA_DECISION_SUMMARY.md) · Ψ [PSI_INTEGRITY_PANEL](docs/PSI_INTEGRITY_PANEL.md) · Φ [human_opinion/HUMAN_OPINION_LANDSCAPE](docs/human_opinion/HUMAN_OPINION_LANDSCAPE.md)
