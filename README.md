@@ -159,7 +159,7 @@ was 77.4s and historical pinned-image Docker best was ~153s; all are inside the 
 ## Documentation map
 
 - **Product (recruiter view):** [PRODUCT](PRODUCT.md) — the recruiter journey + the integrity decision-support differentiator (CONTINUE/CLARIFY/VERIFY/BLOCK)
-- **Decision & validation:** [dominant_v4_experiment](docs/dominant_v4_experiment.md) · [loss_aggregate_v3_experiment](docs/loss_aggregate_v3_experiment.md) · [universal_v2_experiment](docs/universal_v2_experiment.md) · [external_recruiter_validation](docs/external_recruiter_validation.md)
+- **Decision & validation:** [exhaustive main/V3/V4/public comparison](docs/full_comparison_main_v3_v4_public.md) · [dominant_v4_experiment](docs/dominant_v4_experiment.md) · [loss_aggregate_v3_experiment](docs/loss_aggregate_v3_experiment.md) · [universal_v2_experiment](docs/universal_v2_experiment.md) · [external_recruiter_validation](docs/external_recruiter_validation.md)
 - **What we rejected:** [measured_negatives](docs/measured_negatives.md) · [why_not_reranker](docs/why_not_reranker.md) · [beyond_hedge_sweep](docs/beyond_hedge_sweep.md)
 - **Reproduce / runtime:** [REPRODUCTION](docs/REPRODUCTION.md) · [runtime_matrix](docs/runtime_matrix.md) · [SUBMISSION_CHECKLIST](docs/SUBMISSION_CHECKLIST.md)
 - **Decision frameworks (research):** Ω [OMEGA_DECISION_SUMMARY](docs/OMEGA_DECISION_SUMMARY.md) · Ψ [PSI_INTEGRITY_PANEL](docs/PSI_INTEGRITY_PANEL.md) · Φ [human_opinion/HUMAN_OPINION_LANDSCAPE](docs/human_opinion/HUMAN_OPINION_LANDSCAPE.md)
