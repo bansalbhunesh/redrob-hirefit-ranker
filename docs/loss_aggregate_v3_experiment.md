@@ -74,7 +74,10 @@ H2 0.929965, reviewer 0.934955, and blind 0.966756.
 ## Production verification
 
 - Host full 100K: 77.4-79.8 seconds.
-- Docker full 100K, `--cpus=2 --memory=16g`: 152.8-226.9 seconds.
+- Original Docker image, full 100K, `--cpus=2 --memory=16g`: 109.3 seconds on a
+  Docker-native volume in the controlled runtime A/B.
+- Optimized Docker image under the same A/B conditions: **69.1 seconds**
+  (36.8% faster); a loaded Docker Desktop bind-mount run took 254.0 seconds.
 - 53 honeypots detected, 0 emitted.
 - Host and Docker SHA-256:
   `c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c`.

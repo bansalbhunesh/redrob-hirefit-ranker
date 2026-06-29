@@ -1,5 +1,25 @@
 # Docker Runtime Matrix (Phase 0.1)
 
+## 2026-06-29 loss-aggregate-v3 query-only BM25 optimization
+
+A controlled before/after run used the same Docker-native volume, pinned image
+dependencies, full 100,000-candidate input, and `--cpus=2 --memory=16g`:
+
+| image | pipeline runtime | output SHA-256 |
+|---|---:|---|
+| loss-aggregate-v3 before optimization | **109.3 s** | `c28857fd...e769c` |
+| loss-aggregate-v3 optimized | **69.1 s** | `c28857fd...e769c` |
+
+That is **40.2 seconds / 36.8% less runtime** (1.58x throughput) with byte-for-byte
+identical output. The optimized path computes Lucene-BM25 statistics only for
+the single JD query instead of building an unused full-corpus vocabulary and
+sparse index. Large read buffering, fork-shared candidate/text data, parallel
+text rendering, and cached constant HyRE tokens remove additional I/O and IPC.
+
+Docker Desktop bind-mount timing remains host-I/O-sensitive. The optimized image
+also completed a deliberately loaded bind-mount run in **254.0 s**, below the
+300-second limit, with the same hash, 53 honeypots detected, and 0 emitted.
+
 ## 2026-06-29 loss-aggregate-v3 constrained reproduction
 
 The exact branch artifact (`c28857fd…`) was regenerated from all 100,000

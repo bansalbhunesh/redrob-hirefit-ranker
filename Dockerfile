@@ -17,18 +17,19 @@ ENV OPENBLAS_NUM_THREADS=1
 ENV OMP_NUM_THREADS=1
 ENV MKL_NUM_THREADS=1
 ENV NUMEXPR_NUM_THREADS=1
+ENV PYTHONPATH=/app/src
 
 WORKDIR /app
 
-COPY pyproject.toml requirements.txt README.md ./
+COPY requirements.txt ./
+
+# Keep third-party dependencies in a cacheable layer so source-only changes do
+# not redownload/reinstall NumPy and the BM25 packages on every image rebuild.
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY src ./src
 COPY models ./models
 COPY rank.py ./rank.py
-
-# Deps come exact-pinned from requirements.txt; the package itself installs
-# --no-deps so pyproject's dev-friendly ranges can never widen the image.
-RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir --no-deps -e .
 
 # Drop root (audit-v2 hardening): the entrypoint only reads bundled code and
 # writes to the path passed via --out (typically a mounted volume), so an

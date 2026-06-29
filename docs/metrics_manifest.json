@@ -3,7 +3,7 @@
   "_provenance": "All ranking-quality metrics are DEVELOPMENT PROXIES (independent heuristic + LLM-judge labels on dev samples). No official hidden labels were available before submission. Runtime/memory numbers are measured; sources cited per key.",
   "submission": {
     "golden_sha256": "c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c",
-    "_golden_note": "2026-06-29: loss-aggregate-v3 is the opt-in branch champion. It keeps universal-v2's exact top-100 membership and improves all 15 measured evaluators using seven out-of-fold-gated label-family heads plus a conservative RRF reorder. Full 100K runtime was 77.4-79.8 s host and 152.8-226.9 s in Docker with --cpus=2 --memory=16g; outputs were byte-identical with 0 guarded profiles emitted. The default main profile and fixed-slice hash remain unchanged.",
+    "_golden_note": "2026-06-29: loss-aggregate-v3 is the opt-in branch champion. It keeps universal-v2's exact top-100 membership and improves all 15 measured evaluators using seven out-of-fold-gated label-family heads plus a conservative RRF reorder. Query-only BM25 reduced a controlled Docker-native-volume run from 109.3 s to 69.1 s; a loaded bind-mount run completed in 254.0 s under --cpus=2 --memory=16g. Outputs were byte-identical with 0 guarded profiles emitted. The default main profile and fixed-slice hash remain unchanged.",
     "rows": 100,
     "total_candidates": 100000,
     "honeypots_detected": 53,
@@ -18,9 +18,13 @@
     "local_docker_serial_best_s": 152.8,
     "local_docker_pinned_image_s": 138.3,
     "local_docker_serial_worst_recorded_s": 226.9,
-    "worst_ever_under_host_load_s": 226.9,
-    "conservative_reported_s": 226.9,
-    "showpiece_recorded_run_ms": 226900,
+    "worst_ever_under_host_load_s": 254.0,
+    "conservative_reported_s": 254.0,
+    "optimized_control_before_s": 109.3,
+    "optimized_native_volume_s": 69.1,
+    "optimized_loaded_bind_s": 254.0,
+    "optimized_speedup_percent": 36.8,
+    "showpiece_recorded_run_ms": 254000,
     "_showpiece_note": "apps/api/data/precomputed.json replays the exact loss-aggregate-v3 top-100 and the conservative constrained 2-CPU/16-GB Docker runtime."
   },
   "memory": {
@@ -52,8 +56,8 @@
     "reranker_v2_blind_ndcg50": 0.8404,
     "_delta": "composite -0.0307, NDCG@10 -0.0695, NDCG@50 +0.0135 -- improved @50 but destroyed @10 (50% of the composite). Looked positive only on a curated 249-candidate LLM-judge sample (gpt-4.1-mini +0.027, deepseek +0.085, claude-3.5-haiku +0.019, gemini-3.1-flash-lite +0.049 composite); none generalized to the 100K blind set."
   },
-  "tests_collected": 215,
-  "tests_passing": 209,
+  "tests_collected": 219,
+  "tests_passing": 213,
   "tests_skipped": 6,
   "feature_count": 33,
   "_feature_count_note": "len(FEATURE_NAMES) in src/redrob_ranker/features.py; guarded by tests/test_metrics_manifest.py. Pipeline-description surfaces must quote 33; measurement docs (ablation, learned-weights) keep their historical 28-feature base.",

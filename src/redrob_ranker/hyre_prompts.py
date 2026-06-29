@@ -6,6 +6,8 @@
 # `artifacts/hyre_embeddings.json` (produced offline by scripts/hyre_generate.py)
 # is retained only for offline analysis/experiments and is read on no ranking path.
 
+from functools import lru_cache
+
 HYRE_PROMPTS = {
     "AI/ML Engineer": """
     Senior AI/ML Engineer with 6+ years of experience building and deploying scalable machine learning models.
@@ -56,6 +58,16 @@ def get_hyre_for_role(role_name: str) -> str:
             return text.strip()
     return HYRE_PROMPTS["AI/ML Engineer"].strip()
 
+
+@lru_cache(maxsize=16)
+def _hyre_token_set(jd_text: str) -> frozenset[str]:
+    """Return cached lexical tokens for the role template selected by a JD."""
+    hyre_text = get_hyre_for_role(jd_text)
+    return frozenset(
+        hyre_text.lower().replace(",", " ").replace(".", " ").split()
+    )
+
+
 def get_hyre_similarity(candidate_text: str, jd_text: str) -> float:
     """
     Computes a fast lexical Jaccard similarity between the candidate's text
@@ -64,12 +76,11 @@ def get_hyre_similarity(candidate_text: str, jd_text: str) -> float:
     if not candidate_text:
         return 0.0
         
-    hyre_text = get_hyre_for_role(jd_text)
-    
+    hyre_tokens = _hyre_token_set(jd_text)
+
     # Simple normalization and tokenization
     cand_tokens = set(candidate_text.lower().replace(",", " ").replace(".", " ").split())
-    hyre_tokens = set(hyre_text.lower().replace(",", " ").replace(".", " ").split())
-    
+
     if not cand_tokens or not hyre_tokens:
         return 0.0
         

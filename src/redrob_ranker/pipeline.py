@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import multiprocessing
 import os
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
@@ -34,6 +35,9 @@ def _submission_score(raw_score: float, max_score: float) -> float:
 # process via the pool initializer so it is pickled once, not per candidate.
 _WORKER_JD = None
 _WORKER_SCORING_PROFILE = "main"
+_WORKER_CANDIDATES: list[dict] | None = None
+_WORKER_RETRIEVAL_SCORES: dict[int, float] | None = None
+_WORKER_SEMANTIC_SCORES: dict[int, float] | None = None
 
 
 def _init_worker(jd, scoring_profile: str = "main") -> None:
@@ -72,6 +76,22 @@ def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
     return features, score
 
 
+def _score_index(index: int) -> tuple[object, float]:
+    """Fork-worker adapter that keeps large candidate dictionaries off IPC."""
+
+    if _WORKER_CANDIDATES is None or _WORKER_RETRIEVAL_SCORES is None:
+        raise RuntimeError("feature worker corpus was not initialized")
+    return _score_one(
+        (
+            _WORKER_CANDIDATES[index],
+            _WORKER_RETRIEVAL_SCORES.get(index, 0.0),
+            _WORKER_SEMANTIC_SCORES.get(index)
+            if _WORKER_SEMANTIC_SCORES is not None
+            else None,
+        )
+    )
+
+
 @dataclass(slots=True)
 class RankerConfig:
     top_k: int = 100
@@ -86,8 +106,6 @@ class RankerConfig:
     # Opt-in experimental scorer. "main" preserves the shipped byte output.
     scoring_profile: str = "main"
     # Optional compiled JD (rank.py --jd). None = bundled challenge JD; the
-    # None path is byte-identical to the historical pipeline.
-    jd: object | None = None
     # None path is byte-identical to the historical pipeline.
     jd: object | None = None
 
@@ -148,16 +166,7 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
         local = _sem(texts, JD_QUERY, StaticModelEmbedder(config.embed_model))
         semantic_scores = {idx: local[pos] for pos, idx in enumerate(indices)}
 
-    work = [
-        (
-            candidates[idx],
-            retrieval_scores.get(idx, 0.0),
-            semantic_scores.get(idx) if config.use_embeddings else None,
-        )
-        for idx in indices
-    ]
-
-    workers = _resolve_workers(config.workers, len(work))
+    workers = _resolve_workers(config.workers, len(indices))
     ranked: list[tuple[dict, object, float]] = []
     if workers == 1:
         global _WORKER_JD, _WORKER_SCORING_PROFILE
@@ -166,14 +175,56 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
         _WORKER_JD = config.jd
         _WORKER_SCORING_PROFILE = config.scoring_profile
         try:
-            for item in work:
-                features, score = _score_one(item)
-                ranked.append((item[0], features, score))
+            for idx in indices:
+                features, score = _score_one(
+                    (
+                        candidates[idx],
+                        retrieval_scores.get(idx, 0.0),
+                        semantic_scores.get(idx) if config.use_embeddings else None,
+                    )
+                )
+                ranked.append((candidates[idx], features, score))
         finally:
             _WORKER_JD = prev_jd
             _WORKER_SCORING_PROFILE = prev_profile
+    elif os.name == "posix":
+        # Docker's fork workers inherit these read-only objects. Passing only
+        # indices avoids repeatedly pickling the ~500 MB candidate corpus and
+        # its cached rendered text through the process-pool queue.
+        global _WORKER_CANDIDATES, _WORKER_RETRIEVAL_SCORES, _WORKER_SEMANTIC_SCORES
+        previous_candidates = _WORKER_CANDIDATES
+        previous_retrieval = _WORKER_RETRIEVAL_SCORES
+        previous_semantic = _WORKER_SEMANTIC_SCORES
+        _WORKER_CANDIDATES = candidates
+        _WORKER_RETRIEVAL_SCORES = retrieval_scores
+        _WORKER_SEMANTIC_SCORES = semantic_scores if config.use_embeddings else None
+        try:
+            chunksize = _resolve_chunksize(len(indices), workers)
+            with ProcessPoolExecutor(
+                max_workers=workers,
+                initializer=_init_worker,
+                initargs=(config.jd, config.scoring_profile),
+                mp_context=multiprocessing.get_context("fork"),
+            ) as executor:
+                results = executor.map(_score_index, indices, chunksize=chunksize)
+                for idx, (features, score) in zip(indices, results):
+                    ranked.append((candidates[idx], features, score))
+        finally:
+            _WORKER_CANDIDATES = previous_candidates
+            _WORKER_RETRIEVAL_SCORES = previous_retrieval
+            _WORKER_SEMANTIC_SCORES = previous_semantic
     else:
-        chunksize = _resolve_chunksize(len(work), workers)
+        # Spawn platforms cannot inherit the corpus; retain the portable tuple
+        # path used before the Docker fork optimization.
+        work = [
+            (
+                candidates[idx],
+                retrieval_scores.get(idx, 0.0),
+                semantic_scores.get(idx) if config.use_embeddings else None,
+            )
+            for idx in indices
+        ]
+        chunksize = _resolve_chunksize(len(indices), workers)
         with ProcessPoolExecutor(
             max_workers=workers,
             initializer=_init_worker,

@@ -14,6 +14,12 @@ except ImportError:  # pragma: no cover - stdlib fallback
     orjson = None
 
 
+# Docker Desktop bind mounts make small host<->VM reads disproportionately
+# expensive. A large userspace buffer turns the 487 MB JSONL input into dozens
+# of filesystem reads instead of tens of thousands, with no parsing changes.
+JSONL_READ_BUFFER_BYTES = 8 * 1024 * 1024
+
+
 def _loads(line: str | bytes) -> dict:
     if isinstance(line, bytes) and line.startswith(b"\xef\xbb\xbf"):
         line = line[3:]
@@ -55,7 +61,7 @@ def iter_candidates(path: Path, max_candidates: int | None = None) -> Iterator[d
                 return
         return
 
-    with path.open("rb") as f:
+    with path.open("rb", buffering=JSONL_READ_BUFFER_BYTES) as f:
         for raw in f:
             if raw.strip():
                 item = _loads(raw)

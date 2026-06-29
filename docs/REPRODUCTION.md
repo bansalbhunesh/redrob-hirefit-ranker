@@ -3,7 +3,7 @@
 ```bash
 # 1. full suite (deterministic env)
 PYTHONHASHSEED=0 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
-  python -m pytest -q                       # expect: 209 passed, 6 environment skips
+  python -m pytest -q                       # expect: 213 passed, 6 environment skips
 # 2. committed branch-champion hash (must be byte-identical)
 sha256sum submission.csv                    # -> c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c
 # 3. omitting --scoring-profile still preserves main's default scorer and fixed-slice hash

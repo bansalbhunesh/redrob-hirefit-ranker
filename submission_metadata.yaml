@@ -26,10 +26,11 @@ compute:
   has_network_during_ranking: false
   pre_computation_required: false
   pre_computation_time_minutes: 0
-  # loss-aggregate-v3 exact full-100K reproduction on 2026-06-29: 77.4-79.8s
-  # host and 152.8-226.9s in the pinned image with --cpus=2 --memory=16g.
+  # Optimized loss-aggregate-v3 exact full-100K reproduction on 2026-06-29:
+  # 69.1s in a controlled Docker-native-volume A/B and 254.0s in a deliberately
+  # loaded Windows bind-mount run with --cpus=2 --memory=16g.
   # byte-identical to the committed artifact and emitted 0 guarded profiles.
-  measured_runtime_seconds: 226.9
+  measured_runtime_seconds: 254.0
   measured_peak_rss_gb: 6.1
   measured_bm25_backend: "bm25s"
   feature_scoring_workers: "auto (up to 8); output identical for any worker count"

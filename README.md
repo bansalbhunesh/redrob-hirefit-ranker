@@ -3,8 +3,8 @@
 A deterministic, evidence-aware system that ranks the **top 100 of 100,000** candidates for a Senior
 AI Engineer role — with receipts for *why* this ranking is the one to ship.
 
-[![Tests](https://img.shields.io/badge/tests-209_passed_6_skipped-brightgreen.svg)](#)
-[![Runtime](https://img.shields.io/badge/100K-79.8s_host_·_153--227s_Docker_2cpu-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-213_passed_6_skipped-brightgreen.svg)](#)
+[![Runtime](https://img.shields.io/badge/100K-69.1s_Docker_native_·_254s_loaded_bind-brightgreen.svg)](#)
 [![Execution](https://img.shields.io/badge/CPU--only-offline-blue.svg)](#)
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](#)
 [![Validation](https://img.shields.io/badge/validation-15_of_15_measured_axes-success.svg)](#)
@@ -20,9 +20,9 @@ AI Engineer role — with receipts for *why* this ranking is the one to ship.
 
 - **What this branch tests:** deterministic, CPU-only `loss-aggregate-v3` (`c28857fd`): seven shallow label-family heads exported to pure NumPy, plus a conservative rank hedge that keeps v2's exact top-100 membership. No competitor code, IDs, fingerprints, or ranking files enter production.
 - **Measured result:** beats `main`, `top23-clean`, and `universal-v2` on **all 15 full-table evaluator axes**; seven-world mean **0.9059 vs 0.8727 main**, mean15 **0.9095 vs 0.8752**, reviewer **0.8096 vs 0.7106**, blind recruiter **0.8969 vs 0.8718**, and H2 **0.8820 vs 0.8748**.
-- **Runtime and integrity:** full 100K in **77.4s best / 79.8s latest host and 152.8–226.9s Docker (`--cpus=2 --memory=16g`)**, byte-identical outputs, all **53 honeypots detected**, and **0 honeypots** emitted.
+- **Runtime and integrity:** the optimized full-100K Docker path fell from **109.3s to 69.1s** in a controlled 2-CPU A/B (36.8% faster). A loaded Windows bind-mount pass took 254.0s, still under 300s. Outputs remained byte-identical; all **53 honeypots** were detected and **0** emitted. Earlier pinned-image runs were 152.8–226.9s.
 - **Public field:** 665 valid public outputs compared and all 69 multi-axis leaders cloned. V3 is **#1 on seven-world mean** and no public output dominates it across H2 + mean7 + reviewer + blind together.
-- **The receipts:** **209 tests passed / 6 environment skips**, 665 public submission repositories compared, 69 multi-axis leaders inspected, and a direct rank-fusion ceiling kept research-only.
+- **The receipts:** **213 tests passed / 6 environment skips**, 665 public submission repositories compared, 69 multi-axis leaders inspected, and a direct rank-fusion ceiling kept research-only.
 - **Honest limit:** this is the strongest **balanced** measured artifact, not best on every isolated public metric. Specialists still lead H2 and small recruiter slices, and candidate half-splits are noisy on some evaluators. There is no official hidden-score proof.
 
 **Contents:** [Live links](#live-links) · [Screenshots](#screenshots) · [Quick start](#quick-start) · [Product](PRODUCT.md) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--loss-aggregate-v3-on-the-experiment-branch) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
@@ -66,11 +66,11 @@ ranking behavior byte-for-byte. **Live:** [HuggingFace Space](https://huggingfac
 | Branch submission | **Loss-aggregation v3 challenger** (`c28857fd`); default `main` is unchanged |
 | Production pipeline | Deterministic `rank.py`, **33-feature** scorer + seven shallow NumPy heads; champion is opt-in with `--scoring-profile loss-aggregate-v3` |
 | Dataset | 100,000 candidates → top-100 |
-| Tests | 209 passed, 6 environment skips |
+| Tests | 213 passed, 6 environment skips |
 | Challenger vs main | mean7 **0.9059 vs 0.8727**, mean15 **0.9095 vs 0.8752**, wins **15/15** full-table axes — *dev proxy; **No official hidden labels*** |
 | Public comparison | #1 mean7; #16 H2, #113 reviewer, #23 blind among 665 valid outputs; no four-axis dominator |
 | Dev-proxy quality | NDCG@10 0.9104 · P@10 = 1.0 — *dev proxy* |
-| Runtime | **77.4–79.8s host · ~153s best / 226.9s loaded Docker `--cpus=2 --memory=16g`** (budget 300s) |
+| Runtime | **69.1s optimized Docker-native volume · 254.0s loaded Windows bind mount, `--cpus=2 --memory=16g`** (budget 300s; earlier pinned-image best ~153s) |
 | Memory | peak ~6.1 GB / 16 GB |
 | Execution | CPU-only, offline, deterministic (`PYTHONHASHSEED=0`) |
 | Integrity | shipped-detector flags in top-100: **0**; anachronism anomalies: **44** (golden 52) |
@@ -128,7 +128,7 @@ and constrained Linux Docker. See `docs/loss_aggregate_v3_experiment.md`.
 | out-of-fold seven-head blend | improves H2, mean7, reviewer, and blind versus v2 |
 | repeated candidate half-splits vs main | positive on most axes; independent set is noisy (**45/100**) |
 | 1,272-repo public census | 665 valid outputs; v3 #1 mean7; no four-axis dominator |
-| full 100K constrained Docker | **152.8–226.9s**, 53 detected / 0 emitted, host-identical hash |
+| full 100K constrained Docker | **69.1s native volume / 254.0s loaded bind mount**, 53 detected / 0 emitted, host-identical hash |
 
 These are development measurements, not a hidden-score guarantee. Specialist public submissions
 still lead individual axes, so the defensible claim is strongest balanced artifact, not universal
@@ -150,7 +150,8 @@ PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl \
 sha256sum submission.csv             # -> c28857fdba63723e…
 ```
 CPU-only, offline, deterministic. Full 100K reproduced byte-identically on the host and in Docker;
-77.4–79.8s host / 152.8–226.9s under `--cpus=2 --memory=16g`, inside the 300s budget. Details:
+Host best 77.4s (latest 79.8s); optimized constrained Docker measured 69.1s on a native volume
+and 254.0s on a loaded Windows bind mount, inside the 300s budget. Details:
 `docs/REPRODUCTION.md` · `docs/runtime_matrix.md`.
 
 ## Documentation map

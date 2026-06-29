@@ -5,6 +5,7 @@ import sys
 
 import redrob_ranker.pipeline as pipeline_mod
 import redrob_ranker.retrieval as retrieval_mod
+from redrob_ranker import hyre_prompts
 from redrob_ranker.constants import FEATURE_NAMES
 from redrob_ranker.features import CandidateFeatures
 from redrob_ranker.pipeline import RankerConfig, rank_candidates, run_ranking
@@ -80,6 +81,20 @@ def test_feature_pool_chunksize_uses_four_chunks_per_worker():
     assert pipeline_mod._resolve_chunksize(100_000, 2) == 12_500
     assert pipeline_mod._resolve_chunksize(20_000, 2) == 2_500
     assert pipeline_mod._resolve_chunksize(3, 8) == 1
+
+
+def test_hyre_template_tokens_are_cached():
+    hyre_prompts._hyre_token_set.cache_clear()
+    jd = "Senior AI/ML Engineer building retrieval systems"
+    candidate = "Python engineer who shipped production semantic search"
+
+    first = hyre_prompts.get_hyre_similarity(candidate, jd)
+    second = hyre_prompts.get_hyre_similarity(candidate, jd)
+
+    assert first == second
+    cache = hyre_prompts._hyre_token_set.cache_info()
+    assert cache.misses == 1
+    assert cache.hits == 1
 
 
 def test_pipeline_writes_valid_small_json(tmp_path: Path):
