@@ -18,7 +18,8 @@ hashes, deterministic serial/parallel output, integrity gates, and a full test s
 leaderboard boast. All ranking-quality numbers are **development proxies**; no official hidden labels
 were available before submission.
 
-**Judge start:** [60-second packet](docs/JUDGE_PACKET.md) ·
+**Judge start:** [judge-proof package](docs/JUDGE_PROOF.md) ·
+[60-second packet](docs/JUDGE_PACKET.md) ·
 [live sandbox](https://huggingface.co/spaces/bansal1234/Hirefit) ·
 [reproduce](#reproduce) ·
 [explainability](#explainability)
@@ -233,10 +234,12 @@ CPU-only, offline, deterministic. The same command appears in `reproduce.sh` and
 ## Documentation map
 
 - **Product (recruiter view):** [PRODUCT](PRODUCT.md) — recruiter journey + the integrity decision-support differentiator (CONTINUE/CLARIFY/VERIFY/BLOCK)
+- **Judge-proof package:** [JUDGE_PROOF](docs/JUDGE_PROOF.md) — one page consolidating reproduction, regeneration, hash, validator, tests, integrity, and explainability proofs
 - **Reproducibility proof:** [REGENERATION_PROOF](docs/REGENERATION_PROOF.md) — full private-pool regeneration matched the committed hash
 - **Explainability:** [EXPLAINABILITY](docs/EXPLAINABILITY.md) — exact-Shapley attributions, ablation, rank-stability
 - **External validation:** [external_recruiter_validation](docs/external_recruiter_validation.md) — cross-check against a real recruiter-labeled set
-- **Judge orientation:** [JUDGE_PACKET](docs/JUDGE_PACKET.md)
+- **Judge orientation:** [JUDGE_PROOF](docs/JUDGE_PROOF.md) · [JUDGE_PACKET](docs/JUDGE_PACKET.md) · [SUBMISSION_CHECKLIST](docs/SUBMISSION_CHECKLIST.md)
+- **Submission surfaces:** [DEVPOST](docs/DEVPOST.md) · [DEMO_SCRIPT](docs/DEMO_SCRIPT.md)
 - **Deployment:** [DEPLOYMENT](docs/DEPLOYMENT.md) · [`render.yaml`](render.yaml) · [backend hardening](docs/backend_infra_hardening.md)
 - **Security:** [SECURITY](SECURITY.md)
 - **What we rejected:** [measured_negatives](docs/measured_negatives.md) · [why_not_reranker](docs/why_not_reranker.md) · [beyond_hedge_sweep](docs/beyond_hedge_sweep.md)
