@@ -15,7 +15,7 @@ Everything controllable in the repository is verified here. “Owner action” m
 - **Fresh visual proof:** desktop and 390-pixel mobile screenshots were rendered from the current V6 API on 2026-06-30; the responsive pipeline and detail drawer were tightened after inspection.
 - **Deployment:** the Hugging Face Space is the primary live sandbox and returns HTTP 200. The repository includes a schema-validated Render Blueprint and documented health/readiness gates.
 - **Honest live-status disclosure:** the historical Render mirror is externally suspended and is not advertised as live proof.
-- **Repository access check:** GitHub reported the repository as **private** on 2026-06-30. This is the only P0 publication blocker and requires an explicit owner visibility decision.
+- **Public access:** verified through GitHub's unauthenticated API, raw-file endpoint, and credential-free `main` lookup on 2026-06-30. The public branch resolves to merge `96a8a8c` and exposes the V6 README and fresh screenshots.
 
 ## Optional presentation enhancement
 
@@ -23,10 +23,9 @@ Everything controllable in the repository is verified here. “Owner action” m
 
 ## Owner action outside this repository
 
-1. Make the GitHub repository public when authorized, then verify it in a logged-out browser.
-2. Confirm the challenge portal entry points to that public repository and the exact `8f7f30c6…` submission artifact.
-3. If the historical Render account is reactivated, run every acceptance check in [DEPLOYMENT.md](DEPLOYMENT.md) before advertising that mirror as live.
-4. Rotate any credential that may have appeared outside version control; no credential is required by the ranker or committed here.
+1. Confirm the challenge portal entry points to the public repository and the exact `8f7f30c6…` submission artifact.
+2. If the historical Render account is reactivated, run every acceptance check in [DEPLOYMENT.md](DEPLOYMENT.md) before advertising that mirror as live.
+3. Rotate any credential that may have appeared outside version control; no credential is required by the ranker or committed here.
 
 ## Claim boundary
 
