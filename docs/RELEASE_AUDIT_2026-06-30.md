@@ -2,7 +2,7 @@
 
 ## Verdict
 
-The V6 repository is technically release-ready and materially stronger than the previous public-facing package. One P0 publication blocker remains outside the code: GitHub currently reports the repository as private.
+The V6 repository is technically release-ready, publicly accessible, and materially stronger than the previous public-facing package. No repository-controlled publication blocker remains.
 
 ## Scorecard
 
@@ -14,7 +14,7 @@ The V6 repository is technically release-ready and materially stronger than the 
 | Deployment readiness | 75 | 95 | schema-validated Render Blueprint, readiness contract and acceptance gate added |
 | Product consistency | 81 | 97 | V6, 33-feature, release-hash and dashboard labels aligned |
 | Security/responsible use | 86 | 96 | dependency and static scans passed; security and hiring-use policy added |
-| Public accessibility | 0 | 0 | **P0: repository is private; explicit owner action required** |
+| Public accessibility | 0 | 100 | Public API, raw V6 README, fresh assets and credential-free `main` lookup verified |
 
 Scores are a transparent repository-quality audit, not official challenge scores.
 
@@ -27,6 +27,7 @@ Scores are a transparent repository-quality audit, not official challenge scores
 - Local API: `/api/health`, `/api/readyz`, and `/api/metrics` returned HTTP 200; health reported V6 and readiness reported all checks true.
 - Artifact validation: `submission.csv` valid; SHA-256 `8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062`.
 - Live sandbox: Hugging Face Space returned HTTP 200.
+- Public repository: unauthenticated GitHub API reported `public`; raw V6 README and both screenshots resolved; credential-free `main` lookup returned merge `96a8a8c`.
 - Deployment manifest: `render.yaml` passed the current Render Blueprint JSON schema.
 - Diagram and metrics artifacts: SVG XML and JSON syntax passed.
 - Visual render: current V6 API inspected at 1440×1100 and 390×844; screenshots are committed and linked from the README.
