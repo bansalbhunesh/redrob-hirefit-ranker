@@ -37,7 +37,7 @@ _LOG = logging.getLogger("redrob.api")
 app = FastAPI(
     title="Redrob HireFit Ranker",
     version="6.0.0",
-    description="V6 battle-proof candidate ranking dashboard. Showpiece + Live Proof + Batch."
+    description="Deterministic candidate ranking — Showpiece + Live Proof + Batch."
 )
 
 def _env_int(name: str, default: int) -> int:

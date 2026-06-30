@@ -251,7 +251,7 @@ with gr.Blocks(
                 <div style="width:40px;height:40px;background:linear-gradient(135deg,#06b6d4,#a855f7);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:white;box-shadow:0 0 20px rgba(6,182,212,0.3);">R</div>
                 <div>
                     <h1 style="margin:0;font-size:22px;font-weight:700;color:#f8fafc;">Redrob HireFit Ranker</h1>
-                    <p style="margin:0;font-size:13px;color:#94a3b8;">V6 battle-proof • CPU-only • 100K candidates • 33 features</p>
+                    <p style="margin:0;font-size:13px;color:#94a3b8;">CPU-only • offline • 100K candidates • 33 features</p>
                 </div>
             </div>
             """)

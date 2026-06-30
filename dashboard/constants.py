@@ -11,9 +11,9 @@ from pathlib import Path
 # repo root = two levels up from this file (dashboard/constants.py -> repo root)
 ROOT = Path(__file__).resolve().parent.parent
 
-GOLDEN_COMMIT = "8f7f30c6"  # Compatibility name: current V6 release artifact prefix.
+GOLDEN_COMMIT = "8f7f30c6"  # current release artifact prefix.
 GOLDEN_SHA256_PREFIX = "8f7f30c68ec30cb6"
-VERDICT = "SHIP_V6_BATTLE_PROOF"
+VERDICT = "SHIP_MAIN_RELEASE"
 
 # Verified local artifact paths (committed). Loaders degrade gracefully if any is absent.
 CONFIG = {
@@ -65,12 +65,13 @@ STATUS_COLORS = {"PASS": "#1b8a5a", "PENDING": "#c98a00", "FAIL": "#b22222", "IN
 
 DISCLAIMER = (
     "This dashboard is a downstream research and explanation layer. It does not modify, "
-    "rerun, or influence the production ranking. The shipped V6 release artifact "
+    "rerun, or influence the production ranking. The shipped release artifact "
     "8f7f30c68ec30cb6 and all production files remain byte-identical."
 )
 VERDICT_DISCLAIMER = (
-    "SHIP_V6_BATTLE_PROOF means V6 is the strongest all-around measured artifact and release. "
-    "Official hidden labels remain unavailable, so it is not a guaranteed leaderboard claim."
+    "SHIP_MAIN_RELEASE means the main --release build is the strongest all-around measured "
+    "artifact and release. Official hidden labels remain unavailable, so it is not a guaranteed "
+    "leaderboard claim."
 )
 EXPERIMENTAL_INTEGRITY_NOTE = (
     "Experimental integrity guidance. VERIFY recommends human review and does NOT identify "

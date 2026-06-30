@@ -1,4 +1,8 @@
-# V6 public-field scorecard
+# Public-field scorecard
+
+> Honesty note: every rank here is a self-run **development proxy** (committed evaluator harness over
+> reproducible public outputs), **not** an official score or leaderboard. Ranks are reported with their
+> eligible field size for auditability; they are provenance, not a dominance claim.
 
 ## Scope
 

@@ -1,12 +1,17 @@
-# V6 challenge positioning
+# Challenge positioning
+
+> Honesty note: all rankings in this document are self-run **development proxies** (independent
+> heuristic + LLM-judge labels), **not** an official score or leaderboard. They are included as
+> transparent provenance, not as a dominance claim. Detailed per-axis tables below are kept for
+> auditability.
 
 ## Bottom line
 
-V6 is the strongest all-around submission we could measure: **#1 / 673** on
-the broad seven-judge mean, **#1 / 100** across the revalidated strongest-union
-mean15, and **#3 / 322** on equal four-axis balance. It also wins **30 / 30**
-composite comparisons against main and couples that ranking with a fail-closed,
-OOM-safe, hash-pinned release.
+On our development proxies this system sits in the **top cluster** of the public field across the
+seven-judge mean, the strongest-union mean, and four-axis balance, and it couples that with a
+fail-closed, OOM-safe, hash-pinned release that a single command reproduces from `main`. The
+defensible case rests on reproducibility, integrity, and validation — not on a proxy rank, and there
+is no official-score claim.
 
 The official India Runs page defines the mission but does **not** publish
 numeric judging weights. Therefore the score below is an explicit

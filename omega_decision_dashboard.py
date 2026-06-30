@@ -1,7 +1,7 @@
-"""Redrob V6 Decision Lab — judge-facing evidence and integrity dashboard.
+"""Redrob Ranking Decision Lab — judge-facing evidence and integrity dashboard.
 
 STRICTLY a downstream research/explanation layer. It does NOT import, rerun, or influence the
-production ranking path; V6 artifact 8f7f30c68ec30cb6 stays byte-identical. Reads only committed local
+production ranking path; the release artifact 8f7f30c68ec30cb6 stays byte-identical. Reads only committed local
 artifacts (no network, no model downloads, no production execution).
 
 Run:  streamlit run omega_decision_dashboard.py
@@ -73,13 +73,13 @@ def cc_bar(df, value_col, xtitle):
 with st.sidebar:
     st.header("Redrob Ranking Decision Lab")
     st.caption("Downstream research & explanation layer — NOT the production ranker.")
-    st.markdown(f"**Shipped:** V6 battle-proof `{GOLDEN_COMMIT}`")
+    st.markdown(f"**Shipped:** main `--release` artifact `{GOLDEN_COMMIT}`")
     st.markdown("**Ranking core:** `frontier-v5`")
     st.markdown("**Dataset:** 100K candidates (frozen blind arbiter)")
     show_tech = st.toggle("Technical details", value=False)
     show_limits = st.toggle("Show research limitations", value=True)
     st.divider()
-    st.markdown("**Reproduce V6 release:**")
+    st.markdown("**Reproduce the release:**")
     st.code("PYTHONHASHSEED=0 python rank.py --release --workers 2 "
             "--candidates candidates.jsonl --out submission.csv\n"
             "sha256sum submission.csv  # -> 8f7f30c68ec30cb6...", language="bash")
@@ -103,7 +103,7 @@ st.markdown(theme.verdict_console(VERDICT, GOLDEN_COMMIT, tests_label, hash_ok=T
 n_cards = len(cards)
 anomalies = sum(1 for c in cards if c.get("evidence_status") == "PROBABLE_CONTRADICTION")
 st.markdown(theme.readout([
-    (f"{GOLDEN_COMMIT}", "V6 release"),
+    (f"{GOLDEN_COMMIT}", "Release artifact"),
     (tests_label.split()[0], "Tests passing"),
     (str(SHARED_FACTS["honeypots_in_top100"]), "Integrity-flagged in top-100"),
     (str(anomalies if n_cards else SHARED_FACTS["anachronism_anomalies_top100"]),
@@ -113,7 +113,7 @@ st.markdown(theme.readout([
 st.info(VERDICT_DISCLAIMER)
 st.caption(
     "Nav:  1·Gates → 2·Regret frontier → 3·Integrity reconciliation → 4·Candidate audit → "
-    "5·Fusion autopsy → 6·Ψ panel → 7·Study Φ → 8·Timeline → 9·Why V6"
+    "5·Fusion autopsy → 6·Ψ panel → 7·Study Φ → 8·Timeline → 9·Why this ships"
 )
 
 # ----------------------------------------------------------------- 2. gates
@@ -250,28 +250,31 @@ TL = [("Golden baseline", "frozen reproducible production baseline", "FALLBACK")
       ("Study Φ", "severity-conditioned discourse", "AWAITING HUMAN DATA"),
       ("Integrity audit cards", "downstream explanation", "EXPLANATION LAYER"),
       ("Rank-space Condorcet (Copeland)", "beats golden 7/7 on blind arbiter (0.8779)", "RESEARCH ONLY"),
-      ("Ship Hedge (severity-gated Copeland)", "historical main artifact; superseded by V6", "SUPERSEDED"),
+      ("Ship Hedge (severity-gated Copeland)", "historical main artifact; superseded by the release", "SUPERSEDED"),
       ("Dominant V4", "feature-only evidence correction; no component regression vs V3", "ADOPTED"),
-      ("Frontier V5", "#1 mean7; #1 strongest union; 30/30 composites over main", "RANKING CORE"),
-      ("Battle-proof V6", "hash-pinned, fail-closed, OOM-safe atomic release", "SHIPPED")]
+      ("Frontier V5", "Dominant V4 + two narrow holdout-scoped tie-breaks (marginal, within proxy noise)", "RANKING CORE"),
+      ("Fail-closed release", "hash-pinned, fail-closed, OOM-safe atomic release", "SHIPPED")]
 for stage, result, label in TL:
     st.markdown(f"- **{stage}** — {result}  ·  `{label}`")
 
-# ----------------------------------------------------------------- 10. why V6
-st.header("9 · Why V6 ships")
+# ----------------------------------------------------------------- 10. why this ships
+st.header("9 · Why this ships")
+st.caption("Quality figures are development proxies (independent heuristic + LLM-judge labels), "
+           "NOT the official hidden score.")
 st.dataframe({
-    "Property": ["Seven-evaluator mean", "Composites vs main", "2 CPU / 16 GiB release",
-                 "Failure safety", "Independent human lockbox", "Status"],
-    "V6 battle-proof": ["0.906553 · #1/673", "30 wins · 0 losses", "136.0 s pipeline",
+    "Property": ["Seven-evaluator mean (dev proxy)", "Composites vs main (dev proxy)",
+                 "2 CPU / 16 GiB release", "Failure safety", "Independent human lockbox", "Status"],
+    "main --release": ["0.906553 (top cluster)", "wins all tested composites", "136.0 s pipeline",
                  "Hash-pinned · atomic · OOM-safe", "External recruiter slices; own panel pending", "SHIP · 8f7f30c6"],
-    "Historical main hedge": ["0.872686 · #11/673", "Baseline", "Historical runtime",
-                 "No V6 release envelope", "External recruiter slices", "SUPERSEDED"],
+    "Historical main hedge": ["0.872686", "Baseline", "Historical runtime",
+                 "No fail-closed release envelope", "External recruiter slices", "SUPERSEDED"],
     "Raw Copeland research": ["Narrow proxy gain", "Not universal", "Not release-qualified",
                  "Anachronism exposure", "Missing", "REJECTED"]},
     width="stretch", hide_index=True)
-st.success("V6 ships because it has the strongest broad public-field portfolio we can reproduce, "
-           "beats main on all 30 tested composites, and adds an exact-output release gate that "
-           "fails closed before a bad or partial shortlist can replace the last good artifact.")
+st.success("This ships because it is reproducible from main by one fail-closed command, keeps the "
+           "integrity gates intact, and adds an exact-output release gate that fails closed before a "
+           "bad or partial shortlist can replace the last good artifact. Quality numbers are dev "
+           "proxies, not an official score.")
 st.markdown("**Docs:** `docs/SHIPPING_DECISION.md` · `docs/OMEGA_DECISION_SUMMARY.md` · "
             "`docs/PSI_INTEGRITY_PANEL.md` · `docs/human_opinion/HUMAN_OPINION_LANDSCAPE.md` · "
             "`docs/REPRODUCTION.md`")

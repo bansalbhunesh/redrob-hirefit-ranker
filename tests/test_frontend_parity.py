@@ -32,7 +32,7 @@ def test_dashboard_has_no_stale_hardcoded_test_count():
 
 
 def test_verdict_is_consistent_everywhere():
-    v = "SHIP_V6_BATTLE_PROOF"
+    v = "SHIP_MAIN_RELEASE"
     assert f'VERDICT = "{v}"' in CONST
     assert "theme.verdict_console(VERDICT" in DASH
 

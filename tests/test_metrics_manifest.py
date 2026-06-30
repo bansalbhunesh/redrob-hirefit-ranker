@@ -55,12 +55,15 @@ def test_readme_dev_proxy_metrics_match_manifest():
     # The qualifier must be in the headline metrics area, not buried in docs.
     assert "dev proxy" in README.lower()
     assert "No official hidden labels" in README
-    field = MANIFEST["public_field"]
-    assert f"#{field['mean7_rank']} / {field['mean7_field']}" in README
-    assert f"#{field['balanced4_rank']} / {field['balanced4_field']}" in README
-    positioning = MANIFEST["challenge_positioning"]
-    assert f"{positioning['mission_derived_score']:.1f}/100" in README
+    # Honest-framing anti-drift: the README must carry the dev-proxy and
+    # no-hidden-score qualifiers and state competitive position in AGGREGATE.
+    # It deliberately no longer boasts a public leaderboard rank (e.g. "#1 / 673"):
+    # those are self-run development proxies, so positioning is stated as
+    # "top cluster" with an explicit not-an-official-score caveat. The underlying
+    # numbers remain in the manifest (public_field, challenge_positioning) as
+    # provenance for the docs, but are not asserted as README boasts.
     assert "not an official" in README.lower()
+    assert "top cluster" in README.lower()
 
     # Anti-drift guard for the 28->33 feature-count history (folded here to keep the suite
     # count stable). Manifest, code FEATURE_NAMES, and README must agree; current-pipeline docs

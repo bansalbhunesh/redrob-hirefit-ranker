@@ -14,7 +14,7 @@ team_members:
 
 github_repo: "https://github.com/bansalbhunesh/redrob-hirefit-ranker"
 sandbox_link: "https://huggingface.co/spaces/bansal1234/Hirefit"
-reproduce_command: "PYTHONHASHSEED=0 python rank.py --candidates ./candidates.jsonl --out ./submission.csv --workers 2 --scoring-profile dominant-v4"
+reproduce_command: "PYTHONHASHSEED=0 python rank.py --release --candidates ./candidates.jsonl --out ./submission.csv --workers 2"
 
 compute:
   platform: "Local CPU machine"
@@ -26,10 +26,11 @@ compute:
   has_network_during_ranking: false
   pre_computation_required: false
   pre_computation_time_minutes: 0
-  # dominant-v4 exact full-100K reproduction on 2026-06-29:
-  # 75.4s pipeline / 79.5s wall time on a Docker-native volume with
-  # --cpus=2 --memory=16g. It emitted 0 guarded profiles.
-  measured_runtime_seconds: 75.4
+  # frontier-v5 --release exact full-100K reproduction (the committed
+  # submission.csv, golden SHA-256 8f7f30c6...), Docker --cpus=2 --memory=16g:
+  # 136.0s pipeline / 149.1s wall. Detected 53 honeypots, emitted 0, left 0
+  # output temp files, and reproduced the exact golden hash. Budget 300s.
+  measured_runtime_seconds: 136.0
   measured_peak_rss_gb: 6.1
   measured_bm25_backend: "bm25s"
   feature_scoring_workers: "auto (up to 8); output identical for any worker count"
@@ -56,14 +57,19 @@ methodology_summary: |
   (skills, career evidence, seniority, role-family depth, behavior, logistics)
   with multiplicative behavioral, honeypot, and JD-disqualifier multipliers; no
   hosted LLM/API scoring during ranking; reasoning generated from actual candidate
-  facts. The branch artifact uses opt-in dominant-v4: seven shallow
-  label-family heads distilled to a 130 KB NumPy artifact, blended with ungated
-  universal-v2 relevance, then passed through the existing integrity multipliers.
-  A conservative RRF lock is followed by a feature-only top-eight correction
-  and two clean backfills for the lowest-ranked severe temporal contradictions.
-  No competitor code, candidate IDs, public ranks, or paragraph fingerprints are
-  in production. All quality numbers are development proxies; no official hidden
-  labels were available.
+  facts. The committed artifact is produced by the fail-closed `--release` path
+  (ranking profile frontier-v5): seven shallow label-family heads distilled to a
+  130 KB NumPy artifact, blended with ungated universal-v2 relevance, then passed
+  through the existing integrity multipliers. A conservative RRF lock is followed
+  by a feature-only top-eight correction, two clean backfills for the lowest-ranked
+  severe temporal contradictions, and two narrow feature-only tie-breaks
+  (behaviour and responsiveness within fixed rank windows) that were retained only
+  after holdout half-splits eliminated a broader rule set; their effect is marginal
+  and within proxy noise. The `dominant-v4` profile (same pipeline without those
+  two tie-breaks) and the default `main` profile remain available. No competitor
+  code, candidate IDs, public ranks, or paragraph fingerprints are in production.
+  All quality numbers are development proxies; no official hidden labels were
+  available.
 
 declarations:
   read_submission_spec: true
