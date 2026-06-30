@@ -1,9 +1,9 @@
 # GAPS.md
 
-> **Historical audit.** This file preserves the 2026-06-12 pre-V6 gap analysis and
-> should not be used as the current scorecard. The closed-loop V6 position is in
+> **Historical audit.** This file preserves the 2026-06-12 pre-release gap analysis and
+> should not be used as the current scorecard. The closed-loop current position is in
 > `docs/CHALLENGE_POSITIONING.md`, the current release evidence is in
-> `docs/v6_battleproof_audit.md`, and the current test result is 262 passed with
+> `docs/archive/v6_battleproof_audit.md`, and the current test result is 262 passed with
 > 6 environment skips (268 collected).
 
 Audit date: 2026-06-12 IST  

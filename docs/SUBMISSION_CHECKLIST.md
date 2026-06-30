@@ -4,18 +4,18 @@ Everything controllable in the repository is verified here. “Owner action” m
 
 ## Verified in the repository
 
-- **Release locked:** V6 battle-proof release, frontier-v5 ranking core, SHA-256 prefix `8f7f30c6`.
+- **Release locked:** fail-closed release, frontier-v5 ranking core, SHA-256 prefix `8f7f30c6`.
 - **One release path:** `PYTHONHASHSEED=0 python rank.py --release ...` forces the champion and fails closed on input, model, configuration, count, numeric, or output drift.
 - **Reproducible:** `./reproduce.sh` is green; the full 100K Docker release is byte-identical and atomic; a forced OOM preserves the previous output.
 - **Resource fit:** CPU-only and offline; 136.0 s pipeline / 149.1 s wall at 2 CPU / 16 GiB; sampled peak 4.13 GiB.
-- **Ranking evidence:** 30/30 composite wins over main; #1/673 mean7; #1/100 mean15; #3/322 balance4; 883 safety fusions; 100 repeated half-splits; external reviewer and blind slices.
+- **Ranking evidence:** wins every measured composite vs main and sits in the top cluster on development proxies (broad / strongest-union / four-axis means); external reviewer and blind cross-checks. Dev proxies, not an official score.
 - **Integrity:** 0 detected honeypots in the top 100, with 53 detected in the pool.
 - **Supply chain:** digest-pinned base image, hash-pinned wheels, `pip --require-hashes`, and no known production dependency vulnerabilities in the dated audit.
 - **Judge path:** 60-second judge packet, evidence-first README, public-field scorecard, methodology, deployment guide, pitch deck (PPTX + PDF), and screenshots are linked from the repository front page.
-- **Fresh visual proof:** desktop and 390-pixel mobile screenshots were rendered from the current V6 API on 2026-06-30; the responsive pipeline and detail drawer were tightened after inspection.
+- **Fresh visual proof:** desktop and 390-pixel mobile screenshots were rendered from the current API on 2026-06-30; the responsive pipeline and detail drawer were tightened after inspection.
 - **Deployment:** the Hugging Face Space is the primary live sandbox and returns HTTP 200. The repository includes a schema-validated Render Blueprint and documented health/readiness gates.
 - **Honest live-status disclosure:** the historical Render mirror is externally suspended and is not advertised as live proof.
-- **Public access:** verified through GitHub's unauthenticated API, raw-file endpoint, and credential-free `main` lookup on 2026-06-30. The public branch resolves to merge `96a8a8c` and exposes the V6 README and fresh screenshots.
+- **Public access:** verified through GitHub's unauthenticated API, raw-file endpoint, and credential-free `main` lookup on 2026-06-30. The public branch resolves to merge `96a8a8c` and exposes the README and fresh screenshots.
 
 ## Optional presentation enhancement
 
@@ -29,4 +29,4 @@ Everything controllable in the repository is verified here. “Owner action” m
 
 ## Claim boundary
 
-Official hidden labels and numeric judging weights are unpublished. The mission-derived positioning score and public-field rank estimates are transparent estimates, not official results. The measured claim is narrower and stronger: V6 is the best balanced artifact tested in this repository, wins every measured composite against main, remains inside the challenge resource envelope, and preserves deterministic fail-closed delivery.
+Official hidden labels and numeric judging weights are unpublished. The mission-derived positioning score and public-field rank estimates are transparent estimates, not official results. The measured claim is narrower and honest: the release is the best balanced artifact tested in this repository, wins every measured composite against main, remains inside the challenge resource envelope, and preserves deterministic fail-closed delivery.

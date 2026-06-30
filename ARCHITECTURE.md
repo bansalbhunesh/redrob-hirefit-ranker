@@ -4,7 +4,7 @@
 
 Rank the top 100 candidates for the Redrob **Senior AI Engineer - Founding Team** JD while satisfying CPU-only, no-network, no-GPU, sub-5-minute reproduction constraints.
 
-Final V6 measurement in the pinned python:3.11 image: all 100,000 candidates rank in
+Final release measurement in the pinned python:3.11 image: all 100,000 candidates rank in
 **136.0 s pipeline / 149.1 s wall** at 2 CPU / 16 GiB, with sampled peak memory
 **4.13 GiB**; 53 honeypots are detected and 0 enter the top 100. The exact input,
 model, environment, backend, counts, integrity totals and output hash are verified
@@ -71,7 +71,7 @@ PYTHONHASHSEED=0 python rank.py --release --candidates ./candidates.jsonl \
 ```
 
 No hosted LLM/API calls are made during ranking. General runs may fall back to
-`rank-bm25`, but the official V6 `--release` path requires `bm25s` and fails closed.
+`rank-bm25`, but the official `--release` path requires `bm25s` and fails closed.
 
 Feature scoring is parallelized across CPU workers by default, capped at 8 workers for memory safety. `--workers 1` remains the serial escape hatch and produces byte-identical output.
 
@@ -79,7 +79,7 @@ The FastAPI dashboard uses the same `CandidateFeatures` objects to expose flags,
 
 ## 7. Battle-proof release envelope
 
-V6 keeps expensive ranking work in container-local temporary storage, verifies
+The release keeps expensive ranking work in container-local temporary storage, verifies
 the exact champion CSV, then performs a small atomic publish on the destination
 filesystem. A deliberate 3-GiB OOM exited 137 while preserving the prior output
 and leaving zero mounted temporary files. The release also rejects altered input

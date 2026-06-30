@@ -20,7 +20,6 @@ were available before submission.
 
 **Judge start:** [60-second packet](docs/JUDGE_PACKET.md) ·
 [live sandbox](https://huggingface.co/spaces/bansal1234/Hirefit) ·
-[pitch PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf) ·
 [reproduce](#reproduce) ·
 [explainability](#explainability)
 
@@ -61,7 +60,7 @@ were available before submission.
 | **Deployable API** | [Render Blueprint](https://render.com/deploy?repo=https://github.com/bansalbhunesh/redrob-hirefit-ranker) | one-click FastAPI deployment from committed `render.yaml` |
 | **Decision dashboard** | `streamlit run omega_decision_dashboard.py` | read-only explainability + integrity cards |
 | **Source** | [GitHub ↗](https://github.com/bansalbhunesh/redrob-hirefit-ranker) | full code · one-command reproduction |
-| **Pitch** | [PPTX](docs/HireFit_Ranker_Redrob_POLISHED.pptx) · [PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf) | 14-slide narrative with current metrics and claim boundaries |
+| **Pitch** | archived under [`docs/archive/`](docs/archive/) | 14-slide narrative; archived pending a clean re-export (committed binary still uses prior framing) |
 
 ## Screenshots
 
@@ -99,9 +98,10 @@ Each row below is something a judge can verify from the repository, not a claim 
 | Honest evaluation | A pre-registered measured-negatives ladder; every rejected idea is reproducible (`docs/measured_negatives.md`) |
 | Tests | 265 passed / 6 environment skips, including golden-hash and 2K-slice behavior gates |
 
-The [public-field scorecard](docs/PUBLIC_FIELD_SCORECARD.md) reviews the strongest public ranking,
-human-validation, product, and deployment approaches **in aggregate** — what they do well and where
-this system is and is not ahead. It is a professional comparison, not a ranking boast.
+Competitive position is stated **in aggregate**: on development proxies across the public field this
+system is in the **top cluster**, leading on reproducibility and integrity engineering while specialist
+submissions lead individual axes. These are dev proxies, not an official score — no ranking boast.
+Historical R&D comparisons are preserved under [`docs/archive/`](docs/archive/) with a disclaimer.
 
 ## Submission snapshot
 
@@ -207,8 +207,8 @@ hidden-score guarantee.
 | full 100K constrained Docker | 136.0s pipeline / 149.1s wall, 53 detected / 0 emitted, 0 output temps, exact hash `8f7f30c6…` |
 
 Specialist public submissions still lead individual axes; the defensible claim is **strongest balanced
-artifact on development proxies**, not guaranteed hidden-score supremacy. Full record:
-`docs/frontier_v5_experiment.md`.
+artifact on development proxies**, not guaranteed hidden-score supremacy. Full development record:
+[`docs/archive/`](docs/archive/) (historical R&D notes, with disclaimer).
 
 ## The integrity distinction
 
@@ -233,13 +233,14 @@ CPU-only, offline, deterministic. The same command appears in `reproduce.sh` and
 ## Documentation map
 
 - **Product (recruiter view):** [PRODUCT](PRODUCT.md) — recruiter journey + the integrity decision-support differentiator (CONTINUE/CLARIFY/VERIFY/BLOCK)
-- **Decision & validation:** [champion/main invariance audit](docs/champion_main_invariance_audit.md) · [frontier_v5_experiment](docs/frontier_v5_experiment.md) · [exhaustive main/v3/v4/public comparison](docs/full_comparison_main_v3_v4_public.md) · [dominant_v4_experiment](docs/dominant_v4_experiment.md) · [loss_aggregate_v3_experiment](docs/loss_aggregate_v3_experiment.md) · [universal_v2_experiment](docs/universal_v2_experiment.md) · [external_recruiter_validation](docs/external_recruiter_validation.md)
+- **Reproducibility proof:** [REGENERATION_PROOF](docs/REGENERATION_PROOF.md) — full private-pool regeneration matched the committed hash
 - **Explainability:** [EXPLAINABILITY](docs/EXPLAINABILITY.md) — exact-Shapley attributions, ablation, rank-stability
-- **Challenge fit:** [CHALLENGE_POSITIONING](docs/CHALLENGE_POSITIONING.md) — official mission mapped to measured evidence; inferred weights clearly separated from official facts
-- **Judge orientation:** [JUDGE_PACKET](docs/JUDGE_PACKET.md) · [PUBLIC_FIELD_SCORECARD](docs/PUBLIC_FIELD_SCORECARD.md) · [pitch PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf)
+- **External validation:** [external_recruiter_validation](docs/external_recruiter_validation.md) — cross-check against a real recruiter-labeled set
+- **Judge orientation:** [JUDGE_PACKET](docs/JUDGE_PACKET.md)
 - **Deployment:** [DEPLOYMENT](docs/DEPLOYMENT.md) · [`render.yaml`](render.yaml) · [backend hardening](docs/backend_infra_hardening.md)
-- **Security & release audit:** [SECURITY](SECURITY.md) · [release audit](docs/RELEASE_AUDIT_2026-06-30.md)
+- **Security:** [SECURITY](SECURITY.md)
 - **What we rejected:** [measured_negatives](docs/measured_negatives.md) · [why_not_reranker](docs/why_not_reranker.md) · [beyond_hedge_sweep](docs/beyond_hedge_sweep.md)
+- **Historical R&D notes:** [`docs/archive/`](docs/archive/) — development logs with a clear disclaimer (superseded framing/codenames; not the submission's claims)
 - **Reproduce / runtime:** [REPRODUCTION](docs/REPRODUCTION.md) · [runtime_matrix](docs/runtime_matrix.md) · [SUBMISSION_CHECKLIST](docs/SUBMISSION_CHECKLIST.md)
 
 > Experimental decision frameworks (Ω, Ψ, Φ) are included for transparency and do not alter the

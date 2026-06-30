@@ -7,7 +7,7 @@
     "ranking_core": "frontier-v5",
     "golden_sha256": "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062",
     "candidate_input_sha256": "de7b8cae39a9f9378a2cd4f8153bfc1f84960bce0ae520f263423d129df4b335",
-    "_golden_note": "2026-06-30: frontier-v5 remains the ranking champion after V6 cross-fit and leave-one-family-out experiments rejected every apparent universal gain. The fail-closed --release path verifies configuration, the model artifact, full-pool and integrity counts, and the exact output hash before atomic publication. The default main profile remains available when --release is omitted.",
+    "_golden_note": "2026-06-30: frontier-v5 remains the ranking champion after cross-fit and leave-one-family-out experiments rejected every apparent universal gain. The fail-closed --release path verifies configuration, the model artifact, full-pool and integrity counts, and the exact output hash before atomic publication. The default main profile remains available when --release is omitted.",
     "rows": 100,
     "total_candidates": 100000,
     "honeypots_detected": 53,
@@ -33,12 +33,12 @@
     "frontier_v5_wall_s": 241.9,
     "frontier_v5_cold_pipeline_s": 209.4,
     "frontier_v5_cold_wall_s": 233.8,
-    "frontier_v6_release_pipeline_s": 109.9,
-    "frontier_v6_release_peak_mib": 4232.2,
-    "frontier_v6_final_pipeline_s": 136.0,
-    "frontier_v6_final_wall_s": 149.1,
     "showpiece_recorded_run_ms": 136000,
-    "_showpiece_note": "apps/api/data/precomputed.json replays the exact V6/frontier-v5 top-100 and the final battle-proof constrained Docker pipeline time: 136.0 s at 2 CPU / 16 GiB. The run ranked all 100K, detected 53 honeypots, emitted 0, left 0 output temps, and reproduced the exact golden hash."
+    "_showpiece_note": "apps/api/data/precomputed.json replays the exact frontier-v5 top-100 and the final fail-closed constrained Docker pipeline time: 136.0 s at 2 CPU / 16 GiB. The run ranked all 100K, detected 53 honeypots, emitted 0, left 0 output temps, and reproduced the exact golden hash.",
+    "release_pipeline_s": 109.9,
+    "release_peak_mib": 4232.2,
+    "release_final_pipeline_s": 136.0,
+    "release_final_wall_s": 149.1
   },
   "memory": {
     "_source": "docs/runtime_matrix.md",
@@ -50,20 +50,34 @@
     "_source": "docs/LLM_JUDGE_EVAL.md, docs/llm_judge_eval_2.md, docs/llm_judge_eval_3.md",
     "p10": 1.0,
     "ndcg10": 0.9104,
-    "top10_tiers": [5, 5, 4, 5, 5, 5, 5, 5, 5, 4],
+    "top10_tiers": [
+      5,
+      5,
+      4,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      4
+    ],
     "composite_independent": 0.8884,
     "composite_judge1": 0.9321,
     "composite_judge2": 0.9666,
     "composite_judge3": 0.9421,
     "_composite_note": "frontier-v5 exact full-100K artifact; quality numbers are development proxies, not official hidden labels",
-    "judge_agreement_kappa_range": [0.918, 0.935]
+    "judge_agreement_kappa_range": [
+      0.918,
+      0.935
+    ]
   },
   "reranker_measured_negative": {
     "_label": "LightGBM LambdaMART v2 reranker (codex/ndcg50-killer): measured on the 100K frozen blind set vs the shipped hand pipeline. Rejected; hand pipeline retained. See docs/why_not_reranker.md and docs/measured_negatives.md.",
     "_blind_set": "artifacts/h2_availblind_labels.jsonl (generated before any tuning, full population)",
     "hand_pipeline_blind_composite": 0.8625,
     "hand_pipeline_blind_ndcg10": 0.8288,
-    "hand_pipeline_blind_ndcg50": 0.8270,
+    "hand_pipeline_blind_ndcg50": 0.827,
     "reranker_v2_blind_composite": 0.8318,
     "reranker_v2_blind_ndcg10": 0.7593,
     "reranker_v2_blind_ndcg50": 0.8404,
@@ -87,54 +101,16 @@
     "component_losses": 6,
     "fusion_variants": 883,
     "fully_safe_fusions": 0,
-    "origin_and_v6_main_sha256": "af8f2b327f05d30e22aba41e884077071c673082cd4a2647294f0969c0f0536a",
     "hash_pinned_release_s": 131.7,
     "serial_release_s": 135.0,
-    "oom_preserved_existing_output": true
-  },
-  "battleproof_release": {
-    "_source": "docs/v6_battleproof_audit.md",
-    "corrupted_submissions_detected": 10000,
-    "invalid_configs_rejected": 9750,
-    "docker_2cpu_16g_pipeline_s": 136.0,
-    "docker_2cpu_16g_wall_s": 149.1,
-    "docker_3g_oom_exit": 137,
     "oom_preserved_existing_output": true,
-    "oom_output_temp_files": 0
+    "origin_main_sha256": "af8f2b327f05d30e22aba41e884077071c673082cd4a2647294f0969c0f0536a"
   },
   "public_field": {
-    "_source": "docs/frontier_v5_experiment.md, docs/full_comparison_main_v3_v4_public.md",
-    "repositories_discovered": 1367,
-    "eligible_repositories": 1279,
-    "valid_public_outputs": 672,
-    "mean7_rank": 1,
-    "mean7_field": 673,
-    "mean7_value": 0.906553,
-    "mean15_rank": 1,
-    "mean15_field": 100,
-    "mean15_value": 0.910406,
-    "balanced4_rank": 3,
-    "balanced4_field": 322,
-    "balanced4_value": 0.876596,
-    "h2_rank": 14,
-    "h2_field": 673,
-    "h2_value": 0.884206,
-    "reviewer_rank": 115,
-    "reviewer_field": 430,
-    "reviewer_value": 0.809768,
-    "blind_rank_estimated": 20,
-    "blind_field": 325,
-    "blind_value": 0.905858,
-    "no_four_axis_dominator": true
+    "_note": "Development-proxy public-field comparisons (independent heuristic + LLM-judge labels). Summarized honestly in the README as 'top cluster'; historical per-axis tables live in docs/archive/. NOT an official score or leaderboard."
   },
   "challenge_positioning": {
-    "_source": "docs/CHALLENGE_POSITIONING.md",
-    "official_page": "https://hack2skill.com/event/india_runs/",
-    "official_numeric_weights_published": false,
-    "mission_derived_score": 93.7,
-    "projected_rank": 1,
-    "honest_rank_range": "1-3",
-    "claim_boundary": "Mission-derived positioning estimate, not an official score or leaderboard result"
+    "_note": "Mission-derived positioning was a development estimate, NOT an official score or projected rank. See the README for the honest aggregate statement and claim boundary."
   },
   "deployment": {
     "_source": "docs/DEPLOYMENT.md; verified 2026-06-30",
@@ -159,5 +135,15 @@
     "_crossencoder_note": "We reproduced the competitor's ms-marco-MiniLM cross-encoder + semantic stack and validated fresh on the blind recruiter: 0.71 vs our 0.90. Their lead on their own labels is training-on-those-labels + selection bias, not transferable.",
     "blind_holdout_coverage": "24% (24 ranked candidates) -- small sample, directional",
     "public_field_position": "V5 keeps #1 seven-world mean and #14 H2, improves blind recruiter from estimated #23 to #20, and raises the four-axis mean from 0.874314 to 0.876596; no measured public output dominates it across H2 + mean7 + reviewer + blind"
+  },
+  "failclosed_release": {
+    "_source": "docs/archive/v6_battleproof_audit.md",
+    "corrupted_submissions_detected": 10000,
+    "invalid_configs_rejected": 9750,
+    "docker_2cpu_16g_pipeline_s": 136.0,
+    "docker_2cpu_16g_wall_s": 149.1,
+    "docker_3g_oom_exit": 137,
+    "oom_preserved_existing_output": true,
+    "oom_output_temp_files": 0
   }
 }

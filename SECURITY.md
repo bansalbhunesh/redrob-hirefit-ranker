@@ -17,4 +17,4 @@ The release path is designed for offline, deterministic execution. It validates 
 
 ## Supported release
 
-Security fixes target the latest V6 release on the default branch. Historical experiment branches and research artifacts are retained for auditability but are not deployment targets.
+Security fixes target the latest release on the default branch. Historical experiment branches and research artifacts are retained for auditability but are not deployment targets.

@@ -1,13 +1,13 @@
 # Docker Runtime Matrix (Phase 0.1)
 
-> **Current shipping number:** the final battle-proof V6 release completed the full
+> **Current shipping number:** the final fail-closed release completed the full
 > 100K pool in **136.0 s pipeline / 149.1 s wall** at `--cpus=2 --memory=16g
 > --workers 2 --release`, produced exact SHA-256 `8f7f30c6...`, and left no
 > temporary output. Earlier rows below are retained as dated experiment history.
 
-## 2026-06-30 V6 quality-safe inference hardening
+## 2026-06-30 quality-safe inference hardening
 
-V6 keeps the exact `frontier-v5` rank artifact and removes repeated work in two
+The release keeps the exact `frontier-v5` rank artifact and removes repeated work in two
 post-retrieval hotspots. The dual V2/main scoring pass is bit-exact and measured
 36.8% faster in an isolated 5,000-candidate loop (median 0.0546 s to 0.0345 s).
 The 3,000-row model feature matrix is also bit-exact and measured 77.0% faster
@@ -20,13 +20,13 @@ The full 100,000-candidate verification used a Docker-native volume,
 | Image | Pipeline time | Sampled peak | Output SHA-256 | Integrity |
 |---|---:|---:|---|---|
 | unchanged V5 stress control | 299.2 s | not retained | `8f7f30c68ec30cb6...` | 53 detected / 0 emitted |
-| V6 hardened | **197.2 s** | **4,204.5 MiB** | `8f7f30c68ec30cb6...` | 53 detected / 0 emitted |
-| V6 fail-closed `--release` | **109.9 s** | **4,232.2 MiB** | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
-| V6 `--release --workers 1` | **135.0 s** | not sampled | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
-| V6 fresh hash-pinned image | **131.7 s** | not sampled | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
+| hardened | **197.2 s** | **4,204.5 MiB** | `8f7f30c68ec30cb6...` | 53 detected / 0 emitted |
+| fail-closed `--release` | **109.9 s** | **4,232.2 MiB** | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
+| `--release --workers 1` | **135.0 s** | not sampled | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
+| fresh hash-pinned image | **131.7 s** | not sampled | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
 
 The 102-second paired gap is dominated by Docker Desktop host variance: earlier
-unchanged V5 runs were 199.0-209.4 s. The defensible result is that V6 matches
+unchanged V5 runs were 199.0-209.4 s. The defensible result is that the release matches
 the prior normal V5 window, remains under 300 seconds, uses less than the
 effective Docker VM memory, and reproduces the artifact byte-for-byte. Although
 the container requested 16 GB, this Docker Desktop VM exposed about 7.6 GiB;
@@ -206,7 +206,7 @@ docker run --rm --memory=16g -v "<dir>:/data" redrob-hirefit-ranker \
 # --workers defaults to auto (up to 8); output is identical for any worker count
 ```
 
-## 2026-06-30 battle-proof V6 release
+## 2026-06-30 fail-closed release
 
 Final post-hardening image, exact official input hash pinned, full 100K pool:
 
@@ -215,4 +215,4 @@ Final post-hardening image, exact official input hash pinned, full 100K pool:
 | `--cpus=2 --memory=16g --workers 2 --release` | 136.0 s pipeline / 149.1 s wall; exact `8f7f30c6...`; exit 0; no OOM; 0 output temps |
 | `--cpus=2 --memory=3g --workers 2 --release` | intentional OOM; exit 137; prior output preserved; 0 output temps |
 
-See `docs/v6_battleproof_audit.md` for the complete failure-mode matrix.
+See `docs/archive/v6_battleproof_audit.md` for the complete failure-mode matrix.

@@ -93,8 +93,8 @@ def test_readme_runtime_claims_are_manifest_values():
         f"README should quote ~{rounded_local}s for the local Docker serial run "
         f"(manifest: {rt['local_docker_serial_best_s']} s)"
     )
-    assert f"{rt['frontier_v6_final_pipeline_s']:.1f}s" in README
-    assert f"{rt['frontier_v6_final_wall_s']:.1f}s" in README
+    assert f"{rt['release_final_pipeline_s']:.1f}s" in README
+    assert f"{rt['release_final_wall_s']:.1f}s" in README
 
 
 def test_precomputed_payload_matches_manifest():

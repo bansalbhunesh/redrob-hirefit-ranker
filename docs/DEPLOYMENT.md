@@ -58,6 +58,6 @@ A deployment is judge-ready only when all are true:
 - `/api/health` returns 200 with version `6.0.0` and the expected build SHA.
 - `/api/readyz` returns 200 with `precomputed_loaded=true` and `dashboard_present=true`.
 - `/api/metrics` returns Prometheus text without leaking file paths or candidate data.
-- The homepage displays **33 Features**, V6 positioning, and the committed top-100.
+- The homepage displays **33 Features** and the committed top-100.
 - A desktop and mobile browser pass shows no horizontal overflow or console errors.
 - `python -m pytest -q` and the GitHub `gates` check pass on the deployed commit.

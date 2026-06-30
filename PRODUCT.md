@@ -1,7 +1,7 @@
 # HireFit — the recruiter product, not just a ranker
 
 *A decision-support layer for Redrob: a recruiter pastes a role, gets a ranked, explained, and
-integrity-screened shortlist they can act on and export — deterministic, CPU-only, and battle-proof.*
+integrity-screened shortlist they can act on and export — deterministic, CPU-only, and fail-closed.*
 
 This document is the **product** view. For the ML/methodology view see `METHODOLOGY.md`; for the
 shipping/reproduction view see `docs/REPRODUCTION.md`.
@@ -35,7 +35,7 @@ using a two-axis, recruiter-validated mapping (`dashboard/integrity_cards.py`):
 
 Crucially it is **assistive, not automated rejection**: a flag means *"a human should look"*, never
 *"this person is a fraud."* The code literally forbids claims like "confirmed fraud" / "is a honeypot."
-This is why the **V6 release** keeps multiplicative integrity gates around its frontier-v5 ranking
+This is why the **release** keeps multiplicative integrity gates around its frontier-v5 ranking
 core: it excludes every detected hard trap from the top 100 instead of letting keyword strength buy
 rank. An independent recruiter's labels support that choice (`docs/external_recruiter_validation.md`).
 **Our top-100 ships 0 honeypots.**
@@ -47,7 +47,7 @@ rank. An independent recruiter's labels support that choice (`docs/external_recr
   without a per-candidate LLM bill. The cost-quality tradeoff is the point.
 - **Auditable & fair:** counterfactual fairness tests, no candidate-ID tuning in the ranking path,
   every KPI generated from a single drift-checked manifest.
-- **Public-field proof:** #1 / 673 broad mean7, #1 / 100 strongest-union mean15, and #3 / 322
+- **Public-field proof:** the top cluster across the broad, strongest-union, and four-axis development-proxy means
   equal four-axis balance; no measured public artifact dominates all four axes.
 - **Failure-safe:** exact input/model/output hashes, deterministic environment checks, and OOM-safe
   atomic publication protect a known-good shortlist.
