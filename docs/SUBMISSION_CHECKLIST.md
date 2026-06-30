@@ -12,6 +12,7 @@ Everything controllable in the repository is verified here. “Owner action” m
 - **Integrity:** 0 detected honeypots in the top 100, with 53 detected in the pool.
 - **Supply chain:** digest-pinned base image, hash-pinned wheels, `pip --require-hashes`, and no known production dependency vulnerabilities in the dated audit.
 - **Judge path:** 60-second judge packet, evidence-first README, public-field scorecard, methodology, deployment guide, pitch deck (PPTX + PDF), and screenshots are linked from the repository front page.
+- **Fresh visual proof:** desktop and 390-pixel mobile screenshots were rendered from the current V6 API on 2026-06-30; the responsive pipeline and detail drawer were tightened after inspection.
 - **Deployment:** the Hugging Face Space is the primary live sandbox and returns HTTP 200. The repository includes a schema-validated Render Blueprint and documented health/readiness gates.
 - **Honest live-status disclosure:** the historical Render mirror is externally suspended and is not advertised as live proof.
 - **Repository access check:** GitHub reported the repository as **private** on 2026-06-30. This is the only P0 publication blocker and requires an explicit owner visibility decision.

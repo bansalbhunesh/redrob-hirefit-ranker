@@ -224,9 +224,11 @@
     /* ── PIPELINE VISUALIZER ── */
     .pipeline {
       display: flex; align-items: center;
-      gap: 12px;
+      gap: 6px;
       padding: 8px 4px;
       overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity;
       margin-bottom: 24px;
     }
     .pipeline::-webkit-scrollbar { height: 4px; }
@@ -235,14 +237,15 @@
     .pipeline-node {
       display: flex; flex-direction: column; align-items: center;
       gap: 6px;
-      padding: 10px 16px;
+      padding: 10px 8px;
       border-radius: var(--radius-sm);
       background: var(--bg-card);
       border: 1px solid var(--border-glass);
       cursor: pointer;
       transition: var(--transition);
-      min-width: 90px;
+      min-width: 78px;
       position: relative;
+      scroll-snap-align: start;
     }
     .pipeline-node:hover {
       border-color: rgba(255, 255, 255, 0.15);
@@ -508,6 +511,9 @@
       .metrics-grid { grid-template-columns: 1fr; }
       .main { padding: 14px; gap: 14px; }
       .glass-panel { padding: 14px; }
+      .pipeline { margin-right: -14px; padding-right: 14px; }
+      .pipeline-node { min-width: 82px; }
+      .search-box { min-width: 100%; }
     }
 
     /* ── LOADING SPINNER ── */
@@ -825,6 +831,10 @@
       .detail-panel { position: fixed; right: -400px; top: 0; bottom: 0; width: 380px; z-index: 200; transition: right 0.3s ease; }
       .detail-panel.open { right: 0; }
       .detail-panel .close-btn { display: block; }
+    }
+    @media (max-width: 420px) {
+      .detail-panel { right: calc(-100vw - 16px); width: calc(100vw - 16px); }
+      .detail-panel.open { right: 0; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {

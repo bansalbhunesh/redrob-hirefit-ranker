@@ -29,6 +29,7 @@ Scores are a transparent repository-quality audit, not official challenge scores
 - Live sandbox: Hugging Face Space returned HTTP 200.
 - Deployment manifest: `render.yaml` passed the current Render Blueprint JSON schema.
 - Diagram and metrics artifacts: SVG XML and JSON syntax passed.
+- Visual render: current V6 API inspected at 1440×1100 and 390×844; screenshots are committed and linked from the README.
 
 ## Findings closed
 
@@ -41,7 +42,7 @@ Scores are a transparent repository-quality audit, not official challenge scores
 
 ## Known limits
 
-- The in-app visual browser connection was unavailable during this final pass, so no new screenshot is represented as freshly captured. Existing screenshots remain illustrative; endpoint behavior and live availability were verified independently.
+- The preferred in-app visual connection was unavailable, so the installed Chrome headless renderer was used as the documented fallback. Both committed screenshots are fresh captures of the current local V6 API.
 - The final Docker rebuild did not complete within the local Docker daemon timeout. This does not replace the already recorded full 100K, 2-CPU/16-GiB byte-identity run; it is documented rather than hidden.
 - Repository-wide Ruff includes exploratory and historical scripts and reports legacy style debt. The production/shipping surface is clean; preserved experiments were not mechanically rewritten.
 - Official hidden labels and judging weights remain unavailable. Public-field rankings are evidence-based estimates, not official placements.
