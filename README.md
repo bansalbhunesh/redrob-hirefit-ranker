@@ -54,10 +54,10 @@ publish. The ranking remains the proven frontier-v5 order; the shipping system i
 
 ## Screenshots
 
-| Live HuggingFace Space (sandbox) | Recruiter decision dashboard |
+| Current V6 API — desktop | Current V6 API — mobile |
 |:---:|:---:|
-| [![HuggingFace Space](docs/assets/hf-live-desktop.png)](https://huggingface.co/spaces/bansal1234/Hirefit) | ![Decision dashboard](docs/assets/dashboard-overview.png) |
-| Upload → tiered shortlist → per-candidate evidence → CSV export | Audit evidence → CONTINUE / CLARIFY / VERIFY / BLOCK guidance |
+| ![V6 API desktop](docs/assets/api-v6-desktop.png) | ![V6 API mobile](docs/assets/api-v6-mobile.png) |
+| 100K-pool evidence, all eight pipeline stages, shortlist and audit detail | Responsive one-column evidence flow with touch-safe mode controls and horizontal pipeline navigation |
 
 ## Quick start
 
