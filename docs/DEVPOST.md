@@ -14,7 +14,7 @@ submitted file, byte-for-byte.
 
 Most candidate rankers are impressive demos that can't be re-run and can't explain themselves. For a
 hiring decision that's the wrong trade. We built for what a recruiter and a judge can actually trust:
-the same input always produces the same shortlist, every score decomposes into named evidence, and
+the same input always produces the same shortlist, every candidate's evidence score decomposes into named evidence, and
 integrity red flags are hard gates rather than vibes.
 
 ## What it does
@@ -24,7 +24,7 @@ integrity red flags are hard gates rather than vibes.
   trajectory, behavior, and logistics — with BM25 as one signal, not the whole story.
 - Applies multiplicative honeypot and JD-disqualifier guardrails that a high relevance score cannot
   override (53 suspicious profiles detected in the pool; 0 reach the shortlist).
-- Emits grounded, per-candidate reasoning and an exact per-feature explanation of every score.
+- Emits grounded, per-candidate reasoning and an exact per-feature explanation of each candidate's evidence score.
 
 ## How we built it
 

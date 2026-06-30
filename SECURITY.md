@@ -12,6 +12,10 @@ The release path is designed for offline, deterministic execution. It validates 
 
 - Run only on candidate data you are authorized to process.
 - Do not commit challenge data, personal data, API keys, or generated candidate exports.
+- The full 100,000-candidate challenge pool is never committed (`.gitignore`d). The committed API
+  showpiece (`apps/api/data/precomputed.json`) replays only this submission's own published top-100 for
+  the live demo, with personal-identity, contact-verification, and compensation fields redacted; the
+  underlying pool is synthetic challenge data, not real individuals.
 - Treat ranking explanations and integrity flags as decision support, not verified facts about a person.
 - Retain human review for consequential hiring decisions and provide an appropriate appeal or correction path.
 

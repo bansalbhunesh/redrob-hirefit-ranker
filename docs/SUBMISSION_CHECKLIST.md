@@ -11,11 +11,11 @@ Everything controllable in the repository is verified here. “Owner action” m
 - **Ranking evidence:** wins every measured composite vs main and sits in the top cluster on development proxies (broad / strongest-union / four-axis means); external reviewer and blind cross-checks. Dev proxies, not an official score.
 - **Integrity:** 0 detected honeypots in the top 100, with 53 detected in the pool.
 - **Supply chain:** digest-pinned base image, hash-pinned wheels, `pip --require-hashes`, and no known production dependency vulnerabilities in the dated audit.
-- **Judge path:** 60-second judge packet, evidence-first README, public-field scorecard, methodology, deployment guide, pitch deck (PPTX + PDF), and screenshots are linked from the repository front page.
+- **Judge path:** the judge-proof package, 60-second judge packet, evidence-first README, methodology, deployment guide, and screenshots are linked from the repository front page. (The pitch deck and historical R&D notes are archived under `docs/archive/` and are intentionally not on the judge path.)
 - **Fresh visual proof:** desktop and 390-pixel mobile screenshots were rendered from the current API on 2026-06-30; the responsive pipeline and detail drawer were tightened after inspection.
 - **Deployment:** the Hugging Face Space is the primary live sandbox and returns HTTP 200. The repository includes a schema-validated Render Blueprint and documented health/readiness gates.
 - **Honest live-status disclosure:** the historical Render mirror is externally suspended and is not advertised as live proof.
-- **Public access:** verified through GitHub's unauthenticated API, raw-file endpoint, and credential-free `main` lookup on 2026-06-30. The public branch resolves to merge `96a8a8c` and exposes the README and fresh screenshots.
+- **Public access:** verified through GitHub's unauthenticated API, raw-file endpoint, and credential-free `main` lookup on 2026-06-30. The public `main` branch exposes the current README and screenshots.
 
 ## Optional presentation enhancement
 

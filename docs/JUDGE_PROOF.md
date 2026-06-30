@@ -80,7 +80,9 @@ Shape/format/membership checks; also runs as a CI gate on every push.
   feature's Shapley value *is* its own additive term — analytic, not sampled, byte-reproducible.
   Module [`src/redrob_ranker/explain.py`](../src/redrob_ranker/explain.py); method + commands in
   [`EXPLAINABILITY.md`](EXPLAINABILITY.md). Faithfulness verified by
-  `tests/test_explain.py::test_reconstructs_universal_v2` (reconstructs the shipped score).
+  `tests/test_explain.py::test_reconstructs_universal_v2` (reconstructs the universal-v2 evidence base).
+  Scope: this decomposes the evidence base; the final `frontier-v5` order adds an RRF hedge, a top-band
+  correction, integrity backfills, and two tie-breaks on top of it (not folded into the attribution).
 - **Ablation:** the pre-registered measured-negatives ladder — every rejected idea (dense embeddings,
   LearnedLR, LambdaMART v2/v3, cross-encoder, rank fusion) is reproducible:
   [`measured_negatives.md`](measured_negatives.md).

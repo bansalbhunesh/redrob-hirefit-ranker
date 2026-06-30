@@ -12,7 +12,7 @@ commitment to **blind evaluation over proxy chasing**.
 ### v1 — LightGBM LambdaMART challenger (proxy labels)
 A LambdaMART model over our own 33 features plus recovered generator structure. Measured at
 **−0.0061 composite against a pre-registered ≥ +0.005 gate**, committed before training.
-Rejected. Full study: [docs/ltr_challenger_study.md](ltr_challenger_study.md).
+Rejected. Full study: [docs/ltr_challenger_study.md](archive/ltr_challenger_study.md).
 
 ### v2 — LightGBM LambdaMART reranker (pessimistic labels + RUM hard negatives)
 A retrieve-then-rerank design: the hand pipeline produces guardrailed scores, then a

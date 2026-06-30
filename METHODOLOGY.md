@@ -127,6 +127,6 @@ Deterministic, offline, CPU-only: 80 s on a clean 2-vCPU cloud runner (CI-verifi
 counts are pinned (Dockerfile + `rank.py`) so the output is **byte-identical
 across CPU counts** — golden `submission.csv` SHA-256
 `fdfd3f3590720e1260822b6729b2851dc8daca9f3f859cefc3df184bbbd4c5db`, verified at
-`--cpus=2` and `--cpus=4` (docs/reproducibility_notes.md). Full reproduction,
+`--cpus=2` and `--cpus=4` (docs/archive/reproducibility_notes.md). Full reproduction,
 tests, and architecture details are in [README.md](README.md) and
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+[ARCHITECTURE.md](ARCHITECTURE.md).

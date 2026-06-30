@@ -1,4 +1,9 @@
-"""Deterministic, exact explainability for the shipped evidence scorer.
+"""Deterministic, exact explainability for the universal-v2 evidence base.
+
+Scope: this decomposes the universal-v2 relevance (the evidence score each candidate enters the
+ranking with). The shipped ``frontier-v5`` order then applies an RRF hedge, a top-band correction,
+integrity backfills, and two tie-breaks on top of this base (see ``loss_aggregate.rerank_frontier_v5``);
+those reordering steps are not folded into the per-feature decomposition here.
 
 For a linear (normalized weighted-sum) relevance, the Shapley value of each
 feature is *exactly* its own additive term -- no sampling, no surrogate model,

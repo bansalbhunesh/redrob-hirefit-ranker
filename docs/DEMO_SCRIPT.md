@@ -36,9 +36,9 @@ a fraud accusation."
 PYTHONHASHSEED=0 python scripts/explain_report.py --candidates candidates.jsonl \
   --out-md docs/explainability_report.md --out-csv artifacts/attributions.csv --top-k 100
 ```
-Say: "Every score decomposes into exact per-feature contributions — these are analytic Shapley values,
+Say: "Each candidate's evidence score decomposes into exact per-feature contributions — analytic Shapley values,
 not sampled — plus a leave-one-feature-out rank-stability band. We test that the explanation
-reconstructs the shipped score."
+reconstructs the universal-v2 evidence score the order is built on."
 
 ## E. Close (10 seconds)
 

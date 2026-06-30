@@ -39,7 +39,7 @@ were available before submission.
   the top-100.
 - **Runtime:** full 100K at 2 CPU / 16 GiB in **136.0s** pipeline / **149.1s** wall — inside the 300s
   budget. Cloud 2-vCPU best **77.4s**; pinned-image Docker serial best **~153s**.
-- **Explainability:** every ranked candidate decomposes into **exact** per-feature contributions
+- **Explainability:** each candidate's evidence score decomposes into **exact** per-feature contributions
   (Shapley values of the linear relevance — analytic, not sampled), plus an ablation summary and a
   deterministic leave-one-feature-out rank-stability band. See [Explainability](#explainability).
 - **Receipts:** **265 tests passed / 6 environment skips**, a committed golden-hash gate, a 2K-slice
@@ -173,13 +173,17 @@ pipeline without the two tie-breaks) is available as a profile for anyone who wa
 
 ## Explainability
 
-Because the relevance score is a normalized weighted sum, each feature's contribution is its **exact
-Shapley value** (its own additive term) — so attributions are analytic and byte-reproducible, not
-sampled approximations. `src/redrob_ranker/explain.py` provides:
+The **universal-v2 relevance** — the evidence score every candidate enters the ranking with — is a
+normalized weighted sum, so each feature's contribution is its **exact Shapley value** (its own additive
+term): analytic and byte-reproducible, not sampled. `src/redrob_ranker/explain.py` provides:
 
-- **Per-candidate attributions** — relevance decomposed into exact additive feature contributions, plus
-  the multiplicative integrity gates as log-space effects. Reconstructs the shipped score exactly
-  (verified in `tests/test_explain.py::test_reconstructs_universal_v2`).
+- **Per-candidate attributions** — the universal-v2 relevance decomposed into exact additive feature
+  contributions, plus the multiplicative integrity gates as log-space effects. The decomposition
+  reconstructs the universal-v2 score exactly (verified in
+  `tests/test_explain.py::test_reconstructs_universal_v2`). *Scope: this explains the evidence base. The
+  final `frontier-v5` order then applies a conservative RRF hedge, a top-band evidence correction,
+  integrity backfills, and two narrow tie-breaks on top of this base — those reordering steps are
+  documented in [the release path](#the-release-path), not folded into the per-feature decomposition.*
 - **Global feature importance** — mean |contribution| across the pool (the SHAP-summary equivalent).
 - **Rank-stability band** — a deterministic, label-free confidence interval: re-rank the pool with each
   feature removed and record where a candidate lands. A tight band means no single signal is carrying
