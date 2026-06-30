@@ -4,7 +4,11 @@
 
 Rank the top 100 candidates for the Redrob **Senior AI Engineer - Founding Team** JD while satisfying CPU-only, no-network, no-GPU, sub-5-minute reproduction constraints.
 
-Measured in the python:3.11 Docker image (the Stage-3 environment), current code: the full 100,000-candidate run completes in **124.7 s** worst-case serial on 2 CPUs (fresh `--no-cache` build, 2026-06-11) and **80-82 s** on a clean 2-vCPU cloud runner (CI-measured), with peak container memory **~6.1 GB**; 53 honeypots detected and 0 in the emitted top 100. `submission_metadata.yaml` reports the conservative quiet-host figure of 187 s (full matrix and optimization history: docs/runtime_matrix.md).
+Final V6 measurement in the pinned python:3.11 image: all 100,000 candidates rank in
+**136.0 s pipeline / 149.1 s wall** at 2 CPU / 16 GiB, with sampled peak memory
+**4.13 GiB**; 53 honeypots are detected and 0 enter the top 100. The exact input,
+model, environment, backend, counts, integrity totals and output hash are verified
+before atomic publication (full history: `docs/runtime_matrix.md`).
 
 ## 2. Pipeline
 
@@ -13,7 +17,7 @@ flowchart LR
     A["candidates.jsonl"] --> B["Parser"]
     B --> C["Structured Text Renderer"]
     C --> D["BM25 Scorer: bm25s preferred, rank-bm25 fallback"]
-    B --> E["28-Feature Deterministic Extractor"]
+    B --> E["33-Feature Deterministic Extractor"]
     D --> F["Base Score"]
     E --> F
     E --> G["Behavioral / Honeypot / Disqualifier Multipliers"]
@@ -62,11 +66,22 @@ The detector penalizes:
 Official command:
 
 ```bash
-python rank.py --candidates ./candidates.jsonl --out ./submission.csv
+PYTHONHASHSEED=0 python rank.py --release --candidates ./candidates.jsonl \
+  --out ./submission.csv --workers 2
 ```
 
-No hosted LLM/API calls are made during ranking. The optional `bm25s` backend is preferred for speed, but `rank-bm25` fallback keeps the ranker runnable in restricted environments.
+No hosted LLM/API calls are made during ranking. General runs may fall back to
+`rank-bm25`, but the official V6 `--release` path requires `bm25s` and fails closed.
 
 Feature scoring is parallelized across CPU workers by default, capped at 8 workers for memory safety. `--workers 1` remains the serial escape hatch and produces byte-identical output.
 
 The FastAPI dashboard uses the same `CandidateFeatures` objects to expose flags, multipliers, and honeypot reasons; it does not infer those values from reasoning text.
+
+## 7. Battle-proof release envelope
+
+V6 keeps expensive ranking work in container-local temporary storage, verifies
+the exact champion CSV, then performs a small atomic publish on the destination
+filesystem. A deliberate 3-GiB OOM exited 137 while preserving the prior output
+and leaving zero mounted temporary files. The release also rejects altered input
+bytes, model drift, nondeterministic thread settings, malformed records and
+invalid programmatic configuration.

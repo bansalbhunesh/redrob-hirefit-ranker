@@ -76,6 +76,11 @@ high (347.5 s control, 165.0 s V6); no speed claim is inferred from that pair.
 | invalid/truncated/experimental release configuration | rejected before publication |
 | partial write | temporary file removed; prior output preserved |
 
+The final battle-proof rerun moved long-running work to container-local storage:
+the repeated 3-GiB OOM preserved `sentinel` **and left zero mounted temp files**.
+The post-fix 2-CPU/16-GiB release completed in 136.0 s pipeline / 149.1 s wall
+with the exact champion hash.
+
 The base image is digest-pinned. All four production wheels now carry exact
 SHA-256 hashes and Docker installs them with `pip --require-hashes`. `pip-audit
 2.10.0` reported no known vulnerabilities for the exact four-version production

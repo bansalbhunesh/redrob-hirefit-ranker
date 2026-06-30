@@ -8,32 +8,33 @@ AI Engineer role — with receipts for *why* this ranking is the one to ship.
 [![Execution](https://img.shields.io/badge/CPU--only-offline-blue.svg)](#)
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](#)
 [![Validation](https://img.shields.io/badge/validation-15_of_15_measured_axes-success.svg)](#)
-[![Decision](https://img.shields.io/badge/decision-frontier--v5_champion-success.svg)](#)
+[![Decision](https://img.shields.io/badge/decision-V6_battle--proof_champion-success.svg)](#)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Live demo](https://img.shields.io/badge/live_demo-HuggingFace_Space-FBBF24.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
 
-`Branch champion: frontier-v5` · `default main profile remains untouched` · `No hidden-score claim`
+`Release: V6 battle-proof` · `Ranking core: frontier-v5` · `No hidden-score claim`
 
-`V6 hardening result:` the V5 ranking artifact remains champion after cross-fitting and
-leave-one-family-out tests rejected every apparent universal ranking gain. V6 retains that exact
-artifact and speeds up two deterministic inference hotspots; see
-[`frontier_v6_experiment`](docs/frontier_v6_experiment.md).
+`V6 result:` the strongest measured ranking is now wrapped in a fail-closed release: exact input,
+model, environment, counts, integrity, and output hashes are verified before an OOM-safe atomic
+publish. The ranking remains the proven frontier-v5 order; the shipping system is V6. See the
+[`battle-proof audit`](docs/v6_battleproof_audit.md) and
+[`challenge positioning`](docs/CHALLENGE_POSITIONING.md).
 
 ---
 
 ## ⚡ For judges — the 30-second version
 
-- **What this branch tests:** deterministic, CPU-only `frontier-v5` (`8f7f30c6`): V4 plus two candidate-ID-free shortlist tie-breaks using behavior and responsiveness. No competitor code, IDs, fingerprints, or ranking files enter production.
-- **Measured result:** versus V4, improves **6 component cells**, ties **54**, and loses **0**; seven-world mean is **0.9066**, mean15 **0.9104**, reviewer **0.8098**, blind recruiter **0.9059**, and H2 remains **0.8842**. It still beats `main` on all 15 composites.
-- **Runtime and integrity:** two exact full-100K Docker runs at 2 CPU / 16 GB completed in **199.0-209.4s pipeline / 233.8-241.9s wall**, safely under 300s and byte-identical to the host artifact. All **53 honeypots** were detected and **0** emitted.
-- **Foolproof release:** the final V6 `--release` Docker gate completed in **109.9s**, used **4.13 GiB** sampled peak, and published only after model, configuration, counts, integrity, and exact-output hash checks passed.
-- **Battle-proof gate:** exact input bytes and deterministic thread settings are now pinned; 10,000/10,000 corrupted outputs and 9,750/9,750 invalid configs were rejected. A forced 3-GiB OOM preserved the old output with zero mounted temps; the final 2-CPU/16-GB run reproduced the exact champion in **136.0s**.
+- **What ships:** deterministic, CPU-only **V6 battle-proof release** (`8f7f30c6`), with the frontier-v5 ranking core and no competitor code, candidate IDs, fingerprints, or public ranks in production.
+- **Measured quality:** V6 wins **30/30 composites versus main** across 15 label families and two missing-label policies. It scores **0.9066 mean7**, **0.9104 mean15**, **0.8098 reviewer**, **0.9059 blind recruiter**, and **0.8842 H2**.
+- **Public field:** **#1 / 673** on the broad seven-judge mean, **#1 / 100** across the revalidated strongest-union mean15, and **#3 / 322** on equal four-axis balance. No measured public output dominates V6 across H2 + mean7 + reviewer + blind.
+- **Runtime and integrity:** the final full-100K Docker release at 2 CPU / 16 GiB completed in **136.0s pipeline / 149.1s wall**, detected all **53 honeypots**, emitted **0**, left **0** output temps, and reproduced the exact hash.
+- **Battle-proof gate:** exact input/model/output hashes and deterministic thread settings are pinned; 10,000/10,000 corrupted submissions and 9,750/9,750 invalid configurations were rejected. A forced 3-GiB OOM preserved the old output.
 - **Main invariance:** champion wins **30/30 composites** across two missing-label policies; origin main and V6 explicit-main full runs are byte-identical (`af8f2b32…`). Six of 120 underlying component cells dip, and all 883 safety fusions that erased them sacrificed the champion composites.
-- **Public field:** 672 valid public outputs compared. V5 remains **#1 on seven-world mean**, keeps H2 around **#14**, and improves blind recruiter from **#23 to an estimated #20**; no public output dominates it across all four axes.
+- **Challenge fit:** the official page publishes mission dimensions but no numeric weights. A transparent mission-derived scorecard gives V6 **93.7/100**, projected **#1** with an honest **#1–#3** range; this is **not an official score or leaderboard result**.
 - **The receipts:** **262 tests passed / 6 environment skips**, 150 main/champion cells, 883 safety fusions, 15 evaluators × 4 primary component metrics, 5,790 nearby band settings, and 100 repeated candidate half-splits.
 - **Honest limit:** this is the strongest **balanced** measured artifact, not best on every isolated component. Six underlying cells trail main despite all 30 composites winning; no simple fusion closed them without losing the champion. There is no official hidden-score proof.
 
-**Contents:** [Live links](#live-links) · [Screenshots](#screenshots) · [Quick start](#quick-start) · [Product](PRODUCT.md) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--frontier-v5-on-the-experiment-branch) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
+**Contents:** [Live links](#live-links) · [Screenshots](#screenshots) · [Quick start](#quick-start) · [Product](PRODUCT.md) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--v6-battle-proof-release) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
 
 ## Live links
 
@@ -73,18 +74,19 @@ and OOM-safe atomic publication. Omitting
 
 | Property | Verified value |
 |---|---|
-| Branch submission | **Frontier-v5 challenger** (`8f7f30c6`); default `main` is unchanged |
-| Production pipeline | Deterministic `rank.py`, **33-feature** scorer + seven shallow NumPy heads + feature-only evidence/integrity/tie-break corrections; foolproof release via `--release` |
+| Branch submission | **V6 battle-proof release** (`8f7f30c6`); ranking core `frontier-v5`; default `main` remains available |
+| Production pipeline | Deterministic `rank.py`, **33-feature** scorer + seven shallow NumPy heads + feature-only evidence/integrity/tie-break corrections; fail-closed release via `--release` |
 | Dataset | 100,000 candidates → top-100 |
 | Tests | 262 passed, 6 environment skips |
 | Challenger vs main | mean7 **0.9066 vs 0.8727**, mean15 **0.9104 vs 0.8752**, wins **15/15** composites — *dev proxy; **No official hidden labels*** |
-| Public comparison | #1 mean7; about #14 H2, #115 reviewer, estimated #20 blind among 672 valid outputs; no four-axis dominator |
+| Public comparison | **#1 / 673 mean7**, **#1 / 100 mean15**, **#3 / 322 balanced4**; #14 H2, #115 reviewer, estimated #20 blind; no four-axis dominator |
 | Dev-proxy quality | NDCG@10 0.9104 · P@10 = 1.0 — *dev proxy* |
-| Runtime | **199.0-209.4s pipeline / 233.8-241.9s wall, Docker-native volume, `--cpus=2 --memory=16g`** (budget 300s; V4 historical best 75.4s) |
-| Memory | peak ~6.1 GB / 16 GB |
+| Runtime | **136.0s pipeline / 149.1s wall**, Docker `--cpus=2 --memory=16g` (budget 300s) |
+| Memory | sampled peak **4.13 GiB** / 16 GiB; historical worst ~6.1 GB |
 | Execution | CPU-only, offline, deterministic (`PYTHONHASHSEED=0`) |
 | Integrity | honeypots in top-100: **0**; standard flags/disqualifications: **6**; temporal anomalies: **57** (V3 59) |
-| Decision | **Strongest balanced branch artifact; keep isolated until hidden or fresh human review** |
+| Challenge positioning | **93.7/100 mission-derived; projected #1, honest #1–#3 range — not an official score** |
+| Decision | **Ship V6: strongest all-around measured artifact plus the strongest release engineering** |
 
 > The quality rows are **dev proxies** (LLM-audit), explicitly **not** the official hidden score.
 
@@ -115,14 +117,18 @@ The strongest signal here is everything we **did not** ship — each built, meas
 small, auditable rebalancing toward production evidence and experience fit, validated across many
 evaluator families while retaining the existing integrity gates.
 
-## The decision — frontier-v5 on the experiment branch
+## The decision — V6 battle-proof release
 
 The branch submission is generated directly by the fail-closed `rank.py --release` path.
 Seven shallow heads learn complementary label families, then a conservative RRF hedge reorders
 V2's membership. V4 applies a small feature-only correction to the top eight and replaces at most
 two lowest-ranked severe temporal contradictions with clean V2 backfills. The default `main`
-profile remains byte-stable and V4 is still available as the fallback. V5 keeps V4's membership,
+profile remains byte-stable and V4 is still available as the fallback. The frontier-v5 ranking core keeps V4's membership,
 then uses behavior at ranks 11-13 and responsiveness at ranks 65-74 as local tie-breaks.
+
+V6 freezes that ranking and hardens the entire release envelope: exact source and model hashes,
+deterministic BLAS/hash settings, strict configuration and input validation, backend/count/integrity
+checks, output-hash verification, and container-local work followed by atomic publication.
 
 ![Decision and validation flow](docs/assets/decision_flow.svg)
 
@@ -140,8 +146,8 @@ candidate half-splits, so only the two surviving rules were retained. See `docs/
 | public reviewer / blind recruiter | **0.8098 / 0.9059** vs V4 **0.8096 / 0.8969** |
 | V4 evidence correction | improves H2, independent, and frozen-blind metrics without lowering any V3 component |
 | repeated candidate half-splits vs main | positive on most axes; independent set is noisy (**45/100**) |
-| 1,272-repo public census | 665 valid outputs; v3 #1 mean7; no four-axis dominator |
-| full 100K constrained Docker | **199.0-209.4s pipeline / 233.8-241.9s wall**, 53 detected / 0 emitted, exact hash `8f7f30c6…` |
+| refreshed public census | 1,367 discovered, 1,279 eligible, 672 valid outputs; V6 **#1 / 673 mean7**, **#1 / 100 mean15**, **#3 / 322 balanced4** |
+| full 100K constrained Docker | **136.0s pipeline / 149.1s wall**, 53 detected / 0 emitted, 0 output temps, exact hash `8f7f30c6…` |
 
 These are development measurements, not a hidden-score guarantee. Specialist public submissions
 still lead individual axes, so the defensible claim is strongest balanced artifact, not guaranteed
@@ -163,14 +169,15 @@ PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl \
 sha256sum submission.csv             # -> 8f7f30c68ec30cb6…
 ```
 CPU-only, offline, deterministic. Full 100K reproduced byte-identically on the host and in Docker;
-the constrained V5 Docker runs remained under 300s. Historical host best
-was 77.4s and historical pinned-image Docker best was ~153s; all are inside the 300s budget. Details:
+the final V6 Docker run remained under 300s. Historical cloud best was 77.4s and historical
+pinned-image Docker serial best was ~153s; all are inside the 300s budget. Details:
 `docs/REPRODUCTION.md` · `docs/runtime_matrix.md`.
 
 ## Documentation map
 
 - **Product (recruiter view):** [PRODUCT](PRODUCT.md) — the recruiter journey + the integrity decision-support differentiator (CONTINUE/CLARIFY/VERIFY/BLOCK)
 - **Decision & validation:** [champion/main invariance audit](docs/champion_main_invariance_audit.md) · [frontier_v6_experiment](docs/frontier_v6_experiment.md) · [frontier_v5_experiment](docs/frontier_v5_experiment.md) · [exhaustive main/V3/V4/public comparison](docs/full_comparison_main_v3_v4_public.md) · [dominant_v4_experiment](docs/dominant_v4_experiment.md) · [loss_aggregate_v3_experiment](docs/loss_aggregate_v3_experiment.md) · [universal_v2_experiment](docs/universal_v2_experiment.md) · [external_recruiter_validation](docs/external_recruiter_validation.md)
+- **Challenge fit:** [CHALLENGE_POSITIONING](docs/CHALLENGE_POSITIONING.md) — official mission mapped to measured evidence; inferred weights clearly separated from official facts
 - **What we rejected:** [measured_negatives](docs/measured_negatives.md) · [why_not_reranker](docs/why_not_reranker.md) · [beyond_hedge_sweep](docs/beyond_hedge_sweep.md)
 - **Reproduce / runtime:** [REPRODUCTION](docs/REPRODUCTION.md) · [runtime_matrix](docs/runtime_matrix.md) · [SUBMISSION_CHECKLIST](docs/SUBMISSION_CHECKLIST.md)
 - **Decision frameworks (research):** Ω [OMEGA_DECISION_SUMMARY](docs/OMEGA_DECISION_SUMMARY.md) · Ψ [PSI_INTEGRITY_PANEL](docs/PSI_INTEGRITY_PANEL.md) · Φ [human_opinion/HUMAN_OPINION_LANDSCAPE](docs/human_opinion/HUMAN_OPINION_LANDSCAPE.md)

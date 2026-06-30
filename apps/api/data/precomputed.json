@@ -6,7 +6,7 @@
     "honeypots_blocked": 53,
     "honeypots_in_output": 0,
     "avg_score": 0.5866,
-    "processing_time_ms": 199000,
+    "processing_time_ms": 136000,
     "bm25_backend": "bm25s"
   },
   "pipeline": [

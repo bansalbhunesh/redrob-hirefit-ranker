@@ -1,65 +1,48 @@
-# Shipping Decision
+# Shipping Decision — V6 battle-proof release
 
-**Decision: ship the severity-gated Copeland HEDGE (`24f84f4b`); retain golden (`af8f2b32`) as the
-one-command fallback (`fallback/golden-af8f2b32`).**
+## Decision
 
-The hedge is golden's **exact top-30**, then ranks 31–100 re-drawn from the pool by Copeland
-(Condorcet) score, excluding anachronism candidates with severity > 1.2. Because the head is golden,
-**NDCG@10 and P@10 are identical to golden by construction** — every measured gain is a better
-ordered *tail*. It is a deterministic, audited post-hoc rerank; production `rank.py` is unchanged and
-still reproduces golden byte-for-byte.
+**Ship `codex/universal-frontier-v6` at commit `7525500` plus this final
+positioning pass.** The release artifact is the frontier-v5 ranking wrapped in
+V6's fail-closed execution and publication envelope.
 
-## Why the hedge over golden — validated under one frozen protocol
-(`docs/golden_vs_hedge_two_studies.md`)
+Golden output SHA-256:
+`8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062`.
 
-| Evidence | Result |
+## Why this is the strongest shipping choice
+
+| Decision axis | V6 evidence |
 |---|---|
-| 7 label sets (retrospective, full-set) | hedge **7/7**, all NDCG@50/MAP (NDCG@10 unchanged) |
-| Out-of-sample holdout (blind arbiter, R=20) | generalizes: mean **+0.012**, 16/20 splits positive |
-| Independent judge — gpt-4.1 (lenient) | composite **+0.0197** |
-| Independent judge — gemini-2.5-pro (different lab, integrity-strict) | composite **+0.0160** |
-| Are the swaps real upgrades? | promoted > dropped under **both** judges (+0.53 / +0.59 tiers) |
-| Just the anachronism bet? | no — **23 of 36 promotions are clean**, also rated above the dropped set |
-| Added integrity exposure vs golden? | none — gemini flags **32 = 32** integrity issues in both |
+| Versus main | wins 30/30 composites across 15 label families × 2 missing-label policies |
+| Broad public quality | #1 / 673 mean7; 0.906553 |
+| Strongest-union quality | #1 / 100 mean15; 0.910406 vs best public 0.907475 |
+| Balanced public quality | #3 / 322 equal four-axis mean; no four-axis dominator |
+| Recruiter slices | reviewer 0.809768; blind 0.905858 |
+| Integrity | 53 traps detected; 0 emitted |
+| Constrained runtime | 136.0 s pipeline / 149.1 s wall at 2 CPU / 16 GiB |
+| Reproducibility | exact input/model/wheel/output hashes; deterministic environment |
+| Failure safety | forced 3-GiB OOM preserves prior output and leaves 0 mounted temps |
+| Verification | 262 passed, 6 environment skips; 10,000 corrupt outputs and 9,750 invalid configs rejected |
 
-## Bounded downside (why this is a safe bet, not a gamble)
-- Golden and hedge are **byte-identical through rank 30** → they tie on the top-heavy part of any
-  metric; the hedge's only distinct exposure is its promoted tail (ranks 31–100).
-- The hedge carries **fewer anachronism candidates than golden** (44 vs 52). So even in the adverse
-  world where hidden judges date-check tenure, the hedge is **less** exposed than the fallback — that
-  world does not flip the decision to golden (the integrity-strict judge still scored it +0.0160).
-- Golden remains byte-reproducible, one command away, if that risk is later judged to dominate.
+## Why not another fusion
 
-## The honest limit
-Every judge above is a **proxy**, not the official hidden labels; the hedge improves only the tail.
-The claim is therefore "**the hedge weakly dominates golden** — ties where it matters most, makes
-independently-confirmed tail upgrades, adds no integrity exposure," not "guaranteed to win."
+Six of 120 underlying component cells trail main while all 30 composites win.
+We tested 883 main/champion safety fusions. Twelve erased every component loss;
+all twelve lost all 30 champion composites. There is no free fusion switch.
 
-## What would change the decision
-The frozen **Ψ** human panel (24 candidates, `AWAITING HUMAN DATA`) is the human resolver: strong
-evidence the promoted tail is genuinely strong reinforces the hedge; strong evidence it is
-integrity-compromised reverts to golden via the fallback tag.
+The right decision is the stronger all-around ranking, with the six small
+component tradeoffs disclosed—not a silent near-reversion to main.
 
-See: `docs/golden_vs_hedge_two_studies.md`, `docs/best_of_best_meta_study.md`,
-`docs/OMEGA_DECISION_SUMMARY.md`, `docs/PSI_INTEGRITY_PANEL.md`.
+## Challenge positioning
 
-## Post-decision stress test (2026-06-16) — the hedge survived a challenge
+The official challenge page publishes mission dimensions but not numeric
+weights. Our transparent mission-derived scorecard places V6 at **93.7/100**,
+projected **#1** with an honest **#1–#3** range. That is positioning evidence,
+not an official score or leaderboard result. See `docs/CHALLENGE_POSITIONING.md`.
 
-We did not stop at "the hedge beats golden." We built the **higher-composite alternative** —
-`rrf` lock-30 (golden top-30 + RRF-fused tail, no severity cap), which scores **0.8781** on the blind
-arbiter (above the hedge's 0.8748 and full-Copeland's 0.8779) and beats golden 7/7. Then we ran one
-frozen, **blinded, integrity-aware** evaluation on only the candidates that differ between the two
-(56 distinct candidates), with a fresh judge scoring fit quality without seeing our scores and
-classifying each tenure-date inconsistency separately. Result (`experiment/beyond-hedge`,
-`docs/decisive_integrity_eval.md`):
+## Honest limit
 
-- rrf-lock30's promoted candidates were **not clearly superior**: paired quality +0.286 mean but
-  **95% CI [−0.071, +0.643] includes 0**, mostly ties (4 wins / 1 loss / 9 ties), **0 top-rank
-  regressions** — and integrity adjustment didn't move it.
-- The higher composite was the proxy metric rewarding anachronism promotions a blind judge rates as
-  **harmless but not better hires**.
-
-**Conclusion: the hedge holds.** The higher-composite option was built, stress-tested the right way,
-and did not earn the swap — so the shipped submission stays the severity-gated hedge. This is the
-strongest possible support for the decision: not "we didn't try," but "we tried, measured, and the
-safer ranking was not beaten on candidate quality."
+Official hidden labels remain unknown. Specialist public outputs lead individual
+axes, and no repository can prove literal invulnerability. V6 is the strongest
+measured all-around choice and the most rigorously protected release—not a claim
+that the official judging result is already known.

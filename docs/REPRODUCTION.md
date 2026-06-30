@@ -17,23 +17,16 @@ PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl --out submission.c
   --workers 2 --release
 sha256sum submission.csv                                      # -> 8f7f30c68ec30cb6…  (byte-identical)
 ```
-There are no hidden steps or manual edits. `--release` forces `frontier-v5` and `bm25s`, rejects
+There are no hidden steps or manual edits. V6 `--release` forces the frontier-v5 ranking core and `bm25s`, rejects
 truncation, alternate JDs, embeddings, and incompatible profiles, verifies the model artifact,
 the exact official candidate-input SHA-256, candidate/honeypot counts, the BM25s backend,
-and final output SHA-256, then atomically publishes the CSV. The champion
-completed the full 100K pool in
-199.0-209.4 seconds in the constrained Docker pipeline (233.8-241.9 seconds wall clock) with
-`--cpus=2 --memory=16g`. Both artifacts matched the host hash and remained under
-the 300-second budget. Omitting `--release` retains `main`'s historical behavior.
-
-Final fail-closed Docker verification (2026-06-30): 109.9 s pipeline,
-4,232.2 MiB sampled peak, 100,000 loaded/ranked, 53 honeypots detected, zero
-emitted, and exact SHA-256 `8f7f30c68ec30cb6...` before atomic publication.
-
-Final post-battle-proof reproduction: 136.0 s pipeline / 149.1 s wall at
+and final output SHA-256, then atomically publishes the CSV. The final
+battle-proof reproduction completed in **136.0 s pipeline / 149.1 s wall** at
 `--cpus=2 --memory=16g`, exact champion hash, no OOM, and zero output-directory
 temporary files. A deliberate 3-GiB OOM preserved the existing output and also
 left zero mounted temps because expensive work now stays container-local.
+Sampled peak memory in the release matrix was 4,232.2 MiB. Omitting `--release`
+retains `main`'s historical behavior.
 
 **Production firewall:** `rank.py` and `src/redrob_ranker/` never import `dashboard/`,
 `omega_decision_dashboard.py`, or `experiments/`. Removing `dashboard/`, `experiments/`, and

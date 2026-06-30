@@ -1,5 +1,10 @@
 # Docker Runtime Matrix (Phase 0.1)
 
+> **Current shipping number:** the final battle-proof V6 release completed the full
+> 100K pool in **136.0 s pipeline / 149.1 s wall** at `--cpus=2 --memory=16g
+> --workers 2 --release`, produced exact SHA-256 `8f7f30c6...`, and left no
+> temporary output. Earlier rows below are retained as dated experiment history.
+
 ## 2026-06-30 V6 quality-safe inference hardening
 
 V6 keeps the exact `frontier-v5` rank artifact and removes repeated work in two
