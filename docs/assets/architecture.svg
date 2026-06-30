@@ -9,8 +9,8 @@
   </defs>
 
   <rect x="0" y="0" width="1320" height="400" rx="8" fill="#0F172A"/>
-  <text x="24" y="40" fill="#F1F5F9" font-size="20" font-weight="700">Redrob HireFit Ranker — pipeline architecture</text>
-  <text x="24" y="62" fill="#B8C4D9" font-size="12.5">Deterministic · CPU-only · offline · byte-reproducible. Production <tspan font-family="monospace">rank.py</tspan> reproduces golden af8f2b32.</text>
+  <text x="24" y="40" fill="#F1F5F9" font-size="20" font-weight="700">Redrob HireFit V6 — ranking and release architecture</text>
+  <text x="24" y="62" fill="#B8C4D9" font-size="12.5">Deterministic · CPU-only · offline · byte-reproducible. <tspan font-family="monospace">rank.py --release</tspan> verifies the exact V6 artifact before publish.</text>
 
   <!-- arrows (drawn first, under boxes) -->
   <g stroke="#38BDF8" stroke-width="2" marker-end="url(#arr)">
@@ -50,17 +50,17 @@
   <g><rect x="952" y="132" width="158" height="82" rx="4" fill="#1E293B" stroke="#475569"/><rect x="952" y="132" width="158" height="3" rx="2" fill="#38BDF8"/>
      <text x="1031" y="170" text-anchor="middle" fill="#F1F5F9" font-size="15" font-weight="700">Sort</text>
      <text x="1031" y="190" text-anchor="middle" fill="#B8C4D9" font-size="11">deterministic (score, id)</text></g>
-  <!-- 7 golden -->
+  <!-- 7 ranking core -->
   <g><rect x="1138" y="132" width="158" height="82" rx="4" fill="#1E293B" stroke="#FBBF24"/><rect x="1138" y="132" width="158" height="3" rx="2" fill="#FBBF24"/>
-     <text x="1217" y="170" text-anchor="middle" fill="#F1F5F9" font-size="14" font-weight="700">Golden top-100</text>
-     <text x="1217" y="190" text-anchor="middle" fill="#FBBF24" font-size="11.5" font-family="monospace">af8f2b32</text></g>
+     <text x="1217" y="170" text-anchor="middle" fill="#F1F5F9" font-size="14" font-weight="700">Frontier-v5 top-100</text>
+     <text x="1217" y="190" text-anchor="middle" fill="#FBBF24" font-size="11.5">strongest measured order</text></g>
 
-  <!-- hedge (shipped) -->
+  <!-- V6 release gate (shipped) -->
   <g><rect x="1138" y="268" width="158" height="74" rx="4" fill="#1E293B" stroke="#4ADE80" stroke-dasharray="5 4"/>
-     <text x="1217" y="296" text-anchor="middle" fill="#4ADE80" font-size="13.5" font-weight="700">Shipped hedge</text>
-     <text x="1217" y="316" text-anchor="middle" fill="#4ADE80" font-size="11.5" font-family="monospace">24f84f4b</text>
-     <text x="1217" y="333" text-anchor="middle" fill="#B8C4D9" font-size="9.5">golden top-30 + Copeland tail</text></g>
-  <text x="1126" y="246" text-anchor="end" fill="#FBBF24" font-size="10.5">post-hoc, audited</text>
+     <text x="1217" y="296" text-anchor="middle" fill="#4ADE80" font-size="13.5" font-weight="700">V6 release gate</text>
+     <text x="1217" y="316" text-anchor="middle" fill="#4ADE80" font-size="11.5" font-family="monospace">8f7f30c6</text>
+     <text x="1217" y="333" text-anchor="middle" fill="#B8C4D9" font-size="9.5">hash · counts · integrity · atomic</text></g>
+  <text x="1126" y="246" text-anchor="end" fill="#FBBF24" font-size="10.5">validate, then publish</text>
 
-  <text x="24" y="378" fill="#B8C4D9" font-size="12">CPU-only · offline · deterministic (PYTHONHASHSEED=0) · byte-reproducible · 53 honeypots detected, 0 in the top-100 · ~80s cloud / 165s docker-2cpu (budget 300s)</text>
+  <text x="24" y="378" fill="#B8C4D9" font-size="12">100K · 136.0 s pipeline / 149.1 s wall · 2 CPU / 16 GiB · 53 integrity traps detected, 0 emitted · forced OOM preserves the last good output</text>
 </svg>

@@ -1,5 +1,7 @@
 # Winner-Grade Improvement Plan (phased)
 
+> **Historical planning record.** This document preserves the state and plan recorded on 2026-06-16. For the current V6 release, use [JUDGE_PACKET](JUDGE_PACKET.md), [DEPLOYMENT](DEPLOYMENT.md), and [SUBMISSION_CHECKLIST](SUBMISSION_CHECKLIST.md).
+
 Goal: make every surface judge-flawless — readable, fast, fully documented, every link live, every
 number consistent — without ever touching the frozen production ranking or the shipped submission.
 Executed in ordered phases (not one sweep); each phase ends green (tests + push).

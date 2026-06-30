@@ -24,6 +24,7 @@ from redrob_ranker.pipeline import RankingResult  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 DEMO_SAMPLE = ROOT / "demo_sample.jsonl"
+MANIFEST = json.loads((ROOT / "docs" / "metrics_manifest.json").read_text(encoding="utf-8"))
 
 
 @pytest.fixture()
@@ -97,6 +98,7 @@ def test_health_reports_artifacts_and_sha(client):
     assert resp.status_code == 200
     body = resp.json()
     assert body["status"] == "ok"
+    assert body["version"] == MANIFEST["submission"]["api_version"]
     assert body["git_sha"] and body["git_sha"] != ""
     if _git_head_resolvable():
         assert body["git_sha"] != "unknown"
@@ -179,6 +181,8 @@ def test_rank_live_happy_path(client):
     assert body["mode"] == "live"
     assert body["metadata"]["total_candidates"] == 5
     assert 0 < len(body["candidates"]) <= 5
+    assert "33 Features" in {stage["name"] for stage in body["pipeline"]}
+    assert not any("28" in stage["name"] for stage in body["pipeline"])
     first = body["candidates"][0]
     assert first["rank"] == 1
     assert "candidate_id" in first
@@ -320,6 +324,7 @@ def test_batch_full_cycle(client):
     body = results.json()
     assert body["mode"] == "batch"
     assert body["metadata"]["ranked_count"] > 0
+    assert "33 Features" in {stage["name"] for stage in body["pipeline"]}
     assert body["candidates"][0]["rank"] == 1
 
     status = client.get(f"/api/batch/{job_id}")

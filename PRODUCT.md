@@ -8,7 +8,9 @@ shipping/reproduction view see `docs/REPRODUCTION.md`.
 
 ## The recruiter journey (what the live demo actually does)
 Live now: [HuggingFace Space](https://huggingface.co/spaces/bansal1234/Hirefit) ·
-[Render app](https://redrob-hirefit-ranker.onrender.com) · `streamlit run omega_decision_dashboard.py`.
+[Live Hugging Face sandbox](https://huggingface.co/spaces/bansal1234/Hirefit) ·
+[Render Blueprint](https://render.com/deploy?repo=https://github.com/bansalbhunesh/redrob-hirefit-ranker) ·
+`streamlit run omega_decision_dashboard.py`.
 
 1. **Bring candidates.** Upload a candidate pool (`.jsonl`/`.json`). The *real* BM25 + 33-feature
    scorer runs in-browser — CPU-only, offline, deterministic. No precomputed results, no LLM calls.

@@ -20,6 +20,12 @@ publish. The ranking remains the proven frontier-v5 order; the shipping system i
 [`battle-proof audit`](docs/v6_battleproof_audit.md) and
 [`challenge positioning`](docs/CHALLENGE_POSITIONING.md).
 
+**Judge start:** [60-second packet](docs/JUDGE_PACKET.md) ·
+[live sandbox](https://huggingface.co/spaces/bansal1234/Hirefit) ·
+[pitch PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf) ·
+[public-field scorecard](docs/PUBLIC_FIELD_SCORECARD.md) ·
+[deployment guide](docs/DEPLOYMENT.md)
+
 ---
 
 ## ⚡ For judges — the 30-second version
@@ -41,34 +47,49 @@ publish. The ranking remains the proven frontier-v5 order; the shipping system i
 | Surface | Link | What it is |
 |---|---|---|
 | **Live demo (sandbox)** | **[HuggingFace Space ↗](https://huggingface.co/spaces/bansal1234/Hirefit)** | runs the *real* ranker in-browser — upload → tiered shortlist → **decision verdict** → CSV export |
-| **Product app** | [Render ↗](https://redrob-hirefit-ranker.onrender.com) | hosted recruiter-facing showcase |
+| **Deployable API** | [Render Blueprint](https://render.com/deploy?repo=https://github.com/bansalbhunesh/redrob-hirefit-ranker) | one-click FastAPI deployment from committed `render.yaml`; the previous mirror is suspended and is not presented as live proof |
 | **Decision dashboard** | `streamlit run omega_decision_dashboard.py` | read-only explainability + integrity cards |
 | **Source** | [GitHub ↗](https://github.com/bansalbhunesh/redrob-hirefit-ranker) | full code · one-command reproduction |
-| **Demo video** | _link to be added_ | 90-second walkthrough |
+| **Pitch** | [PPTX](docs/HireFit_Ranker_Redrob_POLISHED.pptx) · [PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf) | 14-slide V6 narrative with current metrics and claim boundaries |
 
 ## Screenshots
 
-| Live HuggingFace Space (sandbox) | Render app |
+| Live HuggingFace Space (sandbox) | Recruiter decision dashboard |
 |:---:|:---:|
-| [![HuggingFace Space](docs/assets/hf-live-desktop.png)](https://huggingface.co/spaces/bansal1234/Hirefit) | [![Render app](docs/assets/render-desktop.png)](https://redrob-hirefit-ranker.onrender.com) |
-| Upload → tiered shortlist → per-candidate evidence → CSV export | Hosted recruiter-facing product showcase |
-
-**Decision dashboard — integrity review (CONTINUE · VERIFY · BLOCK)**
-
-![Decision dashboard](docs/assets/dashboard-overview.png)
+| [![HuggingFace Space](docs/assets/hf-live-desktop.png)](https://huggingface.co/spaces/bansal1234/Hirefit) | ![Decision dashboard](docs/assets/dashboard-overview.png) |
+| Upload → tiered shortlist → per-candidate evidence → CSV export | Audit evidence → CONTINUE / CLARIFY / VERIFY / BLOCK guidance |
 
 ## Quick start
 
 ```bash
+python -m pip install -e .
 PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl \
   --out submission.csv --workers 2 --release
+python scripts/validate_submission.py submission.csv --candidates candidates.jsonl
 ```
 Runs the fail-closed branch champion: V5 ranking plus V6 hardening, forced BM25 backend,
 exact input/model/output hashes, deterministic environment and full-pool/count/integrity checks,
 and OOM-safe atomic publication. Omitting
 `--release` preserves `main`'s historical ranking behavior byte-for-byte. **Live:** [HuggingFace Space](https://huggingface.co/spaces/bansal1234/Hirefit)
-· [Render app](https://redrob-hirefit-ranker.onrender.com) · `streamlit run omega_decision_dashboard.py`
-(read-only explanation UI). **Demo video:** _link to be added._
+· `streamlit run omega_decision_dashboard.py` (read-only explanation UI). **Deploy:**
+[Render Blueprint](https://render.com/deploy?repo=https://github.com/bansalbhunesh/redrob-hirefit-ranker).
+
+## Why this is hard to beat
+
+| Judging dimension | V6 evidence |
+|---|---|
+| Ranking breadth | #1/673 mean7, #1/100 mean15, #3/322 four-axis balance; no public four-axis dominator |
+| Main comparison | 30/30 composite wins across 15 evaluator families × two missing-label policies |
+| Recruiter trust | Grounded reasons, named feature decomposition, behavioral evidence, and external reviewer/blind-recruiter cross-checks |
+| Runtime | Full 100K in 136.0 s pipeline / 149.1 s wall at 2 CPU / 16 GiB |
+| Failure safety | Corrupt configuration/artifacts fail closed; forced OOM preserves the previous output |
+| Reproducibility | Pinned base and wheels, offline CPU path, deterministic output, exact release SHA-256 |
+| Product proof | Live Hugging Face sandbox, FastAPI showpiece/live/batch modes, health/readiness/metrics, Render Blueprint |
+| Submission completeness | Code, output, README, judge packet, methodology, architecture, deck/PDF, deployment guide, and audit evidence |
+
+The [public-field scorecard](docs/PUBLIC_FIELD_SCORECARD.md) explains how the strongest public
+ranking, human-validation, product, and deployment archetypes were reviewed—and where V6 still
+does **not** claim isolated specialist leadership.
 
 ## Submission snapshot
 
@@ -178,6 +199,9 @@ pinned-image Docker serial best was ~153s; all are inside the 300s budget. Detai
 - **Product (recruiter view):** [PRODUCT](PRODUCT.md) — the recruiter journey + the integrity decision-support differentiator (CONTINUE/CLARIFY/VERIFY/BLOCK)
 - **Decision & validation:** [champion/main invariance audit](docs/champion_main_invariance_audit.md) · [frontier_v6_experiment](docs/frontier_v6_experiment.md) · [frontier_v5_experiment](docs/frontier_v5_experiment.md) · [exhaustive main/V3/V4/public comparison](docs/full_comparison_main_v3_v4_public.md) · [dominant_v4_experiment](docs/dominant_v4_experiment.md) · [loss_aggregate_v3_experiment](docs/loss_aggregate_v3_experiment.md) · [universal_v2_experiment](docs/universal_v2_experiment.md) · [external_recruiter_validation](docs/external_recruiter_validation.md)
 - **Challenge fit:** [CHALLENGE_POSITIONING](docs/CHALLENGE_POSITIONING.md) — official mission mapped to measured evidence; inferred weights clearly separated from official facts
+- **Judge orientation:** [JUDGE_PACKET](docs/JUDGE_PACKET.md) · [PUBLIC_FIELD_SCORECARD](docs/PUBLIC_FIELD_SCORECARD.md) · [pitch PDF](docs/HireFit_Ranker_Redrob_POLISHED.pdf)
+- **Deployment:** [DEPLOYMENT](docs/DEPLOYMENT.md) · [`render.yaml`](render.yaml) · [backend hardening](docs/backend_infra_hardening.md)
+- **Security & release audit:** [SECURITY](SECURITY.md) · [V6 release audit](docs/RELEASE_AUDIT_2026-06-30.md)
 - **What we rejected:** [measured_negatives](docs/measured_negatives.md) · [why_not_reranker](docs/why_not_reranker.md) · [beyond_hedge_sweep](docs/beyond_hedge_sweep.md)
 - **Reproduce / runtime:** [REPRODUCTION](docs/REPRODUCTION.md) · [runtime_matrix](docs/runtime_matrix.md) · [SUBMISSION_CHECKLIST](docs/SUBMISSION_CHECKLIST.md)
 - **Decision frameworks (research):** Ω [OMEGA_DECISION_SUMMARY](docs/OMEGA_DECISION_SUMMARY.md) · Ψ [PSI_INTEGRITY_PANEL](docs/PSI_INTEGRITY_PANEL.md) · Φ [human_opinion/HUMAN_OPINION_LANDSCAPE](docs/human_opinion/HUMAN_OPINION_LANDSCAPE.md)

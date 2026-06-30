@@ -251,7 +251,7 @@ with gr.Blocks(
                 <div style="width:40px;height:40px;background:linear-gradient(135deg,#06b6d4,#a855f7);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:white;box-shadow:0 0 20px rgba(6,182,212,0.3);">R</div>
                 <div>
                     <h1 style="margin:0;font-size:22px;font-weight:700;color:#f8fafc;">Redrob HireFit Ranker</h1>
-                    <p style="margin:0;font-size:13px;color:#94a3b8;">CPU-only • 100K candidates • 28-D feature matrix</p>
+                    <p style="margin:0;font-size:13px;color:#94a3b8;">V6 battle-proof • CPU-only • 100K candidates • 33 features</p>
                 </div>
             </div>
             """)
@@ -281,7 +281,7 @@ with gr.Blocks(
             <div style="color:#64748b;">→</div>
             <div style="padding:8px 12px;background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.08);border-radius:8px;text-align:center;min-width:70px;"><div style="font-size:18px;margin-bottom:4px;">🔍</div><div style="font-size:11px;font-weight:600;color:#94a3b8;">BM25</div></div>
             <div style="color:#64748b;">→</div>
-            <div style="padding:8px 12px;background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.08);border-radius:8px;text-align:center;min-width:70px;"><div style="font-size:18px;margin-bottom:4px;">🧮</div><div style="font-size:11px;font-weight:600;color:#94a3b8;">28-D</div></div>
+            <div style="padding:8px 12px;background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.08);border-radius:8px;text-align:center;min-width:70px;"><div style="font-size:18px;margin-bottom:4px;">🧮</div><div style="font-size:11px;font-weight:600;color:#94a3b8;">33 Features</div></div>
             <div style="color:#64748b;">→</div>
             <div style="padding:8px 12px;background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.08);border-radius:8px;text-align:center;min-width:70px;"><div style="font-size:18px;margin-bottom:4px;">🍯</div><div style="font-size:11px;font-weight:600;color:#94a3b8;">Honeypot</div></div>
             <div style="color:#64748b;">→</div>

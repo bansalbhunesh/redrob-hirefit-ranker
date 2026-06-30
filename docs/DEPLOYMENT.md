@@ -1,0 +1,63 @@
+# Deployment guide
+
+The graded ranker and the recruiter demo are deliberately separate:
+
+| Surface | Purpose | Network during ranking |
+|---|---|---|
+| `rank.py --release` | Official 100K submission path | None |
+| FastAPI app | Showpiece, live sample ranking, batch demo, health and metrics | Same-process HTTP only |
+| Hugging Face Space | Public recruiter-facing sandbox | Hosted UI |
+
+## Local API
+
+```bash
+python -m pip install -e ".[api]"
+uvicorn apps.api.main:app --host 127.0.0.1 --port 8000 --workers 1
+```
+
+Verify:
+
+```bash
+curl --fail http://127.0.0.1:8000/api/health
+curl --fail http://127.0.0.1:8000/api/readyz
+curl --fail http://127.0.0.1:8000/api/metrics
+```
+
+Use one Uvicorn worker: batch progress uses an in-process SSE channel and the SQLite job
+store is designed for one service process. The API applies upload limits, rate limiting,
+restricted CORS, security headers, sanitized errors, readiness checks, and optional write
+authentication through `REDROB_DEMO_TOKEN`.
+
+## Render Blueprint
+
+The root [`render.yaml`](../render.yaml) is the deployable source of truth. It installs the
+API extra, starts one Uvicorn worker, checks `/api/readyz`, pins deterministic thread settings,
+and deploys only after GitHub checks pass.
+
+[Deploy to Render](https://render.com/deploy?repo=https://github.com/bansalbhunesh/redrob-hirefit-ranker)
+
+The previous public Render service was found suspended during the 2026-06-30 audit; the repo
+therefore does not advertise it as a live proof surface. The Hugging Face Space remains the
+primary live demo, while the Blueprint makes a fresh Render service reproducible.
+
+## Environment variables
+
+| Variable | Default | Purpose |
+|---|---:|---|
+| `REDROB_MAX_LIVE_CANDIDATES` | 500 | Live upload candidate cap |
+| `REDROB_MAX_BATCH_CANDIDATES` | 5000 | Batch demo cap |
+| `REDROB_RATE_LIMIT_PER_MINUTE` | 120 | Per-client request limit |
+| `REDROB_CORS_ORIGINS` | localhost + historical Render origin | Comma-separated browser origins |
+| `REDROB_DEMO_TOKEN` | unset | Optional `X-Demo-Token` requirement for write endpoints |
+| `REDROB_GIT_SHA` | auto-detected | Build identity exposed by health endpoints |
+
+## Deployment acceptance gate
+
+A deployment is judge-ready only when all are true:
+
+- `/api/health` returns 200 with version `6.0.0` and the expected build SHA.
+- `/api/readyz` returns 200 with `precomputed_loaded=true` and `dashboard_present=true`.
+- `/api/metrics` returns Prometheus text without leaking file paths or candidate data.
+- The homepage displays **33 Features**, V6 positioning, and the committed top-100.
+- A desktop and mobile browser pass shows no horizontal overflow or console errors.
+- `python -m pytest -q` and the GitHub `gates` check pass on the deployed commit.

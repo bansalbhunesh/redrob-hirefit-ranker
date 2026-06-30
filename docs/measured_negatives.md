@@ -6,7 +6,7 @@ rather than shipping unverified complexity. Nothing here beat the shipped hand-t
 
 | # | Alternative | Result | Verdict |
 |---|---|---|---|
-| 1 | Static dense embeddings (model2vec/potion-32M) | NDCG@10 **+0.0000** at ~2.2× runtime | Rejected ([artifacts/embedding_gate_result.txt](../artifacts/embedding_gate_result.txt)) |
+| 1 | Static dense embeddings (model2vec/potion-32M) | NDCG@10 **+0.0000** at ~2.2× runtime | Rejected; result preserved in this audit table |
 | 2 | Learned logistic-regression weights | **0.8238 vs 0.8811** composite (loses even on labels that favor it) | Rejected ([learned_weights_appendix.md](learned_weights_appendix.md)) |
 | 3 | LightGBM LambdaMART **v1** (our features + recovered structure) | **−0.0061** vs a pre-registered ≥ +0.005 gate | Rejected ([ltr_challenger_study.md](ltr_challenger_study.md)) |
 | 4 | Availability-blind hedge | +0.0135 / −0.0008 across label hypotheses; only pays if labels ignore the JD | Declined ([hedge_simulation_study.md](hedge_simulation_study.md)) |

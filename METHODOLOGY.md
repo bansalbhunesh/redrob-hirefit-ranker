@@ -53,9 +53,9 @@ profile is pushed down regardless of how strong its keywords look.
   profile** (title, years, named skills, signal values) — no hallucinated skills.
 - **Every score decomposes** into named features and the three multipliers; nothing is
   a black box.
-- The **interactive dashboard** ([Render](https://redrob-hirefit-ranker.onrender.com))
-  shows the pipeline stages, honeypot blocking, and a per-candidate feature + reasoning
-  audit live.
+- The **interactive sandbox** ([Hugging Face](https://huggingface.co/spaces/bansal1234/Hirefit))
+  shows the pipeline stages, integrity screening, and a per-candidate feature + reasoning
+  audit live. The FastAPI mirror is reproducible from the root `render.yaml` Blueprint.
 
 ## 5. How we validated ranking quality (without the hidden labels)
 
