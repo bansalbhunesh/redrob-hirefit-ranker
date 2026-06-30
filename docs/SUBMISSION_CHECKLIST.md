@@ -6,9 +6,11 @@ Everything controllable, in one place. ✅ = done & verified in-repo. 🔲 = nee
 
 - **Submission locked:** `frontier-v5` `submission.csv`, SHA-256 `8f7f30c6…`; V6 keeps its exact order.
 - **One release path:** `PYTHONHASHSEED=0 python rank.py --release ...` forces the champion and fails
-  closed on truncation, alternate models/backends, corrupt artifacts, wrong counts, or hash drift.
-- **Reproducible:** `./reproduce.sh` green; full 100K Docker release is byte-identical and atomic.
-- **Tests:** 240 passed, 6 environment skips; configuration, artifact, output, numeric, and supply-chain gates prevent drift.
+  closed on truncation, alternate models/backends, corrupt input/model artifacts, wrong counts,
+  nondeterministic thread settings, or output hash drift.
+- **Reproducible:** `./reproduce.sh` green; full 100K Docker release is byte-identical and atomic;
+  forced OOM preserves the old output and leaves no mounted temporary artifact.
+- **Tests:** 262 passed, 6 environment skips; configuration, input artifact, model artifact, output, numeric, and supply-chain gates prevent drift.
 - **Constraints:** CPU-only, offline, deterministic (`PYTHONHASHSEED=0`); ~80s cloud / ≤300s budget;
   peak ~6.1 GB / 16 GB; 0 honeypots in top-100 (53 detected).
 - **Supply chain:** digest-pinned base, SHA-256-pinned wheels, `pip --require-hashes`, and no known

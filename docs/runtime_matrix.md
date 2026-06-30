@@ -200,3 +200,14 @@ docker run --rm --memory=16g -v "<dir>:/data" redrob-hirefit-ranker \
   --bm25-backend bm25s
 # --workers defaults to auto (up to 8); output is identical for any worker count
 ```
+
+## 2026-06-30 battle-proof V6 release
+
+Final post-hardening image, exact official input hash pinned, full 100K pool:
+
+| constraint | result |
+|---|---|
+| `--cpus=2 --memory=16g --workers 2 --release` | 136.0 s pipeline / 149.1 s wall; exact `8f7f30c6...`; exit 0; no OOM; 0 output temps |
+| `--cpus=2 --memory=3g --workers 2 --release` | intentional OOM; exit 137; prior output preserved; 0 output temps |
+
+See `docs/v6_battleproof_audit.md` for the complete failure-mode matrix.

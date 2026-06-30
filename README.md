@@ -3,7 +3,7 @@
 A deterministic, evidence-aware system that ranks the **top 100 of 100,000** candidates for a Senior
 AI Engineer role — with receipts for *why* this ranking is the one to ship.
 
-[![Tests](https://img.shields.io/badge/tests-240_passed_6_skipped-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-262_passed_6_skipped-brightgreen.svg)](#)
 [![Runtime](https://img.shields.io/badge/100K-under_300s_Docker_2CPU-brightgreen.svg)](#)
 [![Execution](https://img.shields.io/badge/CPU--only-offline-blue.svg)](#)
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](#)
@@ -27,9 +27,10 @@ artifact and speeds up two deterministic inference hotspots; see
 - **Measured result:** versus V4, improves **6 component cells**, ties **54**, and loses **0**; seven-world mean is **0.9066**, mean15 **0.9104**, reviewer **0.8098**, blind recruiter **0.9059**, and H2 remains **0.8842**. It still beats `main` on all 15 composites.
 - **Runtime and integrity:** two exact full-100K Docker runs at 2 CPU / 16 GB completed in **199.0-209.4s pipeline / 233.8-241.9s wall**, safely under 300s and byte-identical to the host artifact. All **53 honeypots** were detected and **0** emitted.
 - **Foolproof release:** the final V6 `--release` Docker gate completed in **109.9s**, used **4.13 GiB** sampled peak, and published only after model, configuration, counts, integrity, and exact-output hash checks passed.
+- **Battle-proof gate:** exact input bytes and deterministic thread settings are now pinned; 10,000/10,000 corrupted outputs and 9,750/9,750 invalid configs were rejected. A forced 3-GiB OOM preserved the old output with zero mounted temps; the final 2-CPU/16-GB run reproduced the exact champion in **136.0s**.
 - **Main invariance:** champion wins **30/30 composites** across two missing-label policies; origin main and V6 explicit-main full runs are byte-identical (`af8f2b32…`). Six of 120 underlying component cells dip, and all 883 safety fusions that erased them sacrificed the champion composites.
 - **Public field:** 672 valid public outputs compared. V5 remains **#1 on seven-world mean**, keeps H2 around **#14**, and improves blind recruiter from **#23 to an estimated #20**; no public output dominates it across all four axes.
-- **The receipts:** **240 tests passed / 6 environment skips**, 150 main/champion cells, 883 safety fusions, 15 evaluators × 4 primary component metrics, 5,790 nearby band settings, and 100 repeated candidate half-splits.
+- **The receipts:** **262 tests passed / 6 environment skips**, 150 main/champion cells, 883 safety fusions, 15 evaluators × 4 primary component metrics, 5,790 nearby band settings, and 100 repeated candidate half-splits.
 - **Honest limit:** this is the strongest **balanced** measured artifact, not best on every isolated component. Six underlying cells trail main despite all 30 composites winning; no simple fusion closed them without losing the champion. There is no official hidden-score proof.
 
 **Contents:** [Live links](#live-links) · [Screenshots](#screenshots) · [Quick start](#quick-start) · [Product](PRODUCT.md) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--frontier-v5-on-the-experiment-branch) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
@@ -62,7 +63,8 @@ PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl \
   --out submission.csv --workers 2 --release
 ```
 Runs the fail-closed branch champion: V5 ranking plus V6 hardening, forced BM25 backend,
-full-pool/count/integrity checks, model and output hashes, and atomic publication. Omitting
+exact input/model/output hashes, deterministic environment and full-pool/count/integrity checks,
+and OOM-safe atomic publication. Omitting
 `--release` preserves `main`'s historical ranking behavior byte-for-byte. **Live:** [HuggingFace Space](https://huggingface.co/spaces/bansal1234/Hirefit)
 · [Render app](https://redrob-hirefit-ranker.onrender.com) · `streamlit run omega_decision_dashboard.py`
 (read-only explanation UI). **Demo video:** _link to be added._
@@ -74,7 +76,7 @@ full-pool/count/integrity checks, model and output hashes, and atomic publicatio
 | Branch submission | **Frontier-v5 challenger** (`8f7f30c6`); default `main` is unchanged |
 | Production pipeline | Deterministic `rank.py`, **33-feature** scorer + seven shallow NumPy heads + feature-only evidence/integrity/tie-break corrections; foolproof release via `--release` |
 | Dataset | 100,000 candidates → top-100 |
-| Tests | 240 passed, 6 environment skips |
+| Tests | 262 passed, 6 environment skips |
 | Challenger vs main | mean7 **0.9066 vs 0.8727**, mean15 **0.9104 vs 0.8752**, wins **15/15** composites — *dev proxy; **No official hidden labels*** |
 | Public comparison | #1 mean7; about #14 H2, #115 reviewer, estimated #20 blind among 672 valid outputs; no four-axis dominator |
 | Dev-proxy quality | NDCG@10 0.9104 · P@10 = 1.0 — *dev proxy* |

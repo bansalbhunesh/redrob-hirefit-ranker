@@ -34,6 +34,7 @@ def _result(**overrides):
         "loaded_count": 100_000,
         "ranked_pool_count": 100_000,
         "rows": [{}] * 100,
+        "bm25_backend": "bm25s",
         "honeypots_detected": 53,
         "honeypots_in_output": 0,
     }
@@ -91,6 +92,10 @@ def test_release_constants_match_metrics_manifest():
     )
 
     assert rank.RELEASE_SHA256 == manifest["submission"]["golden_sha256"]
+    assert (
+        rank.RELEASE_CANDIDATES_SHA256
+        == manifest["submission"]["candidate_input_sha256"]
+    )
     assert rank.RELEASE_CANDIDATE_COUNT == manifest["submission"]["total_candidates"]
     assert rank.RELEASE_HONEYPOT_COUNT == manifest["submission"]["honeypots_detected"]
 

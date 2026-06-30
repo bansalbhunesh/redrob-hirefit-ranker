@@ -16,14 +16,17 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
     ranks = set()
     last_score = float("inf")
     last_cid = ""
-    for row in rows:
+    for position, row in enumerate(rows, start=1):
         cid = str(row.get("candidate_id", ""))
         try:
             rank = int(row.get("rank", 0))
         except (TypeError, ValueError):
             rank = 0
+        score_present = "score" in row and row.get("score") is not None
+        if not score_present:
+            errors.append(f"Missing score at row position {position}.")
         try:
-            score = float(row.get("score", 0))
+            score = float(row.get("score") if score_present else -1.0)
         except (TypeError, ValueError):
             score = -1.0
         if not CANDIDATE_ID_PATTERN.match(cid):
@@ -41,6 +44,10 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
             errors.append(f"Score out of range at rank {rank}: {score}")
         if rank < 1 or rank > expected:
             errors.append(f"Rank out of range: {rank}")
+        if rank != position:
+            errors.append(
+                f"Rank {rank} does not match row position {position}."
+            )
         if finite_score and score > last_score:
             errors.append(f"Score increases at rank {rank}.")
         # Mirror the official validator's tie-break rule: when two consecutive rows
@@ -55,7 +62,8 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
         if finite_score:
             last_score = score
         last_cid = cid
-        if not str(row.get("reasoning", "")).strip():
+        reasoning = row.get("reasoning")
+        if not isinstance(reasoning, str) or not reasoning.strip():
             errors.append(f"Missing reasoning at rank {rank}.")
     missing = set(range(1, expected + 1)) - ranks
     if missing:

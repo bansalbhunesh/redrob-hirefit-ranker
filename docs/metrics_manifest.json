@@ -3,6 +3,7 @@
   "_provenance": "All ranking-quality metrics are DEVELOPMENT PROXIES (independent heuristic + LLM-judge labels on dev samples). No official hidden labels were available before submission. Runtime/memory numbers are measured; sources cited per key.",
   "submission": {
     "golden_sha256": "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062",
+    "candidate_input_sha256": "de7b8cae39a9f9378a2cd4f8153bfc1f84960bce0ae520f263423d129df4b335",
     "_golden_note": "2026-06-30: frontier-v5 remains the ranking champion after V6 cross-fit and leave-one-family-out experiments rejected every apparent universal gain. The fail-closed --release path verifies configuration, the model artifact, full-pool and integrity counts, and the exact output hash before atomic publication. The default main profile remains available when --release is omitted.",
     "rows": 100,
     "total_candidates": 100000,
@@ -63,8 +64,8 @@
     "reranker_v2_blind_ndcg50": 0.8404,
     "_delta": "composite -0.0307, NDCG@10 -0.0695, NDCG@50 +0.0135 -- improved @50 but destroyed @10 (50% of the composite). Looked positive only on a curated 249-candidate LLM-judge sample (gpt-4.1-mini +0.027, deepseek +0.085, claude-3.5-haiku +0.019, gemini-3.1-flash-lite +0.049 composite); none generalized to the 100K blind set."
   },
-  "tests_collected": 246,
-  "tests_passing": 240,
+  "tests_collected": 268,
+  "tests_passing": 262,
   "tests_skipped": 6,
   "feature_count": 33,
   "_feature_count_note": "len(FEATURE_NAMES) in src/redrob_ranker/features.py; guarded by tests/test_metrics_manifest.py. Pipeline-description surfaces must quote 33; measurement docs (ablation, learned-weights) keep their historical 28-feature base.",
@@ -85,6 +86,16 @@
     "hash_pinned_release_s": 131.7,
     "serial_release_s": 135.0,
     "oom_preserved_existing_output": true
+  },
+  "battleproof_release": {
+    "_source": "docs/v6_battleproof_audit.md",
+    "corrupted_submissions_detected": 10000,
+    "invalid_configs_rejected": 9750,
+    "docker_2cpu_16g_pipeline_s": 136.0,
+    "docker_2cpu_16g_wall_s": 149.1,
+    "docker_3g_oom_exit": 137,
+    "oom_preserved_existing_output": true,
+    "oom_output_temp_files": 0
   },
   "external_recruiter_validation": {
     "_label": "External cross-check vs a real recruiter-labeled set published by participant 'Sifter' (shikhar1809): 180 reviewer + 50 BLIND technical-recruiter labels. Separate from our own Ψ lockbox (still awaiting). Source: docs/external_recruiter_validation.md.",

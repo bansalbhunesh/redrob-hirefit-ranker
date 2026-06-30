@@ -147,21 +147,35 @@ class RankingResult:
 def _validate_config(config: RankerConfig) -> None:
     """Reject invalid programmatic configuration instead of silently degrading."""
 
+    def require_int(name: str, value: object, *, minimum: int) -> None:
+        # bool is an int subclass, but accepting True as one worker/top row is a
+        # dangerous programmatic typo, so require the exact built-in int type.
+        if type(value) is not int:
+            raise TypeError(f"{name} must be an integer")
+        if value < minimum:
+            comparator = "at least" if minimum else "non-negative"
+            raise ValueError(f"{name} must be {comparator} {minimum}")
+
+    if not isinstance(config.scoring_profile, str):
+        raise TypeError("scoring_profile must be a string")
     if config.scoring_profile not in SCORING_PROFILES:
         raise ValueError(
             f"Unknown scoring profile {config.scoring_profile!r}; "
             f"choose one of {sorted(SCORING_PROFILES)}"
         )
+    if not isinstance(config.bm25_backend, str):
+        raise TypeError("bm25_backend must be a string")
     if config.bm25_backend not in {"auto", "bm25s", "rank_bm25"}:
         raise ValueError(f"Unknown BM25 backend: {config.bm25_backend!r}")
-    if config.top_k < 1:
-        raise ValueError("top_k must be at least 1")
-    if config.max_candidates is not None and config.max_candidates < 1:
-        raise ValueError("max_candidates must be at least 1 when provided")
-    if config.candidate_pool_size < 0:
-        raise ValueError("candidate_pool_size cannot be negative")
-    if config.workers < 0:
-        raise ValueError("workers cannot be negative")
+    require_int("top_k", config.top_k, minimum=1)
+    require_int("candidate_pool_size", config.candidate_pool_size, minimum=0)
+    require_int("workers", config.workers, minimum=0)
+    if config.max_candidates is not None:
+        require_int("max_candidates", config.max_candidates, minimum=1)
+    if type(config.use_embeddings) is not bool:
+        raise TypeError("use_embeddings must be a boolean")
+    if not isinstance(config.embed_model, str) or not config.embed_model.strip():
+        raise ValueError("embed_model must be a non-empty string")
     if config.jd is not None and config.scoring_profile != "main":
         raise ValueError(
             f"{config.scoring_profile} supports only the bundled challenge JD"
