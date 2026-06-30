@@ -23,6 +23,17 @@ from redrob_ranker._cgroup import cgroup_cpu_quota_count as _cgroup_cpu_quota_co
 # stay serial. This also keeps the demo API/Gradio paths (small uploads) single-process.
 _PARALLEL_MIN_POOL = 4000
 _PARALLEL_WORKER_CAP = 8
+CHAMPION_SCORING_PROFILE = "frontier-v5"
+SCORING_PROFILES = frozenset(
+    {
+        "main",
+        "top23-clean",
+        "universal-v2",
+        "loss-aggregate-v3",
+        "dominant-v4",
+        CHAMPION_SCORING_PROFILE,
+    }
+)
 
 
 def _submission_score(raw_score: float, max_score: float) -> float:
@@ -133,6 +144,30 @@ class RankingResult:
     raw_ranked: list[tuple[dict, object, float]] | None = None
 
 
+def _validate_config(config: RankerConfig) -> None:
+    """Reject invalid programmatic configuration instead of silently degrading."""
+
+    if config.scoring_profile not in SCORING_PROFILES:
+        raise ValueError(
+            f"Unknown scoring profile {config.scoring_profile!r}; "
+            f"choose one of {sorted(SCORING_PROFILES)}"
+        )
+    if config.bm25_backend not in {"auto", "bm25s", "rank_bm25"}:
+        raise ValueError(f"Unknown BM25 backend: {config.bm25_backend!r}")
+    if config.top_k < 1:
+        raise ValueError("top_k must be at least 1")
+    if config.max_candidates is not None and config.max_candidates < 1:
+        raise ValueError("max_candidates must be at least 1 when provided")
+    if config.candidate_pool_size < 0:
+        raise ValueError("candidate_pool_size cannot be negative")
+    if config.workers < 0:
+        raise ValueError("workers cannot be negative")
+    if config.jd is not None and config.scoring_profile != "main":
+        raise ValueError(
+            f"{config.scoring_profile} supports only the bundled challenge JD"
+        )
+
+
 def _resolve_workers(requested: int, pool_count: int) -> int:
     """Return the worker count to use (1 == serial)."""
     if requested == 1 or pool_count < _PARALLEL_MIN_POOL:
@@ -154,6 +189,7 @@ def _resolve_chunksize(work_count: int, workers: int) -> int:
 
 
 def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[tuple[dict, object, float]], str]:
+    _validate_config(config)
     if config.jd is not None:
         retrieval_scores, used_backend = retrieve_pool(
             candidates, config.candidate_pool_size, backend=config.bm25_backend,
@@ -318,6 +354,9 @@ def rows_from_ranked(ranked: list[tuple[dict, object, float]], top_k: int) -> li
 
 def run_ranking(candidates_path: Path, out_path: Path, config: RankerConfig | None = None) -> RankingResult:
     config = config or RankerConfig()
+    _validate_config(config)
+    if candidates_path.resolve() == out_path.resolve():
+        raise ValueError("Input candidates path and output submission path must differ")
     candidates = list(iter_candidates(candidates_path, max_candidates=config.max_candidates))
     ranked, used_backend = rank_candidates(candidates, config)
     top_k = min(config.top_k, len(ranked))

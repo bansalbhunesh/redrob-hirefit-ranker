@@ -5,6 +5,8 @@ from __future__ import annotations
 import csv
 import gzip
 import json
+import os
+import tempfile
 from pathlib import Path
 from typing import Iterable, Iterator
 
@@ -74,9 +76,31 @@ def iter_candidates(path: Path, max_candidates: int | None = None) -> Iterator[d
 
 
 def write_submission(path: Path, rows: Iterable[dict]) -> None:
+    """Atomically replace a submission so failures never leave a partial CSV."""
+
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["candidate_id", "rank", "score", "reasoning"])
-        writer.writeheader()
-        for row in rows:
-            writer.writerow(row)
+    handle = tempfile.NamedTemporaryFile(
+        mode="w",
+        encoding="utf-8",
+        newline="",
+        dir=path.parent,
+        prefix=f".{path.name}.",
+        suffix=".tmp",
+        delete=False,
+    )
+    temporary = Path(handle.name)
+    try:
+        with handle:
+            writer = csv.DictWriter(
+                handle,
+                fieldnames=["candidate_id", "rank", "score", "reasoning"],
+            )
+            writer.writeheader()
+            for row in rows:
+                writer.writerow(row)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    except BaseException:
+        temporary.unlink(missing_ok=True)
+        raise

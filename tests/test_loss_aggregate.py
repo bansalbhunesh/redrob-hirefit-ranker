@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+import redrob_ranker.loss_aggregate as loss_aggregate_module
 from redrob_ranker.challenger import universal_v2_score
 from redrob_ranker.constants import FEATURE_NAMES
 from redrob_ranker.features import CandidateFeatures
@@ -32,6 +33,20 @@ def test_model_artifact_contains_no_candidate_lookup() -> None:
     assert MODEL_PATH.exists()
     assert b"CAND_" not in MODEL_PATH.read_bytes()
     assert b"candidate_id" not in MODEL_PATH.read_bytes()
+
+
+def test_model_artifact_corruption_fails_closed(
+    tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    corrupted = tmp_path / "loss_aggregate_v3.npz"
+    corrupted.write_bytes(MODEL_PATH.read_bytes() + b"corruption")
+    _artifact.cache_clear()
+    monkeypatch.setattr(loss_aggregate_module, "MODEL_PATH", corrupted)
+
+    with pytest.raises(RuntimeError, match="SHA-256 mismatch"):
+        _artifact()
+
+    _artifact.cache_clear()
 
 
 def test_numpy_forest_predictions_are_finite() -> None:

@@ -16,6 +16,7 @@ The full 100,000-candidate verification used a Docker-native volume,
 |---|---:|---:|---|---|
 | unchanged V5 stress control | 299.2 s | not retained | `8f7f30c68ec30cb6...` | 53 detected / 0 emitted |
 | V6 hardened | **197.2 s** | **4,204.5 MiB** | `8f7f30c68ec30cb6...` | 53 detected / 0 emitted |
+| V6 fail-closed `--release` | **109.9 s** | **4,232.2 MiB** | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
 
 The 102-second paired gap is dominated by Docker Desktop host variance: earlier
 unchanged V5 runs were 199.0-209.4 s. The defensible result is that V6 matches
@@ -23,6 +24,11 @@ the prior normal V5 window, remains under 300 seconds, uses less than the
 effective Docker VM memory, and reproduces the artifact byte-for-byte. Although
 the container requested 16 GB, this Docker Desktop VM exposed about 7.6 GiB;
 the run remained well below even that smaller effective cap.
+
+The final `--release` row exercises the production guard itself, not merely the
+profile: it verifies the model SHA-256 before scoring, forces BM25s and
+`frontier-v5`, generates into a temporary file, validates full-pool and integrity
+counts plus the final SHA-256, and only then atomically publishes the output.
 
 ## 2026-06-29 frontier-v5 constrained verification
 

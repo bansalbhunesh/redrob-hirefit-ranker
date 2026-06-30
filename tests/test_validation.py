@@ -44,3 +44,16 @@ def test_validate_rows_flags_tiebreak_descending_candidate_id():
 def test_validate_rows_accepts_tiebreak_ascending_candidate_id():
     # Equal adjacent scores with candidate_id ASCENDING is allowed.
     assert validate_rows(_rows_with_top_tie("CAND_0009998", "CAND_0009999")) == []
+
+
+def test_validate_rows_rejects_nonfinite_score_rank_and_blank_reasoning():
+    rows = _rows_with_top_tie("CAND_0009998", "CAND_0009999")
+    rows[0]["score"] = "nan"
+    rows[0]["rank"] = "0"
+    rows[0]["reasoning"] = "   "
+
+    errors = validate_rows(rows)
+
+    assert any("not finite" in error for error in errors)
+    assert any("Rank out of range" in error for error in errors)
+    assert any("Missing reasoning" in error for error in errors)

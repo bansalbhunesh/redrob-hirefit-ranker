@@ -8,8 +8,10 @@ Example:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import os
 import sys
+import tempfile
 import time
 import tracemalloc
 from pathlib import Path
@@ -27,7 +29,15 @@ if SRC.exists() and str(SRC) not in sys.path:
 for _thread_var in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
     os.environ.setdefault(_thread_var, "1")
 
-from redrob_ranker.pipeline import RankerConfig, run_ranking  # noqa: E402
+from redrob_ranker.pipeline import (  # noqa: E402
+    CHAMPION_SCORING_PROFILE,
+    RankerConfig,
+    run_ranking,
+)
+
+RELEASE_SHA256 = "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062"
+RELEASE_CANDIDATE_COUNT = 100_000
+RELEASE_HONEYPOT_COUNT = 53
 
 
 def _ensure_deterministic_hash_seed() -> None:
@@ -105,10 +115,18 @@ def parse_args() -> argparse.Namespace:
             "dominant-v4",
             "frontier-v5",
         ],
-        default="main",
-        help="Scoring profile. main preserves the shipped scorer; top23-clean "
+        default=None,
+        help="Scoring profile. Omit for main, or use --release to force the "
+        "verified frontier-v5 champion. main preserves the historical scorer; top23-clean "
         "universal-v2, loss-aggregate-v3, dominant-v4, and frontier-v5 enable clean-room "
         "challengers for the bundled JD.",
+    )
+    parser.add_argument(
+        "--release",
+        action="store_true",
+        help="Fail-closed official 100K reproduction: force frontier-v5 + bm25s, "
+        "reject experimental/truncated settings, verify counts, integrity, and "
+        "the golden SHA-256 before atomically publishing --out.",
     )
     parser.add_argument(
         "--profile-memory",
@@ -122,6 +140,68 @@ def parse_args() -> argparse.Namespace:
         help="Print rich ASCII output for the top N candidates.",
     )
     return parser.parse_args()
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _release_profile(args: argparse.Namespace) -> str:
+    """Validate release-only invariants and return the forced champion profile."""
+
+    if os.environ.get("PYTHONHASHSEED") != "0":
+        raise SystemExit("--release requires PYTHONHASHSEED=0")
+    if args.scoring_profile not in {None, CHAMPION_SCORING_PROFILE}:
+        raise SystemExit(
+            f"--release only permits --scoring-profile {CHAMPION_SCORING_PROFILE}"
+        )
+    incompatible = []
+    if args.top_k != 100:
+        incompatible.append("--top-k must be 100")
+    if args.max_candidates is not None:
+        incompatible.append("--max-candidates is forbidden")
+    if args.candidate_pool != 0:
+        incompatible.append("--candidate-pool must be 0")
+    if args.jd is not None:
+        incompatible.append("--jd is forbidden")
+    if args.use_embeddings:
+        incompatible.append("--use-embeddings is forbidden")
+    if args.bm25_backend == "rank_bm25":
+        incompatible.append("--bm25-backend rank_bm25 is forbidden")
+    if incompatible:
+        raise SystemExit("Invalid --release configuration: " + "; ".join(incompatible))
+    return CHAMPION_SCORING_PROFILE
+
+
+def _verify_release(result, artifact: Path) -> None:
+    """Fail closed unless the complete official artifact was reproduced."""
+
+    errors = []
+    if result.loaded_count != RELEASE_CANDIDATE_COUNT:
+        errors.append(
+            f"loaded {result.loaded_count}, expected {RELEASE_CANDIDATE_COUNT} candidates"
+        )
+    if result.ranked_pool_count != RELEASE_CANDIDATE_COUNT:
+        errors.append(
+            f"ranked {result.ranked_pool_count}, expected {RELEASE_CANDIDATE_COUNT} candidates"
+        )
+    if len(result.rows) != 100:
+        errors.append(f"wrote {len(result.rows)}, expected 100 rows")
+    if result.honeypots_detected != RELEASE_HONEYPOT_COUNT:
+        errors.append(
+            f"detected {result.honeypots_detected}, expected {RELEASE_HONEYPOT_COUNT} honeypots"
+        )
+    if result.honeypots_in_output != 0:
+        errors.append(f"emitted {result.honeypots_in_output} honeypots")
+    digest = _sha256(artifact)
+    if digest != RELEASE_SHA256:
+        errors.append(f"SHA-256 {digest}, expected {RELEASE_SHA256}")
+    if errors:
+        raise RuntimeError("Release verification failed: " + "; ".join(errors))
 
 def print_top_n(result, n: int, elapsed: float, peak_mb: float | None) -> None:
     if not result.raw_ranked or n <= 0:
@@ -177,6 +257,12 @@ def print_top_n(result, n: int, elapsed: float, peak_mb: float | None) -> None:
 
 def main() -> None:
     args = parse_args()
+    scoring_profile = _release_profile(args) if args.release else (args.scoring_profile or "main")
+    if args.release:
+        # Verify the signed champion model before spending minutes scoring 100K rows.
+        from redrob_ranker.loss_aggregate import _artifact
+
+        _artifact()
     if args.profile_memory and (args.max_candidates is None or args.max_candidates > 5000):
         raise SystemExit(
             "--profile-memory uses tracemalloc and is intentionally limited to "
@@ -200,17 +286,45 @@ def main() -> None:
         top_k=args.top_k,
         candidate_pool_size=args.candidate_pool,
         max_candidates=args.max_candidates,
-        bm25_backend=args.bm25_backend,
+        bm25_backend="bm25s" if args.release else args.bm25_backend,
         workers=args.workers,
         use_embeddings=args.use_embeddings,
         embed_model=args.embed_model,
-        scoring_profile=args.scoring_profile,
+        scoring_profile=scoring_profile,
         jd=compiled_jd,
     )
     if args.profile_memory:
         tracemalloc.start()
     start_time = time.time()
-    result = run_ranking(Path(args.candidates), Path(args.out), config)
+    output = Path(args.out)
+    if Path(args.candidates).resolve() == output.resolve():
+        raise SystemExit("--candidates and --out must be different paths")
+    temporary_output = None
+    run_output = output
+    if args.release:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        descriptor, raw_path = tempfile.mkstemp(
+            dir=output.parent,
+            prefix=f".{output.name}.release.",
+            suffix=".tmp",
+        )
+        os.close(descriptor)
+        temporary_output = Path(raw_path)
+        run_output = temporary_output
+    try:
+        result = run_ranking(Path(args.candidates), run_output, config)
+        if args.release:
+            _verify_release(result, run_output)
+            os.replace(run_output, output)
+            temporary_output = None
+            print(
+                f"Release verified: {CHAMPION_SCORING_PROFILE}, "
+                f"SHA-256 {RELEASE_SHA256}.",
+                file=sys.stderr,
+            )
+    finally:
+        if temporary_output is not None:
+            temporary_output.unlink(missing_ok=True)
     elapsed = time.time() - start_time
     print(f"Pipeline completed in {elapsed:.1f}s", file=sys.stderr)
     if elapsed > 240:
@@ -223,7 +337,7 @@ def main() -> None:
         peak_mb = tracemalloc.get_traced_memory()[1] / 1024 / 1024
         tracemalloc.stop()
     print(
-        f"Wrote {len(result.rows)} rows to {args.out}. "
+        f"Wrote {len(result.rows)} rows to {output}. "
         f"Loaded {result.loaded_count} candidates; ranked pool {result.ranked_pool_count}; "
         f"BM25 backend {result.bm25_backend}. "
         f"Runtime {elapsed:.1f}s. "

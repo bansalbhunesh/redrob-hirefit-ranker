@@ -7,6 +7,7 @@ IDs, public ranking positions, resume fingerprints, or competitor code.
 
 from __future__ import annotations
 
+import hashlib
 import math
 from collections.abc import Callable
 from functools import lru_cache
@@ -18,6 +19,7 @@ from redrob_ranker.anachronism import worst_severity
 from redrob_ranker.features import CandidateFeatures
 
 MODEL_PATH = Path(__file__).resolve().parents[2] / "models" / "loss_aggregate_v3.npz"
+MODEL_SHA256 = "c54eaa37f3a1df9e8560817badcd2e41a6ce9b024e79169f10299af378dae54d"
 MODEL_POOL_SIZE = 3000
 MEMBERSHIP_LOCK = 100
 V4_TOP_BAND_SIZE = 8
@@ -41,6 +43,12 @@ def _minmax(values: np.ndarray) -> np.ndarray:
 
 @lru_cache(maxsize=1)
 def _artifact() -> dict[str, np.ndarray]:
+    digest = hashlib.sha256(MODEL_PATH.read_bytes()).hexdigest()
+    if digest != MODEL_SHA256:
+        raise RuntimeError(
+            "Refusing to load loss-aggregate model: SHA-256 mismatch "
+            f"({digest} != {MODEL_SHA256})"
+        )
     with np.load(MODEL_PATH, allow_pickle=False) as data:
         return {name: data[name] for name in data.files}
 

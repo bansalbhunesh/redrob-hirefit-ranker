@@ -69,4 +69,20 @@ cap. The adjacent unchanged-V5 control took 299.2 s under severe host load,
 while earlier V5 runs were 199.0-209.4 s. Therefore the full-run evidence proves
 no regression and exact reproduction, not a defensible 34% universal speedup.
 
-Final suite: 225 collected, 219 passed, 6 environment skips.
+Final suite after release hardening: 242 collected, 236 passed, 6 environment skips.
+
+## Foolproof release gate
+
+`rank.py --release` is now the only recommended shipping path. It fails closed
+unless `PYTHONHASHSEED=0`, forces `frontier-v5` and BM25s, rejects truncated
+pools, candidate preselection, alternate JDs, embeddings, and incompatible
+profiles, verifies the model artifact SHA-256 before scoring, and refuses invalid
+programmatic configuration. Submission writes are atomic, so an exception cannot
+replace a previously valid CSV with a partial file. Final validation rejects
+unknown IDs, duplicate/out-of-range ranks, NaN/∞ scores, blank reasoning,
+honeypot leakage, wrong full-pool counts, and output hash drift.
+
+The complete gate was exercised inside the pinned image with `--cpus=2
+--memory=16g --workers 2`: 100,000 loaded and ranked, 53 honeypots detected,
+zero emitted, 109.9 s pipeline time, 4,232.2 MiB sampled peak, exit code 0, and
+the exact golden SHA-256. The output was published only after verification.

@@ -4,11 +4,11 @@ Everything controllable, in one place. ✅ = done & verified in-repo. 🔲 = nee
 
 ## ✅ Done & verified (in the repo)
 
-- **Submission shipped:** severity-gated hedge `submission.csv` sha256 `24f84f4b…` on `main`.
-- **Fallbacks tagged:** `submission/hedge-24f84f4b`, `fallback/golden-af8f2b32`, `main-hand-fallback`.
-- **Reproducible:** `./reproduce.sh` green — shipped hash verified; production `rank.py` reproduces
-  golden `af8f2b32` byte-for-byte (slice gate + full 100K, 55s native / 165s docker-2cpu/16g).
-- **Tests:** 198 passed, 0 skipped; numeric-consistency guard test prevents drift.
+- **Submission locked:** `frontier-v5` `submission.csv`, SHA-256 `8f7f30c6…`; V6 keeps its exact order.
+- **One release path:** `PYTHONHASHSEED=0 python rank.py --release ...` forces the champion and fails
+  closed on truncation, alternate models/backends, corrupt artifacts, wrong counts, or hash drift.
+- **Reproducible:** `./reproduce.sh` green; full 100K Docker release is byte-identical and atomic.
+- **Tests:** 236 passed, 6 environment skips; configuration, artifact, output, and numeric gates prevent drift.
 - **Constraints:** CPU-only, offline, deterministic (`PYTHONHASHSEED=0`); ~80s cloud / ≤300s budget;
   peak ~6.1 GB / 16 GB; 0 honeypots in top-100 (53 detected).
 - **Validation:** two-study (golden vs hedge, holdout) + two cross-family judges (gpt-4.1 +0.0197,

@@ -3,7 +3,7 @@
 A deterministic, evidence-aware system that ranks the **top 100 of 100,000** candidates for a Senior
 AI Engineer role — with receipts for *why* this ranking is the one to ship.
 
-[![Tests](https://img.shields.io/badge/tests-219_passed_6_skipped-brightgreen.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-236_passed_6_skipped-brightgreen.svg)](#)
 [![Runtime](https://img.shields.io/badge/100K-under_300s_Docker_2CPU-brightgreen.svg)](#)
 [![Execution](https://img.shields.io/badge/CPU--only-offline-blue.svg)](#)
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](#)
@@ -26,8 +26,9 @@ artifact and speeds up two deterministic inference hotspots; see
 - **What this branch tests:** deterministic, CPU-only `frontier-v5` (`8f7f30c6`): V4 plus two candidate-ID-free shortlist tie-breaks using behavior and responsiveness. No competitor code, IDs, fingerprints, or ranking files enter production.
 - **Measured result:** versus V4, improves **6 component cells**, ties **54**, and loses **0**; seven-world mean is **0.9066**, mean15 **0.9104**, reviewer **0.8098**, blind recruiter **0.9059**, and H2 remains **0.8842**. It still beats `main` on all 15 composites.
 - **Runtime and integrity:** two exact full-100K Docker runs at 2 CPU / 16 GB completed in **199.0-209.4s pipeline / 233.8-241.9s wall**, safely under 300s and byte-identical to the host artifact. All **53 honeypots** were detected and **0** emitted.
+- **Foolproof release:** the final V6 `--release` Docker gate completed in **109.9s**, used **4.13 GiB** sampled peak, and published only after model, configuration, counts, integrity, and exact-output hash checks passed.
 - **Public field:** 672 valid public outputs compared. V5 remains **#1 on seven-world mean**, keeps H2 around **#14**, and improves blind recruiter from **#23 to an estimated #20**; no public output dominates it across all four axes.
-- **The receipts:** **219 tests passed / 6 environment skips**, 15 evaluators × 4 component metrics checked, 5,790 nearby band settings tested, 100 repeated candidate half-splits, and the tempting eight-rule version rejected when it failed hidden-style splits.
+- **The receipts:** **236 tests passed / 6 environment skips**, 15 evaluators × 4 component metrics checked, 5,790 nearby band settings tested, 100 repeated candidate half-splits, and the tempting eight-rule version rejected when it failed hidden-style splits.
 - **Honest limit:** this is the strongest **balanced** measured artifact, not best on every isolated public metric. Specialists still lead H2 and small recruiter slices, and candidate half-splits are noisy on some evaluators. There is no official hidden-score proof.
 
 **Contents:** [Live links](#live-links) · [Screenshots](#screenshots) · [Quick start](#quick-start) · [Product](PRODUCT.md) · [Snapshot](#submission-snapshot) · [Architecture](#architecture) · [What we rejected](#what-we-tried-and-rejected) · [Decision](#the-decision--frontier-v5-on-the-experiment-branch) · [Validation](#validation) · [Reproduce](#reproduce) · [Docs](#documentation-map)
@@ -57,10 +58,11 @@ artifact and speeds up two deterministic inference hotspots; see
 
 ```bash
 PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl \
-  --out submission.csv --workers 2 --scoring-profile frontier-v5
+  --out submission.csv --workers 2 --release
 ```
-Runs the opt-in clean-room branch champion. Omitting `--scoring-profile` preserves `main`'s historical
-ranking behavior byte-for-byte. **Live:** [HuggingFace Space](https://huggingface.co/spaces/bansal1234/Hirefit)
+Runs the fail-closed branch champion: V5 ranking plus V6 hardening, forced BM25 backend,
+full-pool/count/integrity checks, model and output hashes, and atomic publication. Omitting
+`--release` preserves `main`'s historical ranking behavior byte-for-byte. **Live:** [HuggingFace Space](https://huggingface.co/spaces/bansal1234/Hirefit)
 · [Render app](https://redrob-hirefit-ranker.onrender.com) · `streamlit run omega_decision_dashboard.py`
 (read-only explanation UI). **Demo video:** _link to be added._
 
@@ -69,9 +71,9 @@ ranking behavior byte-for-byte. **Live:** [HuggingFace Space](https://huggingfac
 | Property | Verified value |
 |---|---|
 | Branch submission | **Frontier-v5 challenger** (`8f7f30c6`); default `main` is unchanged |
-| Production pipeline | Deterministic `rank.py`, **33-feature** scorer + seven shallow NumPy heads + feature-only evidence/integrity/tie-break corrections; opt in with `--scoring-profile frontier-v5` |
+| Production pipeline | Deterministic `rank.py`, **33-feature** scorer + seven shallow NumPy heads + feature-only evidence/integrity/tie-break corrections; foolproof release via `--release` |
 | Dataset | 100,000 candidates → top-100 |
-| Tests | 219 passed, 6 environment skips |
+| Tests | 236 passed, 6 environment skips |
 | Challenger vs main | mean7 **0.9066 vs 0.8727**, mean15 **0.9104 vs 0.8752**, wins **15/15** composites — *dev proxy; **No official hidden labels*** |
 | Public comparison | #1 mean7; about #14 H2, #115 reviewer, estimated #20 blind among 672 valid outputs; no four-axis dominator |
 | Dev-proxy quality | NDCG@10 0.9104 · P@10 = 1.0 — *dev proxy* |
@@ -112,7 +114,7 @@ evaluator families while retaining the existing integrity gates.
 
 ## The decision — frontier-v5 on the experiment branch
 
-The branch submission is generated directly by `rank.py --scoring-profile frontier-v5`.
+The branch submission is generated directly by the fail-closed `rank.py --release` path.
 Seven shallow heads learn complementary label families, then a conservative RRF hedge reorders
 V2's membership. V4 applies a small feature-only correction to the top eight and replaces at most
 two lowest-ranked severe temporal contradictions with clean V2 backfills. The default `main`
@@ -154,7 +156,7 @@ fraud and never reorders candidates.
 
 ```bash
 PYTHONHASHSEED=0 python rank.py --candidates candidates.jsonl \
-  --out submission.csv --workers 2 --scoring-profile frontier-v5
+  --out submission.csv --workers 2 --release
 sha256sum submission.csv             # -> 8f7f30c68ec30cb6…
 ```
 CPU-only, offline, deterministic. Full 100K reproduced byte-identically on the host and in Docker;

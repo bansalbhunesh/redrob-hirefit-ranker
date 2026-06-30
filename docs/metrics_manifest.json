@@ -3,7 +3,7 @@
   "_provenance": "All ranking-quality metrics are DEVELOPMENT PROXIES (independent heuristic + LLM-judge labels on dev samples). No official hidden labels were available before submission. Runtime/memory numbers are measured; sources cited per key.",
   "submission": {
     "golden_sha256": "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062",
-    "_golden_note": "2026-06-29: frontier-v5 is the opt-in branch champion. It keeps V4's exact membership and applies two candidate-ID-free shortlist tie-breaks using behavior and responsiveness. It improves 6 and ties 54 of V4's 60 component cells with no losses. Host and constrained-Docker artifacts are byte-identical; two full 2-CPU/16-GB Docker passes remained under the 300 s budget. The default main profile and fixed-slice hash remain unchanged.",
+    "_golden_note": "2026-06-30: frontier-v5 remains the ranking champion after V6 cross-fit and leave-one-family-out experiments rejected every apparent universal gain. The fail-closed --release path verifies configuration, the model artifact, full-pool and integrity counts, and the exact output hash before atomic publication. The default main profile remains available when --release is omitted.",
     "rows": 100,
     "total_candidates": 100000,
     "honeypots_detected": 53,
@@ -29,6 +29,8 @@
     "frontier_v5_wall_s": 241.9,
     "frontier_v5_cold_pipeline_s": 209.4,
     "frontier_v5_cold_wall_s": 233.8,
+    "frontier_v6_release_pipeline_s": 109.9,
+    "frontier_v6_release_peak_mib": 4232.2,
     "showpiece_recorded_run_ms": 199000,
     "_showpiece_note": "apps/api/data/precomputed.json replays the exact frontier-v5 top-100 and the best internal pipeline time from two constrained 2-CPU/16-GB Docker runs. Both V5 runs remained under 300 s; the wide full-run spread is Docker Desktop host variance. A 5K same-image isolation check measured V5 at 9.1 s and V4 at 10.9 s."
   },
@@ -61,8 +63,8 @@
     "reranker_v2_blind_ndcg50": 0.8404,
     "_delta": "composite -0.0307, NDCG@10 -0.0695, NDCG@50 +0.0135 -- improved @50 but destroyed @10 (50% of the composite). Looked positive only on a curated 249-candidate LLM-judge sample (gpt-4.1-mini +0.027, deepseek +0.085, claude-3.5-haiku +0.019, gemini-3.1-flash-lite +0.049 composite); none generalized to the 100K blind set."
   },
-  "tests_collected": 225,
-  "tests_passing": 219,
+  "tests_collected": 242,
+  "tests_passing": 236,
   "tests_skipped": 6,
   "feature_count": 33,
   "_feature_count_note": "len(FEATURE_NAMES) in src/redrob_ranker/features.py; guarded by tests/test_metrics_manifest.py. Pipeline-description surfaces must quote 33; measurement docs (ablation, learned-weights) keep their historical 28-feature base.",

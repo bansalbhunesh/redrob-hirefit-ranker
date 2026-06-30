@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 
 CANDIDATE_ID_PATTERN = re.compile(r"^CAND_[0-9]{7}$")
@@ -33,21 +34,29 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
         if rank in ranks:
             errors.append(f"Duplicate rank: {rank}")
         ranks.add(rank)
-        if score < 0 or score > 1:
+        finite_score = math.isfinite(score)
+        if not finite_score:
+            errors.append(f"Score is not finite at rank {rank}: {score}")
+        elif score < 0 or score > 1:
             errors.append(f"Score out of range at rank {rank}: {score}")
-        if score > last_score:
+        if rank < 1 or rank > expected:
+            errors.append(f"Rank out of range: {rank}")
+        if finite_score and score > last_score:
             errors.append(f"Score increases at rank {rank}.")
         # Mirror the official validator's tie-break rule: when two consecutive rows
         # share the same score, candidate_id must be ascending. Two distinct raw
         # scores can round to the same 6-decimal submission score, so guard it here
         # to ensure we never ship a CSV the official validator would auto-reject.
-        if score == last_score and cid < last_cid:
+        if finite_score and score == last_score and cid < last_cid:
             errors.append(
                 f"Equal scores at rank {rank}: tie-break requires candidate_id "
                 f"ascending ({last_cid} > {cid})."
             )
-        last_score = score
+        if finite_score:
+            last_score = score
         last_cid = cid
+        if not str(row.get("reasoning", "")).strip():
+            errors.append(f"Missing reasoning at rank {rank}.")
     missing = set(range(1, expected + 1)) - ranks
     if missing:
         errors.append(f"Missing ranks: {sorted(missing)}")
