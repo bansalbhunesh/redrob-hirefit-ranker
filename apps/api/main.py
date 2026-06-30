@@ -36,8 +36,8 @@ _LOG = logging.getLogger("redrob.api")
 
 app = FastAPI(
     title="Redrob HireFit Ranker",
-    version="3.0.0",
-    description="Hybrid-mode real-time candidate ranking dashboard. Showpiece + Live Proof + Batch."
+    version="6.0.0",
+    description="V6 battle-proof candidate ranking dashboard. Showpiece + Live Proof + Batch."
 )
 
 def _env_int(name: str, default: int) -> int:
@@ -200,14 +200,6 @@ async def add_operational_headers(request: Request, call_next):
         request_id,
     )
     return response
-
-# Setup Paths
-BASE_DIR = Path(__file__).parent
-STATIC_DIR = BASE_DIR / "static"
-DATA_DIR = BASE_DIR / "data"
-JOB_DIR = DATA_DIR / "jobs"
-
-STATIC_DIR.mkdir(exist_ok=True)
 
 # Setup Paths
 BASE_DIR = Path(__file__).parent
@@ -505,7 +497,7 @@ async def rank_live(request: Request, file: UploadFile = File(...)):
                 {"name": "Load", "status": "complete", "count": result.loaded_count},
                 {"name": "Text", "status": "complete", "count": result.loaded_count},
                 {"name": "BM25", "status": "complete", "count": result.ranked_pool_count},
-                {"name": "28-D Features", "status": "complete", "count": result.ranked_pool_count},
+                {"name": "33 Features", "status": "complete", "count": result.ranked_pool_count},
                 {"name": "Honeypot", "status": "complete", "count": result.honeypots_detected},
                 {"name": "Behavioral", "status": "complete", "count": result.ranked_pool_count},
                 {"name": "Rank", "status": "complete", "count": len(candidates_json)},
@@ -734,7 +726,7 @@ def get_batch_results(job_id: str):
         {"name": "Load", "status": "complete", "count": job["total"]},
         {"name": "Text", "status": "complete", "count": job["total"]},
         {"name": "BM25", "status": "complete", "count": job.get("ranked_pool_count", job["total"])},
-        {"name": "28-D Features", "status": "complete", "count": job.get("ranked_pool_count", job["total"])},
+        {"name": "33 Features", "status": "complete", "count": job.get("ranked_pool_count", job["total"])},
         {"name": "Honeypot", "status": "complete", "count": job.get("honeypots", 0)},
         {"name": "Behavioral", "status": "complete", "count": job.get("ranked_pool_count", job["total"])},
         {"name": "Rank", "status": "complete", "count": len(candidates)},
@@ -791,7 +783,7 @@ def health_check():
     precomputed = _load_precomputed()
     return {
         "status": "ok",
-        "version": "3.0.0",
+        "version": "6.0.0",
         "git_sha": GIT_SHA,
         "uptime_seconds": round(time.time() - STARTED_AT, 3),
         "modes": ["showpiece", "live", "batch"],
@@ -828,7 +820,7 @@ def readiness_check():
     ready = precomputed is not None and _dashboard_present()
     body = {
         "status": "ready" if ready else "degraded",
-        "version": "3.0.0",
+        "version": "6.0.0",
         "git_sha": GIT_SHA,
         "checks": {
             "precomputed_loaded": precomputed is not None,

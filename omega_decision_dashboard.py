@@ -1,7 +1,7 @@
-"""Redrob Ranking Decision Lab — judge-facing dashboard for the Golden -> Fusion -> Ω -> Ψ -> Φ arc.
+"""Redrob V6 Decision Lab — judge-facing evidence and integrity dashboard.
 
 STRICTLY a downstream research/explanation layer. It does NOT import, rerun, or influence the
-production ranking path; golden af8f2b32 stays byte-identical. Reads only committed local
+production ranking path; V6 artifact 8f7f30c68ec30cb6 stays byte-identical. Reads only committed local
 artifacts (no network, no model downloads, no production execution).
 
 Run:  streamlit run omega_decision_dashboard.py
@@ -16,7 +16,7 @@ import streamlit as st
 from dashboard import charts, components as C, theme
 from dashboard.constants import (CONFIG, DISCLAIMER, EXPERIMENTAL_INTEGRITY_NOTE, GATES,
                                  GOLDEN_COMMIT, SHARED_FACTS, VERDICT, VERDICT_DISCLAIMER)
-from dashboard.data_loader import load_csv_safe, load_json_safe
+from dashboard.data_loader import load_json_safe
 from dashboard.integrity_cards import distribution, load_cards
 
 st.set_page_config(page_title="Omega Decision System", page_icon="🔬",
@@ -73,15 +73,16 @@ def cc_bar(df, value_col, xtitle):
 with st.sidebar:
     st.header("Redrob Ranking Decision Lab")
     st.caption("Downstream research & explanation layer — NOT the production ranker.")
-    st.markdown(f"**Shipped:** Golden `{GOLDEN_COMMIT}`")
-    st.markdown("**Active research:** `integration/final-research-program`")
+    st.markdown(f"**Shipped:** V6 battle-proof `{GOLDEN_COMMIT}`")
+    st.markdown("**Ranking core:** `frontier-v5`")
     st.markdown("**Dataset:** 100K candidates (frozen blind arbiter)")
     show_tech = st.toggle("Technical details", value=False)
     show_limits = st.toggle("Show research limitations", value=True)
     st.divider()
-    st.markdown("**Reproduce golden** (real path; there is no reproduce.sh):")
-    st.code("PYTHONHASHSEED=0 python -m pytest tests/test_submission_gate.py -q\n"
-            "sha256sum submission.csv  # -> af8f2b327f05d30e...", language="bash")
+    st.markdown("**Reproduce V6 release:**")
+    st.code("PYTHONHASHSEED=0 python rank.py --release --workers 2 "
+            "--candidates candidates.jsonl --out submission.csv\n"
+            "sha256sum submission.csv  # -> 8f7f30c68ec30cb6...", language="bash")
     st.divider()
     st.caption(DISCLAIMER)
 
@@ -102,7 +103,7 @@ st.markdown(theme.verdict_console(VERDICT, GOLDEN_COMMIT, tests_label, hash_ok=T
 n_cards = len(cards)
 anomalies = sum(1 for c in cards if c.get("evidence_status") == "PROBABLE_CONTRADICTION")
 st.markdown(theme.readout([
-    (f"{GOLDEN_COMMIT}", "Shipped golden"),
+    (f"{GOLDEN_COMMIT}", "V6 release"),
     (tests_label.split()[0], "Tests passing"),
     (str(SHARED_FACTS["honeypots_in_top100"]), "Integrity-flagged in top-100"),
     (str(anomalies if n_cards else SHARED_FACTS["anachronism_anomalies_top100"]),
@@ -112,7 +113,7 @@ st.markdown(theme.readout([
 st.info(VERDICT_DISCLAIMER)
 st.caption(
     "Nav:  1·Gates → 2·Regret frontier → 3·Integrity reconciliation → 4·Candidate audit → "
-    "5·Fusion autopsy → 6·Ψ panel → 7·Study Φ → 8·Timeline → 9·Why Golden"
+    "5·Fusion autopsy → 6·Ψ panel → 7·Study Φ → 8·Timeline → 9·Why V6"
 )
 
 # ----------------------------------------------------------------- 2. gates
@@ -249,28 +250,32 @@ TL = [("Golden baseline", "frozen reproducible production baseline", "FALLBACK")
       ("Study Φ", "severity-conditioned discourse", "AWAITING HUMAN DATA"),
       ("Integrity audit cards", "downstream explanation", "EXPLANATION LAYER"),
       ("Rank-space Condorcet (Copeland)", "beats golden 7/7 on blind arbiter (0.8779)", "RESEARCH ONLY"),
-      ("Ship Hedge (severity-gated Copeland)", "beats golden 7/7 (0.8748); 44<52 anachronism; golden = fallback", "SHIPPED")]
+      ("Ship Hedge (severity-gated Copeland)", "historical main artifact; superseded by V6", "SUPERSEDED"),
+      ("Dominant V4", "feature-only evidence correction; no component regression vs V3", "ADOPTED"),
+      ("Frontier V5", "#1 mean7; #1 strongest union; 30/30 composites over main", "RANKING CORE"),
+      ("Battle-proof V6", "hash-pinned, fail-closed, OOM-safe atomic release", "SHIPPED")]
 for stage, result, label in TL:
     st.markdown(f"- **{stage}** — {result}  ·  `{label}`")
 
-# ----------------------------------------------------------------- 10. why the hedge
-st.header("9 · Why the hedge ships (golden retained as fallback)")
+# ----------------------------------------------------------------- 10. why V6
+st.header("9 · Why V6 ships")
 st.dataframe({
-    "Property": ["Deterministic", "Beats golden on blind arbiter", "Anachronism exposure",
-                 "Modeled worst-case", "Independent human lockbox", "Shipped"],
-    "Hedge (severity-gated Copeland)": ["Yes", "7/7 label sets (0.8748 vs 0.8625)", "44/100 (fewer than golden)",
-                 "Better than golden AND raw Copeland", "Still missing", "Yes — 24f84f4b"],
-    "Golden (fallback)": ["Yes", "Baseline (0.8625)", "52/100", "Exposed (52 anachronism)",
-                 "Not needed to reproduce baseline", "Fallback tag — af8f2b32"],
-    "Raw Copeland": ["Yes", "7/7 (0.8779)", "65/100", "Most exposed", "Missing", "No"]},
+    "Property": ["Seven-evaluator mean", "Composites vs main", "2 CPU / 16 GiB release",
+                 "Failure safety", "Independent human lockbox", "Status"],
+    "V6 battle-proof": ["0.906553 · #1/673", "30 wins · 0 losses", "136.0 s pipeline",
+                 "Hash-pinned · atomic · OOM-safe", "External recruiter slices; own panel pending", "SHIP · 8f7f30c6"],
+    "Historical main hedge": ["0.872686 · #11/673", "Baseline", "Historical runtime",
+                 "No V6 release envelope", "External recruiter slices", "SUPERSEDED"],
+    "Raw Copeland research": ["Narrow proxy gain", "Not universal", "Not release-qualified",
+                 "Anachronism exposure", "Missing", "REJECTED"]},
     width="stretch", hide_index=True)
-st.success("The hedge ships because it dominates golden on every measured label set while reducing "
-           "anachronism exposure (44 vs 52). Its residual risk — tenure date-checking by hidden judges "
-           "— is hedged by retaining golden byte-reproducible as the one-command fallback. Production "
-           "rank.py is unchanged and still reproduces golden af8f2b32 byte-for-byte.")
+st.success("V6 ships because it has the strongest broad public-field portfolio we can reproduce, "
+           "beats main on all 30 tested composites, and adds an exact-output release gate that "
+           "fails closed before a bad or partial shortlist can replace the last good artifact.")
 st.markdown("**Docs:** `docs/SHIPPING_DECISION.md` · `docs/OMEGA_DECISION_SUMMARY.md` · "
             "`docs/PSI_INTEGRITY_PANEL.md` · `docs/human_opinion/HUMAN_OPINION_LANDSCAPE.md` · "
             "`docs/REPRODUCTION.md`")
 if show_tech and reg:
-    st.divider(); st.subheader("Experiment registry (machine-readable spine)")
+    st.divider()
+    st.subheader("Experiment registry (machine-readable spine)")
     st.json(reg.data)

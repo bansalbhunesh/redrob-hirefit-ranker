@@ -1,0 +1,44 @@
+{
+  "date": "2026-06-29",
+  "profile": "frontier-v5",
+  "artifact_sha256": "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062",
+  "base_v4_sha256": "79aebff697cbccf0b03137998d0b6faf2da61caebaa0ae34f0e5fc876650127e",
+  "composites": {
+    "h2": 0.8842060504596995,
+    "independent": 0.8883803238439944,
+    "judge1": 0.9321106451550418,
+    "judge2": 0.9665939586274895,
+    "judge3": 0.9420954015416072,
+    "expand": 0.8145685083021378,
+    "silver20k": 0.9179147415979431,
+    "reviewer": 0.8097679805624599,
+    "blind": 0.9058584417900566,
+    "merged_j1": 0.9061204275908092,
+    "merged_j2": 0.9735306183107847,
+    "merged_j3": 0.9425453258917802,
+    "relabel_j4": 0.9636414333125218,
+    "relabel_g25": 0.8393470437656839,
+    "blind_test_frozen": 0.969411928295076
+  },
+  "means": {
+    "first_seven": 0.9065528042182904,
+    "all_fifteen": 0.910406188603147,
+    "four_axis": 0.8765963192576266
+  },
+  "v5_vs_v4_components": {"wins": 6, "ties": 54, "losses": 0},
+  "changed_positions": 12,
+  "public_positions_estimated": {
+    "h2": 14,
+    "mean7": 1,
+    "reviewer": 115,
+    "blind": 20,
+    "four_axis": 3
+  },
+  "docker_2cpu_16gb": {
+    "pipeline_seconds": [209.4, 199.0],
+    "wall_seconds": [233.8, 241.9],
+    "oom": false,
+    "byte_identical_to_host": true
+  },
+  "claim_boundary": "Development-proxy dominance over measured baselines; no official hidden-score guarantee."
+}

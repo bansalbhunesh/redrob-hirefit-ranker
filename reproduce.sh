@@ -4,16 +4,12 @@ set -euo pipefail
 export PYTHONHASHSEED=0 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 echo "[1/2] golden production gate + validator"
 python -m pytest tests/test_submission_gate.py -q
-# NOTE: the production pipeline (rank.py) still reproduces the golden baseline af8f2b32
-# byte-for-byte (verified by the slice gate above); the SHIPPED submission on main is the
-# full-proof HEDGE (severity-gated Copeland, sev<=1.2), regenerated deterministically by
-# experiments/build_hedge_submission.py. Golden af8f2b32 is retained as the fallback tag
-# fallback/golden-af8f2b32 (one command away if tenure date-checking is judged to dominate).
-echo "[2/2] shipped submission hash (expect 24f84f4b6160a4bcb164369c7f6ab27a060953ec7cfc0d33ed4849eab1194aea)"
+echo "[2/2] champion submission hash (expect 8f7f30c68ec30cb6...)"
 python - <<'PY'
 import hashlib, sys
 h=hashlib.sha256(open("submission.csv","rb").read()).hexdigest()
-exp="24f84f4b6160a4bcb164369c7f6ab27a060953ec7cfc0d33ed4849eab1194aea"
+exp="8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062"
 print("sha256:", h); sys.exit(0 if h==exp else 1)
 PY
-echo "OK: shipped HEDGE submission byte-reproducible (production pipeline still reproduces golden)."
+echo "OK: frontier-v5 champion artifact is locked."
+echo "Full regeneration: PYTHONHASHSEED=0 python rank.py --release --candidates candidates.jsonl --out submission.csv --workers 2"

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 
 CANDIDATE_ID_PATTERN = re.compile(r"^CAND_[0-9]{7}$")
@@ -15,14 +16,17 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
     ranks = set()
     last_score = float("inf")
     last_cid = ""
-    for row in rows:
+    for position, row in enumerate(rows, start=1):
         cid = str(row.get("candidate_id", ""))
         try:
             rank = int(row.get("rank", 0))
         except (TypeError, ValueError):
             rank = 0
+        score_present = "score" in row and row.get("score") is not None
+        if not score_present:
+            errors.append(f"Missing score at row position {position}.")
         try:
-            score = float(row.get("score", 0))
+            score = float(row.get("score") if score_present else -1.0)
         except (TypeError, ValueError):
             score = -1.0
         if not CANDIDATE_ID_PATTERN.match(cid):
@@ -33,21 +37,34 @@ def validate_rows(rows: list[dict], expected: int = 100) -> list[str]:
         if rank in ranks:
             errors.append(f"Duplicate rank: {rank}")
         ranks.add(rank)
-        if score < 0 or score > 1:
+        finite_score = math.isfinite(score)
+        if not finite_score:
+            errors.append(f"Score is not finite at rank {rank}: {score}")
+        elif score < 0 or score > 1:
             errors.append(f"Score out of range at rank {rank}: {score}")
-        if score > last_score:
+        if rank < 1 or rank > expected:
+            errors.append(f"Rank out of range: {rank}")
+        if rank != position:
+            errors.append(
+                f"Rank {rank} does not match row position {position}."
+            )
+        if finite_score and score > last_score:
             errors.append(f"Score increases at rank {rank}.")
         # Mirror the official validator's tie-break rule: when two consecutive rows
         # share the same score, candidate_id must be ascending. Two distinct raw
         # scores can round to the same 6-decimal submission score, so guard it here
         # to ensure we never ship a CSV the official validator would auto-reject.
-        if score == last_score and cid < last_cid:
+        if finite_score and score == last_score and cid < last_cid:
             errors.append(
                 f"Equal scores at rank {rank}: tie-break requires candidate_id "
                 f"ascending ({last_cid} > {cid})."
             )
-        last_score = score
+        if finite_score:
+            last_score = score
         last_cid = cid
+        reasoning = row.get("reasoning")
+        if not isinstance(reasoning, str) or not reasoning.strip():
+            errors.append(f"Missing reasoning at rank {rank}.")
     missing = set(range(1, expected + 1)) - ranks
     if missing:
         errors.append(f"Missing ranks: {sorted(missing)}")

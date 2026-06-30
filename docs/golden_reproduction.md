@@ -2,9 +2,15 @@
 
 ## Current golden artifact
 
-- `submission.csv` SHA-256: `fdfd3f3590720e1260822b6729b2851dc8daca9f3f859cefc3df184bbbd4c5db`
-  (2026-06-14: regenerated in the pinned, thread-locked Docker image so the hash
-  is byte-identical across CPU counts — see `docs/reproducibility_notes.md`).
+- `submission.csv` SHA-256: `8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062`
+  (2026-06-30: `frontier-v5` ranking with V6 exact-output hardening and a fail-closed
+  `rank.py --release` gate; byte-identical in the pinned Docker image).
+  The release path verifies `models/loss_aggregate_v3.npz`, forces BM25s and the
+  champion profile, rejects partial/experimental configuration, verifies all
+  counts and integrity outcomes, checks this hash, and only then atomically
+  replaces the requested output. Earlier lineage below is retained as history.
+  The base image is digest-pinned and all production wheels are installed with
+  exact SHA-256 hashes through `pip --require-hashes`.
   Lineage: `e1a696d1` → `ecb1fc5b` (Phase-4 reasoning) → `a2882cd2` (consensus
   ordering pass, since removed) → `6b284271` (HyRE/MMoE wiring) → `fdfd3f35`
   (reproducibility fix).

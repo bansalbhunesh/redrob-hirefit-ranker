@@ -1,0 +1,56 @@
+{
+  "date": "2026-06-29",
+  "profile": "dominant-v4",
+  "artifact_sha256": "79aebff697cbccf0b03137998d0b6faf2da61caebaa0ae34f0e5fc876650127e",
+  "baselines": {
+    "main_sha256": "24f84f4b6160a4bcb164369c7f6ab27a060953ec7cfc0d33ed4849eab1194aea",
+    "loss_aggregate_v3_sha256": "c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c"
+  },
+  "composites": {
+    "h2": {"main": 0.8748341118, "v3": 0.8819923759, "v4": 0.8842060505},
+    "independent": {"main": 0.8810606098, "v3": 0.8859059486, "v4": 0.8882461499},
+    "judge1": {"main": 0.9227218320, "v3": 0.9321106452, "v4": 0.9321106452},
+    "judge2": {"main": 0.9632766673, "v3": 0.9665939586, "v4": 0.9665939586},
+    "judge3": {"main": 0.9276075746, "v3": 0.9420954015, "v4": 0.9420954015},
+    "expand": {"main": 0.6648081007, "v3": 0.8145685083, "v4": 0.8145685083},
+    "silver20k": {"main": 0.8744901177, "v3": 0.9179147416, "v4": 0.9179147416},
+    "reviewer": {"main": 0.7106267047, "v3": 0.8096032885, "v4": 0.8096032885},
+    "blind": {"main": 0.8718248844, "v3": 0.8969148254, "v4": 0.8969148254},
+    "merged_j1": {"main": 0.8915335806, "v3": 0.9061200721, "v4": 0.9061204276},
+    "merged_j2": {"main": 0.9591166454, "v3": 0.9735306183, "v4": 0.9735306183},
+    "merged_j3": {"main": 0.9190470679, "v3": 0.9425438723, "v4": 0.9425453259},
+    "relabel_j4": {"main": 0.9481089428, "v3": 0.9636414333, "v4": 0.9636414333},
+    "relabel_g25": {"main": 0.7870729328, "v3": 0.8393466647, "v4": 0.8393470438},
+    "blind_test_frozen": {"main": 0.9324415167, "v3": 0.9691782235, "v4": 0.9694119283}
+  },
+  "means": {
+    "first_seven": {"main": 0.8726855734, "v3": 0.9058830828, "v4": 0.9065336365},
+    "all_fifteen": {"main": 0.8752380860, "v3": 0.9094707052, "v4": 0.9097900231}
+  },
+  "v4_vs_v3_components": {"wins": 9, "ties": 51, "losses": 0},
+  "v4_vs_main_components": {"wins": 35, "ties": 23, "losses": 2},
+  "v4_vs_main_composites": {"wins": 15, "ties": 0, "losses": 0},
+  "parameter_stress": {
+    "configurations": 11340,
+    "distinct_orders": 234,
+    "exact_order_configurations": 296,
+    "all_60_components_nonloss_configurations": 2539,
+    "all_composites_nonloss_and_both_weak_ndcg10_gain_configurations": 492
+  },
+  "integrity": {
+    "main_temporal_contradictions": 44,
+    "v3_temporal_contradictions": 59,
+    "v4_temporal_contradictions": 57,
+    "v4_standard_flags_or_disqualifications": 6,
+    "v4_honeypots_emitted": 0
+  },
+  "docker_2cpu_16gb": {
+    "v4_pipeline_seconds": 75.4,
+    "v4_wall_seconds": 79.5,
+    "v3_control_pipeline_seconds": 91.3,
+    "v3_control_wall_seconds": 95.7,
+    "input": "100000 candidates on a Docker-native volume",
+    "image": "same image for V4 and V3 control"
+  },
+  "claim_boundary": "Development-proxy dominance over measured baselines; no official hidden-score guarantee."
+}

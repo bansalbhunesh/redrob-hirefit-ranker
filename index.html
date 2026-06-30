@@ -340,7 +340,7 @@
   <script>
     const PIPELINE_STAGES = [
       {name:'Load',icon:'📥'},{name:'Text',icon:'📝'},{name:'BM25',icon:'🔍'},
-      {name:'28-D Features',icon:'🧮'},{name:'Honeypot',icon:'🍯'},{name:'Behavioral',icon:'📊'},
+      {name:'33 Features',icon:'🧮'},{name:'Integrity',icon:'🛡️'},{name:'Behavioral',icon:'📊'},
       {name:'Rank',icon:'🏆'},{name:'Reasoning',icon:'💡'}
     ];
     let state = {filter:'all',searchQuery:'',selectedId:null};
@@ -19648,7 +19648,7 @@
         <div class="detail-header"><div class="avatar">${(c.profile?.name||'U').charAt(0)}</div><div class="info"><h3>${c.profile?.title||'Unknown'} @ ${c.profile?.company||'Unknown'}</h3><p>${c.candidate_id} • ${c.profile?.location||'Unknown'} • ${c.profile?.yoe?.toFixed(1)||0} YOE</p></div></div>
         <div class="score-bar-container"><div class="score-bar-label"><span>Match Score</span><span>${c.score?.toFixed(4)||'0.0000'}</span></div><div class="score-bar-track"><div class="score-bar-fill ${scoreClass}" style="width:${scorePct}%"></div></div></div>
         <div class="section-title">💡 Reasoning Audit</div><div class="reasoning-box">${c.reasoning||'No reasoning available'}</div>
-        <div class="section-title">🧮 28-D Feature Breakdown</div><div class="feature-grid">${featureItems||'<div style="color:var(--text-muted);font-size:13px;">No feature data</div>'}</div>
+        <div class="section-title">🧮 33-Feature Breakdown</div><div class="feature-grid">${featureItems||'<div style="color:var(--text-muted);font-size:13px;">No feature data</div>'}</div>
         <div class="section-title">📊 Behavioral Signals</div><div class="behavioral-grid">${behavioralItems}</div>
         <div class="section-title">📈 Career Timeline</div><div class="timeline">${timeline||'<div style="color:var(--text-muted);font-size:13px;">No timeline data</div>'}</div>
         <div class="section-title">🎓 Education</div>${education||'<div style="color:var(--text-muted);font-size:13px;">No education data</div>'}

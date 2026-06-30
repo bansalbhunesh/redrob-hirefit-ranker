@@ -1,74 +1,18 @@
-# Deck Outline
+# Final V6 deck outline
 
-## 1. Problem
+1. **HireFit V6** — ranks careers, not keywords; 100K, 136 s, #1 broad, 0 traps emitted.
+2. **Problem** — keyword filters reward buzzwords and miss evidence.
+3. **Insight** — translate the JD into shipped-work, trajectory, seniority and availability evidence.
+4. **Scientific discipline** — 30/30 composites over main; 883 fusions; corruption/config attacks rejected.
+5. **System** — deterministic six-stage V6 ranking and release flow.
+6. **Candidate understanding** — 33 named features plus multiplicative guardrails.
+7. **Real shortlist** — exact V6 top six and grounded evidence for #1.
+8. **Integrity** — 53 detected, 0 emitted; bounded human verification.
+9. **Public-field validation** — #1 / 673 mean7; #1 / 100 mean15; #3 / 322 balanced4.
+10. **Tradeoffs** — specialist slices, hidden-label uncertainty and measured rejected alternatives.
+11. **Reproduction** — one release command; 136.0 s / 149.1 s; 4.13 GiB.
+12. **Redrob fit** — contextual ranking, activity signals, audit payload, offline economics.
+13. **Battle-proof release** — exact hashes, deterministic environment, OOM-safe atomic publish.
+14. **Takeaway** — strongest all-around measured system; mission-derived 93.7/100, honest #1–#3 range.
 
-Keyword filters miss real fit and over-rank candidates who list AI buzzwords without production evidence.
-
-## 2. JD Interpretation
-
-The ideal candidate has production retrieval/ranking/search experience, product-company exposure, Python/evaluation skill, 5-9ish years, India/logistics fit, and strong Redrob availability signals.
-
-## 3. Architecture
-
-Candidate JSONL -> BM25 lexical score -> 33 deterministic features -> behavioral/honeypot/disqualifier multipliers -> top-100 CSV with grounded reasoning.
-
-Dashboard payloads expose the same feature values, flags, and multipliers used by the ranker, not guesses derived from explanation text.
-
-## 4. Feature Matrix
-
-Skills, career, experience, behavior, and logistics are scored separately so the system can tell keyword lists apart from recruiter-plausible fit.
-
-## 5. Multipliers
-
-Behavior is multiplicative because a perfect paper profile with poor response/activity is not hireable. Honeypot and disqualifier multipliers keep impossible profiles away from top ranks.
-
-## 5b. The JD compiles into a deterministic scoring program
-
-`rank.py --jd file.txt` parses any plaintext JD into a frozen `CompiledJD`
-(skill groups, weights, title family, locations, experience band) executed by
-the same scoring engine. Compiling the bundled challenge JD reproduces the
-hand-tuned configuration byte-for-byte (locked by tests); a bundled
-Senior-Backend-Engineer demo JD compiles to a visibly different program —
-generality, not a one-JD hack.
-
-## 5c. Why each layer earns its place (ablation ladder)
-
-Measured on the 20K dev slice (independent labels, challenge composite):
-naive keyword counting 0.6128 -> BM25 0.7158 (+0.103) -> +28-feature matrix
-0.7671 (+0.051) -> +multiplicative guardrails 0.7831 (+0.016, and 0 honeypots
-in top-100). Dense embeddings: tested, rejected (+0.0000 NDCG@10, ~2.2x
-runtime). Every layer pays measured rent; the one that didn't was cut.
-
-## 5d. Hand-tuned weights beat a trained model (appendix)
-
-Cross-validated logistic regression on the exact same 28-feature+BM25 inputs,
-trained on the independent labels, loses to the hand weights even on those
-labels (composite 0.8238 vs 0.8811; top-100 overlap and coefficients in
-docs/learned_weights_appendix.md). Explainable hand weights ship.
-
-## 5e. The shipped decision, validated (golden head + Copeland tail, hedged)
-
-We ship a **hedge** (`24f84f4b`), not raw golden: golden's exact top-30, then ranks 31-100 re-drawn
-by Copeland (Condorcet) rank-fusion, excluding anachronism candidates with severity > 1.2. The head
-is golden, so NDCG@10 is unchanged — every gain is a better-ordered tail. We validated the upgrade,
-not just asserted it (docs/golden_vs_hedge_two_studies.md): beats golden on 7/7 label sets,
-generalizes out-of-sample on held-out halves (16/20), and is confirmed by two independent judges from
-different labs the hedge was never tuned against — gpt-4.1 (+0.0197) and the integrity-strict
-gemini-2.5-pro (+0.0160), both rating the promoted candidates above the dropped ones, with no added
-integrity exposure (32 = 32 flags vs golden). Bounded downside: identical to golden where it matters
-most, fewer anachronism candidates than golden (44 vs 52), and golden retained as a one-command
-fallback.
-
-## 6. Reproducibility
-
-One command, CPU-only, no network:
-
-```bash
-python rank.py --candidates ./candidates.jsonl --out ./submission.csv
-```
-
-Measured full run (python:3.11 Docker, the Stage-3 environment), current code: 100,000 candidates in 124.7 s worst-case serial on 2 CPUs (80-82 s on a clean 2-vCPU cloud runner; ~58-73% headroom under the 300 s limit), peak container memory ~6.1 GB vs the 16 GB budget; every run byte-identical to the committed submission. 53 honeypots detected, 0 in the top 100. Full matrix: docs/runtime_matrix.md.
-
-## 7. Example Output
-
-Show top candidates with exact title, YOE, relevant skills, production evidence, location, response rate, and notice period.
+All quality values are development/public proxies, not official hidden results.

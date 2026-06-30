@@ -32,9 +32,9 @@ def test_dashboard_has_no_stale_hardcoded_test_count():
 
 
 def test_verdict_is_consistent_everywhere():
-    v = MANIFEST_VERDICT = "NO_RANKING_DOMINATES"
+    v = "SHIP_V6_BATTLE_PROOF"
     assert f'VERDICT = "{v}"' in CONST
-    assert v in DASH
+    assert "theme.verdict_console(VERDICT" in DASH
 
 
 def test_dashboard_carries_required_disclaimers():

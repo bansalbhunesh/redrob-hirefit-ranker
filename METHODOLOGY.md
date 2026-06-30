@@ -41,7 +41,7 @@ profile is pushed down regardless of how strong its keywords look.
 
 | Choice | Why |
 |---|---|
-| **Feature matrix + BM25, not an LLM scoring each candidate** | An LLM-per-candidate can't scale to 100K under a real latency/cost budget (the JD makes this point itself), isn't reproducible, and needs network. We rank the whole pool on CPU in about 3 minutes worst-case in the eval Docker image. |
+| **Feature matrix + BM25, not an LLM scoring each candidate** | An LLM-per-candidate cannot scale to 100K under the challenge latency/cost budget, is not reproducible, and needs network. V6 ranks the full pool in **136.0 s pipeline / 149.1 s wall** in the final 2-vCPU, 16 GiB Docker release run. |
 | **No dense embeddings — *tested and rejected*** | We built a model2vec/potion dense-retrieval branch and gated it on a measured A/B: **NDCG@10 +0.0000, ~2.2× runtime → FAIL**. We shipped the simpler, faster system; the negative result is documented (`artifacts/embedding_gate_result.txt`). |
 | **Career-evidence over keywords** | Production/IR-ranking signals mined from career *history* (weights 0.13 + 0.12) outweigh skill-list matches — this is how Tier-5 candidates without the buzzwords still surface. |
 | **Multiplicative behavioral & honeypot guardrails** | A high fit score cannot rescue an impossible profile or an unavailable candidate. This encodes the JD's explicit "down-weight the unavailable" instruction. |
@@ -53,9 +53,9 @@ profile is pushed down regardless of how strong its keywords look.
   profile** (title, years, named skills, signal values) — no hallucinated skills.
 - **Every score decomposes** into named features and the three multipliers; nothing is
   a black box.
-- The **interactive dashboard** ([Render](https://redrob-hirefit-ranker.onrender.com))
-  shows the pipeline stages, honeypot blocking, and a per-candidate feature + reasoning
-  audit live.
+- The **interactive sandbox** ([Hugging Face](https://huggingface.co/spaces/bansal1234/Hirefit))
+  shows the pipeline stages, integrity screening, and a per-candidate feature + reasoning
+  audit live. The FastAPI mirror is reproducible from the root `render.yaml` Blueprint.
 
 ## 5. How we validated ranking quality (without the hidden labels)
 
@@ -68,6 +68,11 @@ profile is pushed down regardless of how strong its keywords look.
    (`docs/LLM_JUDGE_EVAL.md`). It also confirmed our behavioral guardrails are *more*
    recruiter-aware than the judge — we correctly down-weighted high-skill candidates
    with 12% response rate that the judge over-rated.
+3. **Public-field stress test** — 1,367 repositories discovered, 1,279 eligible,
+   and 672 valid public outputs. V6 ranks **#1/673** on the seven-evaluator mean,
+   **#1/100** on the strongest-union mean, and **#3/322** on equal four-axis
+   balance; it beats main on all 30 tested composites. These are transparent
+   local comparisons, not an official leaderboard.
 
 ## 5b. Four measured negative results
 

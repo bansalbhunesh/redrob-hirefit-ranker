@@ -1,0 +1,47 @@
+{
+  "date": "2026-06-29",
+  "profile": "loss-aggregate-v3",
+  "sha256": "c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c",
+  "membership": "exactly universal-v2's 100 candidates",
+  "model": {
+    "heads": 7,
+    "trees_per_head": 30,
+    "max_depth": 6,
+    "artifact_bytes": 129614,
+    "runtime_dependency": "numpy only"
+  },
+  "oof_four": {
+    "h2": 0.880473,
+    "mean7": 0.906974,
+    "reviewer": 0.810971,
+    "blind": 0.900422
+  },
+  "metrics": {
+    "h2": 0.8819923759,
+    "independent": 0.8859059486,
+    "judge1": 0.9321106452,
+    "judge2": 0.9665939586,
+    "judge3": 0.9420954015,
+    "expand": 0.814569,
+    "silver20k": 0.917915,
+    "reviewer": 0.809603,
+    "blind": 0.896915,
+    "merged_j1": 0.906120,
+    "merged_j2": 0.973531,
+    "merged_j3": 0.942544,
+    "relabel_j4": 0.963641,
+    "relabel_g25": 0.839347,
+    "blind_test_frozen": 0.969178,
+    "mean7": 0.9058830828,
+    "mean15": 0.9094707052
+  },
+  "runtime": {
+    "host_seconds_best": 77.4,
+    "host_seconds_latest": 79.8,
+    "docker_2cpu_16gb_seconds_best": 152.8,
+    "docker_2cpu_16gb_seconds_loaded": 226.9,
+    "honeypots_detected": 53,
+    "honeypots_in_output": 0
+  },
+  "claim_boundary": "Strongest balanced measured artifact; public single-axis specialist maxima remain higher."
+}

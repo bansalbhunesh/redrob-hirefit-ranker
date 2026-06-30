@@ -56,12 +56,16 @@ RSS profiling, use `scripts/measure_runtime_memory.py`.
 The official path scores every loaded candidate:
 
 ```bash
-python rank.py --candidates ./candidates.jsonl --out ./submission.csv
+PYTHONHASHSEED=0 python rank.py --release --candidates ./candidates.jsonl --out ./submission.csv --workers 2
 ```
 
 `--candidate-pool N` exists for demos/profiling only. The submission path should leave it at `0`.
 
-In the python:3.11 Docker image the preferred `bm25s` backend generates the validated top-100 `submission.csv` in 124.7 s worst-case serial on 2 CPUs on the current code (80-82 s on a clean 2-vCPU cloud runner; ~93-104 s serial on a 12-core dev machine; conservative reported figure 187 s). The run scores all 100,000 candidates, detects 53 honeypots, and emits 0 in the top 100; peak container memory ~6.1 GB (docs/runtime_matrix.md).
+In the pinned python:3.11 Docker image, the final battle-proof release generates
+the validated top-100 in **136.0 s pipeline / 149.1 s wall** at 2 CPU / 16 GiB.
+It scores all 100,000 candidates, detects 53 honeypots, emits 0, reproduces the
+exact champion hash and leaves zero output-directory temps; sampled peak memory
+is 4.13 GiB (`docs/runtime_matrix.md`).
 
 Feature scoring is parallelized across CPU worker processes by default, capped at 8 workers for memory safety. `--workers 1` remains the serial escape hatch and produces byte-identical output.
 
@@ -73,7 +77,7 @@ The FastAPI/dashboard payload is generated from `CandidateFeatures` directly, ex
 
 ```bash
 python -m pytest -q
-python rank.py --candidates ./candidates.jsonl --out ./submission.csv
+PYTHONHASHSEED=0 python rank.py --release --candidates ./candidates.jsonl --out ./submission.csv --workers 2
 python scripts/validate_submission.py ./submission.csv
 # Also run the official challenge validator from the downloaded bundle when available.
 ```

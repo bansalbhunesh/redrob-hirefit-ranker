@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import multiprocessing
 import os
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
@@ -22,6 +23,17 @@ from redrob_ranker._cgroup import cgroup_cpu_quota_count as _cgroup_cpu_quota_co
 # stay serial. This also keeps the demo API/Gradio paths (small uploads) single-process.
 _PARALLEL_MIN_POOL = 4000
 _PARALLEL_WORKER_CAP = 8
+CHAMPION_SCORING_PROFILE = "frontier-v5"
+SCORING_PROFILES = frozenset(
+    {
+        "main",
+        "top23-clean",
+        "universal-v2",
+        "loss-aggregate-v3",
+        "dominant-v4",
+        CHAMPION_SCORING_PROFILE,
+    }
+)
 
 
 def _submission_score(raw_score: float, max_score: float) -> float:
@@ -33,11 +45,16 @@ def _submission_score(raw_score: float, max_score: float) -> float:
 # Per-worker compiled JD (None = bundled challenge JD). Set once per worker
 # process via the pool initializer so it is pickled once, not per candidate.
 _WORKER_JD = None
+_WORKER_SCORING_PROFILE = "main"
+_WORKER_CANDIDATES: list[dict] | None = None
+_WORKER_RETRIEVAL_SCORES: dict[int, float] | None = None
+_WORKER_SEMANTIC_SCORES: dict[int, float] | None = None
 
 
-def _init_worker(jd) -> None:
-    global _WORKER_JD
+def _init_worker(jd, scoring_profile: str = "main") -> None:
+    global _WORKER_JD, _WORKER_SCORING_PROFILE
     _WORKER_JD = jd
+    _WORKER_SCORING_PROFILE = scoring_profile
 
 
 def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
@@ -48,9 +65,54 @@ def _score_one(args: tuple[dict, float, float | None]) -> tuple[object, float]:
     """
     candidate, retrieval_score, semantic_score = args
     features = compute_features(candidate, config=_WORKER_JD)
-    score = final_score(features, retrieval_score, semantic_score, config=_WORKER_JD)
+    if _WORKER_SCORING_PROFILE in {
+        "top23-clean",
+        "universal-v2",
+        "loss-aggregate-v3",
+        "dominant-v4",
+        "frontier-v5",
+    }:
+        if _WORKER_JD is not None:
+            raise ValueError(
+                f"{_WORKER_SCORING_PROFILE} currently supports only the bundled challenge JD"
+            )
+        from redrob_ranker.challenger import (
+            top23_clean_score,
+            universal_v2_and_main_score,
+            universal_v2_score,
+        )
+
+        profile_score = top23_clean_score if _WORKER_SCORING_PROFILE == "top23-clean" else universal_v2_score
+        if _WORKER_SCORING_PROFILE in {
+            "loss-aggregate-v3",
+            "dominant-v4",
+            "frontier-v5",
+        }:
+            score, features.values["_main_score"] = universal_v2_and_main_score(
+                features, retrieval_score, semantic_score
+            )
+        else:
+            score = profile_score(features, retrieval_score, semantic_score)
+    else:
+        score = final_score(features, retrieval_score, semantic_score, config=_WORKER_JD)
     features.total = score
     return features, score
+
+
+def _score_index(index: int) -> tuple[object, float]:
+    """Fork-worker adapter that keeps large candidate dictionaries off IPC."""
+
+    if _WORKER_CANDIDATES is None or _WORKER_RETRIEVAL_SCORES is None:
+        raise RuntimeError("feature worker corpus was not initialized")
+    return _score_one(
+        (
+            _WORKER_CANDIDATES[index],
+            _WORKER_RETRIEVAL_SCORES.get(index, 0.0),
+            _WORKER_SEMANTIC_SCORES.get(index)
+            if _WORKER_SEMANTIC_SCORES is not None
+            else None,
+        )
+    )
 
 
 @dataclass(slots=True)
@@ -64,9 +126,9 @@ class RankerConfig:
     # EXPERIMENTAL (default OFF): blend a model2vec/potion dense-retrieval feature.
     use_embeddings: bool = False
     embed_model: str = "minishlab/potion-retrieval-32M"
+    # Opt-in experimental scorer. "main" preserves the shipped byte output.
+    scoring_profile: str = "main"
     # Optional compiled JD (rank.py --jd). None = bundled challenge JD; the
-    # None path is byte-identical to the historical pipeline.
-    jd: object | None = None
     # None path is byte-identical to the historical pipeline.
     jd: object | None = None
 
@@ -80,6 +142,44 @@ class RankingResult:
     honeypots_detected: int
     honeypots_in_output: int
     raw_ranked: list[tuple[dict, object, float]] | None = None
+
+
+def _validate_config(config: RankerConfig) -> None:
+    """Reject invalid programmatic configuration instead of silently degrading."""
+
+    def require_int(name: str, value: object, *, minimum: int) -> None:
+        # bool is an int subclass, but accepting True as one worker/top row is a
+        # dangerous programmatic typo, so require the exact built-in int type.
+        if type(value) is not int:
+            raise TypeError(f"{name} must be an integer")
+        if value < minimum:
+            comparator = "at least" if minimum else "non-negative"
+            raise ValueError(f"{name} must be {comparator} {minimum}")
+
+    if not isinstance(config.scoring_profile, str):
+        raise TypeError("scoring_profile must be a string")
+    if config.scoring_profile not in SCORING_PROFILES:
+        raise ValueError(
+            f"Unknown scoring profile {config.scoring_profile!r}; "
+            f"choose one of {sorted(SCORING_PROFILES)}"
+        )
+    if not isinstance(config.bm25_backend, str):
+        raise TypeError("bm25_backend must be a string")
+    if config.bm25_backend not in {"auto", "bm25s", "rank_bm25"}:
+        raise ValueError(f"Unknown BM25 backend: {config.bm25_backend!r}")
+    require_int("top_k", config.top_k, minimum=1)
+    require_int("candidate_pool_size", config.candidate_pool_size, minimum=0)
+    require_int("workers", config.workers, minimum=0)
+    if config.max_candidates is not None:
+        require_int("max_candidates", config.max_candidates, minimum=1)
+    if type(config.use_embeddings) is not bool:
+        raise TypeError("use_embeddings must be a boolean")
+    if not isinstance(config.embed_model, str) or not config.embed_model.strip():
+        raise ValueError("embed_model must be a non-empty string")
+    if config.jd is not None and config.scoring_profile != "main":
+        raise ValueError(
+            f"{config.scoring_profile} supports only the bundled challenge JD"
+        )
 
 
 def _resolve_workers(requested: int, pool_count: int) -> int:
@@ -103,6 +203,7 @@ def _resolve_chunksize(work_count: int, workers: int) -> int:
 
 
 def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[tuple[dict, object, float]], str]:
+    _validate_config(config)
     if config.jd is not None:
         retrieval_scores, used_backend = retrieve_pool(
             candidates, config.candidate_pool_size, backend=config.bm25_backend,
@@ -127,31 +228,69 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
         local = _sem(texts, JD_QUERY, StaticModelEmbedder(config.embed_model))
         semantic_scores = {idx: local[pos] for pos, idx in enumerate(indices)}
 
-    work = [
-        (
-            candidates[idx],
-            retrieval_scores.get(idx, 0.0),
-            semantic_scores.get(idx) if config.use_embeddings else None,
-        )
-        for idx in indices
-    ]
-
-    workers = _resolve_workers(config.workers, len(work))
+    workers = _resolve_workers(config.workers, len(indices))
     ranked: list[tuple[dict, object, float]] = []
     if workers == 1:
-        global _WORKER_JD
+        global _WORKER_JD, _WORKER_SCORING_PROFILE
         prev_jd = _WORKER_JD
+        prev_profile = _WORKER_SCORING_PROFILE
         _WORKER_JD = config.jd
+        _WORKER_SCORING_PROFILE = config.scoring_profile
         try:
-            for item in work:
-                features, score = _score_one(item)
-                ranked.append((item[0], features, score))
+            for idx in indices:
+                features, score = _score_one(
+                    (
+                        candidates[idx],
+                        retrieval_scores.get(idx, 0.0),
+                        semantic_scores.get(idx) if config.use_embeddings else None,
+                    )
+                )
+                ranked.append((candidates[idx], features, score))
         finally:
             _WORKER_JD = prev_jd
+            _WORKER_SCORING_PROFILE = prev_profile
+    elif os.name == "posix":
+        # Docker's fork workers inherit these read-only objects. Passing only
+        # indices avoids repeatedly pickling the ~500 MB candidate corpus and
+        # its cached rendered text through the process-pool queue.
+        global _WORKER_CANDIDATES, _WORKER_RETRIEVAL_SCORES, _WORKER_SEMANTIC_SCORES
+        previous_candidates = _WORKER_CANDIDATES
+        previous_retrieval = _WORKER_RETRIEVAL_SCORES
+        previous_semantic = _WORKER_SEMANTIC_SCORES
+        _WORKER_CANDIDATES = candidates
+        _WORKER_RETRIEVAL_SCORES = retrieval_scores
+        _WORKER_SEMANTIC_SCORES = semantic_scores if config.use_embeddings else None
+        try:
+            chunksize = _resolve_chunksize(len(indices), workers)
+            with ProcessPoolExecutor(
+                max_workers=workers,
+                initializer=_init_worker,
+                initargs=(config.jd, config.scoring_profile),
+                mp_context=multiprocessing.get_context("fork"),
+            ) as executor:
+                results = executor.map(_score_index, indices, chunksize=chunksize)
+                for idx, (features, score) in zip(indices, results):
+                    ranked.append((candidates[idx], features, score))
+        finally:
+            _WORKER_CANDIDATES = previous_candidates
+            _WORKER_RETRIEVAL_SCORES = previous_retrieval
+            _WORKER_SEMANTIC_SCORES = previous_semantic
     else:
-        chunksize = _resolve_chunksize(len(work), workers)
+        # Spawn platforms cannot inherit the corpus; retain the portable tuple
+        # path used before the Docker fork optimization.
+        work = [
+            (
+                candidates[idx],
+                retrieval_scores.get(idx, 0.0),
+                semantic_scores.get(idx) if config.use_embeddings else None,
+            )
+            for idx in indices
+        ]
+        chunksize = _resolve_chunksize(len(indices), workers)
         with ProcessPoolExecutor(
-            max_workers=workers, initializer=_init_worker, initargs=(config.jd,)
+            max_workers=workers,
+            initializer=_init_worker,
+            initargs=(config.jd, config.scoring_profile),
         ) as executor:
             results = executor.map(_score_one, work, chunksize=chunksize)
             for item, (features, score) in zip(work, results):
@@ -192,6 +331,18 @@ def rank_candidates(candidates: list[dict], config: RankerConfig) -> tuple[list[
             print(f"MMoE scoring failed, falling back to heuristic stack: {e}")
 
     ranked.sort(key=lambda item: (-item[2], item[0]["candidate_id"]))
+    if config.scoring_profile == "loss-aggregate-v3":
+        from redrob_ranker.loss_aggregate import rerank_loss_aggregate
+
+        ranked = rerank_loss_aggregate(ranked)
+    elif config.scoring_profile == "dominant-v4":
+        from redrob_ranker.loss_aggregate import rerank_dominant_v4
+
+        ranked = rerank_dominant_v4(ranked)
+    elif config.scoring_profile == "frontier-v5":
+        from redrob_ranker.loss_aggregate import rerank_frontier_v5
+
+        ranked = rerank_frontier_v5(ranked)
     return ranked, used_backend
 
 
@@ -217,6 +368,9 @@ def rows_from_ranked(ranked: list[tuple[dict, object, float]], top_k: int) -> li
 
 def run_ranking(candidates_path: Path, out_path: Path, config: RankerConfig | None = None) -> RankingResult:
     config = config or RankerConfig()
+    _validate_config(config)
+    if candidates_path.resolve() == out_path.resolve():
+        raise ValueError("Input candidates path and output submission path must differ")
     candidates = list(iter_candidates(candidates_path, max_candidates=config.max_candidates))
     ranked, used_backend = rank_candidates(candidates, config)
     top_k = min(config.top_k, len(ranked))

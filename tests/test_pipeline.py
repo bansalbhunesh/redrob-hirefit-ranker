@@ -3,8 +3,11 @@ import os
 import subprocess
 import sys
 
+import pytest
+
 import redrob_ranker.pipeline as pipeline_mod
 import redrob_ranker.retrieval as retrieval_mod
+from redrob_ranker import hyre_prompts
 from redrob_ranker.constants import FEATURE_NAMES
 from redrob_ranker.features import CandidateFeatures
 from redrob_ranker.pipeline import RankerConfig, rank_candidates, run_ranking
@@ -80,6 +83,46 @@ def test_feature_pool_chunksize_uses_four_chunks_per_worker():
     assert pipeline_mod._resolve_chunksize(100_000, 2) == 12_500
     assert pipeline_mod._resolve_chunksize(20_000, 2) == 2_500
     assert pipeline_mod._resolve_chunksize(3, 8) == 1
+
+
+def test_invalid_programmatic_config_fails_closed():
+    candidates = _synthetic_candidates(2)
+
+    for config in (
+        RankerConfig(scoring_profile="frontier-v55"),
+        RankerConfig(bm25_backend="bm25-typo"),
+        RankerConfig(top_k=0),
+        RankerConfig(max_candidates=0),
+        RankerConfig(candidate_pool_size=-1),
+        RankerConfig(workers=-1),
+    ):
+        with pytest.raises(ValueError):
+            rank_candidates(candidates, config)
+
+
+def test_run_ranking_refuses_to_overwrite_candidate_input(tmp_path: Path):
+    sample = tmp_path / "sample.json"
+    original = "[]\n"
+    sample.write_text(original, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="must differ"):
+        run_ranking(sample, sample)
+
+    assert sample.read_text(encoding="utf-8") == original
+
+
+def test_hyre_template_tokens_are_cached():
+    hyre_prompts._hyre_token_set.cache_clear()
+    jd = "Senior AI/ML Engineer building retrieval systems"
+    candidate = "Python engineer who shipped production semantic search"
+
+    first = hyre_prompts.get_hyre_similarity(candidate, jd)
+    second = hyre_prompts.get_hyre_similarity(candidate, jd)
+
+    assert first == second
+    cache = hyre_prompts._hyre_token_set.cache_info()
+    assert cache.misses == 1
+    assert cache.hits == 1
 
 
 def test_pipeline_writes_valid_small_json(tmp_path: Path):

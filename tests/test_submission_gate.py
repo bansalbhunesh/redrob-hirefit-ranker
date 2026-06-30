@@ -67,7 +67,28 @@ CANDIDATES = ROOT / "candidates.jsonl"
 #    vs golden's 52 -- so it has a better modeled worst-case than BOTH golden and raw Copeland. Golden
 #    af8f2b32 is retained byte-reproducible as the fallback tag fallback/golden-af8f2b32. Production
 #    rank.py UNCHANGED; slice gate below UNCHANGED.)
-GOLDEN_SUBMISSION_SHA256 = "24f84f4b6160a4bcb164369c7f6ab27a060953ec7cfc0d33ed4849eab1194aea"
+# -> 7d9dd8ef... (2026-06-28, codex/top23-fusion-lab: the opt-in
+#    clean-room challenger beat main on seven internal worlds plus two external
+#    recruiter checks. Full 100K host and Docker runs were byte-identical; the
+#    default main profile and fixed-slice hash remain unchanged.)
+# -> c00f708a... (2026-06-29, codex/top23-fusion-lab: universal-v2 distills
+#    transferable evidence patterns from a 1,272-repository public census. It
+#    beats main and top23-clean on all 15 measured full-table evaluators. Full
+#    100K host and 2-CPU/16-GB Docker runs were byte-identical with zero guarded
+#    profiles emitted. The default main profile and slice gate remain unchanged.)
+# -> c28857fd... (2026-06-29, codex/universal-v2: loss-aggregate-v3 uses
+#    seven leakage-safe label-family heads and an RRF membership lock. It keeps
+#    v2's exact 100 candidates, improves all 15 measured evaluators, and applies
+#    integrity gates after the model. Host and 2-CPU/16-GB Docker runs matched.)
+# -> 79aebff6... (2026-06-29, codex/dominant-v4: a candidate-ID-free
+#    top-band correction plus two conservative clean backfills. The exact
+#    Docker artifact improves/ties all 60 V3 metric cells and reduces temporal
+#    anomalies 59->57. Default main behavior and the slice gate are unchanged.)
+# -> 8f7f30c6... (2026-06-29, codex/public-frontier-v5: V4 plus two
+#    feature-only shortlist tie-breaks. The exact host and constrained-Docker
+#    artifacts match; V5 improves 6 and ties 54 of V4's component cells, with
+#    no losses. Default main behavior and the slice gate remain unchanged.)
+GOLDEN_SUBMISSION_SHA256 = "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0). Rolled

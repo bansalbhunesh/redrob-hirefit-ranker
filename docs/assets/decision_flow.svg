@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 340" font-family="Inter, Segoe UI, sans-serif" role="img" aria-label="Golden to hedge decision and validation flow">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 340" font-family="Inter, Segoe UI, sans-serif" role="img" aria-label="Main to V6 decision and validation flow">
   <defs>
     <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#38BDF8"/>
@@ -9,8 +9,8 @@
   </defs>
 
   <rect x="0" y="0" width="1320" height="340" rx="8" fill="#0F172A"/>
-  <text x="24" y="36" fill="#F1F5F9" font-size="20" font-weight="700">From golden to the shipped hedge — decision &amp; validation</text>
-  <text x="24" y="58" fill="#B8C4D9" font-size="12.5">The hedge keeps golden's top-30 and only re-orders the tail; every upgrade is measured, not asserted.</text>
+  <text x="24" y="36" fill="#F1F5F9" font-size="20" font-weight="700">From main to battle-proof V6 — decision &amp; validation</text>
+  <text x="24" y="58" fill="#B8C4D9" font-size="12.5">Each ranking change cleared broad quality gates; V6 then locks the winning order inside a fail-closed release.</text>
 
   <g stroke="#38BDF8" stroke-width="2" marker-end="url(#a)">
     <line x1="234" y1="150" x2="272" y2="150"/>
@@ -20,38 +20,38 @@
   </g>
   <line x1="129" y1="204" x2="129" y2="248" stroke="#FBBF24" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ag)"/>
 
-  <!-- 1 golden -->
+  <!-- 1 main -->
   <g><rect x="24" y="96" width="210" height="108" rx="4" fill="#1E293B" stroke="#FBBF24"/><rect x="24" y="96" width="210" height="3" rx="2" fill="#FBBF24"/>
-     <text x="129" y="130" text-anchor="middle" fill="#F1F5F9" font-size="15" font-weight="700">Golden baseline</text>
-     <text x="129" y="152" text-anchor="middle" fill="#B8C4D9" font-size="11.5">pre-registered default</text>
-     <text x="129" y="172" text-anchor="middle" fill="#FBBF24" font-size="12" font-family="monospace">composite 0.8625</text></g>
-  <!-- 2 copeland -->
+     <text x="129" y="130" text-anchor="middle" fill="#F1F5F9" font-size="15" font-weight="700">Main baseline</text>
+     <text x="129" y="152" text-anchor="middle" fill="#B8C4D9" font-size="11.5">historical default</text>
+     <text x="129" y="172" text-anchor="middle" fill="#FBBF24" font-size="12">mean7 0.872686</text></g>
+  <!-- 2 V4 -->
   <g><rect x="274" y="96" width="210" height="108" rx="4" fill="#1E293B" stroke="#38BDF8"/><rect x="274" y="96" width="210" height="3" rx="2" fill="#38BDF8"/>
-     <text x="379" y="128" text-anchor="middle" fill="#F1F5F9" font-size="14.5" font-weight="700">Copeland beats golden</text>
-     <text x="379" y="150" text-anchor="middle" fill="#B8C4D9" font-size="11.5">7/7 sets · +0.0154 blind</text>
-     <text x="379" y="170" text-anchor="middle" fill="#FB7185" font-size="11">but 65 anachronism = exposed</text></g>
-  <!-- 3 hedge -->
+     <text x="379" y="128" text-anchor="middle" fill="#F1F5F9" font-size="14.5" font-weight="700">Dominant V4</text>
+     <text x="379" y="150" text-anchor="middle" fill="#B8C4D9" font-size="11.5">feature-only correction</text>
+     <text x="379" y="170" text-anchor="middle" fill="#38BDF8" font-size="11">no V3 component regression</text></g>
+  <!-- 3 frontier V5 -->
   <g><rect x="524" y="96" width="210" height="108" rx="4" fill="#1E293B" stroke="#4ADE80"/><rect x="524" y="96" width="210" height="3" rx="2" fill="#4ADE80"/>
-     <text x="629" y="128" text-anchor="middle" fill="#F1F5F9" font-size="14.5" font-weight="700">Severity-gated hedge</text>
-     <text x="629" y="150" text-anchor="middle" fill="#B8C4D9" font-size="11">golden top-30 + Copeland tail</text>
-     <text x="629" y="170" text-anchor="middle" fill="#4ADE80" font-size="11.5">sev ≤ 1.2 · 44 flagged &lt; golden's 52</text></g>
-  <!-- 4 validation -->
+     <text x="629" y="128" text-anchor="middle" fill="#F1F5F9" font-size="14.5" font-weight="700">Frontier V5</text>
+     <text x="629" y="150" text-anchor="middle" fill="#B8C4D9" font-size="11">local behavior tie-breaks</text>
+     <text x="629" y="170" text-anchor="middle" fill="#4ADE80" font-size="11.5">#1 mean7 · #1 mean15</text></g>
+  <!-- 4 exhaustive validation -->
   <g><rect x="774" y="96" width="210" height="108" rx="4" fill="#1E293B" stroke="#38BDF8"/><rect x="774" y="96" width="210" height="3" rx="2" fill="#38BDF8"/>
-     <text x="879" y="126" text-anchor="middle" fill="#F1F5F9" font-size="14.5" font-weight="700">Validated 4 ways</text>
-     <text x="879" y="146" text-anchor="middle" fill="#B8C4D9" font-size="11">7/7 sets · holdout 16/20</text>
-     <text x="879" y="164" text-anchor="middle" fill="#B8C4D9" font-size="11">gpt-4.1 +0.0197</text>
-     <text x="879" y="182" text-anchor="middle" fill="#B8C4D9" font-size="11">gemini-2.5-pro +0.0160</text></g>
+     <text x="879" y="126" text-anchor="middle" fill="#F1F5F9" font-size="14.5" font-weight="700">Exhaustive audit</text>
+     <text x="879" y="146" text-anchor="middle" fill="#B8C4D9" font-size="11">15 families · 2 policies</text>
+     <text x="879" y="164" text-anchor="middle" fill="#B8C4D9" font-size="11">30/30 composites over main</text>
+     <text x="879" y="182" text-anchor="middle" fill="#B8C4D9" font-size="11">883 safety fusions rejected</text></g>
   <!-- 5 ship -->
   <g><rect x="1024" y="96" width="210" height="108" rx="4" fill="#16361f" stroke="#4ADE80"/><rect x="1024" y="96" width="210" height="3" rx="2" fill="#4ADE80"/>
      <text x="1129" y="132" text-anchor="middle" fill="#4ADE80" font-size="17" font-weight="700">SHIP</text>
-     <text x="1129" y="156" text-anchor="middle" fill="#F1F5F9" font-size="12.5" font-family="monospace">24f84f4b</text>
-     <text x="1129" y="176" text-anchor="middle" fill="#B8C4D9" font-size="10.5">weakly dominates golden</text></g>
+     <text x="1129" y="156" text-anchor="middle" fill="#F1F5F9" font-size="12.5" font-family="monospace">8f7f30c6</text>
+     <text x="1129" y="176" text-anchor="middle" fill="#B8C4D9" font-size="10.5">exact-output V6 release</text></g>
 
   <!-- fallback -->
   <g><rect x="24" y="250" width="210" height="62" rx="4" fill="#1E293B" stroke="#FBBF24" stroke-dasharray="5 4"/>
-     <text x="129" y="277" text-anchor="middle" fill="#FBBF24" font-size="12.5" font-weight="700">Fallback — one command</text>
-     <text x="129" y="296" text-anchor="middle" fill="#FBBF24" font-size="11" font-family="monospace">fallback/golden-af8f2b32</text></g>
-  <text x="250" y="285" fill="#B8C4D9" font-size="11">golden retained byte-reproducible if a tenure-checking judge is the deciding signal</text>
+     <text x="129" y="277" text-anchor="middle" fill="#FBBF24" font-size="12.5" font-weight="700">Main invariant retained</text>
+     <text x="129" y="296" text-anchor="middle" fill="#FBBF24" font-size="11" font-family="monospace">--scoring-profile main</text></g>
+  <text x="250" y="285" fill="#B8C4D9" font-size="11">origin main and the V6 explicit-main profile remain byte-identical for regression and fallback analysis</text>
 
-  <text x="24" y="328" fill="#B8C4D9" font-size="11.5">All judges are proxies, not the official hidden labels — the claim is "weakly dominates golden," not "guaranteed to win."</text>
+  <text x="24" y="328" fill="#B8C4D9" font-size="11.5">Public and recruiter metrics are development evidence, not official hidden labels — projected #1, honest uncertainty range #1–#3.</text>
 </svg>

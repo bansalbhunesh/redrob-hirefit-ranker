@@ -6,11 +6,22 @@ shadows, monospace numerals. Indigo accent (no teal).
 from __future__ import annotations
 
 # ── tokens (Flight Deck: bright 400-level accents + visible borders on slate, for contrast) ──
-BG_VOID = "#020617"; BG_BASE = "#0F172A"; BG_SURFACE = "#1E293B"
-BG_ELEVATED = "#334155"; BG_INPUT = "#0B1221"
-BORDER = "#475569"; BORDER_ACTIVE = "#64748B"          # borders are VISIBLE, not near-black
-TEXT_PRIMARY = "#F1F5F9"; TEXT_SECONDARY = "#CBD5E1"; TEXT_MUTED = "#94A3B8"; TEXT_MONO = "#E2E8F0"
-ACCENT = "#38BDF8"; AMBER = "#FBBF24"; RED = "#FB7185"; GREEN = "#4ADE80"; BLUE = "#38BDF8"
+BG_VOID = "#020617"
+BG_BASE = "#0F172A"
+BG_SURFACE = "#1E293B"
+BG_ELEVATED = "#334155"
+BG_INPUT = "#0B1221"
+BORDER = "#475569"
+BORDER_ACTIVE = "#64748B"  # borders are VISIBLE, not near-black
+TEXT_PRIMARY = "#F1F5F9"
+TEXT_SECONDARY = "#CBD5E1"
+TEXT_MUTED = "#94A3B8"
+TEXT_MONO = "#E2E8F0"
+ACCENT = "#38BDF8"
+AMBER = "#FBBF24"
+RED = "#FB7185"
+GREEN = "#4ADE80"
+BLUE = "#38BDF8"
 FONT_UI = "'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
 FONT_MONO = "'JetBrains Mono','SF Mono',Consolas,ui-monospace,monospace"
 
@@ -71,7 +82,7 @@ section.main, .block-container {{ background:{BG_BASE}; }}
 
 /* alerts: muted, hairline, sharp (no candy colors) */
 [data-testid="stAlert"] {{ border-radius:0 !important; background:{BG_SURFACE} !important;
-  border:1px solid {BORDER} !important; border-left:2px solid {BORDER_ACTIVE} !important; color:{TEXT_SECONDARY} !important; }}
+  border:1px solid {BORDER_ACTIVE} !important; color:{TEXT_SECONDARY} !important; }}
 
 /* sidebar */
 [data-testid="stSidebar"] {{ background:{BG_VOID}; border-right:1px solid {BORDER}; }}
@@ -85,7 +96,7 @@ section.main, .block-container {{ background:{BG_BASE}; }}
 .cc-rail {{ font-family:{FONT_MONO}; font-size:.72rem; letter-spacing:.18em; text-transform:uppercase;
   color:{TEXT_MUTED}; display:flex; justify-content:space-between; align-items:center;
   border-bottom:1px solid {BORDER}; padding-bottom:.5rem; margin:.2rem 0 1rem; }}
-.cc-verdict {{ background:linear-gradient(90deg,rgba(217,119,6,.10),rgba(180,83,9,.04));
+.cc-verdict {{ background:rgba(217,119,6,.08);
   border:1px solid {AMBER}; padding:22px 24px; margin:.2rem 0 1.2rem; }}
 .cc-verdict .vk {{ font-family:{FONT_MONO}; font-size:.72rem; letter-spacing:.16em; color:{AMBER};
   text-transform:uppercase; }}
@@ -93,7 +104,7 @@ section.main, .block-container {{ background:{BG_BASE}; }}
   letter-spacing:.01em; margin:.25rem 0 .1rem; }}
 .cc-verdict .vmeta {{ font-family:{FONT_MONO}; font-size:.8rem; color:{TEXT_MONO}; margin-top:.6rem; }}
 .cc-verdict .vmeta b {{ color:{GREEN}; font-weight:500; }}
-.cc-gate {{ background:{BG_SURFACE}; border:1px solid {BORDER}; border-left:2px solid var(--gc);
+.cc-gate {{ background:{BG_SURFACE}; border:1px solid var(--gc);
   padding:12px 14px; height:100%; }}
 .cc-gate .gm {{ font-family:{FONT_MONO}; color:var(--gc); font-size:.8rem; }}
 .cc-gate .gn {{ font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:{TEXT_SECONDARY};
@@ -118,19 +129,20 @@ def rail(left: str, right: str = "") -> str:
 
 
 def verdict_console(verdict: str, golden: str, tests_label: str, hash_ok: bool = True) -> str:
-    chk = f"<b>✓</b>" if hash_ok else "—"
+    chk = "<b>✓</b>" if hash_ok else "—"
     return (
         f"<div class='cc-verdict'>"
         f"<div class='vk'>⚠ Automatic decision</div>"
         f"<div class='vv'>{verdict}</div>"
-        f"<div class='vmeta'>Golden: {golden} &nbsp;|&nbsp; Tests: {tests_label} &nbsp;|&nbsp; "
+        f"<div class='vmeta'>Release: {golden} &nbsp;|&nbsp; Tests: {tests_label} &nbsp;|&nbsp; "
         f"Hash: {chk}</div></div>"
     )
 
 
 def readout(cells: list[tuple[str, str]]) -> str:
     inner = "".join(
-        f"<div class='cell'><div class='rv'>{v}</div><div class='rl'>{l}</div></div>" for v, l in cells
+        f"<div class='cell'><div class='rv'>{value}</div><div class='rl'>{label}</div></div>"
+        for value, label in cells
     )
     return f"<div class='cc-readout'>{inner}</div>"
 

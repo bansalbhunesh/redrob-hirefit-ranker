@@ -1,8 +1,126 @@
 # Docker Runtime Matrix (Phase 0.1)
 
+> **Current shipping number:** the final battle-proof V6 release completed the full
+> 100K pool in **136.0 s pipeline / 149.1 s wall** at `--cpus=2 --memory=16g
+> --workers 2 --release`, produced exact SHA-256 `8f7f30c6...`, and left no
+> temporary output. Earlier rows below are retained as dated experiment history.
+
+## 2026-06-30 V6 quality-safe inference hardening
+
+V6 keeps the exact `frontier-v5` rank artifact and removes repeated work in two
+post-retrieval hotspots. The dual V2/main scoring pass is bit-exact and measured
+36.8% faster in an isolated 5,000-candidate loop (median 0.0546 s to 0.0345 s).
+The 3,000-row model feature matrix is also bit-exact and measured 77.0% faster
+(median 0.1848 s to 0.0425 s). These stages are small relative to BM25, so the
+claim is reduced CPU work and no regression, not a universal wall-time speedup.
+
+The full 100,000-candidate verification used a Docker-native volume,
+`--cpus=2 --memory=16g`, and two workers:
+
+| Image | Pipeline time | Sampled peak | Output SHA-256 | Integrity |
+|---|---:|---:|---|---|
+| unchanged V5 stress control | 299.2 s | not retained | `8f7f30c68ec30cb6...` | 53 detected / 0 emitted |
+| V6 hardened | **197.2 s** | **4,204.5 MiB** | `8f7f30c68ec30cb6...` | 53 detected / 0 emitted |
+| V6 fail-closed `--release` | **109.9 s** | **4,232.2 MiB** | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
+| V6 `--release --workers 1` | **135.0 s** | not sampled | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
+| V6 fresh hash-pinned image | **131.7 s** | not sampled | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
+
+The 102-second paired gap is dominated by Docker Desktop host variance: earlier
+unchanged V5 runs were 199.0-209.4 s. The defensible result is that V6 matches
+the prior normal V5 window, remains under 300 seconds, uses less than the
+effective Docker VM memory, and reproduces the artifact byte-for-byte. Although
+the container requested 16 GB, this Docker Desktop VM exposed about 7.6 GiB;
+the run remained well below even that smaller effective cap.
+
+The final `--release` row exercises the production guard itself, not merely the
+profile: it verifies the model SHA-256 before scoring, forces BM25s and
+`frontier-v5`, generates into a temporary file, validates full-pool and integrity
+counts plus the final SHA-256, and only then atomically publishes the output.
+
+An intentional `--memory=3g` failure was OOM-killed with exit 137. The release
+had generated only into its temporary path; a pre-existing output containing
+`sentinel` remained byte-for-byte untouched. This verifies failure atomicity
+under an actual container kill, not only a mocked exception.
+
+## 2026-06-29 frontier-v5 constrained verification
+
+The exact `frontier-v5` artifact was regenerated twice from all 100,000
+candidates using a Docker-native input volume, `--cpus=2 --memory=16g`, and
+two workers:
+
+| Pass | Pipeline time | Wall time | Output SHA-256 |
+|---|---:|---:|---|
+| V5 cold/stress | 209.4 s | 233.8 s | `8f7f30c68ec30cb6...` |
+| V5 repeat | **199.0 s** | 241.9 s | `8f7f30c68ec30cb6...` |
+| V4 same-image control | 108.6 s | 124.7 s | `79aebff697cbccf0...` |
+
+Both V5 artifacts match the host artifact byte-for-byte, reported no OOM, and
+stayed below the 300-second budget. Full-run Docker Desktop timing was noisy:
+an isolated 5,000-candidate same-image check measured V5 at 9.1 s and V4 at
+10.9 s, confirming that the two final 100-row sorts do not add material
+algorithmic cost. The measured full-run spread is retained rather than
+presented as a speedup.
+
+## 2026-06-29 dominant-v4 constrained verification
+
+The exact `dominant-v4` artifact was generated from all 100,000 candidates
+using a Docker-native input volume and `--cpus=2 --memory=16g`:
+
+| Profile | Pipeline time | Wall time | Output SHA-256 |
+|---|---:|---:|---|
+| dominant-v4 | **75.4 s** | **79.5 s** | `79aebff697cbccf0b…` |
+| loss-aggregate-v3 control | 91.3 s | 95.7 s | `c28857fdba63723e…` |
+
+Both profiles used the same image and input volume. V3 reproduced its prior
+artifact byte-for-byte; V4 passed the validator and emitted zero honeypots.
+Docker Desktop timings vary with host load, so this establishes no regression
+and strong margin under the 300-second limit rather than a universal speedup.
+
+## 2026-06-29 loss-aggregate-v3 query-only BM25 optimization
+
+A controlled before/after run used the same Docker-native volume, pinned image
+dependencies, full 100,000-candidate input, and `--cpus=2 --memory=16g`:
+
+| image | pipeline runtime | output SHA-256 |
+|---|---:|---|
+| loss-aggregate-v3 before optimization | **109.3 s** | `c28857fd...e769c` |
+| loss-aggregate-v3 optimized | **69.1 s** | `c28857fd...e769c` |
+
+That is **40.2 seconds / 36.8% less runtime** (1.58x throughput) with byte-for-byte
+identical output. The optimized path computes Lucene-BM25 statistics only for
+the single JD query instead of building an unused full-corpus vocabulary and
+sparse index. Large read buffering, fork-shared candidate/text data, parallel
+text rendering, and cached constant HyRE tokens remove additional I/O and IPC.
+
+Docker Desktop bind-mount timing remains host-I/O-sensitive. The optimized image
+also completed a deliberately loaded bind-mount run in **254.0 s**, below the
+300-second limit, with the same hash, 53 honeypots detected, and 0 emitted.
+
+## 2026-06-29 loss-aggregate-v3 constrained reproduction
+
+The exact branch artifact (`c28857fd…`) was regenerated from all 100,000
+candidates. Host runs were **77.4-79.8 s**. Two pinned Linux container passes
+completed in **152.8 s** and **226.9 s** under `--cpus=2 --memory=16g`, detected 53 honeypots, emitted 0,
+and produced the byte-identical SHA-256
+`c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c`.
+
 > **Note.** Dated entries below reference earlier goldens (`a2882cd2…`). The
 > current golden is `fdfd3f35…` (2026-06-14 reproducibility fix), byte-identical
 > across CPU counts — see `docs/reproducibility_notes.md`.
+
+## 2026-06-29 universal-v2 constrained reproduction
+
+The exact branch artifact (`c00f708a…`) was regenerated from all 100,000
+candidates with `PYTHONHASHSEED=0` and two scoring workers:
+
+| environment | constraint | pipeline runtime | result |
+|---|---|---:|---|
+| Windows host | 2 workers | **130.1 s** | 53 honeypots detected, 0 emitted |
+| pinned Linux Docker | `--cpus=2 --memory=16g` | **164.1 s** | byte-identical to host |
+
+Both outputs have SHA-256
+`c00f708ab63265b73eb280d058ad72376df94c66dc49c50e2027e62ef894e7f3`.
+The Docker run is 135.9 seconds inside the 300-second limit.
 
 Environment: `python:3.11-slim` image (the Stage-3 reproduction environment),
 Docker Desktop on Windows 11 / WSL2 (12 host CPUs, **8.15 GB VM memory** — the
@@ -87,3 +205,14 @@ docker run --rm --memory=16g -v "<dir>:/data" redrob-hirefit-ranker \
   --bm25-backend bm25s
 # --workers defaults to auto (up to 8); output is identical for any worker count
 ```
+
+## 2026-06-30 battle-proof V6 release
+
+Final post-hardening image, exact official input hash pinned, full 100K pool:
+
+| constraint | result |
+|---|---|
+| `--cpus=2 --memory=16g --workers 2 --release` | 136.0 s pipeline / 149.1 s wall; exact `8f7f30c6...`; exit 0; no OOM; 0 output temps |
+| `--cpus=2 --memory=3g --workers 2 --release` | intentional OOM; exit 137; prior output preserved; 0 output temps |
+
+See `docs/v6_battleproof_audit.md` for the complete failure-mode matrix.

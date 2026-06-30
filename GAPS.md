@@ -1,5 +1,11 @@
 # GAPS.md
 
+> **Historical audit.** This file preserves the 2026-06-12 pre-V6 gap analysis and
+> should not be used as the current scorecard. The closed-loop V6 position is in
+> `docs/CHALLENGE_POSITIONING.md`, the current release evidence is in
+> `docs/v6_battleproof_audit.md`, and the current test result is 262 passed with
+> 6 environment skips (268 collected).
+
 Audit date: 2026-06-12 IST  
 Project: `bansalbhunesh/redrob-hirefit-ranker`  
 Hackathon: India Runs Track 1, Redrob AI x Hack2skill  
@@ -60,7 +66,7 @@ Primary research sources are documented in `RESEARCH.md`. The most important ext
 | Technical depth | Deterministic BM25 + 33 feature matrix + multiplicative guardrails + validated Copeland-tail hedge | Hybrid lexical/semantic retrieval, learned/listwise reranking, calibrated trust layer | 6.5/10 |
 | ML rigor | Good ablations, but proxy labels, shared LLM samples, ID-level calibration | Blind held-out labels, no ID tuning, real/public benchmark validation | 4/10 |
 | Result quality | Likely strong on this synthetic JD and output format | Strong under hidden labels, role transfer, and adversarial resumes | 6/10 |
-| Reproduction safety | Docker, pinned deps, CI, 198 tests passing, golden byte-reproducible across CPU counts | Full artifact freshness, benchmark gates, data membership validation, no stale scripts | 7/10 |
+| Reproduction safety | Docker, pinned deps, CI, 262 tests passing with 6 environment skips, golden byte-reproducible across CPU counts | Full artifact freshness, benchmark gates, data membership validation, no stale scripts | 7/10 |
 | Demo quality | Render/FastAPI/Gradio demos, feature payloads | Production-like recruiter workflow, durable jobs, exports, freshness sync | 7/10 |
 | Presentation | Strong README/docs/polished deck | Single source of truth, no metric ambiguity, no stale artifacts | 7/10 |
 | Sponsor alignment | Good resume ranker story and behavioral signals | Redrob OS: people/job/company search, multilingual, graph, CRM/ATS workflow | 6/10 |
@@ -184,7 +190,7 @@ Exact fix:
 
 What the gap is:
 
-The official architecture is BM25 plus a handcrafted 28-feature matrix. That is engineered well, but it is not SOTA for job-candidate matching. The repo rejects static dense embeddings and learned challengers under its own tests (`README.md:51-61`, `docs/ltr_challenger_study.md:13-39`), but those tests do not cover the best champion path: hybrid retrieval plus a stronger top-K reranker, hard negatives, or listwise reranking.
+The official architecture is BM25 plus a handcrafted 33-feature matrix. That is engineered well, but it is not SOTA for job-candidate matching. The repo rejects static dense embeddings and learned challengers under its own tests (`README.md`, `docs/ltr_challenger_study.md`), but those tests do not cover the best champion path: hybrid retrieval plus a stronger top-K reranker, hard negatives, or listwise reranking.
 
 What the champion does instead:
 

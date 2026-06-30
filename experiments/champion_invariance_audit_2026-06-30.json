@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "date": "2026-06-30",
+  "artifacts": {
+    "main_submission_sha256": "24f84f4b6160a4bcb164369c7f6ab27a060953ec7cfc0d33ed4849eab1194aea",
+    "champion_submission_sha256": "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062",
+    "origin_main_profile_sha256": "af8f2b327f05d30e22aba41e884077071c673082cd4a2647294f0969c0f0536a",
+    "v6_main_profile_sha256": "af8f2b327f05d30e22aba41e884077071c673082cd4a2647294f0969c0f0536a"
+  },
+  "quality": {
+    "external_reviewer_source_commit": "57c2f74541a02cb8bfd64b358e76d628c9703501",
+    "external_reviewer_csv_sha256": "68764999a03aba32659cf02aad4b6e8214e897449c508d4a4bcad6ae5ab50b47",
+    "label_families": 15,
+    "unlabeled_policies": 2,
+    "cells": 150,
+    "composite_wins": 30,
+    "composite_ties": 0,
+    "composite_losses": 0,
+    "component_wins": 74,
+    "component_ties": 40,
+    "component_losses": 6,
+    "component_loss_note": "Two tiny H2/independent NDCG@10 losses repeat under both policies; zero-policy expand MAP and silver20k NDCG@50 account for the other two. All 30 composites improve."
+  },
+  "safety_fusion": {
+    "variants": 883,
+    "main_component_safe": 12,
+    "main_component_and_champion_composite_safe": 0,
+    "decision": "Retain the champion. Every component-safe main hybrid lost all 30 champion composites."
+  },
+  "docker": {
+    "origin_main_control": {
+      "pipeline_seconds": 347.5,
+      "sha256": "af8f2b327f05d30e22aba41e884077071c673082cd4a2647294f0969c0f0536a",
+      "host_load_note": "Exceeded 300 seconds under severe Docker Desktop host contention; used only as a byte-drift control."
+    },
+    "v6_explicit_main": {
+      "pipeline_seconds": 165.0,
+      "sha256": "af8f2b327f05d30e22aba41e884077071c673082cd4a2647294f0969c0f0536a"
+    },
+    "release_workers_2": {
+      "pipeline_seconds": 109.9,
+      "sha256": "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062"
+    },
+    "release_workers_1": {
+      "pipeline_seconds": 135.0,
+      "sha256": "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062"
+    },
+    "hash_pinned_fresh_build": {
+      "pipeline_seconds": 131.7,
+      "sha256": "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062"
+    },
+    "low_memory_failure": {
+      "memory_limit_gib": 3,
+      "oom_killed": true,
+      "exit_code": 137,
+      "preexisting_output_preserved": true,
+      "preserved_bytes": "sentinel"
+    }
+  },
+  "supply_chain": {
+    "base_image_digest_pinned": true,
+    "pip_require_hashes": true,
+    "pip_audit": "No known vulnerabilities found",
+    "wheel_sha256": {
+      "numpy==2.4.6": "89cd468399cfd2504718f0ba50e410dca55a170b61a02ad92bb18c8a65186e93",
+      "orjson==3.11.9": "147302878da387104b66bb4a8b0227d1d487e976ce41a8501916161072ed87b1",
+      "bm25s==0.3.9": "db997475e82c9e81262b83fefe6a71304f2fdd0dafd037c8929828865fa6d465",
+      "rank-bm25==0.2.2": "7bd4a95571adadfc271746fa146a4bcfd89c0cf731e49c3d1ad863290adbe8ae"
+    }
+  }
+}

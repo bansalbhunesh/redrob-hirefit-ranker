@@ -10,7 +10,10 @@ Rank the top 100 candidates for the Redrob Senior AI Engineer JD while satisfyin
 - Full 100K reproduction in under 5 minutes.
 - Validator-safe CSV output.
 
-Measured in the python:3.11 Docker image, current code: `bm25s` scores all 100,000 candidates in **124.7 s** worst-case serial on 2 CPUs (80-82 s on a clean 2-vCPU cloud runner) with zero honeypots in the emitted top 100 and peak container memory **~6.1 GB** (docs/runtime_matrix.md).
+Final V6 measurement in the pinned python:3.11 image: `bm25s` ranks all 100,000
+candidates in **136.0 s pipeline / 149.1 s wall** at 2 CPU / 16 GiB, with
+sampled peak memory **4.13 GiB**, 53 honeypots detected and zero emitted
+(`docs/runtime_matrix.md`).
 
 ## System Overview
 
@@ -87,13 +90,14 @@ It then adds deterministic semantic concept markers for safe sparse recall:
 
 `bm25s` is preferred for speed; `rank-bm25` remains a fallback. BM25 is only one feature in the final score, not the final judge.
 
-## 28-Feature Recruiter Matrix
+## 33-Feature Recruiter Matrix
 
 The feature extractor produces stable values in `[0, 1]` for:
 
 Skills:
 
 - `core_skill_match`
+- `jd_keyword_coverage_score`
 - `nice_skill_match`
 - `skill_depth_score`
 - `endorsement_trust`
@@ -108,6 +112,7 @@ Career:
 - `consulting_only_flag`
 - `ir_ranking_experience`
 - `production_evidence`
+- `title_match_score`
 - `senior_title_held`
 - `career_trajectory_score`
 - `scale_signal`
@@ -133,6 +138,12 @@ Logistics:
 
 - `location_score`
 - `relocation_willing`
+
+Role/context depth:
+
+- `backend_depth_score`
+- `data_bi_depth_score`
+- `hyre_similarity`
 
 ## Scoring
 
@@ -197,7 +208,7 @@ Verified gates:
 ```bash
 python -m compileall -q src tests rank.py apps scripts
 python -m pytest -q
-python rank.py --candidates ./candidates.jsonl --out ./submission.csv --bm25-backend bm25s
+PYTHONHASHSEED=0 python rank.py --release --candidates ./candidates.jsonl --out ./submission.csv --workers 2
 python scripts/validate_submission.py submission.csv
 # Also run the official challenge validator from the downloaded bundle when available.
 ```
@@ -205,8 +216,8 @@ python scripts/validate_submission.py submission.csv
 Final measured output:
 
 ```text
-Runtime: 124.7s worst-case serial-2cpu in the python:3.11 Docker image (80-82s cloud 2-vCPU)
-Peak container memory: ~6.1 GB
+Runtime: 136.0s pipeline / 149.1s wall at 2 CPU / 16 GiB
+Sampled peak container memory: 4.13 GiB
 Loaded candidates: 100000
 Ranked pool: 100000
 Rows emitted: 100
@@ -214,3 +225,11 @@ BM25 backend: bm25s
 Hard honeypots detected: 53
 Hard honeypots in output: 0
 ```
+
+## V6 release envelope
+
+`--release` requires the exact official input SHA-256, verified NumPy model,
+deterministic hash/BLAS settings and BM25s backend. It validates full-pool,
+row, integrity and output-hash invariants before an atomic publish. Expensive
+work stays container-local, so a forced OOM preserves the previous output and
+leaves zero mounted temporary files.

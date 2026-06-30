@@ -1,41 +1,32 @@
 # Pre-Submission Checklist — Redrob HireFit Ranker
 
-Everything controllable, in one place. ✅ = done & verified in-repo. 🔲 = needs you (I can't do it).
+Everything controllable in the repository is verified here. “Owner action” means it depends on the challenge portal or an account outside this repository.
 
-## ✅ Done & verified (in the repo)
+## Verified in the repository
 
-- **Submission shipped:** severity-gated hedge `submission.csv` sha256 `24f84f4b…` on `main`.
-- **Fallbacks tagged:** `submission/hedge-24f84f4b`, `fallback/golden-af8f2b32`, `main-hand-fallback`.
-- **Reproducible:** `./reproduce.sh` green — shipped hash verified; production `rank.py` reproduces
-  golden `af8f2b32` byte-for-byte (slice gate + full 100K, 55s native / 165s docker-2cpu/16g).
-- **Tests:** 198 passed, 0 skipped; numeric-consistency guard test prevents drift.
-- **Constraints:** CPU-only, offline, deterministic (`PYTHONHASHSEED=0`); ~80s cloud / ≤300s budget;
-  peak ~6.1 GB / 16 GB; 0 honeypots in top-100 (53 detected).
-- **Validation:** two-study (golden vs hedge, holdout) + two cross-family judges (gpt-4.1 +0.0197,
-  gemini-2.5-pro +0.0160) + post-decision stress test (rrf-lock30 challenge → hedge held).
-- **Surfaces consistent & polished:** README (story, TOC, 2 SVG diagrams, live-demos section,
-  results data), `SHIPPING_DECISION`, `REPRODUCTION`, `why_this_wins`, deck (PPTX+PDF, 33 features),
-  both frontends (contrast fixed, documented in `READABILITY_AUDIT.md`), dashboard, metrics_manifest.
-- **Live demos rebuilt:** HF Space (`huggingface.co/spaces/bansal1234/Hirefit`) and Render
-  (`redrob-hirefit-ranker.onrender.com`) both returning 200 on latest commits.
+- **Release locked:** V6 battle-proof release, frontier-v5 ranking core, SHA-256 prefix `8f7f30c6`.
+- **One release path:** `PYTHONHASHSEED=0 python rank.py --release ...` forces the champion and fails closed on input, model, configuration, count, numeric, or output drift.
+- **Reproducible:** `./reproduce.sh` is green; the full 100K Docker release is byte-identical and atomic; a forced OOM preserves the previous output.
+- **Resource fit:** CPU-only and offline; 136.0 s pipeline / 149.1 s wall at 2 CPU / 16 GiB; sampled peak 4.13 GiB.
+- **Ranking evidence:** 30/30 composite wins over main; #1/673 mean7; #1/100 mean15; #3/322 balance4; 883 safety fusions; 100 repeated half-splits; external reviewer and blind slices.
+- **Integrity:** 0 detected honeypots in the top 100, with 53 detected in the pool.
+- **Supply chain:** digest-pinned base image, hash-pinned wheels, `pip --require-hashes`, and no known production dependency vulnerabilities in the dated audit.
+- **Judge path:** 60-second judge packet, evidence-first README, public-field scorecard, methodology, deployment guide, pitch deck (PPTX + PDF), and screenshots are linked from the repository front page.
+- **Deployment:** the Hugging Face Space is the primary live sandbox and returns HTTP 200. The repository includes a schema-validated Render Blueprint and documented health/readiness gates.
+- **Honest live-status disclosure:** the historical Render mirror is externally suspended and is not advertised as live proof.
+- **Repository access check:** GitHub reported the repository as **private** on 2026-06-30. This is the only P0 publication blocker and requires an explicit owner visibility decision.
 
-## 🔲 Needs you (the highest-leverage remaining items)
+## Optional presentation enhancement
 
-1. 🔲 **Make the GitHub repo PUBLIC.** It currently 404s to anyone but you — a judge who can't open
-   it cannot score it. **Single biggest unforced loss; do this first.**
-2. 🔲 **Record the 2-minute demo video** and paste the link into the README "Live demos & video"
-   slot and the deck. On a rigor/holistic rubric this moves the needle more than any code change.
-3. 🔲 **Refresh the live screenshots** (`docs/assets/render_pipeline.png`, `hf_space_upload.png`)
-   from the rebuilt sites so the README shows the fixed contrast, not the pre-fix captures.
-4. 🔲 **Rotate the aicredits API key** — it appeared in chat history.
-5. 🔲 **Upload `submission.csv` to the official portal** exactly per the competition's instructions
-   (format/filename), and confirm acceptance before the **June 28** deadline.
-6. 🔲 **Final eyeball** of the live HF Space + Render after rebuilds (hard-refresh) to confirm every
-   label/number reads as intended.
+- A two-minute narrated walkthrough could help a time-limited judge, but it is not presented as an existing artifact and is not required to reproduce or evaluate the ranker.
 
-## Honest note on ranking
+## Owner action outside this repository
 
-Quality on the hidden labels is label-bound (proven: ~0.878 ceiling for every method we tried; the
-gap is label information we can't access). This submission's edge is **rigor, reproducibility,
-integrity, and explainability** — strongest on a holistic rubric, capped on a pure-score one. The
-items above are the controllable factors that decide whether a judge ever *sees* that edge.
+1. Make the GitHub repository public when authorized, then verify it in a logged-out browser.
+2. Confirm the challenge portal entry points to that public repository and the exact `8f7f30c6…` submission artifact.
+3. If the historical Render account is reactivated, run every acceptance check in [DEPLOYMENT.md](DEPLOYMENT.md) before advertising that mirror as live.
+4. Rotate any credential that may have appeared outside version control; no credential is required by the ranker or committed here.
+
+## Claim boundary
+
+Official hidden labels and numeric judging weights are unpublished. The mission-derived positioning score and public-field rank estimates are transparent estimates, not official results. The measured claim is narrower and stronger: V6 is the best balanced artifact tested in this repository, wins every measured composite against main, remains inside the challenge resource envelope, and preserves deterministic fail-closed delivery.

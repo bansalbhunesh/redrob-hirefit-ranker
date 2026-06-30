@@ -10,6 +10,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 from redrob_ranker.features import compute_features
 from redrob_ranker.io import iter_candidates, write_submission
 from redrob_ranker.validation import validate_rows
@@ -74,6 +76,26 @@ def test_write_submission_unicode_and_quoting_roundtrip(tmp_path: Path):
     write_submission(out, rows)
     back = list(csv.DictReader(open(out, encoding="utf-8", newline="")))
     assert back[0]["reasoning"] == rows[0]["reasoning"]
+
+
+def test_write_submission_failure_preserves_existing_file(tmp_path: Path):
+    out = tmp_path / "submission.csv"
+    out.write_text("known-good\n", encoding="utf-8")
+
+    def broken_rows():
+        yield {
+            "candidate_id": "CAND_0000001",
+            "rank": 1,
+            "score": "1.000000",
+            "reasoning": "valid first row",
+        }
+        raise RuntimeError("simulated write failure")
+
+    with pytest.raises(RuntimeError, match="simulated write failure"):
+        write_submission(out, broken_rows())
+
+    assert out.read_text(encoding="utf-8") == "known-good\n"
+    assert list(tmp_path.glob(".submission.csv.*.tmp")) == []
 
 
 def test_validate_rows_catches_shape_errors():

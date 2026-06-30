@@ -4,7 +4,13 @@
 # 100K, output byte-identical to the committed submission.csv).
 # Library-style ranges live in pyproject.toml for dev installs; the Docker
 # image installs from THIS file so the July evaluation rebuild cannot drift.
-numpy==2.4.6
-orjson==3.11.9
-bm25s==0.3.9
-rank-bm25==0.2.2
+# Hashes pin the exact Python 3.11 Linux wheels used by the digest-pinned Docker
+# image. Library/developer installs remain cross-platform through pyproject.toml.
+numpy==2.4.6 \
+    --hash=sha256:89cd468399cfd2504718f0ba50e410dca55a170b61a02ad92bb18c8a65186e93
+orjson==3.11.9 \
+    --hash=sha256:147302878da387104b66bb4a8b0227d1d487e976ce41a8501916161072ed87b1
+bm25s==0.3.9 \
+    --hash=sha256:db997475e82c9e81262b83fefe6a71304f2fdd0dafd037c8929828865fa6d465
+rank-bm25==0.2.2 \
+    --hash=sha256:7bd4a95571adadfc271746fa146a4bcfd89c0cf731e49c3d1ad863290adbe8ae

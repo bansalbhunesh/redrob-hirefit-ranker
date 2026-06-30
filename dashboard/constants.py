@@ -11,9 +11,9 @@ from pathlib import Path
 # repo root = two levels up from this file (dashboard/constants.py -> repo root)
 ROOT = Path(__file__).resolve().parent.parent
 
-GOLDEN_COMMIT = "24f84f4b"   # main (HEAD 072707c): shipped = full-proof hedge sev<=1.2; golden af8f2b32 retained as fallback tag
-GOLDEN_SHA256_PREFIX = "24f84f4b6160a4bc"   # shipped submission.csv hash (hedge); production pipeline reproduces golden af8f2b327f05d30e
-VERDICT = "NO_RANKING_DOMINATES"
+GOLDEN_COMMIT = "8f7f30c6"  # Compatibility name: current V6 release artifact prefix.
+GOLDEN_SHA256_PREFIX = "8f7f30c68ec30cb6"
+VERDICT = "SHIP_V6_BATTLE_PROOF"
 
 # Verified local artifact paths (committed). Loaders degrade gracefully if any is absent.
 CONFIG = {
@@ -65,13 +65,12 @@ STATUS_COLORS = {"PASS": "#1b8a5a", "PENDING": "#c98a00", "FAIL": "#b22222", "IN
 
 DISCLAIMER = (
     "This dashboard is a downstream research and explanation layer. It does not modify, "
-    "rerun, or influence the production ranking. Shipped submission 24f84f4b (severity-gated "
-    "Copeland hedge) and all production "
-    "files remain byte-identical."
+    "rerun, or influence the production ranking. The shipped V6 release artifact "
+    "8f7f30c68ec30cb6 and all production files remain byte-identical."
 )
 VERDICT_DISCLAIMER = (
-    "NO_RANKING_DOMINATES does not mean the rankings are equal. It means no alternative has "
-    "satisfied every preregistered shipping gate using independent evidence."
+    "SHIP_V6_BATTLE_PROOF means V6 is the strongest all-around measured artifact and release. "
+    "Official hidden labels remain unavailable, so it is not a guaranteed leaderboard claim."
 )
 EXPERIMENTAL_INTEGRITY_NOTE = (
     "Experimental integrity guidance. VERIFY recommends human review and does NOT identify "
