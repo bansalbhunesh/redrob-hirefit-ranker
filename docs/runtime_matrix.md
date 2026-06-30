@@ -17,6 +17,8 @@ The full 100,000-candidate verification used a Docker-native volume,
 | unchanged V5 stress control | 299.2 s | not retained | `8f7f30c68ec30cb6...` | 53 detected / 0 emitted |
 | V6 hardened | **197.2 s** | **4,204.5 MiB** | `8f7f30c68ec30cb6...` | 53 detected / 0 emitted |
 | V6 fail-closed `--release` | **109.9 s** | **4,232.2 MiB** | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
+| V6 `--release --workers 1` | **135.0 s** | not sampled | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
+| V6 fresh hash-pinned image | **131.7 s** | not sampled | `8f7f30c68ec30cb6...` | release verified; 53 / 0 |
 
 The 102-second paired gap is dominated by Docker Desktop host variance: earlier
 unchanged V5 runs were 199.0-209.4 s. The defensible result is that V6 matches
@@ -29,6 +31,11 @@ The final `--release` row exercises the production guard itself, not merely the
 profile: it verifies the model SHA-256 before scoring, forces BM25s and
 `frontier-v5`, generates into a temporary file, validates full-pool and integrity
 counts plus the final SHA-256, and only then atomically publishes the output.
+
+An intentional `--memory=3g` failure was OOM-killed with exit 137. The release
+had generated only into its temporary path; a pre-existing output containing
+`sentinel` remained byte-for-byte untouched. This verifies failure atomicity
+under an actual container kill, not only a mocked exception.
 
 ## 2026-06-29 frontier-v5 constrained verification
 

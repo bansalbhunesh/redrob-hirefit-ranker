@@ -1,0 +1,414 @@
+{
+  "schema_version": 1,
+  "labels": [
+    "h2",
+    "independent",
+    "judge1",
+    "judge2",
+    "judge3",
+    "expand",
+    "silver20k",
+    "reviewer",
+    "blind",
+    "merged_j1",
+    "merged_j2",
+    "merged_j3",
+    "relabel_j4",
+    "relabel_g25",
+    "blind_test_frozen"
+  ],
+  "variant_count": 883,
+  "main_safe_count": 12,
+  "fully_safe_count": 0,
+  "best_main_safe": [
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 79
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8182044685516875,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 80
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8177494119210585,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 86
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.817316452270827,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 88
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8170070276849903,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 90
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8166133089866621,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 91
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8164301014301752,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 93
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8161613039546538,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 94
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8156246122682995,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 96
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8148128373221556,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 97
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8146546593362217,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main"
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8139494872641743,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 95
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 99
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8139494872641743,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 95
+    }
+  ],
+  "best_fully_safe": [],
+  "best_tradeoffs": [
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 79
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8182044685516875,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 80
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8177494119210585,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 86
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.817316452270827,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 88
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8170070276849903,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 90
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8166133089866621,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 91
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8164301014301752,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 93
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8161613039546538,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 94
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8156246122682995,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 96
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8148128373221556,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 97
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8146546593362217,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 96
+    },
+    {
+      "params": {
+        "kind": "main"
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8139494872641743,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 95
+    },
+    {
+      "params": {
+        "kind": "main_prefix",
+        "size": 99
+      },
+      "main_component_losses": 0,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 30,
+      "mean_composite": 0.8139494872641743,
+      "min_main_delta": 0.0,
+      "changed_from_champion": 95
+    },
+    {
+      "params": {
+        "kind": "rrf",
+        "champion_weight": 0.89,
+        "k": 50.0
+      },
+      "main_component_losses": 1,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 21,
+      "mean_composite": 0.8495195438548275,
+      "min_main_delta": -0.013733671796487178,
+      "changed_from_champion": 81
+    },
+    {
+      "params": {
+        "kind": "rrf",
+        "champion_weight": 0.88,
+        "k": 50.0
+      },
+      "main_component_losses": 1,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 21,
+      "mean_composite": 0.8494189541721926,
+      "min_main_delta": -0.013747431639454133,
+      "changed_from_champion": 83
+    },
+    {
+      "params": {
+        "kind": "rrf",
+        "champion_weight": 0.87,
+        "k": 50.0
+      },
+      "main_component_losses": 1,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 22,
+      "mean_composite": 0.8493509413261476,
+      "min_main_delta": -0.013820132757554685,
+      "changed_from_champion": 84
+    },
+    {
+      "params": {
+        "kind": "linear",
+        "champion_weight": 0.91
+      },
+      "main_component_losses": 1,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 25,
+      "mean_composite": 0.8480030115504752,
+      "min_main_delta": -0.014065936839967437,
+      "changed_from_champion": 82
+    },
+    {
+      "params": {
+        "kind": "linear",
+        "champion_weight": 0.89
+      },
+      "main_component_losses": 1,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 26,
+      "mean_composite": 0.8465276785372833,
+      "min_main_delta": -0.014065980291042293,
+      "changed_from_champion": 85
+    },
+    {
+      "params": {
+        "kind": "linear",
+        "champion_weight": 0.9
+      },
+      "main_component_losses": 1,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 26,
+      "mean_composite": 0.8465193382622173,
+      "min_main_delta": -0.014102413401938976,
+      "changed_from_champion": 85
+    },
+    {
+      "params": {
+        "kind": "linear",
+        "champion_weight": 0.88
+      },
+      "main_component_losses": 1,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 26,
+      "mean_composite": 0.8462637105306012,
+      "min_main_delta": -0.014121039465680718,
+      "changed_from_champion": 87
+    },
+    {
+      "params": {
+        "kind": "rrf",
+        "champion_weight": 0.71,
+        "k": 10.0
+      },
+      "main_component_losses": 1,
+      "main_composite_losses": 0,
+      "champion_composite_losses": 28,
+      "mean_composite": 0.8439904442858954,
+      "min_main_delta": -0.011434055505785662,
+      "changed_from_champion": 92
+    }
+  ]
+}

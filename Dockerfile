@@ -25,7 +25,7 @@ COPY requirements.txt ./
 
 # Keep third-party dependencies in a cacheable layer so source-only changes do
 # not redownload/reinstall NumPy and the BM25 packages on every image rebuild.
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --require-hashes -r requirements.txt
 
 COPY src ./src
 COPY models ./models

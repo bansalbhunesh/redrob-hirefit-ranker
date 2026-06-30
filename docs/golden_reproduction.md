@@ -9,6 +9,8 @@
   champion profile, rejects partial/experimental configuration, verifies all
   counts and integrity outcomes, checks this hash, and only then atomically
   replaces the requested output. Earlier lineage below is retained as history.
+  The base image is digest-pinned and all production wheels are installed with
+  exact SHA-256 hashes through `pip --require-hashes`.
   Lineage: `e1a696d1` → `ecb1fc5b` (Phase-4 reasoning) → `a2882cd2` (consensus
   ordering pass, since removed) → `6b284271` (HyRE/MMoE wiring) → `fdfd3f35`
   (reproducibility fix).

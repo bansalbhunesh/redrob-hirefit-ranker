@@ -69,7 +69,7 @@ cap. The adjacent unchanged-V5 control took 299.2 s under severe host load,
 while earlier V5 runs were 199.0-209.4 s. Therefore the full-run evidence proves
 no regression and exact reproduction, not a defensible 34% universal speedup.
 
-Final suite after release hardening: 242 collected, 236 passed, 6 environment skips.
+Final suite after invariance and supply-chain hardening: 246 collected, 240 passed, 6 environment skips.
 
 ## Foolproof release gate
 
@@ -86,3 +86,9 @@ The complete gate was exercised inside the pinned image with `--cpus=2
 --memory=16g --workers 2`: 100,000 loaded and ranked, 53 honeypots detected,
 zero emitted, 109.9 s pipeline time, 4,232.2 MiB sampled peak, exit code 0, and
 the exact golden SHA-256. The output was published only after verification.
+
+The release was repeated with one scoring worker (135.0 s, exact hash) and from
+a fresh image built with SHA-256-pinned production wheels (131.7 s, exact hash).
+An intentional 3 GiB OOM exited 137 while preserving the pre-existing output,
+confirming atomic failure behavior. Full main-versus-champion evidence is in
+`docs/champion_main_invariance_audit.md`.

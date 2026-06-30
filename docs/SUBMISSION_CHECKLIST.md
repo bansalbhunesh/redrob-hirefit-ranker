@@ -8,9 +8,11 @@ Everything controllable, in one place. ✅ = done & verified in-repo. 🔲 = nee
 - **One release path:** `PYTHONHASHSEED=0 python rank.py --release ...` forces the champion and fails
   closed on truncation, alternate models/backends, corrupt artifacts, wrong counts, or hash drift.
 - **Reproducible:** `./reproduce.sh` green; full 100K Docker release is byte-identical and atomic.
-- **Tests:** 236 passed, 6 environment skips; configuration, artifact, output, and numeric gates prevent drift.
+- **Tests:** 240 passed, 6 environment skips; configuration, artifact, output, numeric, and supply-chain gates prevent drift.
 - **Constraints:** CPU-only, offline, deterministic (`PYTHONHASHSEED=0`); ~80s cloud / ≤300s budget;
   peak ~6.1 GB / 16 GB; 0 honeypots in top-100 (53 detected).
+- **Supply chain:** digest-pinned base, SHA-256-pinned wheels, `pip --require-hashes`, and no known
+  production dependency vulnerabilities in the 2026-06-30 `pip-audit` pass.
 - **Validation:** two-study (golden vs hedge, holdout) + two cross-family judges (gpt-4.1 +0.0197,
   gemini-2.5-pro +0.0160) + post-decision stress test (rrf-lock30 challenge → hedge held).
 - **Surfaces consistent & polished:** README (story, TOC, 2 SVG diagrams, live-demos section,
