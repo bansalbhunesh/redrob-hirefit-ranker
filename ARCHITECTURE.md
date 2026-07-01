@@ -77,7 +77,7 @@ Feature scoring is parallelized across CPU workers by default, capped at 8 worke
 
 The FastAPI dashboard uses the same `CandidateFeatures` objects to expose flags, multipliers, and honeypot reasons; it does not infer those values from reasoning text.
 
-## 7. Battle-proof release envelope
+## 7. Fail-closed release envelope
 
 The release keeps expensive ranking work in container-local temporary storage, verifies
 the exact champion CSV, then performs a small atomic publish on the destination

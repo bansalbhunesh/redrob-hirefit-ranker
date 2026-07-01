@@ -58,11 +58,12 @@ were available before submission.
 | Surface | Link | What it is |
 |---|---|---|
 | **Live demo (sandbox)** | **[HuggingFace Space ↗](https://huggingface.co/spaces/bansal1234/Hirefit)** | runs the *real* ranker in-browser — release docket → populated candidate ledger → evidence dossier → CSV export |
-| **Live decision room** | **[Render app ↗](https://redrob-hirefit-ranker.onrender.com)** | recruiter workspace with Rankings, Method, Validation, live proof, and batch modes |
+| **Live decision room** | **[Render app ↗](https://redrob-hirefit-ranker.onrender.com)** | recruiter workspace — Rankings ledger + a slide-in Method drawer (with the reproducible release record), across showpiece / live-proof / batch modes |
 | **Deployable API** | [Render Blueprint](https://render.com/deploy?repo=https://github.com/bansalbhunesh/redrob-hirefit-ranker) | one-click FastAPI deployment from committed `render.yaml` |
 | **Decision dashboard** | `streamlit run omega_decision_dashboard.py` | read-only explainability + integrity cards |
 | **Source** | [GitHub ↗](https://github.com/bansalbhunesh/redrob-hirefit-ranker) | full code · one-command reproduction |
-| **Pitch** | archived under [`docs/archive/`](docs/archive/) | 14-slide narrative; archived pending a clean re-export (committed binary still uses prior framing) |
+| **Ranked output** | [`submission.csv`](submission.csv) · [`ranked_top100.xlsx`](ranked_top100.xlsx) | the recommended top-100 shortlist with a grounded reason per rank (predefined CSV format + an XLSX copy) |
+| **Pitch deck** | [`docs/HireFit_Submission_Deck.pptx`](docs/HireFit_Submission_Deck.pptx) | 11-slide deck on the official Redrob × Hack2Skill template — solution, methodology, explainability, results, honest positioning |
 
 ## Live Space screenshots
 

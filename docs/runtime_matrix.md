@@ -104,9 +104,10 @@ completed in **152.8 s** and **226.9 s** under `--cpus=2 --memory=16g`, detected
 and produced the byte-identical SHA-256
 `c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c`.
 
-> **Note.** Dated entries below reference earlier goldens (`a2882cd2…`). The
-> current golden is `fdfd3f35…` (2026-06-14 reproducibility fix), byte-identical
-> across CPU counts — see `docs/reproducibility_notes.md`.
+> **Note.** Dated entries below reference superseded goldens (`a2882cd2…`,
+> `af8f2b32…`, `fdfd3f35…`, `c28857fd…`). The current shipped golden is
+> `8f7f30c6…` (frontier-v5 `--release`, see the banner at the top of this file),
+> byte-identical across CPU counts — full record in `docs/REPRODUCTION.md`.
 
 ## 2026-06-29 universal-v2 constrained reproduction
 
@@ -215,4 +216,6 @@ Final post-hardening image, exact official input hash pinned, full 100K pool:
 | `--cpus=2 --memory=16g --workers 2 --release` | 136.0 s pipeline / 149.1 s wall; exact `8f7f30c6...`; exit 0; no OOM; 0 output temps |
 | `--cpus=2 --memory=3g --workers 2 --release` | intentional OOM; exit 137; prior output preserved; 0 output temps |
 
-See `docs/archive/v6_battleproof_audit.md` for the complete failure-mode matrix.
+The complete release failure-mode matrix (OOM exit 137, model-drift rejection,
+malformed-input rejection, atomic-publish preservation) is archived under
+`docs/archive/` alongside the other dated experiment logs.
