@@ -25,6 +25,8 @@ integrity red flags are hard gates rather than vibes.
 - Applies multiplicative honeypot and JD-disqualifier guardrails that a high relevance score cannot
   override (53 suspicious profiles detected in the pool; 0 reach the shortlist).
 - Emits grounded, per-candidate reasoning and an exact per-feature explanation of each candidate's evidence score.
+- Opens as a populated recruiter workspace: verified release docket, searchable candidate ledger,
+  evidence dossier, integrity review context, and top-100 CSV export.
 
 ## How we built it
 
