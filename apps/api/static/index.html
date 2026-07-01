@@ -6,7 +6,7 @@
   <title>Redrob HireFit Ranker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,500;7..72,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ── CSS RESET & BASE ── */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -866,6 +866,67 @@
     }
     .mode-btn, .filter-btn, .close-btn, .upload-zone { min-height: 44px; }
     .close-btn { min-width: 44px; }
+
+    /* Evidence glass — calm, legible depth shared with the public demo. */
+    :root {
+      --bg-deep: #f3eee5; --bg-panel: rgba(255, 253, 248, 0.76); --bg-card: rgba(255, 254, 250, 0.9);
+      --border-glass: rgba(82, 67, 52, 0.2); --text-primary: #29241f; --text-secondary: #514940; --text-muted: #71685e;
+      --font-display: 'Literata', Georgia, serif; --font-body: 'Manrope', -apple-system, 'Segoe UI', sans-serif;
+      --font-mono: 'Azeret Mono', 'SF Mono', Consolas, monospace; --accent-cyan: #a34f30; --accent-purple: #6c675e;
+      --accent-gold: #9c6d16; --accent-silver: #6c7480; --accent-bronze: #97522d; --accent-red: #a13e3e; --accent-green: #356b50;
+      --radius: 18px; --radius-sm: 12px; --transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    body { background: #f3eee5; }
+    .ambient-bg { background: radial-gradient(circle at 12% 8%, rgba(181,112,76,.22), transparent 29%), radial-gradient(circle at 84% 18%, rgba(109,142,117,.22), transparent 32%), radial-gradient(circle at 72% 86%, rgba(203,164,93,.16), transparent 34%), linear-gradient(135deg,#f6f0e6 0%,#eee8dc 55%,#f5f1e9 100%); }
+    .ambient-bg::after { background-image:linear-gradient(rgba(55,45,35,.026) 1px,transparent 1px),linear-gradient(90deg,rgba(55,45,35,.026) 1px,transparent 1px); background-size:44px 44px; mask-image:linear-gradient(to bottom,black,transparent 76%); }
+    .header { background:rgba(250,247,239,.76); border-color:rgba(82,67,52,.18); box-shadow:0 10px 32px rgba(71,53,38,.08); backdrop-filter:blur(20px) saturate(118%); -webkit-backdrop-filter:blur(20px) saturate(118%); }
+    .header-brand .logo { background:var(--text-primary); border-color:var(--text-primary); color:#fffaf2; border-radius:11px; }
+    .header-brand .badge { background:rgba(53,107,80,.1); border-color:rgba(53,107,80,.24); color:var(--accent-green); }
+    .mode-toggle { padding:4px; border-radius:14px; background:rgba(255,255,255,.52); box-shadow:inset 0 0 0 1px rgba(82,67,52,.04); }
+    .mode-btn { border:1px solid transparent; border-radius:10px; color:var(--text-secondary); }
+    .mode-btn.active, .mode-btn[aria-pressed="true"] { background:var(--text-primary); border-color:var(--text-primary); color:#fffaf2; box-shadow:0 7px 18px rgba(41,36,31,.16); }
+    .main { max-width:1460px; padding:clamp(16px,2.5vw,36px); gap:22px; }
+    .glass-panel, .metric-card, .candidate-card, .upload-zone { backdrop-filter:blur(18px) saturate(112%); -webkit-backdrop-filter:blur(18px) saturate(112%); box-shadow:0 18px 48px rgba(71,53,38,.08),inset 0 1px rgba(255,255,255,.65); }
+    .glass-panel:hover, .candidate-card:hover { border-color:rgba(163,79,48,.34); box-shadow:0 20px 52px rgba(71,53,38,.12); }
+    .metric-card { border-radius:15px; }
+    .metric-card .value { color:var(--text-primary); }
+    .panel-title, .section-title { color:var(--text-secondary); }
+    .pipeline-node { background:rgba(255,255,255,.48); border-radius:11px; }
+    .pipeline-node.active { background:rgba(163,79,48,.11); border-color:rgba(163,79,48,.52); }
+    .pipeline-node.active .icon { color:var(--accent-cyan); }
+    .filter-bar { gap:8px; padding:5px; border-radius:16px; }
+    .filter-btn { border-radius:11px; background:rgba(255,255,255,.58); color:var(--text-secondary); padding-inline:14px; }
+    .filter-btn:hover { background:rgba(255,255,255,.9); border-color:rgba(163,79,48,.36); color:var(--text-primary); }
+    .filter-btn.active, .filter-btn[aria-pressed="true"] { background:var(--accent-cyan); border-color:var(--accent-cyan); color:#fffaf2; box-shadow:0 8px 20px rgba(123,61,40,.2); }
+    .filter-btn.active .indicator-dot, .filter-btn[aria-pressed="true"] .indicator-dot { background:currentColor; }
+    .search-box { min-height:44px; border-radius:11px; background:rgba(255,255,255,.72); }
+    .search-box:focus { background:#fffdf8; border-color:var(--accent-cyan); box-shadow:0 0 0 3px rgba(163,79,48,.12); }
+    .candidate-card { border-radius:16px; background:rgba(255,254,250,.84); }
+    .candidate-card::before { width:3px; border-radius:16px 0 0 16px; }
+    .candidate-card:hover { transform:translateY(-2px); }
+    .candidate-card.selected { background:rgba(250,226,211,.9); border-color:rgba(163,79,48,.6); box-shadow:0 16px 40px rgba(123,61,40,.14); }
+    .candidate-card .rank-badge, .feature-item, .behavioral-item, .skill-tag, .edu-item { background:rgba(244,238,228,.82); }
+    .candidate-card .score-value, .reasoning-box .highlight { color:var(--accent-cyan); }
+    .reasoning-box { background:rgba(163,79,48,.06); border-color:rgba(163,79,48,.22); }
+    .score-bar-track, .progress-bar { background:rgba(82,67,52,.12); }
+    .loading-overlay { background:rgba(243,238,229,.86); }
+    .toast { background:rgba(255,253,248,.92); }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:rgba(82,67,52,.26); }
+    [role="button"]:focus-visible, button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline-color:var(--accent-cyan); }
+    @media (max-width:1100px) {
+      .detail-panel, .detail-panel.open { position:static; width:100%; height:auto; max-height:none; overflow:visible; transform:none; }
+      .detail-panel .close-btn { display:none; }
+    }
+    @media (max-width:600px) {
+      .header { align-items:flex-start; } .header-brand { min-width:0; } .header-brand .badge { display:none; }
+      .header-controls, .mode-toggle { width:100%; } .mode-btn { flex:1; padding-inline:8px; }
+      .main { padding:12px; gap:16px; } .metrics-grid { grid-template-columns:1fr 1fr; gap:8px; }
+      .metric-card { padding:14px; } .metric-card .value { font-size:23px; } .glass-panel { padding:15px; }
+      .filter-bar { display:grid; grid-template-columns:1fr 1fr; } .filter-btn { justify-content:center; text-align:center; }
+      .search-box { grid-column:1 / -1; min-width:0; width:100%; } .candidate-card { padding:15px; }
+      .feature-grid, .behavioral-grid { grid-template-columns:1fr; }
+    }
   </style>
 <base target="_blank">
 </head>
@@ -884,9 +945,9 @@
     </div>
     <div class="header-controls">
       <div class="mode-toggle">
-        <button class="mode-btn active" data-mode="showpiece" onclick="setMode('showpiece')">Showpiece</button>
-        <button class="mode-btn" data-mode="live" onclick="setMode('live')">Live Proof</button>
-        <button class="mode-btn" data-mode="batch" onclick="setMode('batch')">Batch</button>
+        <button class="mode-btn active" data-mode="showpiece" aria-pressed="true" onclick="setMode('showpiece')">Showpiece</button>
+        <button class="mode-btn" data-mode="live" aria-pressed="false" onclick="setMode('live')">Live Proof</button>
+        <button class="mode-btn" data-mode="batch" aria-pressed="false" onclick="setMode('batch')">Batch</button>
       </div>
     </div>
   </header>
@@ -959,12 +1020,12 @@
 
       <!-- FILTERS -->
       <div class="filter-bar">
-        <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All Candidates</button>
-        <button class="filter-btn" data-filter="honeypot" onclick="setFilter('honeypot')" title="Detector-flagged anomalies — not confirmed fraud">
+        <button class="filter-btn active" data-filter="all" aria-pressed="true" onclick="setFilter('all')">All Candidates</button>
+        <button class="filter-btn" data-filter="honeypot" aria-pressed="false" onclick="setFilter('honeypot')" title="Detector-flagged anomalies — not confirmed fraud">
           <span class="indicator-dot red"></span>Integrity-flagged
         </button>
-        <button class="filter-btn" data-filter="product" onclick="setFilter('product')">Product Companies</button>
-        <button class="filter-btn" data-filter="strong-ml" onclick="setFilter('strong-ml')">Strong ML</button>
+        <button class="filter-btn" data-filter="product" aria-pressed="false" onclick="setFilter('product')">Product Companies</button>
+        <button class="filter-btn" data-filter="strong-ml" aria-pressed="false" onclick="setFilter('strong-ml')">Strong ML</button>
         <label for="searchBox" class="sr-only">Search candidates by name, title, or company</label>
         <input type="text" class="search-box" id="searchBox" placeholder="Search by name, title, company..." aria-label="Search candidates by name, title, or company" oninput="handleSearch(event)">
       </div>
@@ -977,7 +1038,7 @@
 
     <!-- DETAIL PANEL -->
     <aside class="detail-panel glass-panel" id="detailPanel">
-      <button class="close-btn" onclick="closeDetailPanel()">✕</button>
+      <button class="close-btn" onclick="closeDetailPanel()" aria-label="Close candidate details">✕</button>
       <div class="empty-state" id="detailEmpty">
         <div class="empty-icon">
           <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.5" fill="none" style="color:var(--text-muted);margin:0 auto 12px;display:block;">
@@ -1035,7 +1096,9 @@
     function setMode(mode) {
       state.mode = mode;
       document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.mode === mode);
+        const selected = btn.dataset.mode === mode;
+        btn.classList.toggle('active', selected);
+        btn.setAttribute('aria-pressed', String(selected));
       });
 
       const uploadZone = document.getElementById('uploadZone');
@@ -1279,6 +1342,16 @@
       `).join('');
     }
 
+    function isProductCompany(candidate) {
+      const productEmployers = ['adobe','amazon','apple','atlassian','cred','dream11','flipkart','google','linkedin','meesho','meta','microsoft','myntra','netflix','ola','paytm','phonepe','razorpay','swiggy','uber','zepto','zomato'];
+      const employers = [
+        candidate.profile?.company,
+        ...(candidate.experience || []).map(role => role.company)
+      ].filter(Boolean).map(value => value.toLowerCase());
+      const industry = (candidate.profile?.industry || '').toLowerCase();
+      return industry.includes('product') || employers.some(name => productEmployers.some(employer => name.includes(employer)));
+    }
+
     function getFilteredCandidates() {
       let filtered = [...state.candidates];
 
@@ -1286,10 +1359,7 @@
       if (state.filter === 'honeypot') {
         filtered = filtered.filter(c => c.honeypot_flag);
       } else if (state.filter === 'product') {
-        filtered = filtered.filter(c => 
-          c.profile?.company?.toLowerCase().includes('product') ||
-          c.profile?.industry?.toLowerCase().includes('product')
-        );
+        filtered = filtered.filter(isProductCompany);
       } else if (state.filter === 'strong-ml') {
         filtered = filtered.filter(c => {
           const skills = c.skills || [];
@@ -1333,7 +1403,8 @@
         <div class="candidate-card tier-${c.tier || 'standard'} ${isSelected ? 'selected' : ''} animate-in"
              style="animation-delay:${i * 0.03}s"
              role="button" tabindex="0" aria-label="View detail and evidence for candidate ${c.candidate_id}, rank ${c.rank}"
-             onclick="selectCandidate('${c.candidate_id}')">
+             onclick="selectCandidate('${c.candidate_id}')"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectCandidate('${c.candidate_id}')}">
           <div class="card-header">
             <div class="identity">
               <div class="rank-badge">${c.rank}</div>
@@ -1361,6 +1432,9 @@
       state.selectedId = candidateId;
       renderCandidates();
       renderDetail(candidateId);
+      if (window.innerWidth <= 1100) {
+        document.getElementById('detailPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
     function renderDetail(candidateId) {
@@ -1466,7 +1540,9 @@
     function setFilter(filter) {
       state.filter = filter;
       document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.filter === filter);
+        const selected = btn.dataset.filter === filter;
+        btn.classList.toggle('active', selected);
+        btn.setAttribute('aria-pressed', String(selected));
       });
       renderCandidates();
     }
