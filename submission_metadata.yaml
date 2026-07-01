@@ -65,8 +65,8 @@ methodology_summary: |
   severe temporal contradictions, and two narrow feature-only tie-breaks
   (behaviour and responsiveness within fixed rank windows) that were retained only
   after holdout half-splits eliminated a broader rule set; their effect is marginal
-  and within proxy noise. The `dominant-v4` profile (same pipeline without those
-  two tie-breaks) and the default `main` profile remain available. No competitor
+  and within proxy noise. Historical comparison profiles remain available for
+  audit, while `--release` is the only submission path. No competitor
   code, candidate IDs, public ranks, or paragraph fingerprints are in production.
   All quality numbers are development proxies; no official hidden labels were
   available.

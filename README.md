@@ -4,7 +4,7 @@ A deterministic, evidence-aware system that ranks the **top 100 of 100,000** can
 AI Engineer role — and shows *why* each candidate is there, reproducibly.
 
 [![CI](https://github.com/bansalbhunesh/redrob-hirefit-ranker/actions/workflows/ci.yml/badge.svg)](https://github.com/bansalbhunesh/redrob-hirefit-ranker/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-265_passed_6_skipped-brightgreen.svg)](docs/JUDGE_PROOF.md#5-test-summary)
+[![Tests](https://img.shields.io/badge/tests-270_passed_1_skipped-brightgreen.svg)](docs/JUDGE_PROOF.md#5-test-summary)
 [![Runtime](https://img.shields.io/badge/100K-under_300s_Docker_2CPU-brightgreen.svg)](docs/runtime_matrix.md)
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](docs/REGENERATION_PROOF.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -42,7 +42,7 @@ were available before submission.
 - **Explainability:** each candidate's evidence score decomposes into **exact** per-feature contributions
   (Shapley values of the linear relevance — analytic, not sampled), plus an ablation summary and a
   deterministic leave-one-feature-out rank-stability band. See [Explainability](#explainability).
-- **Receipts:** **265 tests passed / 6 environment skips**, a committed golden-hash gate, a 2K-slice
+- **Receipts:** **270 tests passed / 1 environment skip**, a committed golden-hash gate, a 2K-slice
   behavior gate, a Docker runtime matrix, and a pre-registered measured-negatives ladder.
 - **Honest limits:** quality metrics are dev proxies (independent heuristic + LLM-judge labels), **not**
   the official hidden score. On those proxies this system sits in the **top cluster** of the public
@@ -63,7 +63,7 @@ were available before submission.
 | **Decision dashboard** | `streamlit run omega_decision_dashboard.py` | read-only explainability + integrity cards |
 | **Source** | [GitHub ↗](https://github.com/bansalbhunesh/redrob-hirefit-ranker) | full code · one-command reproduction |
 | **Ranked output** | [`submission.csv`](submission.csv) · [`ranked_top100.xlsx`](ranked_top100.xlsx) | the recommended top-100 shortlist with a grounded reason per rank (predefined CSV format + an XLSX copy) |
-| **Pitch deck** | [`docs/HireFit_Submission_Deck.pptx`](docs/HireFit_Submission_Deck.pptx) | 11-slide deck on the official Redrob × Hack2Skill template — solution, methodology, explainability, results, honest positioning |
+| **Pitch deck** | [`docs/HireFit_Submission_Deck.pptx`](docs/HireFit_Submission_Deck.pptx) | judge-ready deck — problem, solution, architecture, live demo, proof, explainability, integrity, honest comparison, limits, and submission links |
 
 ## Live Space screenshots
 
@@ -72,6 +72,8 @@ were available before submission.
 | ![HireFit live desktop hero](docs/screenshots/hirefit-live-desktop-hero.png) | ![HireFit live 390px hero](docs/screenshots/hirefit-live-mobile390-hero.png) |
 | Method + artifact proof | Mobile evidence dossier |
 | ![HireFit live desktop workspace](docs/screenshots/hirefit-live-desktop-workspace.png) | ![HireFit live 390px workspace](docs/screenshots/hirefit-live-mobile390-workspace.png) |
+| Hugging Face release docket | Hosted Space shell |
+| ![HireFit live Hugging Face app](docs/screenshots/hirefit-live-hf-app.png) | ![HireFit live Hugging Face Space](docs/screenshots/hirefit-live-hf-space-page.png) |
 
 ## Quick start
 
@@ -100,7 +102,7 @@ Each row below is something a judge can verify from the repository, not a claim 
 | Runtime | Full 100K in 136.0s pipeline / 149.1s wall at 2 CPU / 16 GiB (budget 300s) |
 | Explainability | Exact per-feature Shapley attributions + ablation + rank-stability bands (`src/redrob_ranker/explain.py`) |
 | Honest evaluation | A pre-registered measured-negatives ladder; every rejected idea is reproducible (`docs/measured_negatives.md`) |
-| Tests | 265 passed / 6 environment skips, including golden-hash and 2K-slice behavior gates |
+| Tests | 270 passed / 1 environment skip, including golden-hash and 2K-slice behavior gates |
 
 Competitive position is stated **in aggregate**: on development proxies across the public field this
 system is in the **top cluster**, leading on reproducibility and integrity engineering while specialist
@@ -114,7 +116,7 @@ Historical R&D comparisons are preserved under [`docs/archive/`](docs/archive/) 
 | Reproduce command | `python rank.py --release …` (profile `frontier-v5`); default `main` profile available without `--release` |
 | Artifact | `submission.csv`, SHA-256 `8f7f30c6…`; 100 rows from 100,000 candidates |
 | Production pipeline | Deterministic `rank.py`, **33-feature** scorer + seven shallow NumPy heads + feature-only evidence/integrity/tie-break corrections; fail-closed `--release` |
-| Tests | 265 passed, 6 environment skips |
+| Tests | 270 passed, 1 environment skip |
 | Dev-proxy quality | NDCG@10 0.9104 · P@10 = 1.0 — *dev proxy; **No official hidden labels*** |
 | Runtime | **136.0s pipeline / 149.1s wall**, Docker `--cpus=2 --memory=16g` (budget 300s) |
 | Memory | sampled peak **4.13 GiB** / 16 GiB; historical worst ~6.1 GB |

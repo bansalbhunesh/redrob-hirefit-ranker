@@ -54,7 +54,7 @@ Shape/format/membership checks; also runs as a CI gate on every push.
 
 ## 5. Test summary
 
-- **265 passed, 6 environment skips** (`PYTHONHASHSEED=0 python -m pytest -q`).
+- **270 passed, 1 environment skip** (`PYTHONHASHSEED=0 python -m pytest -q`).
 - Includes the golden-hash gate, the 2K-slice behavior gate, the explainability faithfulness test,
   dashboard smoke/parity, integrity-card mapping, and the anti-drift metrics-manifest gate.
 - CI gates the suite + validator on every push (`.github/workflows/ci.yml`).
@@ -108,7 +108,7 @@ truth). This is **not** a confirmed hidden-score result or leaderboard position.
 | Determinism | §6: serial/parallel byte-identical, pinned env, cross-CPU-count Docker |
 | Integrity | §7: hard honeypot/disqualifier gates, 53 detected / 0 shipped |
 | Exact explainability | §8: analytic Shapley attributions, faithfulness-tested |
-| Honest evaluation | §5, §8: 265 tests, pre-registered measured-negatives, dev-proxy labeling |
+| Honest evaluation | §5, §8: 270 passing tests, pre-registered measured-negatives, dev-proxy labeling |
 | No overclaiming | dev-proxy labels stated everywhere; no hidden-score or leaderboard claim |
 
 > Boundary: official hidden labels and numeric judging weights are unpublished. The defensible claim is

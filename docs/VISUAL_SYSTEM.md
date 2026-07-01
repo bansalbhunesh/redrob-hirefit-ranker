@@ -44,7 +44,7 @@ competing with the primary task.
 ## Quality gates
 
 - `npx impeccable --json apps/api/static/index.html`: zero findings.
-- Current full local suite: 270 passed, 1 environment skip; CI remains 265 passed, 6 optional-environment skips.
+- Current full local suite: 270 passed, 1 environment skip.
 - Frozen `submission.csv` SHA-256 remains
   `8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062`.
 - Public Render `/api/readyz` reports the merged Git SHA and loaded dashboard.
@@ -59,4 +59,3 @@ competing with the primary task.
   content, not become decoration everywhere.
 - WCAG 2.2: focus appearance and target sizing must make state and interaction discoverable.
 - web.dev: avoid layout-property animation and layout thrashing to protect interaction latency.
-

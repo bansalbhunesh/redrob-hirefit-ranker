@@ -84,8 +84,8 @@
     "_delta": "composite -0.0307, NDCG@10 -0.0695, NDCG@50 +0.0135 -- improved @50 but destroyed @10 (50% of the composite). Looked positive only on a curated 249-candidate LLM-judge sample (gpt-4.1-mini +0.027, deepseek +0.085, claude-3.5-haiku +0.019, gemini-3.1-flash-lite +0.049 composite); none generalized to the 100K blind set."
   },
   "tests_collected": 271,
-  "tests_passing": 265,
-  "tests_skipped": 6,
+  "tests_passing": 270,
+  "tests_skipped": 1,
   "feature_count": 33,
   "_feature_count_note": "len(FEATURE_NAMES) in src/redrob_ranker/features.py; guarded by tests/test_metrics_manifest.py. Pipeline-description surfaces must quote 33; measurement docs (ablation, learned-weights) keep their historical 28-feature base.",
   "bm25_backend": "bm25s",
@@ -110,34 +110,32 @@
     "_note": "Development-proxy public-field comparisons (independent heuristic + LLM-judge labels). Summarized honestly in the README as 'top cluster'; historical per-axis tables live in docs/archive/. NOT an official score or leaderboard."
   },
   "challenge_positioning": {
-    "_note": "Mission-derived positioning was a development estimate, NOT an official score or projected rank. See the README for the honest aggregate statement and claim boundary."
+    "_note": "Public-field comparisons are development proxies only. The submission uses an aggregate top-cluster description and makes no official placement claim."
   },
   "deployment": {
-    "_source": "docs/DEPLOYMENT.md; verified 2026-06-30",
+    "_source": "docs/DEPLOYMENT.md; live surfaces verified 2026-07-01",
     "primary_live_demo": "https://huggingface.co/spaces/bansal1234/Hirefit",
     "primary_live_demo_status": 200,
     "render_blueprint": "render.yaml",
-    "historical_render_service_suspended": true,
+    "render_live_demo": "https://redrob-hirefit-ranker.onrender.com",
+    "render_live_demo_status": 200,
     "api_health_path": "/api/health",
     "api_readiness_path": "/api/readyz",
     "api_metrics_path": "/api/metrics"
   },
   "external_recruiter_validation": {
     "_label": "External cross-check vs a real recruiter-labeled set published by participant 'Sifter' (shikhar1809): 180 reviewer + 50 BLIND technical-recruiter labels. Separate from our own Ψ lockbox (still awaiting). Source: docs/external_recruiter_validation.md.",
-    "dominant_v4_reviewer_composite": 0.8096,
-    "dominant_v4_blind_composite": 0.8969,
     "frontier_v5_reviewer_composite": 0.8098,
     "frontier_v5_blind_composite": 0.9059,
-    "dominant_v4_reviewer_coverage": 0.62,
-    "dominant_v4_blind_coverage": 0.24,
-    "_dominant_v4_note": "Matches V3 and beats main, top23-clean, and universal-v2 on both full public recruiter slices; small blind coverage makes split estimates noisy.",
+    "reviewer_coverage": 0.62,
+    "blind_recruiter_coverage": 0.24,
     "competitor_crossencoder_blind_ndcg10": 0.7096,
     "_crossencoder_note": "We reproduced the competitor's ms-marco-MiniLM cross-encoder + semantic stack and validated fresh on the blind recruiter: 0.71 vs our 0.90. Their lead on their own labels is training-on-those-labels + selection bias, not transferable.",
     "blind_holdout_coverage": "24% (24 ranked candidates) -- small sample, directional",
-    "public_field_position": "V5 keeps #1 seven-world mean and #14 H2, improves blind recruiter from estimated #23 to #20, and raises the four-axis mean from 0.874314 to 0.876596; no measured public output dominates it across H2 + mean7 + reviewer + blind"
+    "public_field_position": "Top cluster on aggregate development proxies; specialist public submissions lead individual axes. This is not an official leaderboard position."
   },
   "failclosed_release": {
-    "_source": "docs/archive/v6_battleproof_audit.md",
+    "_source": "docs/JUDGE_PROOF.md; docs/runtime_matrix.md",
     "corrupted_submissions_detected": 10000,
     "invalid_configs_rejected": 9750,
     "docker_2cpu_16g_pipeline_s": 136.0,

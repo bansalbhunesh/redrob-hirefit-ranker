@@ -11,11 +11,10 @@ Everything controllable in the repository is verified here. “Owner action” m
 - **Ranking evidence:** wins every measured composite vs main and sits in the top cluster on development proxies (broad / strongest-union / four-axis means); external reviewer and blind cross-checks. Dev proxies, not an official score.
 - **Integrity:** 0 detected honeypots in the top 100, with 53 detected in the pool.
 - **Supply chain:** digest-pinned base image, hash-pinned wheels, `pip --require-hashes`, and no known production dependency vulnerabilities in the dated audit.
-- **Judge path:** the judge-proof package, 60-second judge packet, evidence-first README, methodology, deployment guide, and screenshots are linked from the repository front page. (The pitch deck and historical R&D notes are archived under `docs/archive/` and are intentionally not on the judge path.)
-- **Fresh visual proof:** desktop and 390-pixel mobile screenshots were rendered from the current API on 2026-06-30; the responsive pipeline and detail drawer were tightened after inspection.
-- **Deployment:** the Hugging Face Space is the primary live sandbox and returns HTTP 200. The repository includes a schema-validated Render Blueprint and documented health/readiness gates.
-- **Honest live-status disclosure:** the historical Render mirror is externally suspended and is not advertised as live proof.
-- **Public access:** verified through GitHub's unauthenticated API, raw-file endpoint, and credential-free `main` lookup on 2026-06-30. The public `main` branch exposes the current README and screenshots.
+- **Judge path:** the judge-proof package, 60-second judge packet, evidence-first README, methodology, deployment guide, current pitch deck, and screenshots are linked from the repository front page. Historical R&D notes remain under `docs/archive/` and are not submission claims.
+- **Fresh visual proof:** desktop and 390-pixel mobile screenshots were regenerated from the live Render and Hugging Face surfaces on 2026-07-01.
+- **Deployment:** both the Hugging Face Space and Render decision room returned HTTP 200 on 2026-07-01; the repository also includes a schema-validated Render Blueprint and documented health/readiness gates.
+- **Public access:** verified through the live GitHub repository, Hugging Face Space, and Render app on 2026-07-01.
 
 ## Optional presentation enhancement
 
@@ -24,7 +23,7 @@ Everything controllable in the repository is verified here. “Owner action” m
 ## Owner action outside this repository
 
 1. Confirm the challenge portal entry points to the public repository and the exact `8f7f30c6…` submission artifact.
-2. If the historical Render account is reactivated, run every acceptance check in [DEPLOYMENT.md](DEPLOYMENT.md) before advertising that mirror as live.
+2. Record and attach the optional two-minute walkthrough if the challenge portal provides a video field; the verified flow is in [DEMO_SCRIPT.md](DEMO_SCRIPT.md).
 3. Rotate any credential that may have appeared outside version control; no credential is required by the ranker or committed here.
 
 ## Claim boundary

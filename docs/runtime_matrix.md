@@ -52,27 +52,27 @@ two workers:
 |---|---:|---:|---|
 | V5 cold/stress | 209.4 s | 233.8 s | `8f7f30c68ec30cb6...` |
 | V5 repeat | **199.0 s** | 241.9 s | `8f7f30c68ec30cb6...` |
-| V4 same-image control | 108.6 s | 124.7 s | `79aebff697cbccf0...` |
+| historical same-image control | 108.6 s | 124.7 s | `79aebff697cbccf0...` |
 
 Both V5 artifacts match the host artifact byte-for-byte, reported no OOM, and
 stayed below the 300-second budget. Full-run Docker Desktop timing was noisy:
-an isolated 5,000-candidate same-image check measured V5 at 9.1 s and V4 at
+an isolated 5,000-candidate same-image check measured the release at 9.1 s and the historical control at
 10.9 s, confirming that the two final 100-row sorts do not add material
 algorithmic cost. The measured full-run spread is retained rather than
 presented as a speedup.
 
-## 2026-06-29 dominant-v4 constrained verification
+## 2026-06-29 historical comparison-profile verification
 
-The exact `dominant-v4` artifact was generated from all 100,000 candidates
+The historical comparison artifact was generated from all 100,000 candidates
 using a Docker-native input volume and `--cpus=2 --memory=16g`:
 
 | Profile | Pipeline time | Wall time | Output SHA-256 |
 |---|---:|---:|---|
-| dominant-v4 | **75.4 s** | **79.5 s** | `79aebff697cbccf0b…` |
+| comparison profile | **75.4 s** | **79.5 s** | `79aebff697cbccf0b…` |
 | loss-aggregate-v3 control | 91.3 s | 95.7 s | `c28857fdba63723e…` |
 
 Both profiles used the same image and input volume. V3 reproduced its prior
-artifact byte-for-byte; V4 passed the validator and emitted zero honeypots.
+artifact byte-for-byte; the historical comparison passed the validator and emitted zero honeypots.
 Docker Desktop timings vary with host load, so this establishes no regression
 and strong margin under the 300-second limit rather than a universal speedup.
 
