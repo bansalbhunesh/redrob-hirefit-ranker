@@ -58,6 +58,7 @@ were available before submission.
 | Surface | Link | What it is |
 |---|---|---|
 | **Live demo (sandbox)** | **[HuggingFace Space ↗](https://huggingface.co/spaces/bansal1234/Hirefit)** | runs the *real* ranker in-browser — release docket → populated candidate ledger → evidence dossier → CSV export |
+| **Live decision room** | **[Render app ↗](https://redrob-hirefit-ranker.onrender.com)** | recruiter workspace with Rankings, Method, Validation, live proof, and batch modes |
 | **Deployable API** | [Render Blueprint](https://render.com/deploy?repo=https://github.com/bansalbhunesh/redrob-hirefit-ranker) | one-click FastAPI deployment from committed `render.yaml` |
 | **Decision dashboard** | `streamlit run omega_decision_dashboard.py` | read-only explainability + integrity cards |
 | **Source** | [GitHub ↗](https://github.com/bansalbhunesh/redrob-hirefit-ranker) | full code · one-command reproduction |
@@ -65,10 +66,10 @@ were available before submission.
 
 ## Live Space screenshots
 
-| Desktop — release dossier | 390 px mobile — no overflow |
+| Desktop — decision room | 390 px mobile — no overflow |
 |:---:|:---:|
 | ![HireFit live desktop hero](docs/screenshots/hirefit-live-desktop-hero.png) | ![HireFit live 390px hero](docs/screenshots/hirefit-live-mobile390-hero.png) |
-| Candidate ledger + evidence dossier | Mobile evidence dossier |
+| Method + artifact proof | Mobile evidence dossier |
 | ![HireFit live desktop workspace](docs/screenshots/hirefit-live-desktop-workspace.png) | ![HireFit live 390px workspace](docs/screenshots/hirefit-live-mobile390-workspace.png) |
 
 ## Quick start
@@ -246,6 +247,7 @@ CPU-only, offline, deterministic. The same command appears in `reproduce.sh` and
 - **External validation:** [external_recruiter_validation](docs/external_recruiter_validation.md) — cross-check against a real recruiter-labeled set
 - **Judge orientation:** [JUDGE_PROOF](docs/JUDGE_PROOF.md) · [JUDGE_PACKET](docs/JUDGE_PACKET.md) · [SUBMISSION_CHECKLIST](docs/SUBMISSION_CHECKLIST.md)
 - **Submission surfaces:** [DEVPOST](docs/DEVPOST.md) · [DEMO_SCRIPT](docs/DEMO_SCRIPT.md)
+- **Visual system:** [VISUAL_SYSTEM](docs/VISUAL_SYSTEM.md) — forensic decision-room identity, interaction states, responsiveness, and quality gates
 - **Deployment:** [DEPLOYMENT](docs/DEPLOYMENT.md) · [`render.yaml`](render.yaml) · [backend hardening](docs/backend_infra_hardening.md)
 - **Security:** [SECURITY](SECURITY.md)
 - **What we rejected:** [measured_negatives](docs/measured_negatives.md) · [why_not_reranker](docs/why_not_reranker.md) · [beyond_hedge_sweep](docs/beyond_hedge_sweep.md)
