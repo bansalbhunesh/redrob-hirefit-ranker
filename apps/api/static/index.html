@@ -945,10 +945,42 @@
     @keyframes nav-flash { 0% { box-shadow: inset 0 0 0 0 rgba(201,110,72,0); } 26% { box-shadow: inset 0 0 0 2px rgba(230,151,109,.85); } 100% { box-shadow: inset 0 0 0 0 rgba(201,110,72,0); } }
     .nav-flash { animation: nav-flash 1.15s cubic-bezier(.22,1,.36,1) 1; }
     /* Pressed feedback across the interactive surfaces. */
-    .mode-btn:active, .filter-btn:active, .theme-btn:active, .primary-nav a:active { transform: translateY(1px); }
+    .mode-btn:active, .filter-btn:active, .theme-btn:active, .primary-nav a:active, .primary-nav .nav-method:active { transform: translateY(1px); }
     .command-action:active { transform: translateY(0); }
-    .theme-btn { min-height: 44px; padding: 0 13px; border: 1px solid var(--border-glass); border-radius: 999px; background: transparent; color: var(--text-primary); font: 700 12px var(--font-body); cursor: pointer; }
+    /* Method is a nav trigger styled like the other nav items. */
+    .primary-nav .nav-method { position: relative; min-height: 44px; display: inline-flex; align-items: center; padding: 0; background: none; border: none; cursor: pointer; color: var(--text-secondary); font: 700 12px var(--font-body); letter-spacing: .01em; transition: color .2s ease; }
+    .primary-nav .nav-method::after { content: ''; position: absolute; left: 2px; right: 2px; bottom: 7px; height: 2px; border-radius: 2px; background: var(--accent-cyan); transform: scaleX(0); transform-origin: left center; transition: transform .3s cubic-bezier(.22,1,.36,1); }
+    .primary-nav .nav-method:hover, .primary-nav .nav-method:focus-visible { color: var(--text-primary); }
+    .primary-nav .nav-method:hover::after, .primary-nav .nav-method:focus-visible::after, .primary-nav .nav-method[aria-expanded="true"]::after { transform: scaleX(1); }
+    .primary-nav .nav-method[aria-expanded="true"] { color: var(--text-primary); }
+
+    /* ── METHOD DRAWER — half-width slide-in casefile ── */
+    .drawer-backdrop { position: fixed; inset: 0; z-index: 300; background: rgba(18,23,22,.44); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); opacity: 0; transition: opacity .34s ease; }
+    .drawer-backdrop.open { opacity: 1; }
+    .method-drawer { position: fixed; top: 0; right: 0; bottom: 0; z-index: 310; width: clamp(360px, 46vw, 720px); padding: clamp(24px,3vw,44px); overflow-y: auto; color: #eef3f1; background: rgba(26,30,29,.99); border-left: 1px solid rgba(237,243,240,.14); box-shadow: -34px 0 90px rgba(12,18,17,.5); transform: translateX(100%); transition: transform .42s cubic-bezier(.22,1,.36,1); will-change: transform; }
+    .method-drawer.open { transform: translateX(0); }
+    .method-drawer-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .method-drawer-top .brief-kicker { color: #e6976d; }
+    .method-close { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(237,243,240,.22); border-radius: 999px; background: transparent; color: #eef3f1; font-size: 16px; cursor: pointer; transition: var(--transition); }
+    .method-close:hover { background: rgba(237,243,240,.1); border-color: rgba(237,243,240,.4); }
+    .method-drawer h2 { font-family: var(--font-display); font-size: clamp(1.7rem,3vw,2.35rem); font-weight: 600; line-height: 1.02; letter-spacing: -.03em; color: #f5f8f6; }
+    .method-lead { margin: 12px 0 22px; color: #aeb8b4; font-size: 14px; line-height: 1.6; }
+    .method-steps { list-style: none; display: grid; gap: 0; margin: 0; padding: 0; }
+    .method-steps li { display: grid; grid-template-columns: auto 1fr; gap: 16px; padding: 18px 2px; border-top: 1px solid rgba(237,243,240,.1); }
+    .method-steps li i { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 9px; background: rgba(201,110,72,.16); color: #e6976d; font: 600 13px var(--font-mono); font-style: normal; }
+    .method-steps li strong { display: block; color: #f5f8f6; font-size: 15px; margin-bottom: 3px; }
+    .method-steps li p { color: #aeb8b4; font-size: 13px; line-height: 1.55; margin: 0; }
+    .method-record { margin-top: 26px; padding: 20px; border-radius: 15px; background: rgba(12,16,16,.55); border: 1px solid rgba(237,243,240,.1); }
+    .record-kicker { display: block; color: #e6976d; font: 600 11px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 14px; }
+    .record-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 14px; }
+    .record-grid small { display: block; color: #9eaaa5; font-size: 11px; margin-bottom: 4px; }
+    .record-grid strong { color: #eef3f1; font: 600 14px var(--font-mono); }
+    @media (max-width: 600px) { .method-drawer { width: 100vw; } }
+    @media (prefers-reduced-motion: reduce) { .method-drawer, .drawer-backdrop { transition: none; } }
+    .theme-btn { min-height: 44px; padding: 0 15px; border: 1px solid var(--border-glass); border-radius: 999px; background: var(--bg-card); color: var(--text-primary); font: 700 12px var(--font-body); cursor: pointer; box-shadow: 0 2px 8px rgba(20,28,27,.07); transition: var(--transition); display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .theme-btn::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(163,79,48,.16); flex: 0 0 auto; }
     .theme-btn:hover { border-color: var(--text-primary); transform: translateY(-1px); }
+    .theme-btn:active { transform: translateY(1px); }
     .command-brief { min-height: 430px; display: grid; grid-template-columns: 64px minmax(0,1fr); align-items: end; gap: clamp(18px,3vw,46px); padding: clamp(34px,6vw,76px) clamp(24px,5vw,70px); margin-bottom: 22px; overflow: hidden; position: relative; color: var(--text-primary); background: rgba(248,252,250,.74); border: 1px solid var(--border-glass); border-radius: 22px; box-shadow: 0 28px 80px rgba(20,28,27,.12); backdrop-filter: blur(22px) saturate(112%); -webkit-backdrop-filter: blur(22px) saturate(112%); }
     .command-brief::after { content: ''; position: absolute; width: 420px; height: 420px; right: -150px; top: -190px; border: 1px solid rgba(163,79,48,.22); border-radius: 50%; box-shadow: 0 0 0 70px rgba(163,79,48,.035), 0 0 0 140px rgba(53,107,80,.028); pointer-events: none; }
     .case-number { align-self: start; color: var(--accent-cyan); font: 600 13px var(--font-mono); }
@@ -1015,6 +1047,9 @@
     body.night-shift .header-brand .badge { background:rgba(95,174,134,.14); border-color:rgba(95,174,134,.4); color:#6fc79a; }
     body.night-shift .tag-ml { color:#6fc79a; border-color:rgba(95,174,134,.28); }
     body.night-shift .tag-product { color:#e6976d; border-color:rgba(201,110,72,.28); }
+    /* Theme toggle: keep it a clearly-defined pill in night (was a transparent
+       button with an 18% border, so it read as "disappeared"). */
+    body.night-shift .theme-btn { background:rgba(44,50,49,.92); border-color:rgba(208,220,214,.42); color:var(--text-primary); box-shadow:0 2px 10px rgba(0,0,0,.35); }
 
     @media (max-width: 900px) {
       .header { flex-wrap: wrap; }
@@ -1058,7 +1093,7 @@
     </div>
     <div class="header-controls">
       <nav class="primary-nav" aria-label="Primary navigation">
-        <a href="#rankings">Rankings</a><a href="#method">Method</a><a href="#validation">Validation</a>
+        <a href="#rankings">Rankings</a><button type="button" class="nav-method" aria-haspopup="dialog" aria-expanded="false" onclick="openMethod()">Method</button>
       </nav>
       <div class="mode-toggle">
         <button class="mode-btn active" data-mode="showpiece" aria-pressed="true" onclick="setMode('showpiece')">Showpiece</button>
@@ -1098,26 +1133,6 @@
         <a class="command-action" href="#rankings">Inspect the ranking <span aria-hidden="true">↓</span></a>
       </section>
 
-      <section class="proof-band" aria-label="Method and validation">
-        <details id="method" open>
-          <summary><span>Method</span><strong>Four-stage evidence ranking</strong><b>Open</b></summary>
-          <ol>
-            <li><i>R</i><span><strong>Retrieve</strong> Hybrid search narrows the credible field.</span></li>
-            <li><i>V</i><span><strong>Verify</strong> Career evidence is measured across 33 named features.</span></li>
-            <li><i>G</i><span><strong>Gate</strong> Unsupported claims and impossible timelines are penalized.</span></li>
-            <li><i>X</i><span><strong>Rank</strong> A stable sort produces an inspectable top 100.</span></li>
-          </ol>
-        </details>
-        <details id="validation">
-          <summary><span>Validation</span><strong>Reproducible release record</strong><b>Open</b></summary>
-          <div class="validation-grid">
-            <span><small>Artifact</small><strong>8f7f30c68ec3</strong></span>
-            <span><small>Suite</small><strong>271 checks</strong></span>
-            <span><small>Runtime</small><strong>136 s / 100K</strong></span>
-            <span><small>Compute</small><strong>2 CPU / offline</strong></span>
-          </div>
-        </details>
-      </section>
 
       <!-- UPLOAD ZONE (hidden by default) -->
       <div class="upload-zone" id="uploadZone" role="button" tabindex="0" aria-label="Upload a candidate file (JSONL, JSON, or CSV)" onclick="document.getElementById('fileInput').click()">
@@ -1202,6 +1217,32 @@
       </div>
     </aside>
   </main>
+
+  <!-- METHOD DRAWER (slide-in) -->
+  <div class="drawer-backdrop" id="methodBackdrop" onclick="closeMethod()" hidden></div>
+  <aside class="method-drawer" id="methodDrawer" role="dialog" aria-modal="true" aria-labelledby="methodDrawerTitle" aria-hidden="true">
+    <div class="method-drawer-top">
+      <span class="brief-kicker">Method / Decision room</span>
+      <button class="method-close" type="button" onclick="closeMethod()" aria-label="Close method">&#10005;</button>
+    </div>
+    <h2 id="methodDrawerTitle">Four-stage evidence ranking</h2>
+    <p class="method-lead">How the shortlist is produced — and why every place on it is defensible.</p>
+    <ol class="method-steps">
+      <li><i>R</i><div><strong>Retrieve</strong><p>Hybrid search narrows the credible field.</p></div></li>
+      <li><i>V</i><div><strong>Verify</strong><p>Career evidence is measured across 33 named features.</p></div></li>
+      <li><i>G</i><div><strong>Gate</strong><p>Unsupported claims and impossible timelines are penalized.</p></div></li>
+      <li><i>X</i><div><strong>Rank</strong><p>A stable sort produces an inspectable top 100.</p></div></li>
+    </ol>
+    <div class="method-record">
+      <span class="record-kicker">Reproducible release record</span>
+      <div class="record-grid">
+        <span><small>Artifact</small><strong>8f7f30c68ec3</strong></span>
+        <span><small>Suite</small><strong>271 checks</strong></span>
+        <span><small>Runtime</small><strong>136 s / 100K</strong></span>
+        <span><small>Compute</small><strong>2 CPU / offline</strong></span>
+      </div>
+    </div>
+  </aside>
 
   <script>
     // ═══════════════════════════════════════════════════════════
@@ -1757,6 +1798,42 @@
       if (!el) return;
       e.preventDefault();
       el.click();
+    });
+
+    // ═══════════════════════════════════════════════════════════
+    // METHOD DRAWER — half-width slide-in panel (opened from the nav)
+    // ═══════════════════════════════════════════════════════════
+    let __methodPrevFocus = null;
+    function openMethod() {
+      const d = document.getElementById('methodDrawer');
+      const b = document.getElementById('methodBackdrop');
+      __methodPrevFocus = document.activeElement;
+      b.hidden = false;
+      void b.offsetWidth;                 // force reflow so the slide/fade transition plays
+      b.classList.add('open');
+      d.classList.add('open');
+      d.setAttribute('aria-hidden', 'false');
+      const trigger = document.querySelector('.nav-method');
+      if (trigger) trigger.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      const close = d.querySelector('.method-close');
+      if (close) close.focus();
+    }
+    function closeMethod() {
+      const d = document.getElementById('methodDrawer');
+      const b = document.getElementById('methodBackdrop');
+      if (!d.classList.contains('open')) return;
+      d.classList.remove('open');
+      b.classList.remove('open');
+      d.setAttribute('aria-hidden', 'true');
+      const trigger = document.querySelector('.nav-method');
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      setTimeout(() => { b.hidden = true; }, 380);
+      if (__methodPrevFocus && __methodPrevFocus.focus) { try { __methodPrevFocus.focus(); } catch (_) {} }
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMethod();
     });
 
     // ═══════════════════════════════════════════════════════════
