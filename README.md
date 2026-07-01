@@ -3,10 +3,10 @@
 A deterministic, evidence-aware system that ranks the **top 100 of 100,000** candidates for a Senior
 AI Engineer role — and shows *why* each candidate is there, reproducibly.
 
-[![Tests](https://img.shields.io/badge/tests-265_passed_6_skipped-brightgreen.svg)](#)
-[![Runtime](https://img.shields.io/badge/100K-under_300s_Docker_2CPU-brightgreen.svg)](#)
-[![Execution](https://img.shields.io/badge/CPU--only-offline-blue.svg)](#)
-[![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](#)
+[![CI](https://github.com/bansalbhunesh/redrob-hirefit-ranker/actions/workflows/ci.yml/badge.svg)](https://github.com/bansalbhunesh/redrob-hirefit-ranker/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-265_passed_6_skipped-brightgreen.svg)](docs/JUDGE_PROOF.md#5-test-summary)
+[![Runtime](https://img.shields.io/badge/100K-under_300s_Docker_2CPU-brightgreen.svg)](docs/runtime_matrix.md)
+[![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](docs/REGENERATION_PROOF.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Live demo](https://img.shields.io/badge/live_demo-HuggingFace_Space-FBBF24.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
 
