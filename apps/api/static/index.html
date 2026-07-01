@@ -931,9 +931,22 @@
     /* Forensic decision room — narrative hierarchy above the ranking controls. */
     .header { gap: 20px; }
     .header-controls { flex: 1; justify-content: flex-end; }
-    .primary-nav { display: flex; align-items: center; gap: clamp(14px, 2.4vw, 34px); margin-right: auto; }
-    .primary-nav a { min-height: 44px; display: inline-flex; align-items: center; color: var(--text-secondary); font-size: 12px; font-weight: 700; text-decoration: none; border-bottom: 2px solid transparent; }
-    .primary-nav a:hover, .primary-nav a:focus-visible { color: var(--text-primary); border-color: var(--accent-cyan); }
+    .primary-nav { display: flex; align-items: center; gap: clamp(14px, 2.4vw, 30px); margin-right: auto; }
+    .primary-nav a { position: relative; min-height: 44px; display: inline-flex; align-items: center; color: var(--text-secondary); font-size: 12px; font-weight: 700; letter-spacing: .01em; text-decoration: none; transition: color .2s ease; }
+    .primary-nav a::after { content: ''; position: absolute; left: 2px; right: 2px; bottom: 7px; height: 2px; border-radius: 2px; background: var(--accent-cyan); transform: scaleX(0); transform-origin: left center; transition: transform .3s cubic-bezier(.22,1,.36,1); }
+    .primary-nav a:hover, .primary-nav a:focus-visible { color: var(--text-primary); }
+    .primary-nav a:hover::after, .primary-nav a:focus-visible::after { transform: scaleX(1); }
+    .primary-nav a[aria-current="true"] { color: var(--text-primary); }
+    .primary-nav a[aria-current="true"]::after { transform: scaleX(1); }
+    /* Sticky-header offset: JS keeps --scroll-offset synced to the live header height. */
+    :root { --scroll-offset: 96px; }
+    #rankings, #method, #validation, .proof-band, .command-brief { scroll-margin-top: var(--scroll-offset); }
+    /* One-shot ring when a nav item targets a specific proof panel. */
+    @keyframes nav-flash { 0% { box-shadow: inset 0 0 0 0 rgba(201,110,72,0); } 26% { box-shadow: inset 0 0 0 2px rgba(230,151,109,.85); } 100% { box-shadow: inset 0 0 0 0 rgba(201,110,72,0); } }
+    .nav-flash { animation: nav-flash 1.15s cubic-bezier(.22,1,.36,1) 1; }
+    /* Pressed feedback across the interactive surfaces. */
+    .mode-btn:active, .filter-btn:active, .theme-btn:active, .primary-nav a:active { transform: translateY(1px); }
+    .command-action:active { transform: translateY(0); }
     .theme-btn { min-height: 44px; padding: 0 13px; border: 1px solid var(--border-glass); border-radius: 999px; background: transparent; color: var(--text-primary); font: 700 12px var(--font-body); cursor: pointer; }
     .theme-btn:hover { border-color: var(--text-primary); transform: translateY(-1px); }
     .command-brief { min-height: 430px; display: grid; grid-template-columns: 64px minmax(0,1fr); align-items: end; gap: clamp(18px,3vw,46px); padding: clamp(34px,6vw,76px) clamp(24px,5vw,70px); margin-bottom: 22px; overflow: hidden; position: relative; color: var(--text-primary); background: rgba(248,252,250,.74); border: 1px solid var(--border-glass); border-radius: 22px; box-shadow: 0 28px 80px rgba(20,28,27,.12); backdrop-filter: blur(22px) saturate(112%); -webkit-backdrop-filter: blur(22px) saturate(112%); }
@@ -979,6 +992,29 @@
     body.night-shift .candidate-card .rank-badge, body.night-shift .feature-item, body.night-shift .behavioral-item, body.night-shift .skill-tag, body.night-shift .edu-item { background:rgba(13,17,17,.58); }
     body.night-shift .search-box { background:rgba(21,26,25,.78); }
     body.night-shift .filter-btn { background:rgba(31,36,35,.72); }
+    /* Night file — lift every hard-coded day surface so nothing merges into the background or goes unreadable. */
+    body.night-shift { --accent-gold:#d9a441; --accent-silver:#aeb8c4; --accent-bronze:#cf8a5a; --accent-red:#e87a7a; }
+    body.night-shift .ambient-bg::after { background-image:linear-gradient(rgba(208,220,214,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(208,220,214,.03) 1px,transparent 1px); }
+    body.night-shift .mode-toggle { background:rgba(20,25,24,.6); box-shadow:inset 0 0 0 1px rgba(208,220,214,.08); }
+    body.night-shift .pipeline-node { background:rgba(31,36,35,.82); }
+    body.night-shift .pipeline-node:hover { border-color:rgba(208,220,214,.3); }
+    body.night-shift .pipeline-node.active { background:rgba(201,110,72,.16); border-color:rgba(201,110,72,.6); }
+    body.night-shift .filter-btn:hover { background:rgba(42,48,47,.9); border-color:rgba(201,110,72,.5); color:var(--text-primary); }
+    body.night-shift .search-box:focus { background:rgba(24,29,28,.92); border-color:var(--accent-cyan); box-shadow:0 0 0 3px rgba(201,110,72,.22); }
+    body.night-shift .candidate-card { background:rgba(30,36,35,.86); }
+    body.night-shift .candidate-card:hover { border-color:rgba(201,110,72,.45); box-shadow:0 16px 40px rgba(0,0,0,.4); }
+    body.night-shift .candidate-card.selected { background:rgba(201,110,72,.14); border-color:rgba(201,110,72,.7); outline-color:rgba(201,110,72,.5); box-shadow:0 16px 40px rgba(0,0,0,.45); }
+    body.night-shift .reasoning-box { background:rgba(201,110,72,.1); border-color:rgba(201,110,72,.3); }
+    body.night-shift .loading-overlay { background:rgba(12,15,15,.9); }
+    body.night-shift .toast { background:rgba(28,33,32,.96); color:var(--text-primary); }
+    /* The proof band is a dark casefile in both modes; in night, lift it off the page so it still reads as a distinct panel. */
+    body.night-shift .proof-band { background:rgba(38,44,43,.96); border-color:rgba(208,220,214,.16); box-shadow:0 20px 52px rgba(0,0,0,.42); }
+    body.night-shift .proof-band details { background:rgba(48,55,53,.96); }
+    /* Brighten rust/green so text and status keep AA contrast on the dark file. */
+    body.night-shift .case-number, body.night-shift .brief-kicker, body.night-shift .candidate-card .score-value, body.night-shift .reasoning-box .highlight, body.night-shift .pipeline-node.active .icon { color:#e6976d; }
+    body.night-shift .header-brand .badge { background:rgba(95,174,134,.14); border-color:rgba(95,174,134,.4); color:#6fc79a; }
+    body.night-shift .tag-ml { color:#6fc79a; border-color:rgba(95,174,134,.28); }
+    body.night-shift .tag-product { color:#e6976d; border-color:rgba(201,110,72,.28); }
 
     @media (max-width: 900px) {
       .header { flex-wrap: wrap; }
@@ -1006,7 +1042,6 @@
       .proof-band ol, .validation-grid { grid-template-columns: 1fr; padding-inline: 18px; }
     }
   </style>
-<base target="_blank">
 </head>
 <body>
   <div class="ambient-bg"></div>
@@ -1723,6 +1758,111 @@
       e.preventDefault();
       el.click();
     });
+
+    // ═══════════════════════════════════════════════════════════
+    // SECTION NAVIGATION — offset-aware smooth scroll, scrollspy,
+    // and proof-panel reveal so Rankings / Method / Validation each
+    // land in a clearly distinct place beneath the sticky header.
+    // ═══════════════════════════════════════════════════════════
+    (function () {
+      const header = document.querySelector('.header');
+      const nav = document.querySelector('.primary-nav');
+      if (!nav) return;
+      const links = Array.from(nav.querySelectorAll('a[href^="#"]'));
+      const proofBand = document.querySelector('.proof-band');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let lastProofNav = 'method';
+
+      // Keep the sticky-header offset in sync with the live header height
+      // (the header wraps taller on narrow screens, so this can't be a constant).
+      function syncOffset() {
+        const h = header ? header.getBoundingClientRect().height : 72;
+        document.documentElement.style.setProperty('--scroll-offset', (Math.round(h) + 20) + 'px');
+      }
+      syncOffset();
+      if (window.ResizeObserver && header) new ResizeObserver(syncOffset).observe(header);
+      window.addEventListener('resize', syncOffset);
+
+      function offsetPx() {
+        return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--scroll-offset'), 10) || 90;
+      }
+      function targetFor(hash) { return hash && hash.length > 1 ? document.getElementById(hash.slice(1)) : null; }
+
+      function setActive(id) {
+        links.forEach(a => {
+          const on = a.getAttribute('href') === '#' + id;
+          a.setAttribute('aria-current', on ? 'true' : 'false');
+        });
+      }
+      function smoothScrollTo(el) {
+        const top = window.pageYOffset + el.getBoundingClientRect().top - offsetPx();
+        window.scrollTo({ top: Math.max(0, top), behavior: reduce.matches ? 'auto' : 'smooth' });
+      }
+      function activate(hash, fromClick) {
+        const el = targetFor(hash);
+        if (!el) return;
+        const id = hash.slice(1);
+        if (id === 'method' || id === 'validation') {
+          lastProofNav = id;
+          if (el.tagName === 'DETAILS') el.open = true;
+          smoothScrollTo(proofBand || el);
+          el.classList.remove('nav-flash');
+          void el.offsetWidth;                       // restart the one-shot ring
+          if (!reduce.matches) el.classList.add('nav-flash');
+          setTimeout(() => el.classList.remove('nav-flash'), 1300);
+          setActive(id);
+          const summary = el.querySelector('summary');
+          if (summary) { try { summary.focus({ preventScroll: true }); } catch (_) {} }
+        } else {
+          smoothScrollTo(el);
+          setActive(id);
+          if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+          try { el.focus({ preventScroll: true }); } catch (_) {}
+        }
+        if (fromClick) history.replaceState(null, '', hash);
+      }
+
+      // Intercept every in-page anchor (primary nav + hero call-to-action).
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', function (e) {
+          const hash = a.getAttribute('href');
+          if (!targetFor(hash)) return;
+          e.preventDefault();
+          activate(hash, true);
+        });
+      });
+
+      // Scrollspy — highlight whichever section sits under the header line.
+      // Ordered top-to-bottom so the lowest section that has crossed the line wins.
+      const spy = [
+        { id: 'proof', el: proofBand },
+        { id: 'rankings', el: document.getElementById('rankings') }
+      ].filter(s => s.el);
+      let ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          ticking = false;
+          const line = offsetPx() + 6;
+          let current = null;
+          spy.forEach(s => { if (s.el.getBoundingClientRect().top <= line) current = s.id; });
+          if ((window.innerHeight + window.pageYOffset) >= document.documentElement.scrollHeight - 4 && spy.length) {
+            current = spy[spy.length - 1].id;                 // pin last section at page end
+          }
+          if (current === 'proof') setActive(lastProofNav);
+          else if (current) setActive(current);
+          else links.forEach(a => a.setAttribute('aria-current', 'false'));
+        });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      // Honour a deep link (e.g. /#validation) once layout has settled.
+      if (location.hash && targetFor(location.hash)) {
+        window.addEventListener('load', () => setTimeout(() => activate(location.hash, false), 60));
+      }
+    })();
   </script>
 </body>
 </html>
