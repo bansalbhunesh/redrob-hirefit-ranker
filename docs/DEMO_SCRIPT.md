@@ -26,9 +26,10 @@ ranking change fails CI."
 ## C. Live sandbox (30 seconds)
 
 Open https://huggingface.co/spaces/bansal1234/Hirefit
-Say: "Upload → tiered shortlist → decision verdict → CSV export, running the real ranker, CPU-only.
-Notice the integrity flags: 53 detected in the pool, 0 in the top-100, and each is a review signal, not
-a fraud accusation."
+Say: "The example is populated on load. The release docket pins the hash, tests, runtime, and integrity
+facts; the candidate ledger opens each person into an evidence dossier, and the CSV export comes from
+the live CPU-only ranker. Upload your own pool to replace the example. The integrity gate detected 53
+profiles in the full pool and shortlisted 0; every flag is a review signal, not a fraud accusation."
 
 ## D. Explainability (20 seconds)
 

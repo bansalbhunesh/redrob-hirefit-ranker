@@ -6,7 +6,7 @@ All ranking-quality numbers are **development proxies** (independent heuristic +
 **no official hidden labels were available before submission.**
 
 The submission's defensible edge is **full-pool reproducibility, determinism, integrity gates, and
-exact explainability** — not a claim to be #1 on a score nobody can see.
+exact explainability** — not a claim about an unavailable leaderboard score.
 
 ---
 
@@ -98,7 +98,7 @@ repos), on **development proxies** this submission sits in the **top cluster**. 
 on **full-pool reproducibility, determinism, integrity gates, and test/explainability proof** — several
 strong rivals ship learned/semantic stacks but do not commit a reproducible full-pool submission, and
 the whole field shares the same ceiling (self-generated, single-role proxy labels, no official ground
-truth). This is **not** a confirmed hidden-score #1, and we do not claim one.
+truth). This is **not** a confirmed hidden-score result or leaderboard position.
 
 ## 10. Why this is defensible
 

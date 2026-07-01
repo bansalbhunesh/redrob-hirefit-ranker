@@ -25,11 +25,11 @@
      <text x="129" y="130" text-anchor="middle" fill="#F1F5F9" font-size="15" font-weight="700">Main baseline</text>
      <text x="129" y="152" text-anchor="middle" fill="#B8C4D9" font-size="11.5">historical default</text>
      <text x="129" y="172" text-anchor="middle" fill="#FBBF24" font-size="12">mean7 0.872686</text></g>
-  <!-- 2 V4 -->
+  <!-- 2 evidence correction -->
   <g><rect x="274" y="96" width="210" height="108" rx="4" fill="#1E293B" stroke="#38BDF8"/><rect x="274" y="96" width="210" height="3" rx="2" fill="#38BDF8"/>
-     <text x="379" y="128" text-anchor="middle" fill="#F1F5F9" font-size="14.5" font-weight="700">Dominant V4</text>
+     <text x="379" y="128" text-anchor="middle" fill="#F1F5F9" font-size="14.5" font-weight="700">Evidence correction</text>
      <text x="379" y="150" text-anchor="middle" fill="#B8C4D9" font-size="11.5">feature-only correction</text>
-     <text x="379" y="170" text-anchor="middle" fill="#38BDF8" font-size="11">no V3 component regression</text></g>
+     <text x="379" y="170" text-anchor="middle" fill="#38BDF8" font-size="11">held across component checks</text></g>
   <!-- 3 frontier V5 -->
   <g><rect x="524" y="96" width="210" height="108" rx="4" fill="#1E293B" stroke="#4ADE80"/><rect x="524" y="96" width="210" height="3" rx="2" fill="#4ADE80"/>
      <text x="629" y="128" text-anchor="middle" fill="#F1F5F9" font-size="14.5" font-weight="700">Frontier V5</text>
