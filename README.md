@@ -9,8 +9,12 @@ AI Engineer role — and shows *why* each candidate is there, reproducibly.
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](docs/REGENERATION_PROOF.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Live demo](https://img.shields.io/badge/live_demo-HuggingFace_Space-FBBF24.svg)](https://huggingface.co/spaces/bansal1234/Hirefit)
+[![Release](https://img.shields.io/badge/release-v1.1.0_Stage--3_Docker_proof-blue.svg)](https://github.com/bansalbhunesh/redrob-hirefit-ranker/releases/tag/v1.1.0)
 
 `Reproduce: python rank.py --release` · `Ranking profile: frontier-v5` · `CPU-only, offline, byte-reproducible` · `No hidden-score claim`
+
+[![HireFit decision room — live demo](docs/screenshots/hirefit-live-desktop-hero.png)](https://huggingface.co/spaces/bansal1234/Hirefit)
+*The live decision room ([HF Space](https://huggingface.co/spaces/bansal1234/Hirefit)) — more views in [Live Space screenshots](#live-space-screenshots).*
 
 > Badge counts reflect a full checkout (official `candidates.jsonl` + `hf_space` submodule). On a
 > fresh clone without those assets, 272 tests run and 6 skip with stated reasons (full-pool
@@ -70,7 +74,7 @@ were available before submission.
 | **Decision dashboard** | `streamlit run omega_decision_dashboard.py` | read-only explainability + integrity cards |
 | **Source** | [GitHub ↗](https://github.com/bansalbhunesh/redrob-hirefit-ranker) | full code · one-command reproduction |
 | **Ranked output** | [`submission.csv`](submission.csv) · [`ranked_top100.xlsx`](ranked_top100.xlsx) | the recommended top-100 shortlist with a grounded reason per rank (predefined CSV format + an XLSX copy) |
-| **Pitch deck** | [`docs/HireFit_Submission_Deck.pptx`](docs/HireFit_Submission_Deck.pptx) | judge-ready deck — problem, solution, architecture, live demo, proof, explainability, integrity, honest comparison, limits, and submission links |
+| **Pitch deck** | [`docs/HireFit_Submission_Deck.pdf`](docs/HireFit_Submission_Deck.pdf) ([.pptx source](docs/HireFit_Submission_Deck.pptx)) | judge-ready deck — problem, solution, architecture, live demo, proof, explainability, integrity, honest comparison, limits, and submission links; the PDF is the exact file submitted on the portal |
 
 ## Live Space screenshots
 
