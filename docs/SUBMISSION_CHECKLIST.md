@@ -8,13 +8,13 @@ Everything controllable in the repository is verified here. “Owner action” m
 - **One release path:** `PYTHONHASHSEED=0 python rank.py --release ...` forces the champion and fails closed on input, model, configuration, count, numeric, or output drift.
 - **Reproducible:** `./reproduce.sh` is green; the full 100K Docker release is byte-identical and atomic; a forced OOM preserves the previous output.
 - **Resource fit:** CPU-only and offline; 136.0 s pipeline / 149.1 s wall at 2 CPU / 16 GiB; sampled peak 4.13 GiB.
-- **Ranking evidence:** wins every measured composite vs main and sits in the top cluster on development proxies (broad / strongest-union / four-axis means); external reviewer and blind cross-checks. Dev proxies, not an official score.
+- **Ranking evidence:** improves every measured composite versus the repository's default profile and sits in the top cluster on development proxies (broad / strongest-union / four-axis means); external reviewer and blind cross-checks. Dev proxies, not an official score.
 - **Integrity:** 0 detected honeypots in the top 100, with 53 detected in the pool.
 - **Supply chain:** digest-pinned base image, hash-pinned wheels, `pip --require-hashes`, and no known production dependency vulnerabilities in the dated audit.
 - **Judge path:** the judge-proof package, 60-second judge packet, evidence-first README, methodology, deployment guide, current pitch deck, and screenshots are linked from the repository front page. Historical R&D notes remain under `docs/archive/` and are not submission claims.
 - **Fresh visual proof:** desktop and 390-pixel mobile screenshots were regenerated from the live Render and Hugging Face surfaces on 2026-07-01.
-- **Deployment:** both the Hugging Face Space and Render decision room returned HTTP 200 on 2026-07-01; the repository also includes a schema-validated Render Blueprint and documented health/readiness gates.
-- **Public access:** verified through the live GitHub repository, Hugging Face Space, and Render app on 2026-07-01.
+- **Deployment:** both the Hugging Face Space and Render decision room returned HTTP 200 on 2026-07-02; the repository also includes a schema-validated Render Blueprint and documented health/readiness gates.
+- **Public access:** verified through the live GitHub repository, Hugging Face Space, and Render app on 2026-07-02.
 
 ## Optional presentation enhancement
 

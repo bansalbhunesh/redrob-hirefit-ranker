@@ -3,7 +3,7 @@
 ```bash
 # 1. full suite (deterministic env)
 PYTHONHASHSEED=0 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
-  python -m pytest -q                       # expect: 270 passed, 1 environment skip
+  python -m pytest -q                       # expect: 275 passed
 # 2. committed branch-champion hash (must be byte-identical)
 sha256sum submission.csv                    # -> 8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062
 # 3. omitting --release still preserves main's default scorer and fixed-slice hash

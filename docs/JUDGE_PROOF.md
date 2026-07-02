@@ -54,7 +54,7 @@ Shape/format/membership checks; also runs as a CI gate on every push.
 
 ## 5. Test summary
 
-- **270 passed, 1 environment skip** (`PYTHONHASHSEED=0 python -m pytest -q`).
+- **275 passed** (`PYTHONHASHSEED=0 python -m pytest -q`).
 - Includes the golden-hash gate, the 2K-slice behavior gate, the explainability faithfulness test,
   dashboard smoke/parity, integrity-card mapping, and the anti-drift metrics-manifest gate.
 - CI gates the suite + validator on every push (`.github/workflows/ci.yml`).
@@ -94,8 +94,8 @@ Shape/format/membership checks; also runs as a CI gate on every push.
 ## 9. Competitor positioning (honest, aggregate)
 
 Across the discoverable public field (Redrob / Redrop / India Runs / Hack2Skill candidate-ranking
-repos), on **development proxies** this submission sits in the **top cluster**. It is likely strongest
-on **full-pool reproducibility, determinism, integrity gates, and test/explainability proof** — several
+repos), on **development proxies** this submission sits in the **top cluster**. Its clearest differentiators
+are **full-pool reproducibility, determinism, integrity gates, and test/explainability proof** — several
 strong rivals ship learned/semantic stacks but do not commit a reproducible full-pool submission, and
 the whole field shares the same ceiling (self-generated, single-role proxy labels, no official ground
 truth). This is **not** a confirmed hidden-score result or leaderboard position.
@@ -108,10 +108,10 @@ truth). This is **not** a confirmed hidden-score result or leaderboard position.
 | Determinism | §6: serial/parallel byte-identical, pinned env, cross-CPU-count Docker |
 | Integrity | §7: hard honeypot/disqualifier gates, 53 detected / 0 shipped |
 | Exact explainability | §8: analytic Shapley attributions, faithfulness-tested |
-| Honest evaluation | §5, §8: 270 passing tests, pre-registered measured-negatives, dev-proxy labeling |
+| Honest evaluation | §5, §8: 275 passing tests, pre-registered measured-negatives, dev-proxy labeling |
 | No overclaiming | dev-proxy labels stated everywhere; no hidden-score or leaderboard claim |
 
 > Boundary: official hidden labels and numeric judging weights are unpublished. The defensible claim is
-> *strongest balanced, fully reproducible, and explainable artifact* — not guaranteed first place on any
+> *top-cluster development-proxy balance with fully reproducible and explainable evidence* — not guaranteed first place on any
 > official or isolated metric. Historical R&D notes (superseded framing/codenames) live under
 > [`archive/`](archive/) with a disclaimer.

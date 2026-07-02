@@ -36,9 +36,9 @@ and deploys only after GitHub checks pass.
 
 [Deploy to Render](https://render.com/deploy?repo=https://github.com/bansalbhunesh/redrob-hirefit-ranker)
 
-The previous public Render service was found suspended during the 2026-06-30 audit; the repo
-therefore does not advertise it as a live proof surface. The Hugging Face Space remains the
-primary live demo, while the Blueprint makes a fresh Render service reproducible.
+The public Render decision room and its `/api/healthz` and `/api/readyz` gates returned HTTP 200
+on 2026-07-02. The Hugging Face Space remains the lightweight sandbox; Render is the full
+recruiter workspace. The committed Blueprint makes a fresh deployment reproducible.
 
 ## Environment variables
 
@@ -46,8 +46,10 @@ primary live demo, while the Blueprint makes a fresh Render service reproducible
 |---|---:|---|
 | `REDROB_MAX_LIVE_CANDIDATES` | 500 | Live upload candidate cap |
 | `REDROB_MAX_BATCH_CANDIDATES` | 5000 | Batch demo cap |
+| `REDROB_MAX_EXPANDED_UPLOAD_BYTES` | 33554432 | Expanded gzip safety cap |
+| `REDROB_MAX_CANDIDATE_RECORD_BYTES` | 1048576 | Per-record JSONL safety cap |
 | `REDROB_RATE_LIMIT_PER_MINUTE` | 120 | Per-client request limit |
-| `REDROB_CORS_ORIGINS` | localhost + historical Render origin | Comma-separated browser origins |
+| `REDROB_CORS_ORIGINS` | localhost + live Render origin | Comma-separated browser origins |
 | `REDROB_DEMO_TOKEN` | unset | Optional `X-Demo-Token` requirement for write endpoints |
 | `REDROB_GIT_SHA` | auto-detected | Build identity exposed by health endpoints |
 

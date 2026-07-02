@@ -3,8 +3,8 @@
 ## The decision
 
 Ship the **`main` `--release` artifact**: the `frontier-v5` ranking profile wrapped in an
-exact-output, fail-closed release. It is the strongest **balanced** artifact we measured on
-development proxies and the safest to reproduce under the challenge constraints. Quality figures below
+exact-output, fail-closed release. It sits in the **top cluster** of our development-proxy comparisons
+and is fully reproducible under the challenge constraints. Quality figures below
 are dev proxies, **not** an official score.
 
 | Judge question | Evidence-backed answer |
@@ -48,7 +48,7 @@ docker run --rm --cpus=2 --memory=16g -v "$PWD:/data" hirefit-ranker \
 
 Official hidden labels and numeric judging weights are not published. Public-field comparisons are
 transparent local measurements over reproducible outputs on development proxies, **not** an official
-leaderboard. The defensible claim is **strongest balanced artifact on development proxies plus the
-strongest release engineering** — not guaranteed first place on any official or isolated metric. The
+leaderboard. The defensible claim is **top-cluster development-proxy balance with exact full-pool
+release proof** — not guaranteed first place on any official or isolated metric. The
 two narrow `frontier-v5` tie-breaks have marginal, within-noise impact; the submission's case rests on
 reproducibility, integrity, and validation.

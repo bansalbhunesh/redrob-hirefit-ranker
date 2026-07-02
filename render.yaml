@@ -26,6 +26,10 @@ services:
         value: "500"
       - key: REDROB_MAX_BATCH_CANDIDATES
         value: "5000"
+      - key: REDROB_MAX_EXPANDED_UPLOAD_BYTES
+        value: "33554432"
+      - key: REDROB_MAX_CANDIDATE_RECORD_BYTES
+        value: "1048576"
       - key: REDROB_RATE_LIMIT_PER_MINUTE
         value: "120"
 

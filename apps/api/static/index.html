@@ -1135,7 +1135,7 @@
 
 
       <!-- UPLOAD ZONE (hidden by default) -->
-      <div class="upload-zone" id="uploadZone" role="button" tabindex="0" aria-label="Upload a candidate file (JSONL, JSON, or CSV)" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-zone" id="uploadZone" role="button" tabindex="0" aria-label="Upload a candidate file (JSONL, JSON, or CSV)" onclick="document.getElementById('fileInput').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('fileInput').click()}">
         <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-secondary);margin:0 auto 12px;display:block;">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
           <polyline points="17 8 12 3 7 8"></polyline>
@@ -1144,7 +1144,7 @@
         <h3>Upload candidates file</h3>
         <p>Drag and drop candidates.jsonl, or click to browse</p>
         <div class="file-types">Supports .jsonl, .json, .csv</div>
-        <input type="file" id="fileInput" style="display:none" accept=".jsonl,.json,.csv" onchange="handleFileUpload(event)">
+        <input type="file" id="fileInput" style="display:none" aria-label="Candidate data file" accept=".jsonl,.json,.csv" onchange="handleFileUpload(event)">
       </div>
 
       <!-- METRICS -->
@@ -1237,7 +1237,7 @@
       <span class="record-kicker">Reproducible release record</span>
       <div class="record-grid">
         <span><small>Artifact</small><strong>8f7f30c68ec3</strong></span>
-        <span><small>Suite</small><strong>271 checks</strong></span>
+        <span><small>Suite</small><strong>275 checks</strong></span>
         <span><small>Runtime</small><strong>136 s / 100K</strong></span>
         <span><small>Compute</small><strong>2 CPU / offline</strong></span>
       </div>
@@ -1259,6 +1259,17 @@
       jobId: null,
       eventSource: null,
     };
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      })[character]);
+    }
+
+    function safeClassToken(value, fallback = 'standard') {
+      const token = String(value ?? '').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      return token || fallback;
+    }
 
     const PIPELINE_STAGES = [
       { name: 'Load', icon: `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>` },
@@ -1537,10 +1548,10 @@
       const stages = state.pipeline.length ? state.pipeline : PIPELINE_STAGES.map(s => ({...s, status: 'pending', count: 0}));
 
       container.innerHTML = stages.map((stage, i) => `
-        <div class="pipeline-node ${stage.status === 'complete' ? 'active' : ''}" role="button" tabindex="0" aria-label="Pipeline stage ${stage.name}" onclick="highlightStage('${stage.name}')">
+        <div class="pipeline-node ${stage.status === 'complete' ? 'active' : ''}" role="button" tabindex="0" aria-label="Pipeline stage ${escapeHtml(stage.name)}" data-stage="${escapeHtml(encodeURIComponent(String(stage.name ?? '')))}" onclick="highlightStage(decodeURIComponent(this.dataset.stage))" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();highlightStage(decodeURIComponent(this.dataset.stage))}">
           <div class="icon">${PIPELINE_STAGES[i]?.icon || '⚙️'}</div>
-          <div class="name">${stage.name}</div>
-          <div class="count">${stage.count?.toLocaleString('en-US') || 0}</div>
+          <div class="name">${escapeHtml(stage.name)}</div>
+          <div class="count">${Number(stage.count || 0).toLocaleString('en-US')}</div>
         </div>
         ${i < stages.length - 1 ? `<div class="pipeline-arrow"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg></div>` : ''}
       `).join('');
@@ -1603,26 +1614,31 @@
 
       container.innerHTML = filtered.map((c, i) => {
         const isSelected = c.candidate_id === state.selectedId;
+        const candidateId = String(c.candidate_id ?? '');
+        const rank = Number.isFinite(Number(c.rank)) ? Number(c.rank) : 0;
+        const yoe = Number.isFinite(Number(c.profile?.yoe)) ? Number(c.profile.yoe) : 0;
+        const score = Number.isFinite(Number(c.score)) ? Number(c.score) : 0;
         return `
-        <div class="candidate-card tier-${c.tier || 'standard'} ${isSelected ? 'selected' : ''} animate-in"
+        <div class="candidate-card tier-${safeClassToken(c.tier)} ${isSelected ? 'selected' : ''} animate-in"
              style="animation-delay:${i * 0.03}s"
-             role="button" tabindex="0" aria-label="View detail and evidence for candidate ${c.candidate_id}, rank ${c.rank}"
-             onclick="selectCandidate('${c.candidate_id}')"
-             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectCandidate('${c.candidate_id}')}">
+             role="button" tabindex="0" aria-label="View detail and evidence for candidate ${escapeHtml(candidateId)}, rank ${rank}"
+             data-candidate-id="${escapeHtml(encodeURIComponent(candidateId))}"
+             onclick="selectCandidate(decodeURIComponent(this.dataset.candidateId))"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectCandidate(decodeURIComponent(this.dataset.candidateId))}">
           <div class="card-header">
             <div class="identity">
-              <div class="rank-badge">${c.rank}</div>
+              <div class="rank-badge">${rank}</div>
               <div class="name-area">
-                <h3>${c.profile?.title || 'Unknown'} @ ${c.profile?.company || 'Unknown'}</h3>
-                <div class="meta">${c.candidate_id} | ${c.profile?.yoe?.toFixed(1) || 0} YOE | ${c.profile?.location || 'Unknown'}</div>
+                <h3>${escapeHtml(c.profile?.title || 'Unknown')} @ ${escapeHtml(c.profile?.company || 'Unknown')}</h3>
+                <div class="meta">${escapeHtml(candidateId)} | ${yoe.toFixed(1)} YOE | ${escapeHtml(c.profile?.location || 'Unknown')}</div>
               </div>
             </div>
             <div class="score-area">
-              <div class="score-value">${c.score?.toFixed(4) || '0.0000'}</div>
+              <div class="score-value">${score.toFixed(4)}</div>
               <div class="score-label">Score</div>
             </div>
           </div>
-          <div class="reasoning-preview">${c.reasoning || 'No reasoning available'}</div>
+          <div class="reasoning-preview">${escapeHtml(c.reasoning || 'No reasoning available')}</div>
           <div class="tags">
             ${c.honeypot_flag ? '<span class="tag tag-hp">🍯 HONEYPOT</span>' : ''}
             ${c.profile?.yoe >= 5 ? '<span class="tag tag-ml">Experienced</span>' : ''}
@@ -1655,8 +1671,9 @@
 
       const features = c.features || {};
       const featureItems = Object.entries(features).map(([k, v]) => {
-        const valClass = v > 0.7 ? 'high' : v > 0.4 ? 'medium' : 'low';
-        return `<div class="feature-item"><span class="name">${k.replace(/_/g, ' ')}</span><span class="value ${valClass}">${v.toFixed(3)}</span></div>`;
+        const numericValue = Number.isFinite(Number(v)) ? Number(v) : 0;
+        const valClass = numericValue > 0.7 ? 'high' : numericValue > 0.4 ? 'medium' : 'low';
+        return `<div class="feature-item"><span class="name">${escapeHtml(k.replace(/_/g, ' '))}</span><span class="value ${valClass}">${numericValue.toFixed(3)}</span></div>`;
       }).join('');
 
       const b = c.behavioral || {};
@@ -1669,45 +1686,45 @@
         { label: 'Notice Period', value: b.notice_period, fmt: v => v + 'd', cls: v => v <= 30 ? 'positive' : v <= 60 ? 'neutral' : 'negative' },
       ].map(item => {
         const val = item.value !== undefined ? item.value : 0;
-        return `<div class="behavioral-item"><div class="value ${item.cls(val)}">${item.fmt(val)}</div><div class="label">${item.label}</div></div>`;
+        return `<div class="behavioral-item"><div class="value ${safeClassToken(item.cls(val), 'neutral')}">${escapeHtml(item.fmt(val))}</div><div class="label">${escapeHtml(item.label)}</div></div>`;
       }).join('');
 
       const timeline = (c.timeline || []).map(job => `
         <div class="timeline-item ${job.is_current ? 'current' : ''}">
-          <div class="company">${job.company}</div>
-          <div class="title">${job.title}</div>
-          <div class="duration">${job.duration_months} months • ${job.industry} • ${job.company_size}</div>
+          <div class="company">${escapeHtml(job.company)}</div>
+          <div class="title">${escapeHtml(job.title)}</div>
+          <div class="duration">${escapeHtml(job.duration_months)} months • ${escapeHtml(job.industry)} • ${escapeHtml(job.company_size)}</div>
         </div>
       `).join('');
 
       const skills = (c.skills || []).map(s => {
         const cls = s.proficiency === 'advanced' ? 'advanced' : s.proficiency === 'intermediate' ? 'intermediate' : 'beginner';
-        return `<span class="skill-tag ${cls}">${s.name} (${s.endorsements})</span>`;
+        return `<span class="skill-tag ${cls}">${escapeHtml(s.name)} (${escapeHtml(s.endorsements)})</span>`;
       }).join('');
 
       const education = (c.education || []).map(edu => `
         <div class="edu-item">
-          <div class="institution">${edu.institution}</div>
-          <div class="degree">${edu.degree} · ${edu.field}</div>
-          <div class="years">${edu.start}–${edu.end} • ${edu.grade}</div>
-          ${edu.tier ? `<span class="tier-badge tier-${edu.tier.replace('tier_', '')}">${edu.tier.toUpperCase()}</span>` : ''}
+          <div class="institution">${escapeHtml(edu.institution)}</div>
+          <div class="degree">${escapeHtml(edu.degree)} · ${escapeHtml(edu.field)}</div>
+          <div class="years">${escapeHtml(edu.start)}–${escapeHtml(edu.end)} • ${escapeHtml(edu.grade)}</div>
+          ${edu.tier ? `<span class="tier-badge tier-${safeClassToken(String(edu.tier).replace('tier_', ''))}">${escapeHtml(String(edu.tier).toUpperCase())}</span>` : ''}
         </div>
       `).join('');
 
       const honeypotSection = c.honeypot_flag ? `
         <div class="honeypot-alert">
           <div class="title">Honeypot Detected</div>
-          <div class="reasons">${c.honeypot_reasons?.map(r => `<span class="reason">${r}</span>`).join('') || '<span class="reason">Flagged by system</span>'}</div>
+          <div class="reasons">${c.honeypot_reasons?.map(r => `<span class="reason">${escapeHtml(r)}</span>`).join('') || '<span class="reason">Flagged by system</span>'}</div>
         </div>
       ` : '';
 
       content.innerHTML = `
         ${honeypotSection}
         <div class="detail-header">
-          <div class="avatar">${(c.profile?.name || 'U').charAt(0)}</div>
+          <div class="avatar">${escapeHtml((c.profile?.name || 'U').charAt(0))}</div>
           <div class="info">
-            <h3>${c.profile?.title || 'Unknown'} @ ${c.profile?.company || 'Unknown'}</h3>
-            <p>${c.candidate_id} • ${c.profile?.location || 'Unknown'} • ${c.profile?.yoe?.toFixed(1) || 0} YOE</p>
+            <h3>${escapeHtml(c.profile?.title || 'Unknown')} @ ${escapeHtml(c.profile?.company || 'Unknown')}</h3>
+            <p>${escapeHtml(c.candidate_id)} • ${escapeHtml(c.profile?.location || 'Unknown')} • ${Number(c.profile?.yoe || 0).toFixed(1)} YOE</p>
           </div>
         </div>
 
@@ -1717,7 +1734,7 @@
           </div>
         </div>
         <div class="section-title">Reasoning Audit</div>
-        <div class="reasoning-box">${c.reasoning || 'No reasoning available'}</div>
+        <div class="reasoning-box">${escapeHtml(c.reasoning || 'No reasoning available')}</div>
         <div class="section-title">33-Feature Breakdown</div>
         <div class="feature-grid">${featureItems || '<div style="color:var(--text-muted);font-size:13px;">No feature data</div>'}</div>
         <div class="section-title">Behavioral Signals</div>
@@ -1728,8 +1745,8 @@
         ${education || '<div style="color:var(--text-muted);font-size:13px;">No education data</div>'}
         <div class="section-title">Skills</div>
         <div class="skills-cloud">${skills || '<div style="color:var(--text-muted);font-size:13px;">No skills data</div>'}</div>
-        ${c.certifications?.length ? `<div class="section-title">Certifications</div><div class="skills-cloud">${c.certifications.map(cert => `<span class="skill-tag">${cert}</span>`).join('')}</div>` : ''}
-        ${c.languages?.length ? `<div class="section-title">Languages</div><div class="skills-cloud">${c.languages.map(l => `<span class="skill-tag">${l.language} · ${l.proficiency}</span>`).join('')}</div>` : ''}
+        ${c.certifications?.length ? `<div class="section-title">Certifications</div><div class="skills-cloud">${c.certifications.map(cert => `<span class="skill-tag">${escapeHtml(cert)}</span>`).join('')}</div>` : ''}
+        ${c.languages?.length ? `<div class="section-title">Languages</div><div class="skills-cloud">${c.languages.map(language => `<span class="skill-tag">${escapeHtml(language.language)} · ${escapeHtml(language.proficiency)}</span>`).join('')}</div>` : ''}
       `;
 
       if (window.innerWidth <= 1100) {
@@ -1834,6 +1851,21 @@
     }
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeMethod();
+      if (e.key !== 'Tab') return;
+      const drawer = document.getElementById('methodDrawer');
+      if (!drawer.classList.contains('open')) return;
+      const focusable = Array.from(drawer.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+        .filter(element => element.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     });
 
     // ═══════════════════════════════════════════════════════════

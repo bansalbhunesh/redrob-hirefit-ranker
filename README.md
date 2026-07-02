@@ -4,7 +4,7 @@ A deterministic, evidence-aware system that ranks the **top 100 of 100,000** can
 AI Engineer role — and shows *why* each candidate is there, reproducibly.
 
 [![CI](https://github.com/bansalbhunesh/redrob-hirefit-ranker/actions/workflows/ci.yml/badge.svg)](https://github.com/bansalbhunesh/redrob-hirefit-ranker/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-270_passed_1_skipped-brightgreen.svg)](docs/JUDGE_PROOF.md#5-test-summary)
+[![Tests](https://img.shields.io/badge/tests-275_passed_0_skipped-brightgreen.svg)](docs/JUDGE_PROOF.md#5-test-summary)
 [![Runtime](https://img.shields.io/badge/100K-under_300s_Docker_2CPU-brightgreen.svg)](docs/runtime_matrix.md)
 [![Output](https://img.shields.io/badge/output-byte--reproducible-blue.svg)](docs/REGENERATION_PROOF.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -42,7 +42,7 @@ were available before submission.
 - **Explainability:** each candidate's evidence score decomposes into **exact** per-feature contributions
   (Shapley values of the linear relevance — analytic, not sampled), plus an ablation summary and a
   deterministic leave-one-feature-out rank-stability band. See [Explainability](#explainability).
-- **Receipts:** **270 tests passed / 1 environment skip**, a committed golden-hash gate, a 2K-slice
+- **Receipts:** **275 tests passed**, a committed golden-hash gate, a 2K-slice
   behavior gate, a Docker runtime matrix, and a pre-registered measured-negatives ladder.
 - **Honest limits:** quality metrics are dev proxies (independent heuristic + LLM-judge labels), **not**
   the official hidden score. On those proxies this system sits in the **top cluster** of the public
@@ -102,7 +102,7 @@ Each row below is something a judge can verify from the repository, not a claim 
 | Runtime | Full 100K in 136.0s pipeline / 149.1s wall at 2 CPU / 16 GiB (budget 300s) |
 | Explainability | Exact per-feature Shapley attributions + ablation + rank-stability bands (`src/redrob_ranker/explain.py`) |
 | Honest evaluation | A pre-registered measured-negatives ladder; every rejected idea is reproducible (`docs/measured_negatives.md`) |
-| Tests | 270 passed / 1 environment skip, including golden-hash and 2K-slice behavior gates |
+| Tests | 275 passed, including golden-hash and 2K-slice behavior gates |
 
 Competitive position is stated **in aggregate**: on development proxies across the public field this
 system is in the **top cluster**, leading on reproducibility and integrity engineering while specialist
@@ -116,14 +116,14 @@ Historical R&D comparisons are preserved under [`docs/archive/`](docs/archive/) 
 | Reproduce command | `python rank.py --release …` (profile `frontier-v5`); default `main` profile available without `--release` |
 | Artifact | `submission.csv`, SHA-256 `8f7f30c6…`; 100 rows from 100,000 candidates |
 | Production pipeline | Deterministic `rank.py`, **33-feature** scorer + seven shallow NumPy heads + feature-only evidence/integrity/tie-break corrections; fail-closed `--release` |
-| Tests | 270 passed, 1 environment skip |
+| Tests | 275 passed |
 | Dev-proxy quality | NDCG@10 0.9104 · P@10 = 1.0 — *dev proxy; **No official hidden labels*** |
 | Runtime | **136.0s pipeline / 149.1s wall**, Docker `--cpus=2 --memory=16g` (budget 300s) |
 | Memory | sampled peak **4.13 GiB** / 16 GiB; historical worst ~6.1 GB |
 | Execution | CPU-only, offline, deterministic (`PYTHONHASHSEED=0`) |
 | Integrity | honeypots in top-100: **0** (53 detected in pool); standard flags/disqualifications: **6**; temporal anomalies: **57** |
 | Public-field position | top cluster on development proxies across ~670 scored public outputs — *dev proxy, **not an official** score* |
-| Decision | Ship the `--release` artifact: the strongest balanced measured ranking plus the strongest release engineering |
+| Decision | Ship the `--release` artifact: top-cluster development-proxy ranking with exact, fail-closed release proof |
 
 > The quality rows are **dev proxies** (independent heuristic + LLM-audit), explicitly **not** the
 > official hidden score.
@@ -138,7 +138,7 @@ offline, byte-reproducible.
 
 ## What we tried and rejected
 
-The strongest signal here is everything we **did not** ship — each built, measured against a frozen
+The most useful signal here is everything we **did not** ship — each built, measured against a frozen
 100K blind arbiter (frozen before tuning), and rejected on evidence (`docs/measured_negatives.md`).
 
 | Alternative | Measured result on the blind arbiter | Verdict |
@@ -217,8 +217,8 @@ hidden-score guarantee.
 | repeated candidate half-splits | positive on most axes; independent set is noisy (45/100) |
 | full 100K constrained Docker | 136.0s pipeline / 149.1s wall, 53 detected / 0 emitted, 0 output temps, exact hash `8f7f30c6…` |
 
-Specialist public submissions still lead individual axes; the defensible claim is **strongest balanced
-artifact on development proxies**, not guaranteed hidden-score supremacy. Full development record:
+Specialist public submissions still lead individual axes; the defensible claim is **top-cluster balance
+on development proxies with unusually complete release proof**, not hidden-score supremacy. Full development record:
 [`docs/archive/`](docs/archive/) (historical R&D notes, with disclaimer).
 
 ## The integrity distinction

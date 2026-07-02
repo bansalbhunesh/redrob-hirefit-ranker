@@ -51,6 +51,8 @@ MAX_LIVE_CANDIDATES = _env_int("REDROB_MAX_LIVE_CANDIDATES", 500)
 MAX_BATCH_CANDIDATES = _env_int("REDROB_MAX_BATCH_CANDIDATES", 5000)
 MAX_LIVE_UPLOAD_BYTES = _env_int("REDROB_MAX_LIVE_UPLOAD_BYTES", 2 * 1024 * 1024)
 MAX_BATCH_UPLOAD_BYTES = _env_int("REDROB_MAX_BATCH_UPLOAD_BYTES", 16 * 1024 * 1024)
+MAX_EXPANDED_UPLOAD_BYTES = _env_int("REDROB_MAX_EXPANDED_UPLOAD_BYTES", 32 * 1024 * 1024)
+MAX_CANDIDATE_RECORD_BYTES = _env_int("REDROB_MAX_CANDIDATE_RECORD_BYTES", 1024 * 1024)
 MAX_STORED_JOBS = _env_int("REDROB_MAX_STORED_JOBS", 20)
 MAX_ACTIVE_BATCH_JOBS = _env_int("REDROB_MAX_ACTIVE_BATCH_JOBS", 2)
 RATE_LIMIT_PER_MINUTE = _env_int("REDROB_RATE_LIMIT_PER_MINUTE", 120)
@@ -125,9 +127,8 @@ def _route_key(path: str) -> str:
 
 
 def _client_key(request: Request) -> str:
-    forwarded = request.headers.get("x-forwarded-for", "").split(",", 1)[0].strip()
-    if forwarded:
-        return forwarded
+    # Uvicorn resolves trusted proxy headers into request.client. Reading XFF
+    # directly would let callers spoof a fresh rate-limit key on every request.
     return request.client.host if request.client else "unknown"
 
 
@@ -326,14 +327,37 @@ def _uploaded_candidate_count(data: bytes, filename: str) -> int:
     try:
         if suffixes[-2:] == [".jsonl", ".gz"] or suffixes[-1:] == [".gz"]:
             with gzip.GzipFile(fileobj=io.BytesIO(data)) as f:
-                return sum(1 for line in f if line.strip())
+                count = 0
+                expanded_bytes = 0
+                for line in f:
+                    expanded_bytes += len(line)
+                    if expanded_bytes > MAX_EXPANDED_UPLOAD_BYTES:
+                        raise HTTPException(
+                            status_code=413,
+                            detail="Expanded gzip upload exceeds the demo safety limit.",
+                        )
+                    if len(line) > MAX_CANDIDATE_RECORD_BYTES:
+                        raise HTTPException(
+                            status_code=413,
+                            detail="A candidate record exceeds the demo safety limit.",
+                        )
+                    if line.strip():
+                        count += 1
+                return count
         if suffixes[-1:] == [".json"]:
             parsed = json.loads(data.decode("utf-8-sig"))
             if not isinstance(parsed, list):
                 raise ValueError("JSON upload must be an array of candidates.")
             return len(parsed)
+        if any(len(line) > MAX_CANDIDATE_RECORD_BYTES for line in data.splitlines()):
+            raise HTTPException(
+                status_code=413,
+                detail="A candidate record exceeds the demo safety limit.",
+            )
         text = data.decode("utf-8-sig")
         return sum(1 for line in text.splitlines() if line.strip())
+    except HTTPException:
+        raise
     except (OSError, UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
         raise HTTPException(status_code=422, detail=f"Could not parse upload: {exc}") from exc
 
@@ -802,6 +826,8 @@ def health_check():
             "batch_candidates": MAX_BATCH_CANDIDATES,
             "live_upload_mb": round(MAX_LIVE_UPLOAD_BYTES / (1024 * 1024), 2),
             "batch_upload_mb": round(MAX_BATCH_UPLOAD_BYTES / (1024 * 1024), 2),
+            "expanded_upload_mb": round(MAX_EXPANDED_UPLOAD_BYTES / (1024 * 1024), 2),
+            "candidate_record_mb": round(MAX_CANDIDATE_RECORD_BYTES / (1024 * 1024), 2),
             "rate_limit_per_minute": RATE_LIMIT_PER_MINUTE,
         },
     }

@@ -16,6 +16,9 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = json.loads((ROOT / "docs" / "metrics_manifest.json").read_text(encoding="utf-8"))
 DASH = (ROOT / "omega_decision_dashboard.py").read_text(encoding="utf-8")
 CONST = (ROOT / "dashboard" / "constants.py").read_text(encoding="utf-8")
+API_UI = (ROOT / "apps" / "api" / "static" / "index.html").read_text(encoding="utf-8")
+OFFLINE_UI = (ROOT / "index.html").read_text(encoding="utf-8")
+DEMO_GENERATOR = (ROOT / "generate_demo.py").read_text(encoding="utf-8")
 
 HF_APP = ROOT / "hf_space" / "app.py"
 HF_README = ROOT / "hf_space" / "README.md"
@@ -43,6 +46,23 @@ def test_dashboard_carries_required_disclaimers():
     assert "AWAITING HUMAN DATA" in DASH
 
 
+def test_api_ui_escapes_candidate_controlled_html():
+    assert "function escapeHtml" in API_UI
+    assert "${escapeHtml(c.reasoning || 'No reasoning available')}" in API_UI
+    assert "onclick=\"selectCandidate('${c.candidate_id}')\"" not in API_UI
+    assert "data-candidate-id=" in API_UI
+    assert "function escapeHtml" in OFFLINE_UI
+    assert "${escapeHtml(c.reasoning||'No reasoning available')}" in OFFLINE_UI
+    assert "function escapeHtml" in DEMO_GENERATOR
+
+
+def test_api_ui_keyboard_and_modal_focus_safety():
+    assert 'aria-label="Candidate data file"' in API_UI
+    assert "event.key==='Enter'||event.key===' '" in API_UI
+    assert "if (e.key !== 'Tab') return;" in API_UI
+    assert "last.focus();" in API_UI and "first.focus();" in API_UI
+
+
 @_hf
 def test_hf_test_count_matches_manifest():
     # The HF Space is an external submodule; it is redeployed out-of-band. When its checked-out
@@ -52,13 +72,13 @@ def test_hf_test_count_matches_manifest():
     passing = str(MANIFEST["tests_passing"])
     app = HF_APP.read_text(encoding="utf-8")
     readme = HF_README.read_text(encoding="utf-8")
-    m = re.search(r"(\d+) passing tests", app)
+    m = re.search(r"(\d+)(?: passing tests| local pass)", app)
     if not m:
-        pytest.skip("HF app has no 'N passing tests' badge to parity-check")
+        pytest.skip("HF app has no parseable passing-test count to parity-check")
     if m.group(1) != passing:
         pytest.skip(f"HF Space badge says {m.group(1)} passing tests; manifest says {passing} "
                     "— HF redeploy pending (push hf_space submodule + bump pointer)")
-    assert f"{passing} passing tests" in app, "HF app.py test-count badge drifted from manifest"
+    assert f"{passing} local pass" in app, "HF app.py test-count badge drifted from manifest"
     assert f"{passing} passing tests" in readme, "HF README test-count drifted from manifest"
 
 

@@ -60,5 +60,5 @@ rank. An independent recruiter's labels support that choice (`docs/external_recr
 - All ranking-quality numbers are dev proxies; our own frozen human lockbox is still awaiting reviewers
   (the external recruiter cross-check is the best real signal we have, and it supports the ship).
 
-Challenge positioning and the transparent mission-derived 93.7/100 scorecard are in
-`docs/CHALLENGE_POSITIONING.md`; they are not official judging weights or an official result.
+The historical mission-alignment rubric is preserved in
+`docs/archive/CHALLENGE_POSITIONING.md`; current submission claims are grounded in `docs/JUDGE_PROOF.md`.

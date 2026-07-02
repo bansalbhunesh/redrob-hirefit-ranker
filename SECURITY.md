@@ -6,7 +6,7 @@ Please use GitHub's private vulnerability reporting for this repository when ava
 
 ## Security model
 
-The release path is designed for offline, deterministic execution. It validates the input artifact, model artifact, configuration, candidate count, numeric outputs, and final CSV hash before publication. The container uses a digest-pinned base image and hash-pinned Python dependencies. The API exposes separate health and readiness endpoints and applies request-size, candidate-count, timeout, concurrency, CORS, and security-header controls.
+The release path is designed for offline, deterministic execution. It validates the input artifact, model artifact, configuration, candidate count, numeric outputs, and final CSV hash before publication. The container uses a digest-pinned base image and hash-pinned Python dependencies. The API exposes separate health and readiness endpoints and applies compressed/expanded request-size limits, per-record and candidate-count caps, timeouts, concurrency limits, client-keyed rate limiting, CORS, and security headers. Candidate-controlled values are HTML-escaped before the browser inserts them into the recruiter workspace.
 
 ## Data handling
 

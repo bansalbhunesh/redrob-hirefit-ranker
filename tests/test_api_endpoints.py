@@ -8,6 +8,7 @@ small pool (serial path, no process pool).
 from __future__ import annotations
 
 import json
+import gzip
 from pathlib import Path
 
 import pytest
@@ -108,6 +109,8 @@ def test_health_reports_artifacts_and_sha(client):
     assert {"stored", "active"} <= set(body["jobs"])
     assert body["jobs"]["max_active"] == main.MAX_ACTIVE_BATCH_JOBS
     assert body["limits"]["rate_limit_per_minute"] == main.RATE_LIMIT_PER_MINUTE
+    assert body["limits"]["expanded_upload_mb"] == 32.0
+    assert body["limits"]["candidate_record_mb"] == 1.0
     assert resp.headers["x-content-type-options"] == "nosniff"
     assert resp.headers["x-frame-options"] == "DENY"
     assert resp.headers["x-request-id"]
@@ -208,21 +211,49 @@ def test_rank_live_rejects_unsupported_upload_extension(client):
 def test_post_rate_limit_is_enforced_before_ranking(client, monkeypatch):
     monkeypatch.setattr(main, "RATE_LIMIT_PER_MINUTE", 1)
     monkeypatch.setattr(main, "RATE_LIMIT_WINDOW_SECONDS", 60)
-    headers = {"x-forwarded-for": "203.0.113.10"}
     first = client.post(
         "/api/rank",
-        headers=headers,
+        headers={"x-forwarded-for": "203.0.113.10"},
         files={"file": ("bad.jsonl", b"not json\n", "application/jsonl")},
     )
     assert first.status_code == 422
     second = client.post(
         "/api/rank",
-        headers=headers,
+        # A caller-controlled XFF value must not create a fresh rate-limit key.
+        headers={"x-forwarded-for": "198.51.100.44"},
         files={"file": ("bad.jsonl", b"not json\n", "application/jsonl")},
     )
     assert second.status_code == 429
     assert second.headers["retry-after"]
     assert second.json()["error"] == "Rate limit exceeded."
+
+
+def test_rank_live_rejects_gzip_expansion_over_safety_limit(client, monkeypatch):
+    monkeypatch.setattr(main, "MAX_EXPANDED_UPLOAD_BYTES", 64)
+    expanded = b'{"candidate_id":"CAND_0000001","profile":{}}\n' * 4
+    payload = gzip.compress(expanded)
+    resp = client.post(
+        "/api/rank",
+        files={"file": ("sample.jsonl.gz", payload, "application/gzip")},
+    )
+    assert resp.status_code == 413
+    assert "Expanded gzip" in resp.json()["detail"]
+
+
+def test_rank_live_rejects_oversized_plain_jsonl_record(client, monkeypatch):
+    monkeypatch.setattr(main, "MAX_CANDIDATE_RECORD_BYTES", 32)
+    resp = client.post(
+        "/api/rank",
+        files={
+            "file": (
+                "sample.jsonl",
+                b'{"candidate_id":"CAND_0000001","profile":{}}\n',
+                "application/jsonl",
+            )
+        },
+    )
+    assert resp.status_code == 413
+    assert "candidate record" in resp.json()["detail"]
 
 
 def test_rank_live_sanitizes_uploaded_filename(client, monkeypatch):

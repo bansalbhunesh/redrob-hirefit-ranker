@@ -28,7 +28,7 @@
     "optimized_native_volume_s": 75.4,
     "optimized_loaded_bind_s": 254.0,
     "optimized_speedup_percent": 17.4,
-    "dominant_v4_wall_s": 79.5,
+    "legacy_v4_wall_s": 79.5,
     "frontier_v5_pipeline_s": 199.0,
     "frontier_v5_wall_s": 241.9,
     "frontier_v5_cold_pipeline_s": 209.4,
@@ -47,7 +47,7 @@
   },
   "dev_proxy_eval": {
     "_label": "dev proxy / LLM-audit — NOT the official hidden score",
-    "_source": "docs/LLM_JUDGE_EVAL.md, docs/llm_judge_eval_2.md, docs/llm_judge_eval_3.md",
+    "_source": "docs/archive/LLM_JUDGE_EVAL.md, docs/archive/llm_judge_eval_2.md, docs/archive/llm_judge_eval_3.md",
     "p10": 1.0,
     "ndcg10": 0.9104,
     "top10_tiers": [
@@ -83,14 +83,14 @@
     "reranker_v2_blind_ndcg50": 0.8404,
     "_delta": "composite -0.0307, NDCG@10 -0.0695, NDCG@50 +0.0135 -- improved @50 but destroyed @10 (50% of the composite). Looked positive only on a curated 249-candidate LLM-judge sample (gpt-4.1-mini +0.027, deepseek +0.085, claude-3.5-haiku +0.019, gemini-3.1-flash-lite +0.049 composite); none generalized to the 100K blind set."
   },
-  "tests_collected": 271,
-  "tests_passing": 270,
-  "tests_skipped": 1,
+  "tests_collected": 275,
+  "tests_passing": 275,
+  "tests_skipped": 0,
   "feature_count": 33,
   "_feature_count_note": "len(FEATURE_NAMES) in src/redrob_ranker/features.py; guarded by tests/test_metrics_manifest.py. Pipeline-description surfaces must quote 33; measurement docs (ablation, learned-weights) keep their historical 28-feature base.",
   "bm25_backend": "bm25s",
   "champion_main_invariance": {
-    "_source": "docs/champion_main_invariance_audit.md",
+    "_source": "docs/archive/champion_main_invariance_audit.md",
     "label_families": 15,
     "unlabeled_policies": 2,
     "evaluated_cells": 150,
@@ -113,7 +113,7 @@
     "_note": "Public-field comparisons are development proxies only. The submission uses an aggregate top-cluster description and makes no official placement claim."
   },
   "deployment": {
-    "_source": "docs/DEPLOYMENT.md; live surfaces verified 2026-07-01",
+    "_source": "docs/DEPLOYMENT.md; live surfaces verified 2026-07-02",
     "primary_live_demo": "https://huggingface.co/spaces/bansal1234/Hirefit",
     "primary_live_demo_status": 200,
     "render_blueprint": "render.yaml",

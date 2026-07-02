@@ -44,7 +44,7 @@ competing with the primary task.
 ## Quality gates
 
 - `npx impeccable --json apps/api/static/index.html`: zero findings.
-- Current full local suite: 270 passed, 1 environment skip.
+- Current full local suite: 275 passed.
 - Frozen `submission.csv` SHA-256 remains
   `8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062`.
 - Public Render `/api/readyz` reports the merged Git SHA and loaded dashboard.

@@ -33,6 +33,11 @@ jobs:
       - name: Validator gate — committed submission.csv must pass shape checks
         run: python scripts/validate_submission.py submission.csv
 
+      - name: Static checks for ranking and hosted surfaces
+        run: |
+          python -m ruff check src apps tests rank.py generate_demo.py scripts/validate_submission.py
+          python -m py_compile rank.py apps/api/main.py apps/space/app.py
+
       - name: Test suite (golden-hash regression + pipeline + API)
         env:
           PYTHONHASHSEED: "0"
@@ -48,3 +53,13 @@ jobs:
             done
           fi
           exit "$status"
+
+      - name: Build pinned release container
+        run: docker build -t hirefit-ci .
+
+      - name: Smoke-test release container on 2 CPU
+        run: |
+          docker run --rm --cpus 2 \
+            -v "$PWD/demo_sample.jsonl:/data/candidates.jsonl:ro" \
+            hirefit-ci \
+            --candidates /data/candidates.jsonl --out /tmp/submission.csv --workers 2

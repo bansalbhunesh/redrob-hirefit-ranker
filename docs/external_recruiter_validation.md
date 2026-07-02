@@ -27,19 +27,18 @@ Scored `strong_fit=4, maybe=2, not_fit=0` (our shared eval harness):
   egregious ones. We chose to trust the official spec/JD (which warn that impossible tenure is a
   honeypot / Stage-3 filter) and the independent blind recruiter over reviewer-1 on those candidates.
 
-## We reproduced the competitor's weapon and it does not transfer
-*\*Sifter's perfect 1.0 on reviewer-1 is the leakage tell — they fine-tuned their reranker on those exact
-labels.* We ran their toolkit ourselves (semantic bi-encoder + `ms-marco-MiniLM` cross-encoder + a
-reranker trained on the human labels) and validated it **fresh on the blind recruiter**: the
-cross-encoder scores **NDCG@10 0.71** vs our production scorer's **0.90**. Their apparent lead is
-training-on-their-own-labels + selection bias (the 180 are candidates they chose to review), not a
-transferable advantage. Full study: `experiments/ultra/CROSS_ENCODER_FINDINGS.md` (on the research branch).
+## Cross-encoder transfer check
+*\*Sifter reports a perfect 1.0 on reviewer-1 after tuning a reranker with those labels.* We reproduced
+the broad approach (semantic bi-encoder + `ms-marco-MiniLM` cross-encoder + a reranker trained on the
+human labels) and evaluated it separately on the blind recruiter: the cross-encoder scores
+**NDCG@10 0.71** versus our production scorer's **0.90** on the overlapping subset. The result suggests
+limited transfer, but the sample is too small for a general conclusion. Full study:
+`experiments/ultra/CROSS_ENCODER_FINDINGS.md` (research branch).
 
 ## Competitor field
-On the blind-arbiter proxy (the metric the competition mirrors, 100% coverage), our ranking **beats
-every functional competitor** in a 20-repo sample — our cluster takes the top 3; Sifter is #12,
-krish57 #11. The proxy lead is the one with full coverage; the human-label numbers above are the
-independent cross-check.
+On the blind-arbiter development proxy (100% coverage), our ranking is in the **top cluster** of the
+20-repository sample. This is a local proxy comparison, not an official leaderboard. The human-label
+numbers above are a small independent cross-check.
 
 ## Honest limits
 - The blind-recruiter holdout is **~10 overlapping candidates (19% coverage)** — small; treat as

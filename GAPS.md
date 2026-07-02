@@ -1,10 +1,9 @@
 # GAPS.md
 
 > **Historical audit.** This file preserves the 2026-06-12 pre-release gap analysis and
-> should not be used as the current scorecard. The closed-loop current position is in
-> `docs/CHALLENGE_POSITIONING.md`, the current release evidence is in
-> `docs/archive/v6_battleproof_audit.md`, and the current test result is 262 passed with
-> 6 environment skips (268 collected).
+> should not be used as the current scorecard. Current release evidence is in
+> `docs/JUDGE_PROOF.md`, and the current test result is recorded in
+> `docs/metrics_manifest.json`.
 
 Audit date: 2026-06-12 IST  
 Project: `bansalbhunesh/redrob-hirefit-ranker`  

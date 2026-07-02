@@ -144,7 +144,10 @@ def extract_candidate_payload(candidate: dict, submission_row: dict) -> dict:
         "skills": skills_cloud,
         "education": edu_list,
         "certifications": [c.get("name", "Unknown") for c in certs],
-        "languages": [{"language": l.get("language", ""), "proficiency": l.get("proficiency", "")} for l in langs],
+        "languages": [
+            {"language": language.get("language", ""), "proficiency": language.get("proficiency", "")}
+            for language in langs
+        ],
     }
 
 
@@ -496,6 +499,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     let state = {filter:'all',searchQuery:'',selectedId:null};
     const results = __DATA_JSON__;
 
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, character => ({
+        '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'
+      })[character]);
+    }
+    function safeClassToken(value, fallback='standard') {
+      const token = String(value ?? '').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      return token || fallback;
+    }
+
     function init() {
       renderMetrics();
       renderPipeline();
@@ -546,13 +559,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         return;
       }
       container.innerHTML = filtered.map((c,i) => `
-        <div class="candidate-card tier-${c.tier} animate-in" style="animation-delay:${i*0.03}s" onclick="selectCandidate('${c.candidate_id}')">
+        <div class="candidate-card tier-${safeClassToken(c.tier)} animate-in" style="animation-delay:${i*0.03}s" role="button" tabindex="0" data-candidate-id="${escapeHtml(encodeURIComponent(String(c.candidate_id ?? '')))}" onclick="selectCandidate(decodeURIComponent(this.dataset.candidateId))" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectCandidate(decodeURIComponent(this.dataset.candidateId))}">
           <div class="card-header">
             <div class="identity">
-              <div class="rank-badge">${c.rank}</div>
+              <div class="rank-badge">${Number(c.rank || 0)}</div>
               <div class="name-area">
-                <h3>${c.profile?.title||'Unknown'} @ ${c.profile?.company||'Unknown'}</h3>
-                <div class="meta">${c.candidate_id} | ${c.profile?.yoe?.toFixed(1)||0} YOE | ${c.profile?.location||'Unknown'}</div>
+                <h3>${escapeHtml(c.profile?.title||'Unknown')} @ ${escapeHtml(c.profile?.company||'Unknown')}</h3>
+                <div class="meta">${escapeHtml(c.candidate_id)} | ${Number(c.profile?.yoe||0).toFixed(1)} YOE | ${escapeHtml(c.profile?.location||'Unknown')}</div>
               </div>
             </div>
             <div class="score-area">
@@ -560,7 +573,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
               <div class="score-label">Score</div>
             </div>
           </div>
-          <div class="reasoning-preview">${c.reasoning||'No reasoning available'}</div>
+          <div class="reasoning-preview">${escapeHtml(c.reasoning||'No reasoning available')}</div>
           <div class="tags">
             ${c.honeypot_flag?'<span class="tag tag-hp">🍯 HONEYPOT</span>':''}
             ${c.profile?.yoe>=5?'<span class="tag tag-ml">Experienced</span>':''}
@@ -581,7 +594,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       const features = c.features||{};
       const featureItems = Object.entries(features).map(([k,v]) => {
         const valClass = v>0.7?'high':v>0.4?'medium':'low';
-        return `<div class="feature-item"><span class="name">${k.replace(/_/g,' ')}</span><span class="value ${valClass}">${v.toFixed(3)}</span></div>`;
+        return `<div class="feature-item"><span class="name">${escapeHtml(k.replace(/_/g,' '))}</span><span class="value ${valClass}">${Number(v||0).toFixed(3)}</span></div>`;
       }).join('');
       const b = c.behavioral||{};
       const behavioralItems = [
@@ -592,22 +605,22 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         {label:'Profile Views',value:b.profile_views,fmt:v=>v.toString(),cls:()=>'neutral'},
         {label:'Notice Period',value:b.notice_period,fmt:v=>v+'d',cls:v=>v<=30?'positive':v<=60?'neutral':'negative'},
       ].map(item => `<div class="behavioral-item"><div class="value ${item.cls(item.value)}">${item.fmt(item.value)}</div><div class="label">${item.label}</div></div>`).join('');
-      const timeline = (c.timeline||[]).map(job => `<div class="timeline-item ${job.is_current?'current':''}"><div class="company">${job.company}</div><div class="title">${job.title}</div><div class="duration">${job.duration_months} months • ${job.industry} • ${job.company_size}</div></div>`).join('');
-      const skills = (c.skills||[]).map(s => { const cls=s.proficiency==='advanced'?'advanced':s.proficiency==='intermediate'?'intermediate':'beginner'; return `<span class="skill-tag ${cls}">${s.name} (${s.endorsements})</span>`; }).join('');
-      const education = (c.education||[]).map(edu => `<div class="edu-item"><div class="institution">${edu.institution}</div><div class="degree">${edu.degree} — ${edu.field}</div><div class="years">${edu.start}–${edu.end} • ${edu.grade}</div>${edu.tier?`<span class="tier-badge tier-${edu.tier.replace('tier_','')}">${edu.tier.toUpperCase()}</span>`:''}</div>`).join('');
-      const honeypotSection = c.honeypot_flag?`<div class="honeypot-alert"><div class="title">🍯 Honeypot Detected</div><div class="reasons">${c.honeypot_reasons?.map(r=>`<span class="reason">${r}</span>`).join('')||'<span class="reason">Flagged by system</span>'}</div></div>`:'';
+      const timeline = (c.timeline||[]).map(job => `<div class="timeline-item ${job.is_current?'current':''}"><div class="company">${escapeHtml(job.company)}</div><div class="title">${escapeHtml(job.title)}</div><div class="duration">${escapeHtml(job.duration_months)} months • ${escapeHtml(job.industry)} • ${escapeHtml(job.company_size)}</div></div>`).join('');
+      const skills = (c.skills||[]).map(s => { const cls=s.proficiency==='advanced'?'advanced':s.proficiency==='intermediate'?'intermediate':'beginner'; return `<span class="skill-tag ${cls}">${escapeHtml(s.name)} (${escapeHtml(s.endorsements)})</span>`; }).join('');
+      const education = (c.education||[]).map(edu => `<div class="edu-item"><div class="institution">${escapeHtml(edu.institution)}</div><div class="degree">${escapeHtml(edu.degree)} — ${escapeHtml(edu.field)}</div><div class="years">${escapeHtml(edu.start)}–${escapeHtml(edu.end)} • ${escapeHtml(edu.grade)}</div>${edu.tier?`<span class="tier-badge tier-${safeClassToken(String(edu.tier).replace('tier_',''))}">${escapeHtml(String(edu.tier).toUpperCase())}</span>`:''}</div>`).join('');
+      const honeypotSection = c.honeypot_flag?`<div class="honeypot-alert"><div class="title">🍯 Honeypot Detected</div><div class="reasons">${c.honeypot_reasons?.map(r=>`<span class="reason">${escapeHtml(r)}</span>`).join('')||'<span class="reason">Flagged by system</span>'}</div></div>`:'';
       document.getElementById('detailContent').innerHTML = `
         ${honeypotSection}
-        <div class="detail-header"><div class="avatar">${(c.profile?.name||'U').charAt(0)}</div><div class="info"><h3>${c.profile?.title||'Unknown'} @ ${c.profile?.company||'Unknown'}</h3><p>${c.candidate_id} • ${c.profile?.location||'Unknown'} • ${c.profile?.yoe?.toFixed(1)||0} YOE</p></div></div>
+        <div class="detail-header"><div class="avatar">${escapeHtml((c.profile?.name||'U').charAt(0))}</div><div class="info"><h3>${escapeHtml(c.profile?.title||'Unknown')} @ ${escapeHtml(c.profile?.company||'Unknown')}</h3><p>${escapeHtml(c.candidate_id)} • ${escapeHtml(c.profile?.location||'Unknown')} • ${Number(c.profile?.yoe||0).toFixed(1)} YOE</p></div></div>
         <div class="score-bar-container"><div class="score-bar-label"><span>Match Score</span><span>${c.score?.toFixed(4)||'0.0000'}</span></div><div class="score-bar-track"><div class="score-bar-fill ${scoreClass}" style="width:${scorePct}%"></div></div></div>
-        <div class="section-title">💡 Reasoning Audit</div><div class="reasoning-box">${c.reasoning||'No reasoning available'}</div>
+        <div class="section-title">💡 Reasoning Audit</div><div class="reasoning-box">${escapeHtml(c.reasoning||'No reasoning available')}</div>
         <div class="section-title">🧮 33-Feature Breakdown</div><div class="feature-grid">${featureItems||'<div style="color:var(--text-muted);font-size:13px;">No feature data</div>'}</div>
         <div class="section-title">📊 Behavioral Signals</div><div class="behavioral-grid">${behavioralItems}</div>
         <div class="section-title">📈 Career Timeline</div><div class="timeline">${timeline||'<div style="color:var(--text-muted);font-size:13px;">No timeline data</div>'}</div>
         <div class="section-title">🎓 Education</div>${education||'<div style="color:var(--text-muted);font-size:13px;">No education data</div>'}
         <div class="section-title">🛠️ Skills</div><div class="skills-cloud">${skills||'<div style="color:var(--text-muted);font-size:13px;">No skills data</div>'}</div>
-        ${c.certifications?.length?`<div class="section-title">📜 Certifications</div><div class="skills-cloud">${c.certifications.map(cert=>`<span class="skill-tag">${cert}</span>`).join('')}</div>`:''}
-        ${c.languages?.length?`<div class="section-title">🌐 Languages</div><div class="skills-cloud">${c.languages.map(l=>`<span class="skill-tag">${l.language} — ${l.proficiency}</span>`).join('')}</div>`:''}
+        ${c.certifications?.length?`<div class="section-title">📜 Certifications</div><div class="skills-cloud">${c.certifications.map(cert=>`<span class="skill-tag">${escapeHtml(cert)}</span>`).join('')}</div>`:''}
+        ${c.languages?.length?`<div class="section-title">🌐 Languages</div><div class="skills-cloud">${c.languages.map(language=>`<span class="skill-tag">${escapeHtml(language.language)} — ${escapeHtml(language.proficiency)}</span>`).join('')}</div>`:''}
       `;
       if (window.innerWidth <= 1100) document.getElementById('detailPanel').classList.add('open');
     }
@@ -629,7 +642,8 @@ def main():
     candidates_by_id = {}
     with open(args.candidates, "r", encoding="utf-8") as f:
         for line in f:
-            if not line.strip(): continue
+            if not line.strip():
+                continue
             c = json.loads(line)
             candidates_by_id[c["candidate_id"]] = c
 

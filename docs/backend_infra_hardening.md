@@ -39,6 +39,9 @@ The earlier backend story was demo-acceptable but not judge-proof:
 - Batch active concurrency is env-controlled with `REDROB_MAX_ACTIVE_BATCH_JOBS`.
 - Uploads are explicitly limited to `.jsonl`, `.json`, `.jsonl.gz`, and `.gz`.
 - JSON, JSONL, and gzipped candidate counts are checked before ranking so caps fail early.
+- Gzip expansion and individual JSONL records have independent byte caps, preventing a small compressed upload from expanding without bound.
+- Rate-limit identity comes from the ASGI server's resolved client address; raw, user-supplied `X-Forwarded-For` values are not trusted by application code.
+- Candidate-controlled strings are HTML-escaped in the browser before insertion into dynamic cards and dossiers.
 - Batch rejected uploads still delete partial job directories.
 - Failed jobs expose sanitized errors only; internals stay in server logs.
 
@@ -50,6 +53,8 @@ The earlier backend story was demo-acceptable but not judge-proof:
 | `REDROB_MAX_BATCH_CANDIDATES` | `5000` | Batch/demo candidate cap |
 | `REDROB_MAX_LIVE_UPLOAD_BYTES` | `2097152` | Live upload byte cap |
 | `REDROB_MAX_BATCH_UPLOAD_BYTES` | `16777216` | Batch upload byte cap |
+| `REDROB_MAX_EXPANDED_UPLOAD_BYTES` | `33554432` | Maximum expanded bytes read from a gzip upload |
+| `REDROB_MAX_CANDIDATE_RECORD_BYTES` | `1048576` | Maximum bytes in one JSONL candidate record (plain or gzip) |
 | `REDROB_MAX_STORED_JOBS` | `20` | In-memory job retention cap |
 | `REDROB_MAX_ACTIVE_BATCH_JOBS` | `2` | Active queued/processing batch cap |
 | `REDROB_RATE_LIMIT_PER_MINUTE` | `120` | Per-client POST limit for `/api/rank` and `/api/batch`; set `0` to disable |
@@ -83,4 +88,4 @@ python -m py_compile apps\api\main.py
 python -m pytest tests\test_api_endpoints.py tests\test_api_cleanup.py
 ```
 
-Current targeted result: `27 passed`.
+Current full-suite result: `275 passed`.

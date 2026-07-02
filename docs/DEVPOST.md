@@ -52,7 +52,7 @@ integrity red flags are hard gates rather than vibes.
 
 - The committed `submission.csv` regenerates from the full private pool **byte-for-byte** (SHA-256
   `8f7f30c6…`).
-- 270 tests pass, with 1 environment skip, including a golden-hash gate and a fast behavior-regression gate.
+- 275 tests pass, including golden-hash, upload-safety, browser-escaping, and fast behavior-regression gates.
 - Honest, exact explainability instead of a black box.
 
 ## What we learned
@@ -67,7 +67,7 @@ generalization.
 
 ## Built with
 
-Python, NumPy, scikit-learn, bm25s, FastAPI, Streamlit, Docker, Hugging Face Spaces, Render.
+Python, NumPy, bm25s, FastAPI, Gradio (Hugging Face Space), Streamlit (read-only research dashboard), Docker, and Render. Scikit-learn was used in measured research experiments, not the shipped ranking path.
 
 ## Links
 
