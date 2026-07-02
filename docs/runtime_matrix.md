@@ -1,9 +1,20 @@
 # Docker Runtime Matrix (Phase 0.1)
 
 > **Current shipping number:** the final fail-closed release completed the full
-> 100K pool in **136.0 s pipeline / 149.1 s wall** at `--cpus=2 --memory=16g
-> --workers 2 --release`, produced exact SHA-256 `8f7f30c6...`, and left no
+> 100K pool in **105.3 s pipeline / 117.2 s wall** at `--cpus=2 --memory=16g
+> --workers 2 --release`, produced exact SHA-256 `3d2dbd8a...`, and left no
 > temporary output. Earlier rows below are retained as dated experiment history.
+
+## 2026-07-02 integrity-crossfield release
+
+The current release added a candidate-ID-agnostic three-way consistency gate for
+structured, summary, and career YoE. The full constrained container exited 0,
+was not OOM-killed, detected 55 integrity signals, emitted 0 flagged profiles,
+and reproduced `submission.csv` byte-for-byte.
+
+| constraint | pipeline | container wall | output SHA-256 | integrity |
+|---|---:|---:|---|---|
+| `--cpus=2 --memory=16g --workers 2 --release` | **105.3 s** | **117.2 s** | `3d2dbd8a68a145c2...` | 55 detected / 0 emitted |
 
 ## 2026-06-30 quality-safe inference hardening
 
@@ -207,13 +218,13 @@ docker run --rm --memory=16g -v "<dir>:/data" redrob-hirefit-ranker \
 # --workers defaults to auto (up to 8); output is identical for any worker count
 ```
 
-## 2026-06-30 fail-closed release
+## 2026-06-30 fail-closed release (historical)
 
 Final post-hardening image, exact official input hash pinned, full 100K pool:
 
 | constraint | result |
 |---|---|
-| `--cpus=2 --memory=16g --workers 2 --release` | 136.0 s pipeline / 149.1 s wall; exact `8f7f30c6...`; exit 0; no OOM; 0 output temps |
+| `--cpus=2 --memory=16g --workers 2 --release` | 136.0 s pipeline / 149.1 s wall; exact `8f7f30c6...`; exit 0; no OOM; 0 output temps (superseded by current release) |
 | `--cpus=2 --memory=3g --workers 2 --release` | intentional OOM; exit 137; prior output preserved; 0 output temps |
 
 The complete release failure-mode matrix (OOM exit 137, model-drift rejection,

@@ -44,7 +44,7 @@
   <!-- 5 ship -->
   <g><rect x="1024" y="96" width="210" height="108" rx="4" fill="#16361f" stroke="#4ADE80"/><rect x="1024" y="96" width="210" height="3" rx="2" fill="#4ADE80"/>
      <text x="1129" y="132" text-anchor="middle" fill="#4ADE80" font-size="17" font-weight="700">SHIP</text>
-     <text x="1129" y="156" text-anchor="middle" fill="#F1F5F9" font-size="12.5" font-family="monospace">8f7f30c6</text>
+     <text x="1129" y="156" text-anchor="middle" fill="#F1F5F9" font-size="12.5" font-family="monospace">3d2dbd8a</text>
      <text x="1129" y="176" text-anchor="middle" fill="#B8C4D9" font-size="10.5">exact-output release</text></g>
 
   <!-- fallback -->

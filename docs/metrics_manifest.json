@@ -5,15 +5,15 @@
     "release_name": "main release (--release path)",
     "api_version": "6.0.0",
     "ranking_core": "frontier-v5",
-    "golden_sha256": "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062",
+    "golden_sha256": "3d2dbd8a68a145c25bda8122cdf02953ae5f06e2b003aa0f7b4d0e52ce283f6b",
     "candidate_input_sha256": "de7b8cae39a9f9378a2cd4f8153bfc1f84960bce0ae520f263423d129df4b335",
-    "_golden_note": "2026-06-30: frontier-v5 remains the ranking champion after cross-fit and leave-one-family-out experiments rejected every apparent universal gain. The fail-closed --release path verifies configuration, the model artifact, full-pool and integrity counts, and the exact output hash before atomic publication. The default main profile remains available when --release is omitted.",
+    "_golden_note": "2026-07-02: frontier-v5 keeps the validated relevance ranking and adds a candidate-ID-agnostic three-way consistency gate for structured, summary, and career YoE. The fail-closed --release path verifies configuration, model artifact, full-pool and integrity counts, and the exact output hash before atomic publication. The default main profile remains available when --release is omitted.",
     "rows": 100,
     "total_candidates": 100000,
-    "honeypots_detected": 53,
+    "honeypots_detected": 55,
     "honeypots_in_top100": 0,
-    "avg_top100_score": 0.5866,
-    "membership_validated": "scripts/validate_submission.py --candidates candidates.jsonl (2026-06-30: all 100 IDs present in pool)"
+    "avg_top100_score": 0.5855,
+    "membership_validated": "python scripts/validate_submission.py submission.csv --candidates candidates.jsonl (2026-07-02: all 100 IDs present in pool)"
   },
   "runtime": {
     "_source": "docs/runtime_matrix.md",
@@ -33,12 +33,12 @@
     "frontier_v5_wall_s": 241.9,
     "frontier_v5_cold_pipeline_s": 209.4,
     "frontier_v5_cold_wall_s": 233.8,
-    "showpiece_recorded_run_ms": 136000,
-    "_showpiece_note": "apps/api/data/precomputed.json replays the exact frontier-v5 top-100 and the final fail-closed constrained Docker pipeline time: 136.0 s at 2 CPU / 16 GiB. The run ranked all 100K, detected 53 honeypots, emitted 0, left 0 output temps, and reproduced the exact golden hash.",
+    "showpiece_recorded_run_ms": 105300,
+    "_showpiece_note": "apps/api/data/precomputed.json replays the exact frontier-v5 top-100 and the 2026-07-02 fail-closed constrained Docker pipeline time: 105.3 s at 2 CPU / 16 GiB. The run ranked all 100K, detected 55 integrity signals, emitted 0, and reproduced the exact golden hash.",
     "release_pipeline_s": 109.9,
     "release_peak_mib": 4232.2,
-    "release_final_pipeline_s": 136.0,
-    "release_final_wall_s": 149.1
+    "release_final_pipeline_s": 105.3,
+    "release_final_wall_s": 117.2
   },
   "memory": {
     "_source": "docs/runtime_matrix.md",
@@ -83,8 +83,8 @@
     "reranker_v2_blind_ndcg50": 0.8404,
     "_delta": "composite -0.0307, NDCG@10 -0.0695, NDCG@50 +0.0135 -- improved @50 but destroyed @10 (50% of the composite). Looked positive only on a curated 249-candidate LLM-judge sample (gpt-4.1-mini +0.027, deepseek +0.085, claude-3.5-haiku +0.019, gemini-3.1-flash-lite +0.049 composite); none generalized to the 100K blind set."
   },
-  "tests_collected": 275,
-  "tests_passing": 275,
+  "tests_collected": 278,
+  "tests_passing": 278,
   "tests_skipped": 0,
   "feature_count": 33,
   "_feature_count_note": "len(FEATURE_NAMES) in src/redrob_ranker/features.py; guarded by tests/test_metrics_manifest.py. Pipeline-description surfaces must quote 33; measurement docs (ablation, learned-weights) keep their historical 28-feature base.",
@@ -138,8 +138,8 @@
     "_source": "docs/JUDGE_PROOF.md; docs/runtime_matrix.md",
     "corrupted_submissions_detected": 10000,
     "invalid_configs_rejected": 9750,
-    "docker_2cpu_16g_pipeline_s": 136.0,
-    "docker_2cpu_16g_wall_s": 149.1,
+    "docker_2cpu_16g_pipeline_s": 105.3,
+    "docker_2cpu_16g_wall_s": 117.2,
     "docker_3g_oom_exit": 137,
     "oom_preserved_existing_output": true,
     "oom_output_temp_files": 0

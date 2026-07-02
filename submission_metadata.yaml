@@ -27,10 +27,10 @@ compute:
   pre_computation_required: false
   pre_computation_time_minutes: 0
   # frontier-v5 --release exact full-100K reproduction (the committed
-  # submission.csv, golden SHA-256 8f7f30c6...), Docker --cpus=2 --memory=16g:
-  # 136.0s pipeline / 149.1s wall. Detected 53 honeypots, emitted 0, left 0
+  # submission.csv, golden SHA-256 3d2dbd8a...), Docker --cpus=2 --memory=16g:
+  # 105.3s pipeline / 117.2s wall. Detected 55 integrity signals, emitted 0, left 0
   # output temp files, and reproduced the exact golden hash. Budget 300s.
-  measured_runtime_seconds: 136.0
+  measured_runtime_seconds: 105.3
   measured_peak_rss_gb: 6.1
   measured_bm25_backend: "bm25s"
   feature_scoring_workers: "auto (up to 8); output identical for any worker count"

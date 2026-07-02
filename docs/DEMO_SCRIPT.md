@@ -9,7 +9,7 @@ gated, not that we won a score nobody can see."
 ```bash
 PYTHONHASHSEED=0 python rank.py --release \
   --candidates candidates.jsonl --out submission.csv --workers 2
-sha256sum submission.csv      # -> 8f7f30c68ec30cb6…
+sha256sum submission.csv      # -> 3d2dbd8a68a145c2…
 ```
 Say: "Same command in the README, the metadata, and reproduce.sh. It regenerates the exact committed
 file — byte-for-byte — from the full 100K pool. Here's the matching SHA."
@@ -28,7 +28,7 @@ ranking change fails CI."
 Open https://huggingface.co/spaces/bansal1234/Hirefit
 Say: "The example is populated on load. The release docket pins the hash, tests, runtime, and integrity
 facts; the candidate ledger opens each person into an evidence dossier, and the CSV export comes from
-the live CPU-only ranker. Upload your own pool to replace the example. The integrity gate detected 53
+the live CPU-only ranker. Upload your own pool to replace the example. The integrity gate detected 55
 profiles in the full pool and shortlisted 0; every flag is a review signal, not a fraud accusation."
 
 ## D. Explainability (20 seconds)

@@ -89,7 +89,7 @@ def test_failed_postrun_verification_preserves_existing_output(
             ranked_pool_count=100_000,
             rows=[{}] * 100,
             bm25_backend="bm25s",
-            honeypots_detected=53,
+            honeypots_detected=55,
             honeypots_in_output=0,
         )
 
@@ -154,7 +154,7 @@ def test_release_verifier_rejects_backend_drift():
         loaded_count=100_000,
         ranked_pool_count=100_000,
         rows=[{}] * 100,
-        honeypots_detected=53,
+        honeypots_detected=55,
         honeypots_in_output=0,
         bm25_backend="rank_bm25",
     )

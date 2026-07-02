@@ -12,7 +12,7 @@ are dev proxies, **not** an official score.
 | Does it understand the job beyond keywords? | BM25 is only one signal. A 33-feature evidence model reads production work, role depth, seniority, trajectory, behavior, and logistics. |
 | Does it use profile and activity signals? | Yes. Career history, structured profile facts, recruiter response, activity, notice, reliability, and open-to-work signals all contribute. |
 | Is the ranking strong? | On our development proxies (independent heuristic + LLM-judge labels) it sits in the **top cluster** of the public field. These are self-run proxies, not an official leaderboard. |
-| Is it fast enough? | 100K candidates in 136.0 s pipeline / 149.1 s wall at 2 CPU / 16 GiB; 4.13 GiB sampled peak. Budget 300 s. |
+| Is it fast enough? | 100K candidates in 105.3 s pipeline / 117.2 s wall at 2 CPU / 16 GiB; 4.13 GiB sampled peak. Budget 300 s. |
 | Can a recruiter trust it? | Every output row has grounded reasoning; every candidate's evidence score decomposes into **exact** named-feature contributions and guardrails; suspicious cases become review guidance, not unsupported fraud claims. |
 | Can the evaluator reproduce it? | CPU-only, offline, digest- and wheel-pinned, deterministic, **one release command**, exact input/model/output hashes; serial and parallel output byte-identical. |
 | What happens on failure? | Invalid configuration, corrupt artifacts, count drift, and hash drift fail closed. A forced 3 GiB OOM preserved the prior output and left zero mounted temporary files. |
@@ -33,7 +33,7 @@ PYTHONHASHSEED=0 python rank.py --release --workers 2 \
   --candidates candidates.jsonl --out submission.csv
 python scripts/validate_submission.py submission.csv --candidates candidates.jsonl
 sha256sum submission.csv
-# 8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062
+# 3d2dbd8a68a145c25bda8122cdf02953ae5f06e2b003aa0f7b4d0e52ce283f6b
 ```
 
 Docker:

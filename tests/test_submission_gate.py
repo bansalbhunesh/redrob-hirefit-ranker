@@ -88,7 +88,11 @@ CANDIDATES = ROOT / "candidates.jsonl"
 #    feature-only shortlist tie-breaks. The exact host and constrained-Docker
 #    artifacts match; V5 improves 6 and ties 54 of V4's component cells, with
 #    no losses. Default main behavior and the slice gate remain unchanged.)
-GOLDEN_SUBMISSION_SHA256 = "8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062"
+# -> 3d2dbd8a... (2026-07-02, codex/integrity-crossfield-v1: adds a
+#    candidate-ID-free three-way YoE contradiction gate. Summary and career
+#    history must corroborate each other before the structured YoE field is
+#    treated as inconsistent; two affected profiles leave the top-100.)
+GOLDEN_SUBMISSION_SHA256 = "3d2dbd8a68a145c25bda8122cdf02953ae5f06e2b003aa0f7b4d0e52ce283f6b"
 
 # Recorded hash of rank.py output for the first 2,000 candidates of the
 # official candidates.jsonl (top-100, bm25s backend, PYTHONHASHSEED=0). Rolled

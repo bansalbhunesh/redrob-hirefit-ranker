@@ -103,6 +103,48 @@ def test_good_candidate_scores_above_trap():
     assert final_score(good, 0.5) > final_score(bad, 0.5)
 
 
+def test_summary_career_yoe_contradiction_is_independent_of_ratio_threshold():
+    candidate = make_candidate()
+    candidate["profile"]["years_of_experience"] = 16.2
+    candidate["profile"]["summary"] = (
+        "Senior AI engineer with 8.3 years of hands-on experience building ranking systems."
+    )
+    candidate["career_history"][0]["duration_months"] = 98
+
+    features = compute_features(candidate)
+
+    assert "career_history_too_short_for_claimed_yoe" not in features.flags
+    assert "summary_career_yoe_contradiction" in features.flags
+    assert features.honeypot_multiplier == 0.05
+
+
+def test_summary_yoe_does_not_flag_an_abbreviated_career_history_without_corroboration():
+    candidate = make_candidate()
+    candidate["profile"]["years_of_experience"] = 16.2
+    candidate["profile"]["summary"] = (
+        "Senior AI engineer with 16.2 years of experience building ranking systems."
+    )
+    candidate["career_history"][0]["duration_months"] = 98
+
+    features = compute_features(candidate)
+
+    assert "summary_career_yoe_contradiction" not in features.flags
+    assert features.honeypot_multiplier == 1.0
+
+
+def test_summary_yoe_requires_career_history_corroboration():
+    candidate = make_candidate()
+    candidate["profile"]["years_of_experience"] = 16.2
+    candidate["profile"]["summary"] = (
+        "Senior AI engineer with 8.3 years of hands-on experience building ranking systems."
+    )
+    candidate["career_history"][0]["duration_months"] = 24
+
+    features = compute_features(candidate)
+
+    assert "summary_career_yoe_contradiction" not in features.flags
+
+
 def test_behavior_multiplier_downweights_stale_unresponsive_profile():
     good = compute_features(make_candidate())
     stale = make_candidate()

@@ -11,8 +11,8 @@ from pathlib import Path
 # repo root = two levels up from this file (dashboard/constants.py -> repo root)
 ROOT = Path(__file__).resolve().parent.parent
 
-GOLDEN_COMMIT = "8f7f30c6"  # current release artifact prefix.
-GOLDEN_SHA256_PREFIX = "8f7f30c68ec30cb6"
+GOLDEN_COMMIT = "3d2dbd8a"  # current release artifact prefix.
+GOLDEN_SHA256_PREFIX = "3d2dbd8a68a145c2"
 VERDICT = "SHIP_MAIN_RELEASE"
 
 # Verified local artifact paths (committed). Loaders degrade gracefully if any is absent.
@@ -37,7 +37,7 @@ SHARED_FACTS = {
     "verdict": VERDICT,
     "golden_commit": GOLDEN_COMMIT,
     "honeypots_in_top100": 0,        # shipped detector — mirrors metrics_manifest.submission
-    "honeypots_detected": 53,        # shipped detector total — mirrors metrics_manifest.submission
+    "honeypots_detected": 55,        # shipped detector total — mirrors metrics_manifest.submission
     "anachronism_anomalies_top100": 52,  # EXPERIMENTAL detector (NOT the shipped honeypot count)
     "psi_status": "AWAITING HUMAN DATA",
 }
@@ -66,7 +66,7 @@ STATUS_COLORS = {"PASS": "#1b8a5a", "PENDING": "#c98a00", "FAIL": "#b22222", "IN
 DISCLAIMER = (
     "This dashboard is a downstream research and explanation layer. It does not modify, "
     "rerun, or influence the production ranking. The shipped release artifact "
-    "8f7f30c68ec30cb6 and all production files remain byte-identical."
+    "3d2dbd8a68a145c2 and all production files remain byte-identical."
 )
 VERDICT_DISCLAIMER = (
     "SHIP_MAIN_RELEASE means the main --release build is the strongest all-around measured "

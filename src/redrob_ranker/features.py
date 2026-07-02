@@ -455,6 +455,10 @@ def _product_consulting_months(candidate: dict) -> tuple[int, int, int]:
 
 _EDU_FIELDS_PADDED = _pad(["computer", "artificial intelligence", "data science", "statistics", "mathematics", "information technology"])
 _EDU_DEGREES_PADDED = _pad(["m.tech", "m.e", "m.s", "m.sc", "ph.d", "phd"])
+_SUMMARY_YOE_RE = re.compile(
+    r"\bwith\s+(\d+(?:\.\d+)?)\+?\s+years?\s+of\s+(?:hands[- ]on\s+)?experience\b",
+    re.IGNORECASE,
+)
 
 def _education_score(candidate: dict) -> float:
     best = 0.0
@@ -485,6 +489,18 @@ def _honeypot_flags(
         flags.append("experience_timeline_exceeds_claim")
     if yoe >= 5 and career and career_months < expected_months * 0.45:
         flags.append("career_history_too_short_for_claimed_yoe")
+
+    # Cross-field corroboration catches a planted-fabrication pattern that a
+    # ratio-only threshold misses: the summary and listed career agree with
+    # each other, while the structured YoE field is inflated. Requiring two
+    # independent fields to agree keeps abbreviated career histories from
+    # becoming false positives.
+    summary_match = _SUMMARY_YOE_RE.search(str(profile.get("summary") or ""))
+    if summary_match and career:
+        summary_yoe = float(summary_match.group(1))
+        career_yoe = career_months / 12.0
+        if abs(summary_yoe - career_yoe) <= 1.5 and yoe - summary_yoe >= 3.0:
+            flags.append("summary_career_yoe_contradiction")
 
     expert_zero_core = []
     expert_zero_any = []
@@ -1210,6 +1226,7 @@ def compute_features(candidate: dict, config=None) -> CandidateFeatures:
 SOFTENED_HONEYPOT_CLASSES = frozenset({
     "career_history_too_short_for_claimed_yoe",
     "expert_skill_zero_duration",
+    "summary_career_yoe_contradiction",
 })
 
 

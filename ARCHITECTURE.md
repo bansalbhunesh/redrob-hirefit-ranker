@@ -5,8 +5,8 @@
 Rank the top 100 candidates for the Redrob **Senior AI Engineer - Founding Team** JD while satisfying CPU-only, no-network, no-GPU, sub-5-minute reproduction constraints.
 
 Final release measurement in the pinned python:3.11 image: all 100,000 candidates rank in
-**136.0 s pipeline / 149.1 s wall** at 2 CPU / 16 GiB, with sampled peak memory
-**4.13 GiB**; 53 honeypots are detected and 0 enter the top 100. The exact input,
+**105.3 s pipeline / 117.2 s wall** at 2 CPU / 16 GiB, with sampled peak memory
+**4.13 GiB**; 55 integrity signals are detected and 0 enter the top 100. The exact input,
 model, environment, backend, counts, integrity totals and output hash are verified
 before atomic publication (full history: `docs/runtime_matrix.md`).
 
