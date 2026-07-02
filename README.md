@@ -14,7 +14,10 @@ AI Engineer role — and shows *why* each candidate is there, reproducibly.
 
 > Badge counts reflect a full checkout (official `candidates.jsonl` + `hf_space` submodule). On a
 > fresh clone without those assets, 272 tests run and 6 skip with stated reasons (full-pool
-> regeneration and Space-parity checks) — nothing fails.
+> regeneration and Space-parity checks) — nothing fails. Those numbers assume the CI-parity test
+> install: `pip install -e ".[api,dev]" httpx -r requirements-dashboard.txt`. Under the base
+> `pip install -e .`, dep-gated API/dashboard tests aren't collected and the suite-count gate
+> skips itself with a stated reason.
 
 The shipped artifact (`submission.csv`, SHA-256 `3d2dbd8a…`) is produced from `main` by a single
 fail-closed command. The repository's value is **verifiable engineering**: exact input/model/output

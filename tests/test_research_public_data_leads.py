@@ -4,6 +4,12 @@ import importlib.util
 import sys
 from pathlib import Path
 
+import pytest
+
+# The script under test needs this dev-extra dep; without the guard a base
+# `pip install -e .` environment dies with a collection error, not a skip.
+pytest.importorskip("defusedxml", reason="dev extra dep; install '.[dev]'")
+
 ROOT = Path(__file__).resolve().parents[1]
 
 

@@ -8,6 +8,7 @@ place and 104s in another.
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import re
 import subprocess
@@ -15,6 +16,11 @@ import sys
 from pathlib import Path
 
 import pytest
+
+# Import-gated test modules (API endpoints, dashboard smoke) drop out of
+# collection entirely when these are absent, so the full-suite count is only
+# meaningful in a CI-parity environment.
+_FULL_SUITE_DEPS = ("fastapi", "httpx", "streamlit")
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = json.loads((ROOT / "docs" / "metrics_manifest.json").read_text(encoding="utf-8"))
@@ -31,6 +37,12 @@ def test_readme_tests_badge_matches_manifest():
 
 
 def test_manifest_tests_count_matches_collected_suite():
+    missing = [m for m in _FULL_SUITE_DEPS if importlib.util.find_spec(m) is None]
+    if missing:
+        pytest.skip(
+            f"full-suite collection needs optional test deps ({', '.join(missing)} "
+            "missing); install '.[api,dev]' httpx -r requirements-dashboard.txt"
+        )
     completed = subprocess.run(
         [sys.executable, "-m", "pytest", "--collect-only", "-q", "--no-header"],
         cwd=ROOT,
