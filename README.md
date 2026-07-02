@@ -12,6 +12,10 @@ AI Engineer role — and shows *why* each candidate is there, reproducibly.
 
 `Reproduce: python rank.py --release` · `Ranking profile: frontier-v5` · `CPU-only, offline, byte-reproducible` · `No hidden-score claim`
 
+> Badge counts reflect a full checkout (official `candidates.jsonl` + `hf_space` submodule). On a
+> fresh clone without those assets, 272 tests run and 6 skip with stated reasons (full-pool
+> regeneration and Space-parity checks) — nothing fails.
+
 The shipped artifact (`submission.csv`, SHA-256 `3d2dbd8a…`) is produced from `main` by a single
 fail-closed command. The repository's value is **verifiable engineering**: exact input/model/output
 hashes, deterministic serial/parallel output, integrity gates, and a full test suite — not a
@@ -262,5 +266,6 @@ CPU-only, offline, deterministic. The same command appears in `reproduce.sh` and
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE). © 2026 Bhunesh Bansal. The bundled competition dataset is not
-redistributed and remains the property of Redrob.
+MIT — see [`LICENSE`](LICENSE). © 2026 Bhunesh Bansal. The full competition dataset is not
+redistributed and remains the property of Redrob; an 80-row demo slice (`demo_sample.jsonl`)
+is bundled solely so the tests, CI smoke run, and live demo work out of the box.

@@ -23,7 +23,7 @@ integrity red flags are hard gates rather than vibes.
 - Scores each candidate from a 33-feature evidence model over career history, role depth, seniority,
   trajectory, behavior, and logistics — with BM25 as one signal, not the whole story.
 - Applies multiplicative honeypot and JD-disqualifier guardrails that a high relevance score cannot
-  override (53 suspicious profiles detected in the pool; 0 reach the shortlist).
+  override (55 suspicious profiles detected in the pool; 0 reach the shortlist).
 - Emits grounded, per-candidate reasoning and an exact per-feature explanation of each candidate's evidence score.
 - Opens as a populated recruiter workspace: verified release docket, searchable candidate ledger,
   evidence dossier, integrity review context, and top-100 CSV export.

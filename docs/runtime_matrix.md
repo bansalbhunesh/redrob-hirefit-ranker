@@ -116,8 +116,8 @@ and produced the byte-identical SHA-256
 `c28857fdba63723ed13bea35d977a49f3aca7550dc7ea1c2c82d4150279e769c`.
 
 > **Note.** Dated entries below reference superseded goldens (`a2882cd2…`,
-> `af8f2b32…`, `fdfd3f35…`, `c28857fd…`). The current shipped golden is
-> `8f7f30c6…` (frontier-v5 `--release`, see the banner at the top of this file),
+> `af8f2b32…`, `fdfd3f35…`, `c28857fd…`, `8f7f30c6…`). The current shipped golden is
+> `3d2dbd8a…` (frontier-v5 `--release`, see the banner at the top of this file),
 > byte-identical across CPU counts — full record in `docs/REPRODUCTION.md`.
 
 ## 2026-06-29 universal-v2 constrained reproduction

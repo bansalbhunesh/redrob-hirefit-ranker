@@ -108,7 +108,7 @@ truth). This is **not** a confirmed hidden-score result or leaderboard position.
 | Determinism | §6: serial/parallel byte-identical, pinned env, cross-CPU-count Docker |
 | Integrity | §7: hard honeypot/disqualifier gates, 55 detected / 0 shipped |
 | Exact explainability | §8: analytic Shapley attributions, faithfulness-tested |
-| Honest evaluation | §5, §8: 275 passing tests, pre-registered measured-negatives, dev-proxy labeling |
+| Honest evaluation | §5, §8: 278 passing tests, pre-registered measured-negatives, dev-proxy labeling |
 | No overclaiming | dev-proxy labels stated everywhere; no hidden-score or leaderboard claim |
 
 > Boundary: official hidden labels and numeric judging weights are unpublished. The defensible claim is
