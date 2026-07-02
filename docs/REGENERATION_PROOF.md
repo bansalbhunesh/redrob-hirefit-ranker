@@ -23,13 +23,13 @@ PYTHONHASHSEED=0 python rank.py --release \
 ## Result
 
 ```
-Release verified: frontier-v5, SHA-256 8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062
+Release verified: frontier-v5, SHA-256 3d2dbd8a68a145c25bda8122cdf02953ae5f06e2b003aa0f7b4d0e52ce283f6b
 Pipeline completed in 76.2s
-Loaded 100000 candidates; ranked pool 100000; honeypots detected 53; honeypots in output 0
+Loaded 100000 candidates; ranked pool 100000; honeypots detected 55; honeypots in output 0
 ```
 
-- **Regenerated SHA-256:** `8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062`
-- **Golden SHA-256 (committed):** `8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062`
+- **Regenerated SHA-256:** `3d2dbd8a68a145c25bda8122cdf02953ae5f06e2b003aa0f7b4d0e52ce283f6b`
+- **Golden SHA-256 (committed):** `3d2dbd8a68a145c25bda8122cdf02953ae5f06e2b003aa0f7b4d0e52ce283f6b`
 - **Match:** ✅ byte-identical to the committed `submission.csv`
 - **Validation:** `scripts/validate_submission.py` → `Submission is valid.`
 - **Pipeline exit code:** 0

@@ -62,8 +62,8 @@ PYTHONHASHSEED=0 python rank.py --release --candidates ./candidates.jsonl --out 
 `--candidate-pool N` exists for demos/profiling only. The submission path should leave it at `0`.
 
 In the pinned python:3.11 Docker image, the final fail-closed release generates
-the validated top-100 in **136.0 s pipeline / 149.1 s wall** at 2 CPU / 16 GiB.
-It scores all 100,000 candidates, detects 53 honeypots, emits 0, reproduces the
+the validated top-100 in **105.3 s pipeline / 117.2 s wall** at 2 CPU / 16 GiB.
+It scores all 100,000 candidates, detects 55 integrity signals, emits 0, reproduces the
 exact champion hash and leaves zero output-directory temps; sampled peak memory
 is 4.13 GiB (`docs/runtime_matrix.md`).
 

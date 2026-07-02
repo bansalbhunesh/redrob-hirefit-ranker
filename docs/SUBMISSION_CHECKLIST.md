@@ -4,12 +4,12 @@ Everything controllable in the repository is verified here. “Owner action” m
 
 ## Verified in the repository
 
-- **Release locked:** fail-closed release, frontier-v5 ranking core, SHA-256 prefix `8f7f30c6`.
+- **Release locked:** fail-closed release, frontier-v5 ranking core, SHA-256 prefix `3d2dbd8a`.
 - **One release path:** `PYTHONHASHSEED=0 python rank.py --release ...` forces the champion and fails closed on input, model, configuration, count, numeric, or output drift.
 - **Reproducible:** `./reproduce.sh` is green; the full 100K Docker release is byte-identical and atomic; a forced OOM preserves the previous output.
-- **Resource fit:** CPU-only and offline; 136.0 s pipeline / 149.1 s wall at 2 CPU / 16 GiB; sampled peak 4.13 GiB.
+- **Resource fit:** CPU-only and offline; 105.3 s pipeline / 117.2 s wall at 2 CPU / 16 GiB; sampled peak 4.13 GiB.
 - **Ranking evidence:** improves every measured composite versus the repository's default profile and sits in the top cluster on development proxies (broad / strongest-union / four-axis means); external reviewer and blind cross-checks. Dev proxies, not an official score.
-- **Integrity:** 0 detected honeypots in the top 100, with 53 detected in the pool.
+- **Integrity:** 0 detector-flagged profiles in the top 100, with 55 detected in the pool.
 - **Supply chain:** digest-pinned base image, hash-pinned wheels, `pip --require-hashes`, and no known production dependency vulnerabilities in the dated audit.
 - **Judge path:** the judge-proof package, 60-second judge packet, evidence-first README, methodology, deployment guide, current pitch deck, and screenshots are linked from the repository front page. Historical R&D notes remain under `docs/archive/` and are not submission claims.
 - **Fresh visual proof:** desktop and 390-pixel mobile screenshots were regenerated from the live Render and Hugging Face surfaces on 2026-07-01.
@@ -22,7 +22,7 @@ Everything controllable in the repository is verified here. “Owner action” m
 
 ## Owner action outside this repository
 
-1. Confirm the challenge portal entry points to the public repository and the exact `8f7f30c6…` submission artifact.
+1. Confirm the challenge portal entry points to the public repository and the exact `3d2dbd8a…` submission artifact.
 2. Record and attach the optional two-minute walkthrough if the challenge portal provides a video field; the verified flow is in [DEMO_SCRIPT.md](DEMO_SCRIPT.md).
 3. Rotate any credential that may have appeared outside version control; no credential is required by the ranker or committed here.
 

@@ -41,7 +41,7 @@ profile is pushed down regardless of how strong its keywords look.
 
 | Choice | Why |
 |---|---|
-| **Feature matrix + BM25, not an LLM scoring each candidate** | An LLM-per-candidate cannot scale to 100K under the challenge latency/cost budget, is not reproducible, and needs network. The release ranks the full pool in **136.0 s pipeline / 149.1 s wall** in the final 2-vCPU, 16 GiB Docker release run. |
+| **Feature matrix + BM25, not an LLM scoring each candidate** | An LLM-per-candidate cannot scale to 100K under the challenge latency/cost budget, is not reproducible, and needs network. The release ranks the full pool in **105.3 s pipeline / 117.2 s wall** in the final 2-vCPU, 16 GiB Docker release run. |
 | **No dense embeddings — *tested and rejected*** | We built a model2vec/potion dense-retrieval branch and gated it on a measured A/B: **NDCG@10 +0.0000, ~2.2× runtime → FAIL**. We shipped the simpler, faster system; the negative result is documented (`artifacts/embedding_gate_result.txt`). |
 | **Career-evidence over keywords** | Production/IR-ranking signals mined from career *history* (weights 0.13 + 0.12) outweigh skill-list matches — this is how Tier-5 candidates without the buzzwords still surface. |
 | **Multiplicative behavioral & honeypot guardrails** | A high fit score cannot rescue an impossible profile or an unavailable candidate. This encodes the JD's explicit "down-weight the unavailable" instruction. |

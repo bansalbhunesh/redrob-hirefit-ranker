@@ -51,8 +51,8 @@ integrity red flags are hard gates rather than vibes.
 ## Accomplishments we're proud of
 
 - The committed `submission.csv` regenerates from the full private pool **byte-for-byte** (SHA-256
-  `8f7f30c6…`).
-- 275 tests pass, including golden-hash, upload-safety, browser-escaping, and fast behavior-regression gates.
+  `3d2dbd8a…`).
+- 278 tests pass, including golden-hash, upload-safety, browser-escaping, and fast behavior-regression gates.
 - Honest, exact explainability instead of a black box.
 
 ## What we learned

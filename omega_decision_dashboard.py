@@ -1,7 +1,7 @@
 """Redrob Ranking Decision Lab — judge-facing evidence and integrity dashboard.
 
 STRICTLY a downstream research/explanation layer. It does NOT import, rerun, or influence the
-production ranking path; the release artifact 8f7f30c68ec30cb6 stays byte-identical. Reads only committed local
+production ranking path; the release artifact 3d2dbd8a68a145c2 stays byte-identical. Reads only committed local
 artifacts (no network, no model downloads, no production execution).
 
 Run:  streamlit run omega_decision_dashboard.py
@@ -82,7 +82,7 @@ with st.sidebar:
     st.markdown("**Reproduce the release:**")
     st.code("PYTHONHASHSEED=0 python rank.py --release --workers 2 "
             "--candidates candidates.jsonl --out submission.csv\n"
-            "sha256sum submission.csv  # -> 8f7f30c68ec30cb6...", language="bash")
+            "sha256sum submission.csv  # -> 3d2dbd8a68a145c2...", language="bash")
     st.divider()
     st.caption(DISCLAIMER)
 
@@ -251,8 +251,8 @@ TL = [("Golden baseline", "frozen reproducible production baseline", "FALLBACK")
       ("Integrity audit cards", "downstream explanation", "EXPLANATION LAYER"),
       ("Rank-space Condorcet (Copeland)", "beats golden 7/7 on blind arbiter (0.8779)", "RESEARCH ONLY"),
       ("Ship Hedge (severity-gated Copeland)", "historical main artifact; superseded by the release", "SUPERSEDED"),
-      ("Dominant V4", "feature-only evidence correction; no component regression vs V3", "ADOPTED"),
-      ("Frontier V5", "Dominant V4 + two narrow holdout-scoped tie-breaks (marginal, within proxy noise)", "RANKING CORE"),
+      ("V4 evidence correction", "feature-only correction; no component regression vs V3", "ADOPTED"),
+      ("Frontier V5", "V4 base + two narrow holdout-scoped tie-breaks (marginal, within proxy noise)", "RANKING CORE"),
       ("Fail-closed release", "hash-pinned, fail-closed, OOM-safe atomic release", "SHIPPED")]
 for stage, result, label in TL:
     st.markdown(f"- **{stage}** — {result}  ·  `{label}`")
@@ -264,8 +264,8 @@ st.caption("Quality figures are development proxies (independent heuristic + LLM
 st.dataframe({
     "Property": ["Seven-evaluator mean (dev proxy)", "Composites vs main (dev proxy)",
                  "2 CPU / 16 GiB release", "Failure safety", "Independent human lockbox", "Status"],
-    "main --release": ["0.906553 (top cluster)", "wins all tested composites", "136.0 s pipeline",
-                 "Hash-pinned · atomic · OOM-safe", "External recruiter slices; own panel pending", "SHIP · 8f7f30c6"],
+    "main --release": ["0.906553 (top cluster)", "wins all tested composites", "105.3 s pipeline",
+                 "Hash-pinned · atomic · OOM-safe", "External recruiter slices; own panel pending", "SHIP · 3d2dbd8a"],
     "Historical main hedge": ["0.872686", "Baseline", "Historical runtime",
                  "No fail-closed release envelope", "External recruiter slices", "SUPERSEDED"],
     "Raw Copeland research": ["Narrow proxy gain", "Not universal", "Not release-qualified",

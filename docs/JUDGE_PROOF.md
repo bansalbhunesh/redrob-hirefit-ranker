@@ -26,8 +26,8 @@ Re-ranking the full 100,000-candidate private pool from scratch reproduces the c
 `submission.csv` **byte-for-byte**. Details + environment: [`REGENERATION_PROOF.md`](REGENERATION_PROOF.md).
 
 ```
-Release verified: frontier-v5, SHA-256 8f7f30c68ec30cb6…
-Loaded 100000 candidates; ranked pool 100000; honeypots detected 53; honeypots in output 0
+Release verified: frontier-v5, SHA-256 3d2dbd8a68a145c2…
+Loaded 100000 candidates; ranked pool 100000; honeypots detected 55; honeypots in output 0
 ```
 - Regenerated SHA-256 == committed SHA-256: **byte-identical** ✅
 - The private pool is `.gitignore`d (not redistributed); place the official `candidates.jsonl` at the
@@ -35,13 +35,13 @@ Loaded 100000 candidates; ranked pool 100000; honeypots detected 53; honeypots i
 
 ## 3. Golden-hash proof
 
-- `submission.csv` SHA-256: `8f7f30c68ec30cb66ad7d9c2f7103e7fbb6b20f639fdace8961f395c30ab6062`
+- `submission.csv` SHA-256: `3d2dbd8a68a145c25bda8122cdf02953ae5f06e2b003aa0f7b4d0e52ce283f6b`
 - Pinned and gated by [`tests/test_submission_gate.py`](../tests/test_submission_gate.py): the committed
   bytes must match this hash, and a fixed 2K-slice re-rank must match a recorded behavior hash (catches
   any silent ranking change in seconds).
 
 ```bash
-sha256sum submission.csv      # -> 8f7f30c68ec30cb6…
+sha256sum submission.csv      # -> 3d2dbd8a68a145c2…
 bash reproduce.sh             # runs the gate + hash check
 ```
 
@@ -54,7 +54,7 @@ Shape/format/membership checks; also runs as a CI gate on every push.
 
 ## 5. Test summary
 
-- **275 passed** (`PYTHONHASHSEED=0 python -m pytest -q`).
+- **278 passed** (`PYTHONHASHSEED=0 python -m pytest -q`).
 - Includes the golden-hash gate, the 2K-slice behavior gate, the explainability faithfulness test,
   dashboard smoke/parity, integrity-card mapping, and the anti-drift metrics-manifest gate.
 - CI gates the suite + validator on every push (`.github/workflows/ci.yml`).
@@ -63,13 +63,13 @@ Shape/format/membership checks; also runs as a CI gate on every push.
 
 - Serial and parallel (`--workers`) output are **byte-identical**; pinned BLAS/hash environment;
   reproduced across host CPU counts inside a pinned Docker image.
-- Full 100K at 2 CPU / 16 GiB: **136.0 s pipeline / 149.1 s wall** (budget 300 s). Matrix:
+- Full 100K at 2 CPU / 16 GiB: **105.3 s pipeline / 117.2 s wall** (budget 300 s). Matrix:
   [`runtime_matrix.md`](runtime_matrix.md).
 
 ## 7. Integrity gates
 
 - Honeypot and JD-disqualifier multipliers are **hard guardrails** a higher relevance score cannot
-  override. On the shipped run: **53 detected in the pool, 0 in the top-100.**
+  override. On the shipped run: **55 detected in the pool, 0 in the top-100.**
 - The distinction is stated honestly: detector-flagged anomaly ≠ confirmed contradiction ≠ official
   planted honeypot. A downstream layer maps suspicious timelines to `VERIFY` for human review; it never
   asserts fraud and never reorders candidates.
@@ -106,7 +106,7 @@ truth). This is **not** a confirmed hidden-score result or leaderboard position.
 |---|---|
 | Full-pool reproducibility | §1–§2: one command regenerates the committed artifact byte-for-byte |
 | Determinism | §6: serial/parallel byte-identical, pinned env, cross-CPU-count Docker |
-| Integrity | §7: hard honeypot/disqualifier gates, 53 detected / 0 shipped |
+| Integrity | §7: hard honeypot/disqualifier gates, 55 detected / 0 shipped |
 | Exact explainability | §8: analytic Shapley attributions, faithfulness-tested |
 | Honest evaluation | §5, §8: 275 passing tests, pre-registered measured-negatives, dev-proxy labeling |
 | No overclaiming | dev-proxy labels stated everywhere; no hidden-score or leaderboard claim |

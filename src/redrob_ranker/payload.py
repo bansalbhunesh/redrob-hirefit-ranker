@@ -9,6 +9,7 @@ from typing import Any
 HARD_HONEYPOT_FLAGS = {
     "experience_timeline_exceeds_claim",
     "career_history_too_short_for_claimed_yoe",
+    "summary_career_yoe_contradiction",
     "expert_skill_zero_duration",
     "multiple_current_jobs",
     "impossible_education_timeline",

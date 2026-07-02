@@ -43,7 +43,7 @@ rank. An independent recruiter's labels support that choice (`docs/external_recr
 ## Why this fits Redrob
 - **Recruiter trust:** grounded reasons + an explicit "where to look" flag → a tool a recruiter can
   defend to a hiring manager, not a black box.
-- **Production-shaped:** deterministic, CPU-only, **136.0 s for 100K on 2 CPUs**, offline — scales to a 200K pool
+- **Production-shaped:** deterministic, CPU-only, **105.3 s for 100K on 2 CPUs**, offline — scales to a 200K pool
   without a per-candidate LLM bill. The cost-quality tradeoff is the point.
 - **Auditable & fair:** counterfactual fairness tests, no candidate-ID tuning in the ranking path,
   every KPI generated from a single drift-checked manifest.

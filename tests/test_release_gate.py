@@ -35,7 +35,7 @@ def _result(**overrides):
         "ranked_pool_count": 100_000,
         "rows": [{}] * 100,
         "bm25_backend": "bm25s",
-        "honeypots_detected": 53,
+        "honeypots_detected": 55,
         "honeypots_in_output": 0,
     }
     values.update(overrides)
